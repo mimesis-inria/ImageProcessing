@@ -1,0 +1,11 @@
+# CMake package configuration file for the AcquisitOR plugin
+
+@PACKAGE_INIT@
+
+find_package(SofaFramework REQUIRED)
+
+if(NOT TARGET AcquisitOR)
+	include("${CMAKE_CURRENT_LIST_DIR}/ProcessORTargets.cmake")
+endif()
+
+check_required_components(ProcessOR)
