@@ -4,7 +4,8 @@
 #include "DetectorOptions.h"
 #include "initplugin.h"
 
-#include <SofaORCommon/Image.h>
+#include <SofaORCommon/cvMat.h>
+#include <SofaORCommon/cvKeypoint.h>
 
 #include <sofa/core/DataEngine.h>
 #include <sofa/helper/OptionsGroup.h>
@@ -42,9 +43,9 @@ class FeatureDetector : public core::DataEngine
   void update();
   void reinit();
 
-  Data<common::Image> d_image;
-  Data<common::Image> d_mask;
-  Data<sofa::helper::vector<cv::KeyPoint> > d_keypoints;
+  Data<common::cvMat> d_image;
+  Data<common::cvMat> d_mask;
+  Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
   Data<sofa::helper::OptionsGroup> d_detectorType;
 
   void handleEvent(sofa::core::objectmodel::Event* event);

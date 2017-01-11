@@ -1,7 +1,7 @@
 #ifndef SOFA_OR_PROCESSOR_DETECTOROPTIONS_H
 #define SOFA_OR_PROCESSOR_DETECTOROPTIONS_H
 
-#include <SofaORCommon/Image.h>
+#include <SofaORCommon/cvMat.h>
 
 #include <sofa/core/DataEngine.h>
 #include <sofa/helper/OptionsGroup.h>
@@ -18,8 +18,8 @@ class FeatureDetector;
 struct BaseOpts
 {
   virtual ~BaseOpts();
-  virtual void detect(const common::Image&, const common::Image&,
-                      sofa::helper::vector<cv::KeyPoint>* keypoints) = 0;
+  virtual void detect(const common::cvMat&, const common::cvMat&,
+                      std::vector<cv::KeyPoint>& keypoints) = 0;
 };
 struct FASTOpts : BaseOpts
 {
@@ -29,8 +29,8 @@ struct FASTOpts : BaseOpts
   Data<bool> nonmaxsuppression;
   Data<sofa::helper::OptionsGroup> type;
 
-  void detect(const common::Image&, const common::Image&,
-              sofa::helper::vector<cv::KeyPoint>* keypoints);
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>& keypoints);
 };
 struct MSEROpts : BaseOpts
 {
@@ -46,8 +46,8 @@ struct MSEROpts : BaseOpts
   Data<double> minMargin;
   Data<int> edgeBlurSize;
 
-  void detect(const common::Image&, const common::Image&,
-              sofa::helper::vector<cv::KeyPoint>* keypoints);
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>& keypoints);
 };
 struct ORBOpts : BaseOpts
 {
@@ -63,8 +63,8 @@ struct ORBOpts : BaseOpts
   Data<int> patchSize;
   Data<int> fastThreshold;
 
-  void detect(const common::Image&, const common::Image&,
-              sofa::helper::vector<cv::KeyPoint>* keypoints);
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>& keypoints);
 };
 struct BRISKOpts : BaseOpts
 {
@@ -74,8 +74,8 @@ struct BRISKOpts : BaseOpts
   Data<int> octaves;
   Data<float> npatternScale;
 
-  void detect(const common::Image&, const common::Image&,
-              sofa::helper::vector<cv::KeyPoint>* keypoints);
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>& keypoints);
 };
 struct KAZEOpts : BaseOpts
 {
@@ -88,8 +88,8 @@ struct KAZEOpts : BaseOpts
   Data<int> sublevels;
   Data<sofa::helper::OptionsGroup> diffusivity;
 
-  void detect(const common::Image&, const common::Image&,
-              sofa::helper::vector<cv::KeyPoint>* keypoints);
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>& keypoints);
 };
 struct AKAZEOpts : BaseOpts
 {
@@ -103,8 +103,8 @@ struct AKAZEOpts : BaseOpts
   Data<int> sublevels;
   Data<sofa::helper::OptionsGroup> diffusivity;
 
-  void detect(const common::Image&, const common::Image&,
-              sofa::helper::vector<cv::KeyPoint>* keypoints);
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>& keypoints);
 };
 struct SIFTOpts : BaseOpts
 {
@@ -116,8 +116,8 @@ struct SIFTOpts : BaseOpts
   Data<double> edgeThreshold;
   Data<double> sigma;
 
-  void detect(const common::Image&, const common::Image&,
-              sofa::helper::vector<cv::KeyPoint>* keypoints);
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>& keypoints);
 };
 
 }  // namespace sofa

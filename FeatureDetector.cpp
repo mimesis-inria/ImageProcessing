@@ -17,7 +17,7 @@ int FeatureDetectorClass =
         .add<FeatureDetector>();
 
 FeatureDetector::FeatureDetector()
-    : d_mask(initData(&d_mask, common::Image(), "mask",
+    : d_mask(initData(&d_mask, common::cvMat(), "mask",
                       "Mask specifying where to look for keypoints "
                       "(optional). It must be a 8-bit integer matrix with "
                       "non-zero values in the region of interest.")),
@@ -59,37 +59,39 @@ FeatureDetector::FeatureDetector()
 FeatureDetector::~FeatureDetector() {}
 void FeatureDetector::init()
 {
+  const cv::KeyPoint* arr =
+      dynamic_cast<const cv::KeyPoint*>(d_keypoints.getValue().data());
+
+  std::vector<cv::KeyPoint> v(arr, arr + d_keypoints.getValue().size());
   switch (d_detectorType.getValue().getSelectedId())
   {
     case FAST:
-      m_detector->detect(d_image.getValue(), d_mask.getValue(),
-                         d_keypoints.beginEdit());
+      m_detector->detect(d_image.getValue(), d_mask.getValue(), v);
       break;
     case MSER:
-      m_detector->detect(d_image.getValue(), d_mask.getValue(),
-                         d_keypoints.beginEdit());
+      m_detector->detect(d_image.getValue(), d_mask.getValue(), v);
       break;
     case ORB:
-      m_detector->detect(d_image.getValue(), d_mask.getValue(),
-                         d_keypoints.beginEdit());
+      m_detector->detect(d_image.getValue(), d_mask.getValue(), v);
       break;
     case BRISK:
-      m_detector->detect(d_image.getValue(), d_mask.getValue(),
-                         d_keypoints.beginEdit());
+      m_detector->detect(d_image.getValue(), d_mask.getValue(), v);
       break;
     case KAZE:
-      m_detector->detect(d_image.getValue(), d_mask.getValue(),
-                         d_keypoints.beginEdit());
+      m_detector->detect(d_image.getValue(), d_mask.getValue(), v);
       break;
     case AKAZE:
-      m_detector->detect(d_image.getValue(), d_mask.getValue(),
-                         d_keypoints.beginEdit());
+      m_detector->detect(d_image.getValue(), d_mask.getValue(), v);
       break;
     case SIFT:
-      m_detector->detect(d_image.getValue(), d_mask.getValue(),
-                         d_keypoints.beginEdit());
+      m_detector->detect(d_image.getValue(), d_mask.getValue(), v);
       break;
   }
+
+  sofa::helper::vector<common::cvKeypoint>* vec = d_keypoints.beginEdit();
+  vec->clear();
+  for (cv::KeyPoint& kp : v) vec->push_back(common::cvKeypoint(kp));
+  d_keypoints.endEdit();
 }
 void FeatureDetector::update() {}
 void FeatureDetector::reinit() { update(); }
