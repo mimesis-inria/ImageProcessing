@@ -11,7 +11,6 @@
 #include <sofa/helper/OptionsGroup.h>
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/xfeatures2d.hpp>
 
 namespace sofa
 {
@@ -43,10 +42,13 @@ class FeatureDetector : public core::DataEngine
   void update();
   void reinit();
 
+  Data<bool> d_detectOnly;
   Data<common::cvMat> d_image;
   Data<common::cvMat> d_mask;
-  Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
   Data<sofa::helper::OptionsGroup> d_detectorType;
+  Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
+  Data<common::cvMat>* d_descriptors;
+  Data<bool>* d_useProvidedKeypoints;
 
   void handleEvent(sofa::core::objectmodel::Event* event);
 

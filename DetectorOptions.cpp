@@ -8,6 +8,22 @@ namespace OR
 namespace processor
 {
 BaseOpts::~BaseOpts() {}
+
+void BaseOpts::detect(const common::cvMat& img, const common::cvMat& mask,
+                      std::vector<cv::KeyPoint>& keypoints)
+{
+  m_detector->detect(img, keypoints, mask);
+}
+
+void BaseOpts::detectAndCompute(const common::cvMat& img,
+                                const common::cvMat& mask,
+                                std::vector<cv::KeyPoint>& keypoints,
+                                common::cvMat& descriptors, bool useKPts)
+{
+  m_detector->detectAndCompute(img, mask, keypoints, descriptors, useKPts);
+}
+
+
 FASTOpts::FASTOpts(FeatureDetector* c)
     : threshold(c->initData(&threshold, 0, "threshold",
                             "threshold on difference between intensity of the "
@@ -25,17 +41,10 @@ FASTOpts::FASTOpts(FeatureDetector* c)
   t->setNames(3, "TYPE_9_16", "TYPE_7_12", "TYPE_5_8");
   t->setSelectedItem(0);
   type.endEdit();
-}
 
-void FASTOpts::detect(const common::cvMat& img, const common::cvMat& mask,
-                      std::vector<cv::KeyPoint>& keypoints)
-{
-
-  cv::Ptr<cv::FeatureDetector> detector = cv::FastFeatureDetector::create(
+  m_detector = cv::FastFeatureDetector::create(
       threshold.getValue(), nonmaxsuppression.getValue(),
       int(type.getValue().getSelectedId()));
-
-  detector->detect(img, keypoints, mask);
 }
 
 MSEROpts::MSEROpts(FeatureDetector* c)
@@ -62,17 +71,10 @@ MSEROpts::MSEROpts(FeatureDetector* c)
           c->initData(&edgeBlurSize, 5, "edgeBlurSize",
                       "For color image, the aperture size for edge blur"))
 {
-}
-
-void MSEROpts::detect(const common::cvMat& img, const common::cvMat& mask,
-                      std::vector<cv::KeyPoint>& keypoints)
-{
-  cv::Ptr<cv::MSER> detector = cv::MSER::create(
+  m_detector = cv::MSER::create(
       delta.getValue(), minArea.getValue(), maxArea.getValue(),
       maxVariation.getValue(), minDiversity.getValue(), maxEvolution.getValue(),
       areaThreshold.getValue(), minMargin.getValue(), edgeBlurSize.getValue());
-
-  detector->detect(img, keypoints, mask);
 }
 
 ORBOpts::ORBOpts(FeatureDetector* c)
@@ -104,18 +106,12 @@ ORBOpts::ORBOpts(FeatureDetector* c)
   t->setNames(2, "HARRIS_SCORE", "FAST_SCORE");
   t->setSelectedItem(0);
   scoreType.endEdit();
-}
 
-void ORBOpts::detect(const common::cvMat& img, const common::cvMat& mask,
-                     std::vector<cv::KeyPoint>& keypoints)
-{
-  cv::Ptr<cv::ORB> detector = cv::ORB::create(
-      nFeatures.getValue(), scaleFactor.getValue(), nLevels.getValue(),
-      edgeThreshold.getValue(), firstLevel.getValue(), WTA_K.getValue(),
-      int(scoreType.getValue().getSelectedId()), patchSize.getValue(),
-      fastThreshold.getValue());
-
-  detector->detect(img, keypoints, mask);
+  m_detector = cv::ORB::create(nFeatures.getValue(), scaleFactor.getValue(),
+                               nLevels.getValue(), edgeThreshold.getValue(),
+                               firstLevel.getValue(), WTA_K.getValue(),
+                               int(scoreType.getValue().getSelectedId()),
+                               patchSize.getValue(), fastThreshold.getValue());
 }
 
 BRISKOpts::BRISKOpts(FeatureDetector* c)
@@ -127,15 +123,8 @@ BRISKOpts::BRISKOpts(FeatureDetector* c)
                                 "apply this scale to the pattern used for "
                                 "sampling the neighbourhood of a keypoint."))
 {
-}
-
-void BRISKOpts::detect(const common::cvMat& img, const common::cvMat& mask,
-                       std::vector<cv::KeyPoint>& keypoints)
-{
-  cv::Ptr<cv::BRISK> detector = cv::BRISK::create(
-      threshold.getValue(), octaves.getValue(), npatternScale.getValue());
-
-  detector->detect(img, keypoints, mask);
+  m_detector = cv::BRISK::create(threshold.getValue(), octaves.getValue(),
+                                 npatternScale.getValue());
 }
 
 KAZEOpts::KAZEOpts(FeatureDetector* c)
@@ -160,16 +149,11 @@ KAZEOpts::KAZEOpts(FeatureDetector* c)
               "DIFF_CHARBONNIER");
   t->setSelectedItem(3);
   diffusivity.endEdit();
-}
 
-void KAZEOpts::detect(const common::cvMat& img, const common::cvMat& mask,
-                      std::vector<cv::KeyPoint>& keypoints)
-{
-  cv::Ptr<cv::Feature2D> detector = cv::KAZE::create(
-      extended.getValue(), upright.getValue(), threshold.getValue(),
-      octaves.getValue(), sublevels.getValue(),
-      int(diffusivity.getValue().getSelectedId()));
-  detector->detect(img, keypoints, mask);
+  m_detector = cv::KAZE::create(extended.getValue(), upright.getValue(),
+                                threshold.getValue(), octaves.getValue(),
+                                sublevels.getValue(),
+                                int(diffusivity.getValue().getSelectedId()));
 }
 
 AKAZEOpts::AKAZEOpts(FeatureDetector* c)
@@ -205,17 +189,13 @@ AKAZEOpts::AKAZEOpts(FeatureDetector* c)
               "DIFF_CHARBONNIER");
   t->setSelectedItem(3);
   diffusivity.endEdit();
-}
 
-void AKAZEOpts::detect(const common::cvMat& img, const common::cvMat& mask,
-                       std::vector<cv::KeyPoint>& keypoints)
-{
-  cv::Ptr<cv::Feature2D> detector = cv::AKAZE::create(
+  m_detector = cv::AKAZE::create(
       int(descriptorType.getValue().getSelectedId()), descriptorSize.getValue(),
       descriptorChannels.getValue(), threshold.getValue(), octaves.getValue(),
       sublevels.getValue(), int(diffusivity.getValue().getSelectedId()));
-  detector->detect(img, keypoints, mask);
 }
+
 
 SIFTOpts::SIFTOpts(FeatureDetector* c)
     : nFeatures(c->initData(&nFeatures, 0, "nfeatures",
@@ -244,16 +224,9 @@ SIFTOpts::SIFTOpts(FeatureDetector* c)
                         "weak camera with soft lenses, you might want to "
                         "reduce the number."))
 {
-}
-
-void SIFTOpts::detect(const common::cvMat& img, const common::cvMat& mask,
-                      std::vector<cv::KeyPoint>& keypoints)
-{
-  cv::Ptr<cv::Feature2D> detector = cv::xfeatures2d::SIFT::create(
+  m_detector = cv::xfeatures2d::SIFT::create(
       nFeatures.getValue(), nOctaveLayers.getValue(),
       contrastThreshold.getValue(), edgeThreshold.getValue(), sigma.getValue());
-
-  detector->detect(img, keypoints, mask);
 }
 
 }  // namespace sofa
