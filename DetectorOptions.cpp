@@ -30,6 +30,7 @@ FASTOpts::FASTOpts(FeatureDetector* c)
 void FASTOpts::detect(const common::cvMat& img, const common::cvMat& mask,
                       std::vector<cv::KeyPoint>& keypoints)
 {
+
   cv::Ptr<cv::FeatureDetector> detector = cv::FastFeatureDetector::create(
       threshold.getValue(), nonmaxsuppression.getValue(),
       int(type.getValue().getSelectedId()));

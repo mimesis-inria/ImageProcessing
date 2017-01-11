@@ -26,6 +26,7 @@ FeatureDetector::FeatureDetector()
                               "MSER, ORB, BRISK, KAZE, AKAZE, SIFT"))
 {
   f_listening.setValue(true);
+
   sofa::helper::OptionsGroup* t = d_detectorType.beginEdit();
   t->setNames(7, "FAST", "MSER", "ORB", "BRISK", "KAZE", "AKAZE", "SIFT");
   t->setSelectedItem(5);
@@ -59,10 +60,21 @@ FeatureDetector::FeatureDetector()
 FeatureDetector::~FeatureDetector() {}
 void FeatureDetector::init()
 {
-  const cv::KeyPoint* arr =
-      dynamic_cast<const cv::KeyPoint*>(d_keypoints.getValue().data());
+  addInput(&d_image);
+  addInput(&d_mask);
+  addInput(&d_keypoints);
+  setDirtyValue();
+}
+void FeatureDetector::update()
+{
+  std::vector<cv::KeyPoint> v;
+  if (!d_keypoints.getValue().empty())
+  {
+    const cv::KeyPoint* arr =
+        dynamic_cast<const cv::KeyPoint*>(d_keypoints.getValue().data());
 
-  std::vector<cv::KeyPoint> v(arr, arr + d_keypoints.getValue().size());
+    v.assign(arr, arr + d_keypoints.getValue().size());
+  }
   switch (d_detectorType.getValue().getSelectedId())
   {
     case FAST:
@@ -87,13 +99,13 @@ void FeatureDetector::init()
       m_detector->detect(d_image.getValue(), d_mask.getValue(), v);
       break;
   }
+  cleanDirty();
 
   sofa::helper::vector<common::cvKeypoint>* vec = d_keypoints.beginEdit();
   vec->clear();
   for (cv::KeyPoint& kp : v) vec->push_back(common::cvKeypoint(kp));
   d_keypoints.endEdit();
 }
-void FeatureDetector::update() {}
 void FeatureDetector::reinit() { update(); }
 void FeatureDetector::handleEvent(sofa::core::objectmodel::Event* e)
 {
