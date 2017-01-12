@@ -4,8 +4,8 @@
 #include "DetectorOptions.h"
 #include "initplugin.h"
 
-#include <SofaORCommon/cvMat.h>
 #include <SofaORCommon/cvKeypoint.h>
+#include <SofaORCommon/cvMat.h>
 
 #include <sofa/core/DataEngine.h>
 #include <sofa/helper/OptionsGroup.h>
@@ -28,7 +28,8 @@ class FeatureDetector : public core::DataEngine
     BRISK = 3,
     KAZE = 4,
     AKAZE = 5,
-    SIFT = 6
+    SIFT = 6,
+    DetectorType_COUNT
   };
 
  public:
@@ -47,14 +48,12 @@ class FeatureDetector : public core::DataEngine
   Data<common::cvMat> d_mask;
   Data<sofa::helper::OptionsGroup> d_detectorType;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
-  Data<common::cvMat>* d_descriptors;
-  Data<bool>* d_useProvidedKeypoints;
 
   void handleEvent(sofa::core::objectmodel::Event* event);
 
-
-private:
-  BaseOpts* m_detector;
+ private:
+  ComputeOpts* m_compute;
+  BaseOpts* m_detectors[DetectorType_COUNT];
 };
 
 }  // namespace processor
