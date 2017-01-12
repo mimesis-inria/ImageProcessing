@@ -1,4 +1,4 @@
-#include "DetectorOptions.h"
+#include "Detectors.h"
 #include "FeatureDetector.h"
 
 namespace sofa
@@ -7,31 +7,14 @@ namespace OR
 {
 namespace processor
 {
-ComputeOpts::ComputeOpts(FeatureDetector* c)
-    : d_useProvidedKeypoints(
-          c->initData(&d_useProvidedKeypoints, false, "useProvidedKeypoints",
-                      "whether or not to perform a feature detection before "
-                      "description")),
-      d_descriptors(c->initData(&d_descriptors, "descriptors",
-                                "output cvMat of feature descriptors", true,
-                                true))
-{
-}
-
-void ComputeOpts::toggleVisible(bool show)
-{
-  d_useProvidedKeypoints.setDisplayed(show);
-  d_descriptors.setDisplayed(show);
-}
-
-BaseOpts::~BaseOpts() {}
-void BaseOpts::detect(const common::cvMat& img, const common::cvMat& mask,
+BaseDetector::~BaseDetector() {}
+void BaseDetector::detect(const common::cvMat& img, const common::cvMat& mask,
                       std::vector<cv::KeyPoint>& keypoints)
 {
   m_detector->detect(img, keypoints, mask);
 }
 
-void BaseOpts::detectAndCompute(const common::cvMat& img,
+void BaseDetector::detectAndCompute(const common::cvMat& img,
                                 const common::cvMat& mask,
                                 std::vector<cv::KeyPoint>& keypoints,
                                 common::cvMat& descriptors, bool useKPts)
@@ -39,7 +22,7 @@ void BaseOpts::detectAndCompute(const common::cvMat& img,
   m_detector->detectAndCompute(img, mask, keypoints, descriptors, useKPts);
 }
 
-FASTOpts::FASTOpts(FeatureDetector* c)
+FASTDetector::FASTDetector(FeatureDetector* c)
     : threshold(c->initData(&threshold, 0, "FASTThreshold",
                             "threshold on difference between intensity of the "
                             "central pixel and pixels of a circle around this "
@@ -62,14 +45,14 @@ FASTOpts::FASTOpts(FeatureDetector* c)
       int(type.getValue().getSelectedId()));
 }
 
-void FASTOpts::toggleVisible(bool show)
+void FASTDetector::toggleVisible(bool show)
 {
   threshold.setDisplayed(show);
   nonmaxsuppression.setDisplayed(show);
   type.setDisplayed(show);
 }
 
-MSEROpts::MSEROpts(FeatureDetector* c)
+MSERDetector::MSERDetector(FeatureDetector* c)
     : delta(c->initData(&delta, 5, "MSERDelta",
                         "Compares (sizei - sizei-delta)/sizei-delta")),
       minArea(c->initData(&minArea, 60, "MSERMinArea",
@@ -99,7 +82,7 @@ MSEROpts::MSEROpts(FeatureDetector* c)
       areaThreshold.getValue(), minMargin.getValue(), edgeBlurSize.getValue());
 }
 
-void MSEROpts::toggleVisible(bool show)
+void MSERDetector::toggleVisible(bool show)
 {
   delta.setDisplayed(show);
   minArea.setDisplayed(show);
@@ -112,7 +95,7 @@ void MSEROpts::toggleVisible(bool show)
   edgeBlurSize.setDisplayed(show);
 }
 
-ORBOpts::ORBOpts(FeatureDetector* c)
+ORBDetector::ORBDetector(FeatureDetector* c)
     : nFeatures(c->initData(&nFeatures, 500, "ORBNFeatures",
                             "Compares (sizei - sizei-delta)/sizei-delta")),
       scaleFactor(c->initData(&scaleFactor, 1.2f, "scaleFactor",
@@ -149,7 +132,7 @@ ORBOpts::ORBOpts(FeatureDetector* c)
                                patchSize.getValue(), fastThreshold.getValue());
 }
 
-void ORBOpts::toggleVisible(bool show)
+void ORBDetector::toggleVisible(bool show)
 {
   nFeatures.setDisplayed(show);
   scaleFactor.setDisplayed(show);
@@ -162,7 +145,7 @@ void ORBOpts::toggleVisible(bool show)
   fastThreshold.setDisplayed(show);
 }
 
-BRISKOpts::BRISKOpts(FeatureDetector* c)
+BRISKDetector::BRISKDetector(FeatureDetector* c)
     : threshold(c->initData(&threshold, 30, "BRISKThreshold",
                             "FAST/AGAST detection threshold score.")),
       octaves(c->initData(&octaves, 3, "BRISKOctaves",
@@ -175,14 +158,14 @@ BRISKOpts::BRISKOpts(FeatureDetector* c)
                                  npatternScale.getValue());
 }
 
-void BRISKOpts::toggleVisible(bool show)
+void BRISKDetector::toggleVisible(bool show)
 {
   threshold.setDisplayed(show);
   octaves.setDisplayed(show);
   npatternScale.setDisplayed(show);
 }
 
-KAZEOpts::KAZEOpts(FeatureDetector* c)
+KAZEDetector::KAZEDetector(FeatureDetector* c)
     : extended(c->initData(
           &extended, false, "KAZEExtended",
           "Set to enable extraction of extended (128-byte) descriptor.")),
@@ -211,7 +194,7 @@ KAZEOpts::KAZEOpts(FeatureDetector* c)
                                 int(diffusivity.getValue().getSelectedId()));
 }
 
-void KAZEOpts::toggleVisible(bool show)
+void KAZEDetector::toggleVisible(bool show)
 {
   extended.setDisplayed(show);
   upright.setDisplayed(show);
@@ -221,7 +204,7 @@ void KAZEOpts::toggleVisible(bool show)
   diffusivity.setDisplayed(show);
 }
 
-AKAZEOpts::AKAZEOpts(FeatureDetector* c)
+AKAZEDetector::AKAZEDetector(FeatureDetector* c)
     : descriptorType(
           c->initData(&descriptorType, "AKAZEDescriptorType",
                       "Type of the extracted descriptor: "
@@ -261,7 +244,7 @@ AKAZEOpts::AKAZEOpts(FeatureDetector* c)
       sublevels.getValue(), int(diffusivity.getValue().getSelectedId()));
 }
 
-void AKAZEOpts::toggleVisible(bool show)
+void AKAZEDetector::toggleVisible(bool show)
 {
   descriptorType.setDisplayed(show);
   descriptorSize.setDisplayed(show);
@@ -272,7 +255,7 @@ void AKAZEOpts::toggleVisible(bool show)
   diffusivity.setDisplayed(show);
 }
 
-SIFTOpts::SIFTOpts(FeatureDetector* c)
+SIFTDetector::SIFTDetector(FeatureDetector* c)
     : nFeatures(c->initData(&nFeatures, 0, "SIFTNfeatures",
                             "The number of best features to retain. The "
                             "features are ranked by their scores (measured in "
@@ -304,7 +287,7 @@ SIFTOpts::SIFTOpts(FeatureDetector* c)
       contrastThreshold.getValue(), edgeThreshold.getValue(), sigma.getValue());
 }
 
-void SIFTOpts::toggleVisible(bool show)
+void SIFTDetector::toggleVisible(bool show)
 {
   nFeatures.setDisplayed(show);
   nOctaveLayers.setDisplayed(show);

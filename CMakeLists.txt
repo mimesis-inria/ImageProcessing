@@ -7,18 +7,16 @@ set(PROCESSOR_VERSION ${PROCESSOR_MAJOR_VERSION}.${PROCESSOR_MINOR_VERSION})
 
 set(HEADER_FILES
   initplugin.h
-  DetectorOptions.h
+  Detectors.h
   FeatureDetector.h
-  FeatureDescriptor.h
-  FeatureMatcher.h
+  DescriptorMatcher.h
   FeatureTriangulator.cpp)
 
 set(SOURCE_FILES
   initPlugin.cpp
-  DetectorOptions.cpp
+  Detectors.cpp
   FeatureDetector.cpp
-  FeatureDescriptor.cpp
-  FeatureMatcher.cpp
+  DescriptorMatcher.cpp
   FeatureTriangulator.cpp)
 
 set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})

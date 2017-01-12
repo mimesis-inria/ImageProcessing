@@ -29,12 +29,21 @@ FeatureDetector::FeatureDetector()
                               "Available feature detection algoritms: FAST, "
                               "MSER, ORB, BRISK, KAZE, AKAZE, SIFT")),
       d_keypoints(initData(&d_keypoints, "keypoints",
-                           "output array of cvKeypoints", true, true))
+                           "output array of cvKeypoints", true, true)),
+      d_useProvidedKeypoints(
+          initData(&d_useProvidedKeypoints, false, "useProvidedKeypoints",
+                   "whether or not to perform a feature detection before "
+                   "description")),
+      d_descriptors(initData(&d_descriptors, "descriptors",
+                             "output cvMat of feature descriptors", true, true))
 {
   f_listening.setValue(true);
 
-  m_compute = new ComputeOpts(this);
-  if (d_detectOnly.getValue()) m_compute->toggleVisible(false);
+  if (d_detectOnly.getValue())
+  {
+    d_useProvidedKeypoints.setDisplayed(false);
+    d_descriptors.setDisplayed(false);
+  }
 
   sofa::helper::OptionsGroup* t = d_detectorType.beginEdit();
   t->setNames(DetectorType_COUNT, "FAST", "MSER", "ORB", "BRISK", "KAZE",
@@ -45,13 +54,13 @@ FeatureDetector::FeatureDetector()
   std::cout << "detectorType: " << d_detectorType.getValue().getSelectedItem()
             << std::endl;
 
-  m_detectors[FAST] = new FASTOpts(this);
-  m_detectors[MSER] = new MSEROpts(this);
-  m_detectors[ORB] = new ORBOpts(this);
-  m_detectors[BRISK] = new BRISKOpts(this);
-  m_detectors[KAZE] = new KAZEOpts(this);
-  m_detectors[AKAZE] = new AKAZEOpts(this);
-  m_detectors[SIFT] = new SIFTOpts(this);
+  m_detectors[FAST] = new FASTDetector(this);
+  m_detectors[MSER] = new MSERDetector(this);
+  m_detectors[ORB] = new ORBDetector(this);
+  m_detectors[BRISK] = new BRISKDetector(this);
+  m_detectors[KAZE] = new KAZEDetector(this);
+  m_detectors[AKAZE] = new AKAZEDetector(this);
+  m_detectors[SIFT] = new SIFTDetector(this);
 
   for (size_t i = 0; i < DetectorType_COUNT; ++i)
   {
@@ -65,12 +74,15 @@ void FeatureDetector::init()
 {
   addInput(&d_image);
   addInput(&d_mask);
-  if (m_compute && m_compute->d_useProvidedKeypoints.getValue())
+  if (!d_detectOnly.getValue() && d_useProvidedKeypoints.getValue())
     addInput(&d_keypoints);
+  addOutput(&d_keypoints);
+  addOutput(&d_descriptors);
   setDirtyValue();
 }
 void FeatureDetector::update()
 {
+  cleanDirty();
   std::vector<cv::KeyPoint> v;
   if (!d_keypoints.getValue().empty())
   {
@@ -82,18 +94,17 @@ void FeatureDetector::update()
 
   bool detectOnly = d_detectOnly.getValue();
   bool useKPts =
-      (m_compute) ? (m_compute->d_useProvidedKeypoints.getValue()) : (false);
+      (!d_detectOnly.getValue()) ? (d_useProvidedKeypoints.getValue()) : (false);
   if (detectOnly)
     m_detectors[d_detectorType.getValue().getSelectedId()]->detect(
         d_image.getValue(), d_mask.getValue(), v);
   else
   {
-    common::cvMat* descr = m_compute->d_descriptors.beginEdit();
+    common::cvMat* descr = d_descriptors.beginEdit();
     m_detectors[d_detectorType.getValue().getSelectedId()]->detectAndCompute(
         d_image.getValue(), d_mask.getValue(), v, *descr, useKPts);
-    m_compute->d_descriptors.endEdit();
+    d_descriptors.endEdit();
   }
-  cleanDirty();
 
   sofa::helper::vector<common::cvKeypoint>* vec = d_keypoints.beginEdit();
   vec->clear();
@@ -103,9 +114,15 @@ void FeatureDetector::update()
 void FeatureDetector::reinit()
 {
   if (d_detectOnly.getValue())
-    m_compute->toggleVisible(false);
+  {
+    d_useProvidedKeypoints.setDisplayed(false);
+    d_descriptors.setDisplayed(false);
+  }
   else
-    m_compute->toggleVisible(true);
+  {
+    d_useProvidedKeypoints.setDisplayed(true);
+    d_descriptors.setDisplayed(true);
+  }
 
   for (size_t i = 0; i < DetectorType_COUNT; ++i)
   {

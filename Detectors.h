@@ -1,5 +1,5 @@
-#ifndef SOFA_OR_PROCESSOR_DETECTOROPTIONS_H
-#define SOFA_OR_PROCESSOR_DETECTOROPTIONS_H
+#ifndef SOFA_OR_PROCESSOR_DETECTORS_H
+#define SOFA_OR_PROCESSOR_DETECTORS_H
 
 #include <SofaORCommon/cvMat.h>
 
@@ -17,18 +17,9 @@ namespace processor
 {
 class FeatureDetector;
 
-struct ComputeOpts
+struct BaseDetector
 {
-  ComputeOpts(FeatureDetector* c);
-  void toggleVisible(bool);
-
-  Data<bool> d_useProvidedKeypoints;
-  Data<common::cvMat> d_descriptors;
-};
-
-struct BaseOpts
-{
-  virtual ~BaseOpts();
+  virtual ~BaseDetector();
 
   virtual void toggleVisible(bool) = 0;
 
@@ -41,16 +32,16 @@ struct BaseOpts
  protected:
   cv::Ptr<cv::Feature2D> m_detector;
 };
-struct FASTOpts : BaseOpts
+struct FASTDetector: BaseDetector
 {
-  FASTOpts(FeatureDetector* c);
+  FASTDetector(FeatureDetector* c);
   void toggleVisible(bool);
   virtual void detectAndCompute(const common::cvMat& img,
                                 const common::cvMat& mask,
                                 std::vector<cv::KeyPoint>& kpts, common::cvMat&,
                                 bool)
   {
-    msg_warning("FASTOpts::detectAndCompute()")
+    msg_warning("FASTDetector::detectAndCompute()")
         << "FAST is detectOnly. descriptors won't be computed.";
     detect(img, mask, kpts);
   }
@@ -59,16 +50,16 @@ struct FASTOpts : BaseOpts
   Data<bool> nonmaxsuppression;
   Data<sofa::helper::OptionsGroup> type;
 };
-struct MSEROpts : BaseOpts
+struct MSERDetector : BaseDetector
 {
-  MSEROpts(FeatureDetector* c);
+  MSERDetector(FeatureDetector* c);
   void toggleVisible(bool);
   virtual void detectAndCompute(const common::cvMat& img,
                                 const common::cvMat& mask,
                                 std::vector<cv::KeyPoint>& kpts, common::cvMat&,
                                 bool)
   {
-    msg_warning("MSEROpts::detectAndCompute()")
+    msg_warning("MSERDetector::detectAndCompute()")
         << "MSER is detectOnly. descriptors won't be computed.";
     detect(img, mask, kpts);
   }
@@ -83,9 +74,9 @@ struct MSEROpts : BaseOpts
   Data<double> minMargin;
   Data<int> edgeBlurSize;
 };
-struct ORBOpts : BaseOpts
+struct ORBDetector: BaseDetector
 {
-  ORBOpts(FeatureDetector* c);
+  ORBDetector(FeatureDetector* c);
   void toggleVisible(bool);
 
   Data<int> nFeatures;
@@ -98,18 +89,18 @@ struct ORBOpts : BaseOpts
   Data<int> patchSize;
   Data<int> fastThreshold;
 };
-struct BRISKOpts : BaseOpts
+struct BRISKDetector : BaseDetector
 {
-  BRISKOpts(FeatureDetector* c);
+  BRISKDetector(FeatureDetector* c);
   void toggleVisible(bool);
 
   Data<int> threshold;
   Data<int> octaves;
   Data<float> npatternScale;
 };
-struct KAZEOpts : BaseOpts
+struct KAZEDetector: BaseDetector
 {
-  KAZEOpts(FeatureDetector* c);
+  KAZEDetector(FeatureDetector* c);
   void toggleVisible(bool);
 
   Data<bool> extended;
@@ -119,9 +110,9 @@ struct KAZEOpts : BaseOpts
   Data<int> sublevels;
   Data<sofa::helper::OptionsGroup> diffusivity;
 };
-struct AKAZEOpts : BaseOpts
+struct AKAZEDetector: BaseDetector
 {
-  AKAZEOpts(FeatureDetector* c);
+  AKAZEDetector(FeatureDetector* c);
   void toggleVisible(bool);
 
   Data<sofa::helper::OptionsGroup> descriptorType;
@@ -132,9 +123,9 @@ struct AKAZEOpts : BaseOpts
   Data<int> sublevels;
   Data<sofa::helper::OptionsGroup> diffusivity;
 };
-struct SIFTOpts : BaseOpts
+struct SIFTDetector: BaseDetector
 {
-  SIFTOpts(FeatureDetector* c);
+  SIFTDetector(FeatureDetector* c);
   void toggleVisible(bool);
 
   Data<int> nFeatures;
@@ -148,4 +139,4 @@ struct SIFTOpts : BaseOpts
 }  // namespace OR
 }  // namespace processor
 
-#endif  // SOFA_OR_PROCESSOR_DETECTOROPTIONS_H
+#endif  // SOFA_OR_PROCESSOR_DETECTORS_H

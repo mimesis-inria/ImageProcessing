@@ -1,7 +1,7 @@
 #ifndef SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
 #define SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
 
-#include "DetectorOptions.h"
+#include "Detectors.h"
 #include "initplugin.h"
 
 #include <SofaORCommon/cvKeypoint.h>
@@ -48,12 +48,13 @@ class FeatureDetector : public core::DataEngine
   Data<common::cvMat> d_mask;
   Data<sofa::helper::OptionsGroup> d_detectorType;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
+  Data<bool> d_useProvidedKeypoints;
+  Data<common::cvMat> d_descriptors;
 
   void handleEvent(sofa::core::objectmodel::Event* event);
 
  private:
-  ComputeOpts* m_compute;
-  BaseOpts* m_detectors[DetectorType_COUNT];
+  BaseDetector* m_detectors[DetectorType_COUNT];
 };
 
 }  // namespace processor
