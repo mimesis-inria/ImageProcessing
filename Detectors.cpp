@@ -14,12 +14,11 @@ void BaseDetector::detect(const common::cvMat& img, const common::cvMat& mask,
   m_detector->detect(img, keypoints, mask);
 }
 
-void BaseDetector::detectAndCompute(const common::cvMat& img,
-                                const common::cvMat& mask,
+void BaseDetector::compute(const common::cvMat& img,
                                 std::vector<cv::KeyPoint>& keypoints,
-                                common::cvMat& descriptors, bool useKPts)
+                                common::cvMat& descriptors)
 {
-  m_detector->detectAndCompute(img, mask, keypoints, descriptors, useKPts);
+  m_detector->compute(img, keypoints, descriptors);
 }
 
 FASTDetector::FASTDetector(FeatureDetector* c)

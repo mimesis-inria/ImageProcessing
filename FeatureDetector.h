@@ -43,12 +43,11 @@ class FeatureDetector : public core::DataEngine
   void update();
   void reinit();
 
-  Data<bool> d_detectOnly;
+  Data<bool> d_detect;
   Data<common::cvMat> d_image;
   Data<common::cvMat> d_mask;
   Data<sofa::helper::OptionsGroup> d_detectorType;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
-  Data<bool> d_useProvidedKeypoints;
   Data<common::cvMat> d_descriptors;
 
   void handleEvent(sofa::core::objectmodel::Event* event);

@@ -25,9 +25,9 @@ struct BaseDetector
 
   virtual void detect(const common::cvMat&, const common::cvMat&,
                       std::vector<cv::KeyPoint>&);
-  virtual void detectAndCompute(const common::cvMat&, const common::cvMat&,
-                                std::vector<cv::KeyPoint>&, common::cvMat&,
-                                bool);
+  virtual void compute(const common::cvMat& img,
+                       std::vector<cv::KeyPoint>& keypoints,
+                       common::cvMat& descriptors);
 
  protected:
   cv::Ptr<cv::Feature2D> m_detector;
@@ -36,14 +36,12 @@ struct FASTDetector: BaseDetector
 {
   FASTDetector(FeatureDetector* c);
   void toggleVisible(bool);
-  virtual void detectAndCompute(const common::cvMat& img,
-                                const common::cvMat& mask,
-                                std::vector<cv::KeyPoint>& kpts, common::cvMat&,
-                                bool)
+  virtual void compute(const common::cvMat&,
+                       std::vector<cv::KeyPoint>&,
+                       common::cvMat&)
   {
     msg_warning("FASTDetector::detectAndCompute()")
         << "FAST is detectOnly. descriptors won't be computed.";
-    detect(img, mask, kpts);
   }
 
   Data<int> threshold;
@@ -54,14 +52,12 @@ struct MSERDetector : BaseDetector
 {
   MSERDetector(FeatureDetector* c);
   void toggleVisible(bool);
-  virtual void detectAndCompute(const common::cvMat& img,
-                                const common::cvMat& mask,
-                                std::vector<cv::KeyPoint>& kpts, common::cvMat&,
-                                bool)
+  virtual void compute(const common::cvMat&,
+                       std::vector<cv::KeyPoint>&,
+                       common::cvMat&)
   {
     msg_warning("MSERDetector::detectAndCompute()")
         << "MSER is detectOnly. descriptors won't be computed.";
-    detect(img, mask, kpts);
   }
 
   Data<int> delta;

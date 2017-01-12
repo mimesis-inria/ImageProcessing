@@ -45,14 +45,6 @@ DescriptorMatcher::DescriptorMatcher()
   t->setSelectedItem(0);
   d_matcherType.endEdit();
 
-  std::cout << "MatcherType: " << d_matcherType.getValue().getSelectedItem()
-            << std::endl;
-
-  if (d_matcherType.getValue().getSelectedId() == FLANN)
-    m_matcher = new cv::FlannBasedMatcher();
-  else
-    m_matcher = new cv::BFMatcher();
-
   t = d_matchingAlgo.beginEdit();
   t->setNames(MatchingAlgo_COUNT, "STANDARD", "KNN_MATCH", "RADIUS_MATCH");
   t->setSelectedItem(0);
@@ -62,6 +54,12 @@ DescriptorMatcher::DescriptorMatcher()
 DescriptorMatcher::~DescriptorMatcher() {}
 void DescriptorMatcher::init()
 {
+  std::cout << "Matcher type: " << d_matcherType.getValue().getSelectedItem()
+            << std::endl;
+  if (d_matcherType.getValue().getSelectedId() == FLANN)
+    m_matcher = new cv::FlannBasedMatcher();
+  else
+    m_matcher = new cv::BFMatcher();
   addInput(&d_queryDescriptors);
   addInput(&d_trainDescriptors);
   addOutput(&d_matches);
@@ -90,7 +88,7 @@ void DescriptorMatcher::update()
   {
     vec->push_back(helper::vector<common::cvDMatch>());
     for (cv::DMatch& match : matchVec)
-        vec->back().push_back(common::cvDMatch(match));
+      vec->back().push_back(common::cvDMatch(match));
   }
   d_matches.endEdit();
 }
