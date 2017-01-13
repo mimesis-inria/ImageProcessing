@@ -29,6 +29,7 @@ class FeatureDetector : public core::DataEngine
     KAZE = 4,
     AKAZE = 5,
     SIFT = 6,
+    BRIEF = 7,
     DetectorType_COUNT
   };
 

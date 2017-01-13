@@ -1,6 +1,8 @@
 #include "Detectors.h"
 #include "FeatureDetector.h"
 
+#include <opencv2/xfeatures2d.hpp>
+
 namespace sofa
 {
 namespace OR
@@ -9,14 +11,14 @@ namespace processor
 {
 BaseDetector::~BaseDetector() {}
 void BaseDetector::detect(const common::cvMat& img, const common::cvMat& mask,
-                      std::vector<cv::KeyPoint>& keypoints)
+                          std::vector<cv::KeyPoint>& keypoints)
 {
   m_detector->detect(img, keypoints, mask);
 }
 
 void BaseDetector::compute(const common::cvMat& img,
-                                std::vector<cv::KeyPoint>& keypoints,
-                                common::cvMat& descriptors)
+                           std::vector<cv::KeyPoint>& keypoints,
+                           common::cvMat& descriptors)
 {
   m_detector->compute(img, keypoints, descriptors);
 }
@@ -255,7 +257,7 @@ void AKAZEDetector::toggleVisible(bool show)
 }
 
 SIFTDetector::SIFTDetector(FeatureDetector* c)
-    : nFeatures(c->initData(&nFeatures, 0, "SIFTNfeatures",
+    : nFeatures(c->initData(&nFeatures, 0, "SIFTNFeatures",
                             "The number of best features to retain. The "
                             "features are ranked by their scores (measured in "
                             "SIFT algorithm as the local contrast)")),
@@ -293,6 +295,24 @@ void SIFTDetector::toggleVisible(bool show)
   contrastThreshold.setDisplayed(show);
   edgeThreshold.setDisplayed(show);
   sigma.setDisplayed(show);
+}
+
+BRIEFDetector::BRIEFDetector(FeatureDetector* c)
+    : bytes(c->initData(&bytes, 32, "BRIEFBytes",
+                        "length of the descriptor in bytes, valid values are: "
+                        "16, 32 (default) or 64 ")),
+      use_orientation(c->initData(
+          &use_orientation, false, "BRIEFUseOrientation",
+          "sample patterns using keypoints orientation, disabled by default."))
+{
+  m_detector = cv::xfeatures2d::BriefDescriptorExtractor::create(
+      bytes.getValue(), use_orientation.getValue());
+}
+
+void BRIEFDetector::toggleVisible(bool show)
+{
+  bytes.setDisplayed(show);
+  use_orientation.setDisplayed(show);
 }
 
 }  // namespace sofa

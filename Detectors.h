@@ -131,6 +131,15 @@ struct SIFTDetector: BaseDetector
   Data<double> sigma;
 };
 
+struct BRIEFDetector: BaseDetector
+{
+  BRIEFDetector(FeatureDetector* c);
+  void toggleVisible(bool);
+
+  Data<int> bytes;
+  Data<bool> use_orientation;
+};
+
 }  // namespace sofa
 }  // namespace OR
 }  // namespace processor

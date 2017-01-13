@@ -2,6 +2,7 @@
 
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
+#include <opencv2/features2d.hpp>
 
 namespace sofa
 {
@@ -57,7 +58,11 @@ void DescriptorMatcher::init()
   std::cout << "Matcher type: " << d_matcherType.getValue().getSelectedItem()
             << std::endl;
   if (d_matcherType.getValue().getSelectedId() == FLANN)
-    m_matcher = new cv::FlannBasedMatcher();
+  {
+    m_matcher =
+        new cv::FlannBasedMatcher(cv::makePtr<cv::flann::KDTreeIndexParams>(8),
+                                  cv::makePtr<cv::flann::SearchParams>());
+  }
   else
     m_matcher = new cv::BFMatcher();
   addInput(&d_queryDescriptors);
@@ -67,10 +72,17 @@ void DescriptorMatcher::init()
 }
 void DescriptorMatcher::update()
 {
+  std::cout << getName() << std::endl;
+  updateAllInputsIfDirty();
+  cleanDirty();
+
   std::vector<std::vector<cv::DMatch> > matches;
   if (d_matchingAlgo.getValue().getSelectedId() == STANDARD_MATCH)
+  {
+    matches.push_back(std::vector<cv::DMatch>());
     m_matcher->match(d_queryDescriptors.getValue(),
                      d_trainDescriptors.getValue(), matches[0]);
+  }
   if (d_matchingAlgo.getValue().getSelectedId() == KNN_MATCH)
     m_matcher->knnMatch(d_queryDescriptors.getValue(),
                         d_trainDescriptors.getValue(), matches, d_k.getValue());
@@ -78,8 +90,6 @@ void DescriptorMatcher::update()
     m_matcher->radiusMatch(d_queryDescriptors.getValue(),
                            d_trainDescriptors.getValue(), matches,
                            d_maxDistance.getValue());
-
-  cleanDirty();
 
   sofa::helper::vector<sofa::helper::vector<common::cvDMatch> >* vec =
       d_matches.beginEdit();
