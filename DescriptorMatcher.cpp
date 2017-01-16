@@ -50,6 +50,9 @@ DescriptorMatcher::DescriptorMatcher()
   t->setNames(MatchingAlgo_COUNT, "STANDARD", "KNN_MATCH", "RADIUS_MATCH");
   t->setSelectedItem(0);
   d_matchingAlgo.endEdit();
+
+  m_matchers[FLANN] = new FlannMatcher(this);
+  m_matchers[BRUTEFORCE] = new BFMatcher(this);
 }
 
 DescriptorMatcher::~DescriptorMatcher() {}
@@ -57,14 +60,15 @@ void DescriptorMatcher::init()
 {
   std::cout << "Matcher type: " << d_matcherType.getValue().getSelectedItem()
             << std::endl;
-  if (d_matcherType.getValue().getSelectedId() == FLANN)
+  for (size_t i = 0; i < MatcherType_COUNT; ++i)
   {
-    m_matcher =
-        new cv::FlannBasedMatcher(cv::makePtr<cv::flann::KDTreeIndexParams>(8),
-                                  cv::makePtr<cv::flann::SearchParams>());
+    m_matchers[i]->init();
+    if (d_matcherType.getValue().getSelectedId() != i)
+      m_matchers[i]->toggleVisible(false);
+    else
+      m_matchers[i]->init();
   }
-  else
-    m_matcher = new cv::BFMatcher();
+
   addInput(&d_queryDescriptors);
   addInput(&d_trainDescriptors);
   addOutput(&d_matches);
@@ -72,24 +76,25 @@ void DescriptorMatcher::init()
 }
 void DescriptorMatcher::update()
 {
+  if (!f_listening.getValue()) return;
+
   std::cout << getName() << std::endl;
   updateAllInputsIfDirty();
   cleanDirty();
 
+  unsigned m = d_matcherType.getValue().getSelectedId();
   std::vector<std::vector<cv::DMatch> > matches;
   if (d_matchingAlgo.getValue().getSelectedId() == STANDARD_MATCH)
-  {
-    matches.push_back(std::vector<cv::DMatch>());
-    m_matcher->match(d_queryDescriptors.getValue(),
-                     d_trainDescriptors.getValue(), matches[0]);
-  }
-  if (d_matchingAlgo.getValue().getSelectedId() == KNN_MATCH)
-    m_matcher->knnMatch(d_queryDescriptors.getValue(),
-                        d_trainDescriptors.getValue(), matches, d_k.getValue());
-  if (d_matchingAlgo.getValue().getSelectedId() == RADIUS_MATCH)
-    m_matcher->radiusMatch(d_queryDescriptors.getValue(),
+    m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
+                        d_trainDescriptors.getValue(), matches, 1, *d_mask.beginEdit());
+  else if (d_matchingAlgo.getValue().getSelectedId() == KNN_MATCH)
+    m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
+                        d_trainDescriptors.getValue(), matches, d_k.getValue(), *d_mask.beginEdit());
+  else if (d_matchingAlgo.getValue().getSelectedId() == RADIUS_MATCH)
+    m_matchers[m]->radiusMatch(d_queryDescriptors.getValue(),
                            d_trainDescriptors.getValue(), matches,
-                           d_maxDistance.getValue());
+                           d_maxDistance.getValue(), *d_mask.beginEdit());
+  d_mask.endEdit();
 
   sofa::helper::vector<sofa::helper::vector<common::cvDMatch> >* vec =
       d_matches.beginEdit();
@@ -103,7 +108,20 @@ void DescriptorMatcher::update()
   d_matches.endEdit();
 }
 
-void DescriptorMatcher::reinit() {}
+void DescriptorMatcher::reinit()
+{
+  for (size_t i = 0; i < MatcherType_COUNT; ++i)
+  {
+    if (i == d_matcherType.getValue().getSelectedId())
+    {
+      m_matchers[i]->toggleVisible(true);
+      m_matchers[i]->init();
+    }
+    else
+      m_matchers[i]->toggleVisible(false);
+  }
+}
+
 void DescriptorMatcher::handleEvent(sofa::core::objectmodel::Event* e)
 {
   if (sofa::simulation::AnimateBeginEvent::checkEventType(e)) this->update();

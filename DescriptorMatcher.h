@@ -2,6 +2,7 @@
 #define SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
 
 #include "initplugin.h"
+#include "Matchers.h"
 
 #include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvDMatch.h>
@@ -50,6 +51,7 @@ class DescriptorMatcher : public core::DataEngine
   Data<sofa::helper::OptionsGroup> d_matchingAlgo;
   Data<int> d_k;
   Data<float> d_maxDistance;
+  Data<common::cvMat> d_mask;
 
   Data<common::cvMat> d_queryDescriptors;
   Data<common::cvMat> d_trainDescriptors;
@@ -67,7 +69,7 @@ class DescriptorMatcher : public core::DataEngine
   void handleEvent(sofa::core::objectmodel::Event* event);
 
  private:
-  cv::DescriptorMatcher* m_matcher;
+  BaseMatcher* m_matchers[MatcherType_COUNT];
 };
 
 }  // namespace processor

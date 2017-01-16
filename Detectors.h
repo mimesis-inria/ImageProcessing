@@ -15,33 +15,42 @@ namespace OR
 {
 namespace processor
 {
-class FeatureDetector;
-
 struct BaseDetector
 {
   virtual ~BaseDetector();
 
   virtual void toggleVisible(bool) = 0;
 
+  virtual void init() = 0;
+
   virtual void detect(const common::cvMat&, const common::cvMat&,
                       std::vector<cv::KeyPoint>&);
-  virtual void compute(const common::cvMat& img,
-                       std::vector<cv::KeyPoint>& keypoints,
-                       common::cvMat& descriptors);
+  virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
+                       common::cvMat&);
+  virtual void detectAndCompute(const common::cvMat&, const common::cvMat&,
+                                std::vector<cv::KeyPoint>&, common::cvMat&);
 
  protected:
   cv::Ptr<cv::Feature2D> m_detector;
 };
-struct FASTDetector: BaseDetector
+struct FASTDetector : BaseDetector
 {
-  FASTDetector(FeatureDetector* c);
+  FASTDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
-  virtual void compute(const common::cvMat&,
-                       std::vector<cv::KeyPoint>&,
+  void init();
+  virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
                        common::cvMat&)
+  {
+    msg_warning("FASTDetector::compute()")
+        << "FAST is detectOnly. descriptors won't be computed.";
+  }
+  virtual void detectAndCompute(const common::cvMat& img,
+                                const common::cvMat& mask,
+                                std::vector<cv::KeyPoint>& kpts, common::cvMat&)
   {
     msg_warning("FASTDetector::detectAndCompute()")
         << "FAST is detectOnly. descriptors won't be computed.";
+    detect(img, mask, kpts);
   }
 
   Data<int> threshold;
@@ -50,14 +59,22 @@ struct FASTDetector: BaseDetector
 };
 struct MSERDetector : BaseDetector
 {
-  MSERDetector(FeatureDetector* c);
+  MSERDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
-  virtual void compute(const common::cvMat&,
-                       std::vector<cv::KeyPoint>&,
+  void init();
+  virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
                        common::cvMat&)
   {
     msg_warning("MSERDetector::detectAndCompute()")
         << "MSER is detectOnly. descriptors won't be computed.";
+  }
+  virtual void detectAndCompute(const common::cvMat& img,
+                                const common::cvMat& mask,
+                                std::vector<cv::KeyPoint>& kpts, common::cvMat&)
+  {
+    msg_warning("MSERDetector::detectAndCompute()")
+        << "MSER is detectOnly. descriptors won't be computed.";
+    detect(img, mask, kpts);
   }
 
   Data<int> delta;
@@ -70,10 +87,11 @@ struct MSERDetector : BaseDetector
   Data<double> minMargin;
   Data<int> edgeBlurSize;
 };
-struct ORBDetector: BaseDetector
+struct ORBDetector : BaseDetector
 {
-  ORBDetector(FeatureDetector* c);
+  ORBDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
+  void init();
 
   Data<int> nFeatures;
   Data<float> scaleFactor;
@@ -87,17 +105,19 @@ struct ORBDetector: BaseDetector
 };
 struct BRISKDetector : BaseDetector
 {
-  BRISKDetector(FeatureDetector* c);
+  BRISKDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
+  void init();
 
   Data<int> threshold;
   Data<int> octaves;
   Data<float> npatternScale;
 };
-struct KAZEDetector: BaseDetector
+struct KAZEDetector : BaseDetector
 {
-  KAZEDetector(FeatureDetector* c);
+  KAZEDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
+  void init();
 
   Data<bool> extended;
   Data<bool> upright;
@@ -106,10 +126,11 @@ struct KAZEDetector: BaseDetector
   Data<int> sublevels;
   Data<sofa::helper::OptionsGroup> diffusivity;
 };
-struct AKAZEDetector: BaseDetector
+struct AKAZEDetector : BaseDetector
 {
-  AKAZEDetector(FeatureDetector* c);
+  AKAZEDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
+  void init();
 
   Data<sofa::helper::OptionsGroup> descriptorType;
   Data<int> descriptorSize;
@@ -119,10 +140,11 @@ struct AKAZEDetector: BaseDetector
   Data<int> sublevels;
   Data<sofa::helper::OptionsGroup> diffusivity;
 };
-struct SIFTDetector: BaseDetector
+struct SIFTDetector : BaseDetector
 {
-  SIFTDetector(FeatureDetector* c);
+  SIFTDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
+  void init();
 
   Data<int> nFeatures;
   Data<int> nOctaveLayers;
@@ -131,12 +153,70 @@ struct SIFTDetector: BaseDetector
   Data<double> sigma;
 };
 
-struct BRIEFDetector: BaseDetector
+struct SURFDetector : BaseDetector
 {
-  BRIEFDetector(FeatureDetector* c);
+  SURFDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
+  void init();
+
+  Data<double> threshold;
+  Data<int> nOctaves;
+  Data<int> nOctaveLayers;
+  Data<bool> extended;
+  Data<bool> upright;
+};
+
+struct BRIEFDetector : BaseDetector
+{
+  BRIEFDetector(core::objectmodel::BaseObject* c);
+  void toggleVisible(bool);
+  void init();
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>&)
+  {
+    msg_warning("BRIEFDetector::detect()")
+        << "BRIEF is computeOnly. keypoints must be provided.";
+  }
+  virtual void detectAndCompute(const common::cvMat&,
+                                const common::cvMat&,
+                                std::vector<cv::KeyPoint>&, common::cvMat&)
+  {
+    msg_warning("BRIEFDetector::detectAndCompute()")
+        << "BRIEF is computeOnly. Please provide keypoints and set "
+           "DetectMode to COMPUTE_ONLY";
+  }
 
   Data<int> bytes;
+  Data<bool> use_orientation;
+};
+
+struct DAISYDetector : BaseDetector
+{
+  DAISYDetector(core::objectmodel::BaseObject* c);
+  void toggleVisible(bool);
+  void init();
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>&)
+  {
+    msg_warning("DAISYDetector::detect()")
+        << "DAISY is computeOnly. keypoints must be provided.";
+  }
+  virtual void detectAndCompute(const common::cvMat&,
+                                const common::cvMat&,
+                                std::vector<cv::KeyPoint>&, common::cvMat&)
+  {
+    msg_warning("DAISYDetector::detectAndCompute()")
+        << "DAISY is computeOnly. Please provide keypoints and set "
+           "DetectMode to COMPUTE_ONLY";
+  }
+
+  Data<float> radius;
+  Data<int> q_radius;
+  Data<int> q_theta;
+  Data<int> q_hist;
+  Data<sofa::helper::OptionsGroup> norm;
+  Data<common::cvMat> H;
+  Data<bool> interpolation;
   Data<bool> use_orientation;
 };
 

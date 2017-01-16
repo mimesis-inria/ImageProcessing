@@ -20,6 +20,13 @@ namespace processor
 {
 class FeatureDetector : public core::DataEngine
 {
+  enum DetectorMode
+  {
+    DETECT_ONLY,
+    COMPUTE_ONLY,
+    DETECT_AND_COMPUTE
+  };
+
   enum DetectorType
   {
     FAST = 0,
@@ -29,7 +36,9 @@ class FeatureDetector : public core::DataEngine
     KAZE = 4,
     AKAZE = 5,
     SIFT = 6,
-    BRIEF = 7,
+    SURF = 7,
+    BRIEF = 8,
+    DAISY = 9,
     DetectorType_COUNT
   };
 
@@ -44,7 +53,7 @@ class FeatureDetector : public core::DataEngine
   void update();
   void reinit();
 
-  Data<bool> d_detect;
+  Data<sofa::helper::OptionsGroup> d_detectMode;
   Data<common::cvMat> d_image;
   Data<common::cvMat> d_mask;
   Data<sofa::helper::OptionsGroup> d_detectorType;

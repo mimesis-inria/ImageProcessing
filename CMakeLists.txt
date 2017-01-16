@@ -8,6 +8,7 @@ set(PROCESSOR_VERSION ${PROCESSOR_MAJOR_VERSION}.${PROCESSOR_MINOR_VERSION})
 set(HEADER_FILES
   initplugin.h
   Detectors.h
+  Matchers.h
   FeatureDetector.h
   DescriptorMatcher.h
   FeatureTriangulator.cpp)
@@ -15,6 +16,7 @@ set(HEADER_FILES
 set(SOURCE_FILES
   initPlugin.cpp
   Detectors.cpp
+  Matchers.cpp
   FeatureDetector.cpp
   DescriptorMatcher.cpp
   FeatureTriangulator.cpp)

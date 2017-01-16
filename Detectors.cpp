@@ -1,5 +1,4 @@
 #include "Detectors.h"
-#include "FeatureDetector.h"
 
 #include <opencv2/xfeatures2d.hpp>
 
@@ -23,7 +22,14 @@ void BaseDetector::compute(const common::cvMat& img,
   m_detector->compute(img, keypoints, descriptors);
 }
 
-FASTDetector::FASTDetector(FeatureDetector* c)
+void BaseDetector::detectAndCompute(const common::cvMat& img, const common::cvMat& mask,
+                           std::vector<cv::KeyPoint>& keypoints,
+                           common::cvMat& descriptors)
+{
+  m_detector->detectAndCompute(img, mask, keypoints, descriptors);
+}
+
+FASTDetector::FASTDetector(core::objectmodel::BaseObject* c)
     : threshold(c->initData(&threshold, 0, "FASTThreshold",
                             "threshold on difference between intensity of the "
                             "central pixel and pixels of a circle around this "
@@ -40,7 +46,10 @@ FASTDetector::FASTDetector(FeatureDetector* c)
   t->setNames(3, "TYPE_9_16", "TYPE_7_12", "TYPE_5_8");
   t->setSelectedItem(0);
   type.endEdit();
+}
 
+void FASTDetector::init()
+{
   m_detector = cv::FastFeatureDetector::create(
       threshold.getValue(), nonmaxsuppression.getValue(),
       int(type.getValue().getSelectedId()));
@@ -53,7 +62,7 @@ void FASTDetector::toggleVisible(bool show)
   type.setDisplayed(show);
 }
 
-MSERDetector::MSERDetector(FeatureDetector* c)
+MSERDetector::MSERDetector(core::objectmodel::BaseObject* c)
     : delta(c->initData(&delta, 5, "MSERDelta",
                         "Compares (sizei - sizei-delta)/sizei-delta")),
       minArea(c->initData(&minArea, 60, "MSERMinArea",
@@ -77,10 +86,6 @@ MSERDetector::MSERDetector(FeatureDetector* c)
           c->initData(&edgeBlurSize, 5, "MSEREdgeBlurSize",
                       "For color image, the aperture size for edge blur"))
 {
-  m_detector = cv::MSER::create(
-      delta.getValue(), minArea.getValue(), maxArea.getValue(),
-      maxVariation.getValue(), minDiversity.getValue(), maxEvolution.getValue(),
-      areaThreshold.getValue(), minMargin.getValue(), edgeBlurSize.getValue());
 }
 
 void MSERDetector::toggleVisible(bool show)
@@ -96,7 +101,15 @@ void MSERDetector::toggleVisible(bool show)
   edgeBlurSize.setDisplayed(show);
 }
 
-ORBDetector::ORBDetector(FeatureDetector* c)
+void MSERDetector::init()
+{
+  m_detector = cv::MSER::create(
+      delta.getValue(), minArea.getValue(), maxArea.getValue(),
+      maxVariation.getValue(), minDiversity.getValue(), maxEvolution.getValue(),
+      areaThreshold.getValue(), minMargin.getValue(), edgeBlurSize.getValue());
+}
+
+ORBDetector::ORBDetector(core::objectmodel::BaseObject* c)
     : nFeatures(c->initData(&nFeatures, 500, "ORBNFeatures",
                             "Compares (sizei - sizei-delta)/sizei-delta")),
       scaleFactor(c->initData(&scaleFactor, 1.2f, "scaleFactor",
@@ -125,7 +138,10 @@ ORBDetector::ORBDetector(FeatureDetector* c)
   t->setNames(2, "HARRIS_SCORE", "FAST_SCORE");
   t->setSelectedItem(0);
   scoreType.endEdit();
+}
 
+void ORBDetector::init()
+{
   m_detector = cv::ORB::create(nFeatures.getValue(), scaleFactor.getValue(),
                                nLevels.getValue(), edgeThreshold.getValue(),
                                firstLevel.getValue(), WTA_K.getValue(),
@@ -146,7 +162,7 @@ void ORBDetector::toggleVisible(bool show)
   fastThreshold.setDisplayed(show);
 }
 
-BRISKDetector::BRISKDetector(FeatureDetector* c)
+BRISKDetector::BRISKDetector(core::objectmodel::BaseObject* c)
     : threshold(c->initData(&threshold, 30, "BRISKThreshold",
                             "FAST/AGAST detection threshold score.")),
       octaves(c->initData(&octaves, 3, "BRISKOctaves",
@@ -154,6 +170,9 @@ BRISKDetector::BRISKDetector(FeatureDetector* c)
       npatternScale(c->initData(&npatternScale, 1.0f, "BRISKNpatternScale",
                                 "apply this scale to the pattern used for "
                                 "sampling the neighbourhood of a keypoint."))
+{
+}
+void BRISKDetector::init()
 {
   m_detector = cv::BRISK::create(threshold.getValue(), octaves.getValue(),
                                  npatternScale.getValue());
@@ -166,7 +185,7 @@ void BRISKDetector::toggleVisible(bool show)
   npatternScale.setDisplayed(show);
 }
 
-KAZEDetector::KAZEDetector(FeatureDetector* c)
+KAZEDetector::KAZEDetector(core::objectmodel::BaseObject* c)
     : extended(c->initData(
           &extended, false, "KAZEExtended",
           "Set to enable extraction of extended (128-byte) descriptor.")),
@@ -188,13 +207,15 @@ KAZEDetector::KAZEDetector(FeatureDetector* c)
               "DIFF_CHARBONNIER");
   t->setSelectedItem(3);
   diffusivity.endEdit();
+}
 
+void KAZEDetector::init()
+{
   m_detector = cv::KAZE::create(extended.getValue(), upright.getValue(),
                                 threshold.getValue(), octaves.getValue(),
                                 sublevels.getValue(),
                                 int(diffusivity.getValue().getSelectedId()));
 }
-
 void KAZEDetector::toggleVisible(bool show)
 {
   extended.setDisplayed(show);
@@ -205,7 +226,7 @@ void KAZEDetector::toggleVisible(bool show)
   diffusivity.setDisplayed(show);
 }
 
-AKAZEDetector::AKAZEDetector(FeatureDetector* c)
+AKAZEDetector::AKAZEDetector(core::objectmodel::BaseObject* c)
     : descriptorType(
           c->initData(&descriptorType, "AKAZEDescriptorType",
                       "Type of the extracted descriptor: "
@@ -238,13 +259,15 @@ AKAZEDetector::AKAZEDetector(FeatureDetector* c)
               "DIFF_CHARBONNIER");
   t->setSelectedItem(3);
   diffusivity.endEdit();
+}
 
+void AKAZEDetector::init()
+{
   m_detector = cv::AKAZE::create(
       int(descriptorType.getValue().getSelectedId()), descriptorSize.getValue(),
       descriptorChannels.getValue(), threshold.getValue(), octaves.getValue(),
       sublevels.getValue(), int(diffusivity.getValue().getSelectedId()));
 }
-
 void AKAZEDetector::toggleVisible(bool show)
 {
   descriptorType.setDisplayed(show);
@@ -256,7 +279,7 @@ void AKAZEDetector::toggleVisible(bool show)
   diffusivity.setDisplayed(show);
 }
 
-SIFTDetector::SIFTDetector(FeatureDetector* c)
+SIFTDetector::SIFTDetector(core::objectmodel::BaseObject* c)
     : nFeatures(c->initData(&nFeatures, 0, "SIFTNFeatures",
                             "The number of best features to retain. The "
                             "features are ranked by their scores (measured in "
@@ -283,11 +306,14 @@ SIFTDetector::SIFTDetector(FeatureDetector* c)
                         "weak camera with soft lenses, you might want to "
                         "reduce the number."))
 {
+}
+
+void SIFTDetector::init()
+{
   m_detector = cv::xfeatures2d::SIFT::create(
       nFeatures.getValue(), nOctaveLayers.getValue(),
       contrastThreshold.getValue(), edgeThreshold.getValue(), sigma.getValue());
 }
-
 void SIFTDetector::toggleVisible(bool show)
 {
   nFeatures.setDisplayed(show);
@@ -297,7 +323,56 @@ void SIFTDetector::toggleVisible(bool show)
   sigma.setDisplayed(show);
 }
 
-BRIEFDetector::BRIEFDetector(FeatureDetector* c)
+SURFDetector::SURFDetector(core::objectmodel::BaseObject* c)
+    : threshold(c->initData(
+          &threshold, 100.0, "SURFThreshold",
+          "Hessian threshold for keypoint detector. Only features, whose "
+          "hessian is larger than hessianThreshold are retained by the "
+          "detector. Therefore, the larger the value, the less keypoints you "
+          "will get. A good default value could be from 300 to 500, depending "
+          "on the image contrast.")),
+      nOctaves(c->initData(
+          &nOctaves, 4, "SURFNOctaves",
+          "The number of a gaussian pyramid octaves that the detector uses. It "
+          "is set to 4 by default. If you want to get very large features, use "
+          "the larger value. If you want just small features, decrease it.)")),
+      nOctaveLayers(c->initData(&nOctaveLayers, 3, "SURFNOctaveLayers",
+                                "The number of images within each octave of a "
+                                "gaussian pyramid. It is set to 2 by "
+                                "default.")),
+      extended(c->initData(&extended, false, "SURFExtended",
+                           " - 0 means that the basic descriptors (64 elements "
+                           "each) shall be computed\n"
+                           " - 1 means that the extended descriptors (128 "
+                           "elements each) shall be computed")),
+      upright(c->initData(
+          &upright, false, "SURFUpright",
+          " - 0 means that detector computes orientation of each feature.\n"
+          " - 1 means that the orientation is not computed (which is much, "
+          "much "
+          "faster). For example, if you match images from a stereo pair, or do "
+          "image stitching, the matched features likely have very similar "
+          "angles, and you can speed up feature extraction by setting "
+          "upright=1."))
+{
+}
+
+void SURFDetector::init()
+{
+  m_detector = cv::xfeatures2d::SURF::create(
+      threshold.getValue(), nOctaves.getValue(), nOctaveLayers.getValue(),
+      extended.getValue(), upright.getValue());
+}
+void SURFDetector::toggleVisible(bool show)
+{
+  threshold.setDisplayed(show);
+  nOctaves.setDisplayed(show);
+  nOctaveLayers.setDisplayed(show);
+  extended.setDisplayed(show);
+  upright.setDisplayed(show);
+}
+
+BRIEFDetector::BRIEFDetector(core::objectmodel::BaseObject* c)
     : bytes(c->initData(&bytes, 32, "BRIEFBytes",
                         "length of the descriptor in bytes, valid values are: "
                         "16, 32 (default) or 64 ")),
@@ -305,13 +380,70 @@ BRIEFDetector::BRIEFDetector(FeatureDetector* c)
           &use_orientation, false, "BRIEFUseOrientation",
           "sample patterns using keypoints orientation, disabled by default."))
 {
+}
+
+void BRIEFDetector::init()
+{
   m_detector = cv::xfeatures2d::BriefDescriptorExtractor::create(
       bytes.getValue(), use_orientation.getValue());
 }
-
 void BRIEFDetector::toggleVisible(bool show)
 {
   bytes.setDisplayed(show);
+  use_orientation.setDisplayed(show);
+}
+
+DAISYDetector::DAISYDetector(core::objectmodel::BaseObject* c)
+    : radius(c->initData(&radius, 15.0f, "DAISYRadius",
+                         "radius of the descriptor at the initial scale")),
+      q_radius(c->initData(&q_radius, 3, "DAISYQRadius",
+                           "amount of radial range division quantity")),
+      q_theta(c->initData(&q_theta, 8, "DAISYQTheta",
+                          "amount of angular range division quantity")),
+      q_hist(c->initData(
+          &q_hist, 8, "DAISYQHist",
+          "amount of gradient orientations range division quantity")),
+      norm(c->initData(
+          &norm, "DAISYNorm",
+          "choose descriptors normalization type, where DAISY::NRM_NONE will "
+          "not do any normalization (default), DAISY::NRM_PARTIAL mean that "
+          "histograms are normalized independently for L2 norm equal to 1.0, "
+          "DAISY::NRM_FULL mean that descriptors are normalized for L2 norm "
+          "equal to 1.0, DAISY::NRM_SIFT mean that descriptors are normalized "
+          "for L2 norm equal to 1.0 but no individual one is bigger than 0.154 "
+          "as in SIFT")),
+      H(c->initData(&H, common::cvMat(), "DAISYH",
+                    "optional 3x3 homography matrix used to warp the grid of "
+                    "daisy but sampling keypoints remains unwarped on image")),
+      interpolation(c->initData(&interpolation, true, "DAISYInterpolation",
+                                "switch to disable interpolation for speed "
+                                "improvement at minor quality loss")),
+      use_orientation(c->initData(
+          &use_orientation, false, "DAISYUseOrientation",
+          "sample patterns using keypoints orientation, disabled by default."))
+{
+  sofa::helper::OptionsGroup* t = norm.beginEdit();
+  t->setNames(4, "NRM_NONE", "NRM_PARTIAL", "NRM_FULL", "NRM_SIFT");
+  t->setSelectedItem("NRM_NONE");
+  norm.endEdit();
+}
+
+void DAISYDetector::init()
+{
+  m_detector = cv::xfeatures2d::DAISY::create(
+      radius.getValue(), q_radius.getValue(), q_theta.getValue(),
+      q_hist.getValue(), int(norm.getValue().getSelectedId()), H.getValue(),
+      interpolation.getValue(), use_orientation.getValue());
+}
+void DAISYDetector::toggleVisible(bool show)
+{
+  radius.setDisplayed(show);
+  q_radius.setDisplayed(show);
+  q_theta.setDisplayed(show);
+  q_hist.setDisplayed(show);
+  norm.setDisplayed(show);
+  H.setDisplayed(show);
+  interpolation.setDisplayed(show);
   use_orientation.setDisplayed(show);
 }
 
