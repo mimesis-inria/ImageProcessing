@@ -31,7 +31,9 @@ DescriptorMatcher::DescriptorMatcher()
           "maxDistance Threshold for the distance between matched descriptors. "
           "Distance means here metric distance (e.g. Hamming distance), not "
           "the distance between coordinates (which is measured in Pixels)!")),
-
+      d_mask(initData(&d_mask, common::cvMat(), "mask",
+                      "Mask specifying permissible matches between an input "
+                      "query and train matrices of descriptors.")),
       d_queryDescriptors(initData(&d_queryDescriptors, "queryDescriptors",
                                   "Query set of descriptors")),
       d_trainDescriptors(initData(&d_trainDescriptors, "trainDescriptors",
@@ -71,6 +73,7 @@ void DescriptorMatcher::init()
 
   addInput(&d_queryDescriptors);
   addInput(&d_trainDescriptors);
+  addInput(&d_mask);
   addOutput(&d_matches);
   setDirtyValue();
 }
@@ -96,28 +99,27 @@ void DescriptorMatcher::update()
            (d_queryDescriptors.getValue().type() != 0 ||
             d_trainDescriptors.getValue().type() != 0))
   {
-      msg_error("DescriptorMatcher::update")
-          << "Cannot match non-binary descriptors with these settings.";
-      return;
+    msg_error("DescriptorMatcher::update")
+        << "Cannot match non-binary descriptors with these settings.";
+    return;
   }
 
   std::vector<std::vector<cv::DMatch> > matches;
   if (d_matchingAlgo.getValue().getSelectedId() == STANDARD_MATCH)
     m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
                             d_trainDescriptors.getValue(), matches, 1,
-                            *d_mask.beginEdit());
+                            d_mask.getValue());
   else if (d_matchingAlgo.getValue().getSelectedId() == KNN_MATCH)
     m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
                             d_trainDescriptors.getValue(), matches,
-                            d_k.getValue(), *d_mask.beginEdit());
+                            d_k.getValue(), d_mask.getValue());
   else if (d_matchingAlgo.getValue().getSelectedId() == RADIUS_MATCH)
     m_matchers[m]->radiusMatch(d_queryDescriptors.getValue(),
                                d_trainDescriptors.getValue(), matches,
-                               d_maxDistance.getValue(), *d_mask.beginEdit());
-  d_mask.endEdit();
+                               d_maxDistance.getValue(), d_mask.getValue());
 
   sofa::helper::vector<sofa::helper::vector<common::cvDMatch> >* vec =
-      d_matches.beginEdit();
+      d_matches.beginWriteOnly();
   vec->clear();
   for (std::vector<cv::DMatch>& matchVec : matches)
   {
@@ -127,6 +129,8 @@ void DescriptorMatcher::update()
   }
   d_matches.endEdit();
   std::cout << d_matches.getValue().size() << std::endl;
+
+  d_matches.setDirtyOutputs();
 }
 
 void DescriptorMatcher::reinit()

@@ -27,11 +27,11 @@ struct BaseMatcher
   virtual void knnMatch(const common::cvMat& queryDescriptors,
                         const common::cvMat& trainDescriptors,
                         std::vector<std::vector<cv::DMatch> >& matches, int k,
-                        common::cvMat& mask);
+                        const common::cvMat& mask);
   virtual void radiusMatch(const common::cvMat& queryDescriptors,
                            const common::cvMat& trainDescriptors,
                            std::vector<std::vector<cv::DMatch> >& matches,
-                           float maxDistance, common::cvMat& mask);
+                           float maxDistance, const common::cvMat& mask);
 
  protected:
   cv::DescriptorMatcher* m_matcher;

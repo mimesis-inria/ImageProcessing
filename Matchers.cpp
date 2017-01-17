@@ -12,7 +12,7 @@ BaseMatcher::~BaseMatcher() {}
 void BaseMatcher::knnMatch(const common::cvMat& queryDescriptors,
                            const common::cvMat& trainDescriptors,
                            std::vector<std::vector<cv::DMatch> >& matches,
-                           int k, common::cvMat& mask)
+                           int k, const common::cvMat& mask)
 {
   m_matcher->knnMatch(queryDescriptors, trainDescriptors, matches, k, mask);
 }
@@ -20,7 +20,7 @@ void BaseMatcher::knnMatch(const common::cvMat& queryDescriptors,
 void BaseMatcher::radiusMatch(const common::cvMat& queryDescriptors,
                               const common::cvMat& trainDescriptors,
                               std::vector<std::vector<cv::DMatch> >& matches,
-                              float maxDistance, common::cvMat& mask)
+                              float maxDistance, const common::cvMat& mask)
 {
   m_matcher->radiusMatch(queryDescriptors, trainDescriptors, matches,
                          maxDistance, mask);
