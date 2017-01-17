@@ -22,6 +22,7 @@ struct BaseMatcher
   virtual void toggleVisible(bool) = 0;
 
   virtual void init() = 0;
+  virtual bool acceptsBinary() = 0;
 
   virtual void knnMatch(const common::cvMat& queryDescriptors,
                         const common::cvMat& trainDescriptors,
@@ -43,7 +44,7 @@ struct BFMatcher : BaseMatcher
   BFMatcher(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
-
+  bool acceptsBinary() { return true; }
   Data<sofa::helper::OptionsGroup> normType;
   Data<bool> crossCheck;
 };
@@ -53,8 +54,12 @@ struct FlannMatcher : BaseMatcher
   FlannMatcher(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  bool acceptsBinary()
+  {
+    return (dynamic_cast<LshIndexParams*>(m_indexParams)) ? (true) : (false);
+  }
 
- private:
+ public:
   enum IndexParamsType
   {
     AUTOTUNED = 0,

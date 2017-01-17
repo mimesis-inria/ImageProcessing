@@ -83,17 +83,37 @@ void DescriptorMatcher::update()
   cleanDirty();
 
   unsigned m = d_matcherType.getValue().getSelectedId();
+  if (!m_matchers[m]->acceptsBinary() &&
+      (d_queryDescriptors.getValue().type() == 0 ||
+       d_trainDescriptors.getValue().type() == 0))
+  {
+    msg_error("DescriptorMatcher::update")
+        << "Cannot match binary descriptors with these settings. either use "
+           "BRUTEFORCE matcher or FLANN with LSHIndexParams";
+    return;
+  }
+  else if (m_matchers[m]->acceptsBinary() &&
+           (d_queryDescriptors.getValue().type() != 0 ||
+            d_trainDescriptors.getValue().type() != 0))
+  {
+      msg_error("DescriptorMatcher::update")
+          << "Cannot match non-binary descriptors with these settings.";
+      return;
+  }
+
   std::vector<std::vector<cv::DMatch> > matches;
   if (d_matchingAlgo.getValue().getSelectedId() == STANDARD_MATCH)
     m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
-                        d_trainDescriptors.getValue(), matches, 1, *d_mask.beginEdit());
+                            d_trainDescriptors.getValue(), matches, 1,
+                            *d_mask.beginEdit());
   else if (d_matchingAlgo.getValue().getSelectedId() == KNN_MATCH)
     m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
-                        d_trainDescriptors.getValue(), matches, d_k.getValue(), *d_mask.beginEdit());
+                            d_trainDescriptors.getValue(), matches,
+                            d_k.getValue(), *d_mask.beginEdit());
   else if (d_matchingAlgo.getValue().getSelectedId() == RADIUS_MATCH)
     m_matchers[m]->radiusMatch(d_queryDescriptors.getValue(),
-                           d_trainDescriptors.getValue(), matches,
-                           d_maxDistance.getValue(), *d_mask.beginEdit());
+                               d_trainDescriptors.getValue(), matches,
+                               d_maxDistance.getValue(), *d_mask.beginEdit());
   d_mask.endEdit();
 
   sofa::helper::vector<sofa::helper::vector<common::cvDMatch> >* vec =
@@ -106,6 +126,7 @@ void DescriptorMatcher::update()
       vec->back().push_back(common::cvDMatch(match));
   }
   d_matches.endEdit();
+  std::cout << d_matches.getValue().size() << std::endl;
 }
 
 void DescriptorMatcher::reinit()
