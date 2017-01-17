@@ -41,7 +41,7 @@ struct FASTDetector : BaseDetector
   virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
                        common::cvMat&)
   {
-    msg_warning("FASTDetector::compute()")
+    msg_error("FASTDetector::compute()")
         << "FAST is detectOnly. descriptors won't be computed.";
   }
   virtual void detectAndCompute(const common::cvMat& img,
@@ -65,7 +65,7 @@ struct MSERDetector : BaseDetector
   virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
                        common::cvMat&)
   {
-    msg_warning("MSERDetector::detectAndCompute()")
+    msg_error("MSERDetector::detectAndCompute()")
         << "MSER is detectOnly. descriptors won't be computed.";
   }
   virtual void detectAndCompute(const common::cvMat& img,
@@ -174,14 +174,14 @@ struct BRIEFDetector : BaseDetector
   void detect(const common::cvMat&, const common::cvMat&,
               std::vector<cv::KeyPoint>&)
   {
-    msg_warning("BRIEFDetector::detect()")
+    msg_error("BRIEFDetector::detect()")
         << "BRIEF is computeOnly. keypoints must be provided.";
   }
   virtual void detectAndCompute(const common::cvMat&,
                                 const common::cvMat&,
                                 std::vector<cv::KeyPoint>&, common::cvMat&)
   {
-    msg_warning("BRIEFDetector::detectAndCompute()")
+    msg_error("BRIEFDetector::detectAndCompute()")
         << "BRIEF is computeOnly. Please provide keypoints and set "
            "DetectMode to COMPUTE_ONLY";
   }
@@ -198,14 +198,14 @@ struct DAISYDetector : BaseDetector
   void detect(const common::cvMat&, const common::cvMat&,
               std::vector<cv::KeyPoint>&)
   {
-    msg_warning("DAISYDetector::detect()")
+    msg_error("DAISYDetector::detect()")
         << "DAISY is computeOnly. keypoints must be provided.";
   }
   virtual void detectAndCompute(const common::cvMat&,
                                 const common::cvMat&,
                                 std::vector<cv::KeyPoint>&, common::cvMat&)
   {
-    msg_warning("DAISYDetector::detectAndCompute()")
+    msg_error("DAISYDetector::detectAndCompute()")
         << "DAISY is computeOnly. Please provide keypoints and set "
            "DetectMode to COMPUTE_ONLY";
   }
