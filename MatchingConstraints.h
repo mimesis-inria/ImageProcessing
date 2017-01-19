@@ -1,0 +1,92 @@
+#ifndef SOFA_OR_PROCESSOR_MATCHINGCONSTRAINTS_H
+#define SOFA_OR_PROCESSOR_MATCHINGCONSTRAINTS_H
+
+#include "Detectors.h"
+#include "initplugin.h"
+
+#include <SofaORCommon/cvKeypoint.h>
+#include <SofaORCommon/cvDMatch.h>
+#include <SofaORCommon/cvMat.h>
+#include <SofaORCommon/StereoCalib.h>
+
+#include <sofa/core/DataEngine.h>
+#include <sofa/helper/OptionsGroup.h>
+
+#include <opencv2/opencv.hpp>
+
+namespace sofa
+{
+namespace OR
+{
+namespace processor
+{
+class MatchingConstraints : public core::DataEngine
+{
+ public:
+  SOFA_CLASS(MatchingConstraints, core::DataEngine);
+
+ public:
+  MatchingConstraints();
+  virtual ~MatchingConstraints();
+
+  void init();
+  void update();
+  void reinit();
+
+  // INPUTS
+  Data<bool> d_useEpipolarFilter;
+  Data<int> d_epipolarThreshold;
+  Data<common::StereoCalib> d_extrinsics;
+  Data<common::cvMat> d_F;
+  Data<bool> d_useMDFilter;
+  Data<float> d_mdfRadius;
+  Data<bool> d_useKNNFilter;
+  Data<float> d_knnLambda;
+  Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_in;
+  Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_in;
+  Data<common::cvMat> d_descriptorsL_in;
+  Data<common::cvMat> d_descriptorsR_in;
+  Data<helper::vector<helper::vector<common::cvDMatch> > > d_matches_in;
+
+
+  // OUTPUTS
+  Data<sofa::helper::vector<size_t> > d_outliers_out;
+  Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_out;
+  Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_out;
+  Data<common::cvMat> d_descriptorsL_out;
+  Data<common::cvMat> d_descriptorsR_out;
+  Data<helper::vector<common::cvDMatch> > d_matches_out;
+
+  // epipolar-specific outputs
+  Data<sofa::helper::vector<defaulttype::Vec3f> > d_epilinesL;
+  Data<sofa::helper::vector<defaulttype::Vec3f> > d_epilinesR;
+  Data<sofa::helper::vector<float> > d_epidistL;
+  Data<sofa::helper::vector<float> > d_epidistR;
+
+  // mdf-specific outputs
+  Data<sofa::helper::vector<float> > d_mdfDistances;
+  Data<float> d_mdfMaxDist;
+
+  // knn-specific outputs
+  Data<sofa::helper::vector<float> > d_knnLambdas;
+
+  void handleEvent(sofa::core::objectmodel::Event* event);
+
+private:
+  bool computeEpipolarLines();
+  void computeEpipolarDistances();
+
+  std::vector<cv::KeyPoint> m_kptsL, m_kptsR;
+  cv::Mat m_descL, m_descR;
+
+  std::vector<cv::Vec3f> m_epilinesL, m_epilinesR;
+  std::vector<float> m_epidistanceL, m_epidistanceR;
+  float m_maxDist;
+  std::vector<float> m_mdfDistances;
+};
+
+}  // namespace processor
+}  // namespace OR
+}  // namespace sofa
+
+#endif  // SOFA_OR_PROCESSOR_MATCHINGCONSTRAINTS_H

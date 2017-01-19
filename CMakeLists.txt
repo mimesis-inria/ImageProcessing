@@ -11,7 +11,8 @@ set(HEADER_FILES
   Matchers.h
   FeatureDetector.h
   DescriptorMatcher.h
-  FeatureTriangulator.cpp)
+  FeatureTriangulator.h
+  MatchingConstraints.h)
 
 set(SOURCE_FILES
   initPlugin.cpp
@@ -19,7 +20,8 @@ set(SOURCE_FILES
   Matchers.cpp
   FeatureDetector.cpp
   DescriptorMatcher.cpp
-  FeatureTriangulator.cpp)
+  FeatureTriangulator.cpp
+  MatchingConstraints.cpp)
 
 set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})
 

@@ -121,11 +121,14 @@ void DescriptorMatcher::update()
   sofa::helper::vector<sofa::helper::vector<common::cvDMatch> >* vec =
       d_matches.beginWriteOnly();
   vec->clear();
-  for (std::vector<cv::DMatch>& matchVec : matches)
+  if (!matches[0].empty())
   {
-    vec->push_back(helper::vector<common::cvDMatch>());
-    for (cv::DMatch& match : matchVec)
-      vec->back().push_back(common::cvDMatch(match));
+    for (std::vector<cv::DMatch>& matchVec : matches)
+    {
+      vec->push_back(helper::vector<common::cvDMatch>());
+      for (cv::DMatch& match : matchVec)
+        vec->back().push_back(common::cvDMatch(match));
+    }
   }
   d_matches.endEdit();
   std::cout << d_matches.getValue().size() << std::endl;
