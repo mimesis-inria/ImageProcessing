@@ -55,7 +55,7 @@ class MatchingConstraints : public core::DataEngine
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_out;
   Data<common::cvMat> d_descriptorsL_out;
   Data<common::cvMat> d_descriptorsR_out;
-  Data<helper::vector<common::cvDMatch> > d_matches_out;
+//  Data<helper::vector<common::cvDMatch> > d_matches_out;
 
   // epipolar-specific outputs
   Data<sofa::helper::vector<defaulttype::Vec3f> > d_epilinesL;

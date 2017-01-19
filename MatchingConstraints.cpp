@@ -70,9 +70,6 @@ MatchingConstraints::MatchingConstraints()
                                   "left descriptors", true, true)),
       d_descriptorsR_out(initData(&d_descriptorsR_out, "out_descriptorsR",
                                   "right descriptors", true, true)),
-      d_matches_out(initData(&d_matches_out, "out_matches",
-                             "feature matches (usually from DescriptorMatcher)",
-                             true, true)),
       d_epilinesL(initData(&d_epilinesL, "epilinesL",
                            "left epipolar lines for inliers", true, true)),
       d_epilinesR(initData(&d_epilinesR, "epilinesR",
@@ -112,7 +109,6 @@ void MatchingConstraints::init()
   addOutput(&d_keypointsR_out);
   addOutput(&d_descriptorsL_out);
   addOutput(&d_descriptorsR_out);
-  addOutput(&d_matches_out);
   addOutput(&d_outliers_out);
 
   addOutput(&d_epidistL);
@@ -267,7 +263,6 @@ void MatchingConstraints::reinit()
       *d_keypointsR_out.beginWriteOnly();
   common::cvMat& descL = *d_descriptorsL_out.beginWriteOnly();
   common::cvMat& descR = *d_descriptorsR_out.beginWriteOnly();
-  helper::vector<common::cvDMatch>& matches = *d_matches_out.beginWriteOnly();
 
   helper::vector<float>& epidistL = *d_epidistL.beginWriteOnly();
   helper::vector<float>& epidistR = *d_epidistR.beginWriteOnly();
@@ -283,8 +278,6 @@ void MatchingConstraints::reinit()
   outliers.reserve(d_matches_in.getValue().size());
   kptsL.resize(d_matches_in.getValue().size());
   kptsR.resize(d_matches_in.getValue().size());
-  matches.clear();
-  matches.reserve(d_matches_in.getValue().size());
 
   descL = cv::Mat(int(d_matches_in.getValue().size()),
                   d_descriptorsL_in.getValue().cols,
@@ -352,11 +345,10 @@ void MatchingConstraints::reinit()
     // /!\ No push_back here, as vectors & matrices are not cleaned /!\ //
     size_t inliersIdx = i - outliers.size();
 
-    matches.push_back(in_matches[i][0]);
-    kptsL[inliersIdx] = m_kptsL[unsigned(matches.back().queryIdx)];
-    kptsR[inliersIdx] = m_kptsR[unsigned(matches.back().trainIdx)];
-    m_descL.row(int(inliersIdx)).copyTo(descL.row(matches.back().queryIdx));
-    m_descR.row(int(inliersIdx)).copyTo(descR.row(matches.back().trainIdx));
+    kptsL[inliersIdx] = m_kptsL[i];
+    kptsR[inliersIdx] = m_kptsR[i];
+    m_descL.row(int(inliersIdx)).copyTo(descL.row(int(i)));
+    m_descR.row(int(inliersIdx)).copyTo(descR.row(int(i)));
 
     if (epipolar)
     {
@@ -374,7 +366,6 @@ void MatchingConstraints::reinit()
   d_keypointsR_out.endEdit();
   d_descriptorsL_out.endEdit();
   d_descriptorsR_out.endEdit();
-  d_matches_out.endEdit();
 
   d_epidistL.endEdit();
   d_epidistR.endEdit();
