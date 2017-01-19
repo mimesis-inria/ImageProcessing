@@ -281,9 +281,11 @@ void MatchingConstraints::reinit()
   // outputs initialization
   outliers.clear();
   outliers.reserve(d_matches_in.getValue().size());
-  kptsL.reserve(d_matches_in.getValue().size());
-  kptsR.reserve(d_matches_in.getValue().size());
+  kptsL.resize(d_matches_in.getValue().size());
+  kptsR.resize(d_matches_in.getValue().size());
+  matches.clear();
   matches.reserve(d_matches_in.getValue().size());
+
   descL = cv::Mat(int(d_matches_in.getValue().size()),
                   d_descriptorsL_in.getValue().cols,
                   d_descriptorsL_in.getValue().type());
@@ -293,10 +295,10 @@ void MatchingConstraints::reinit()
 
   if (epipolar)
   {
-    epidistL.reserve(d_matches_in.getValue().size());
-    epidistR.reserve(d_matches_in.getValue().size());
-    epilinesL.reserve(d_matches_in.getValue().size());
-    epilinesR.reserve(d_matches_in.getValue().size());
+    epidistL.resize(d_matches_in.getValue().size());
+    epidistR.resize(d_matches_in.getValue().size());
+    epilinesL.resize(d_matches_in.getValue().size());
+    epilinesR.resize(d_matches_in.getValue().size());
   }
   else
   {
@@ -308,12 +310,12 @@ void MatchingConstraints::reinit()
   if (mdf)
   {
     d_mdfMaxDist.setValue(m_maxDist);
-    mdfDistances.reserve(d_matches_in.getValue().size());
+    mdfDistances.resize(d_matches_in.getValue().size());
   }
   else
     mdfDistances.clear();
   if (knn)
-    knnLambdas.reserve(d_matches_in.getValue().size());
+    knnLambdas.resize(d_matches_in.getValue().size());
   else
     knnLambdas.clear();
 
@@ -350,7 +352,7 @@ void MatchingConstraints::reinit()
     // /!\ No push_back here, as vectors & matrices are not cleaned /!\ //
     size_t inliersIdx = i - outliers.size();
 
-    matches[inliersIdx] = in_matches[i][0];
+    matches.push_back(in_matches[i][0]);
     kptsL[inliersIdx] = m_kptsL[unsigned(matches.back().queryIdx)];
     kptsR[inliersIdx] = m_kptsR[unsigned(matches.back().trainIdx)];
     m_descL.row(int(inliersIdx)).copyTo(descL.row(matches.back().queryIdx));
