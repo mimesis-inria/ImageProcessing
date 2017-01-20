@@ -62,7 +62,6 @@ void ImageFilter::Holder::drawDebug()
 
 void ImageFilter::callback(int val, void* holder)
 {
-  std::cout << "val= " << val << std::endl;
   reinterpret_cast<Holder*>(holder)->setDataValue(val);
   reinterpret_cast<Holder*>(holder)->drawDebug();
 }
@@ -160,19 +159,19 @@ void ImageFilter::drawDebug()
         cv::createTrackbar(h.data->getName(), m_win_name, 0, 1,
                            &ImageFilter::callback, &m_params.back());
         cv::setTrackbarPos(h.data->getName(), m_win_name,
-                           m_params.back().getTrackbarRangedValue());
+                           h.getTrackbarRangedValue());
         break;
       case Holder::INT:
         cv::createTrackbar(h.data->getName(), m_win_name, 0, 255,
                            &ImageFilter::callback, &m_params.back());
         cv::setTrackbarPos(h.data->getName(), m_win_name,
-                           m_params.back().getTrackbarRangedValue());
+                           h.getTrackbarRangedValue());
         break;
       case Holder::DOUBLE:
         cv::createTrackbar(h.data->getName(), m_win_name, 0, 255,
                            &ImageFilter::callback, &m_params.back());
         cv::setTrackbarPos(h.data->getName(), m_win_name,
-                           m_params.back().getTrackbarRangedValue());
+                           h.getTrackbarRangedValue());
         break;
     }
   }
