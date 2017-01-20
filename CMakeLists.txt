@@ -12,7 +12,10 @@ set(HEADER_FILES
   FeatureDetector.h
   DescriptorMatcher.h
   FeatureTriangulator.h
-  MatchingConstraints.h)
+  MatchingConstraints.h
+  ImageFilter.h
+  CannyFilter.h
+  ImageConverter.h)
 
 set(SOURCE_FILES
   initPlugin.cpp
@@ -21,9 +24,12 @@ set(SOURCE_FILES
   FeatureDetector.cpp
   DescriptorMatcher.cpp
   FeatureTriangulator.cpp
-  MatchingConstraints.cpp)
+  MatchingConstraints.cpp
+  ImageFilter.cpp
+  CannyFilter.cpp
+  ImageConverter.cpp)
 
-set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})
+set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon AcquisitOR SofaORCommon ${OpenCV_LIBRARIES})
 
 if (SOFAOR_ENABLE_PCL)
   add_definitions("-DSOFAOR_USE_PCL")
