@@ -16,9 +16,7 @@ int ImageFilter::Holder::getTrackbarRangedValue()
       return reinterpret_cast<Data<bool>*>(data)->getValue();
     case INT:
     {
-      int max = value_max._int - value_min._int;
-      int val = reinterpret_cast<Data<int>*>(data)->getValue() - value_min._int;
-      return (val * 255) / max;
+      return reinterpret_cast<Data<int>*>(data)->getValue() - value_min._int;
     }
     case DOUBLE:
     {
@@ -27,6 +25,20 @@ int ImageFilter::Holder::getTrackbarRangedValue()
           reinterpret_cast<Data<double>*>(data)->getValue() - value_min._double;
       return int((val * 255.0) / max);
     }
+  }
+  return 0;
+}
+
+int ImageFilter::Holder::getTrackbarMaxValue()
+{
+  switch (type)
+  {
+    case BOOL:
+      return 1;
+    case INT:
+      return value_max._int - value_min._int;
+    case DOUBLE:
+      return 255;
   }
   return 0;
 }
@@ -40,11 +52,8 @@ void ImageFilter::Holder::setDataValue(int val)
                                                                : (false));
       break;
     case INT:
-    {
-      int max = value_max._int - value_min._int;
-      reinterpret_cast<Data<int>*>(data)->setValue((val * max) / 255);
-    }
-    break;
+      reinterpret_cast<Data<int>*>(data)->setValue(val + value_min._int);
+      break;
     case DOUBLE:
       double max = value_max._double - value_min._double;
       reinterpret_cast<Data<double>*>(data)->setValue((double(val) * max) /
@@ -53,17 +62,20 @@ void ImageFilter::Holder::setDataValue(int val)
   }
 }
 
-void ImageFilter::Holder::drawDebug()
+void ImageFilter::Holder::refresh()
 {
   dynamic_cast<ImageFilter*>(
       reinterpret_cast<core::objectmodel::BaseData*>(data)->getOwner())
-      ->drawDebug();
+      ->refreshDebugWindow();
 }
 
 void ImageFilter::callback(int val, void* holder)
 {
-  reinterpret_cast<Holder*>(holder)->setDataValue(val);
-  reinterpret_cast<Holder*>(holder)->drawDebug();
+  if (reinterpret_cast<Holder*>(holder)->getTrackbarRangedValue() != val)
+  {
+    reinterpret_cast<Holder*>(holder)->setDataValue(val);
+    reinterpret_cast<Holder*>(holder)->refresh();
+  }
 }
 
 unsigned ImageFilter::m_window_uid = 0;
@@ -143,6 +155,27 @@ void ImageFilter::reinit()
   d_out.endEdit();
 }
 
+void ImageFilter::reinitDebugWindow()
+{
+  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
+  for (Holder& h : m_params)
+  {
+    cv::createTrackbar(h.data->getName(), m_win_name, 0,
+                       h.getTrackbarMaxValue(), &ImageFilter::callback,
+                       &h);
+    cv::setTrackbarPos(h.data->getName(), m_win_name,
+                       h.getTrackbarRangedValue());
+  }
+}
+
+void ImageFilter::refreshDebugWindow()
+{
+  applyFilter(d_in.getValue(), m_debugImage);
+  if (m_debugImage.empty()) return;
+  cv::imshow(m_win_name, m_debugImage);
+  cv::waitKey(1);
+}
+
 void ImageFilter::drawDebug()
 {
   if (!d_displayDebugWindow.getValue())
@@ -150,34 +183,8 @@ void ImageFilter::drawDebug()
     cv::destroyWindow(m_win_name);
     return;
   }
-  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
-  for (Holder& h : m_params)
-  {
-    switch (h.type)
-    {
-      case Holder::BOOL:
-        cv::createTrackbar(h.data->getName(), m_win_name, 0, 1,
-                           &ImageFilter::callback, &m_params.back());
-        cv::setTrackbarPos(h.data->getName(), m_win_name,
-                           h.getTrackbarRangedValue());
-        break;
-      case Holder::INT:
-        cv::createTrackbar(h.data->getName(), m_win_name, 0, 255,
-                           &ImageFilter::callback, &m_params.back());
-        cv::setTrackbarPos(h.data->getName(), m_win_name,
-                           h.getTrackbarRangedValue());
-        break;
-      case Holder::DOUBLE:
-        cv::createTrackbar(h.data->getName(), m_win_name, 0, 255,
-                           &ImageFilter::callback, &m_params.back());
-        cv::setTrackbarPos(h.data->getName(), m_win_name,
-                           h.getTrackbarRangedValue());
-        break;
-    }
-  }
-  applyFilter(d_in.getValue(), m_debugImage);
-  if (m_debugImage.empty()) return;
-  cv::imshow(m_win_name, m_debugImage);
+  reinitDebugWindow();
+  refreshDebugWindow();
 }
 
 void ImageFilter::registerData(Data<bool>* data)

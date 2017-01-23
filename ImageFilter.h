@@ -3,8 +3,8 @@
 
 #include <SofaORCommon/cvMat.h>
 #include <sofa/core/DataEngine.h>
-#include <sofa/simulation/AnimateBeginEvent.h>
 #include <sofa/core/ObjectFactory.h>
+#include <sofa/simulation/AnimateBeginEvent.h>
 
 namespace sofa
 {
@@ -32,6 +32,8 @@ class ImageFilter : public core::DataEngine
   // redraw the image for debugging purposes when changes are previewed on the
   // filter, but not yet applied
   virtual void drawDebug();
+  void refreshDebugWindow();
+  void reinitDebugWindow();
 
   Data<common::cvMat> d_in;
   Data<common::cvMat> d_out;
@@ -99,8 +101,9 @@ class ImageFilter : public core::DataEngine
 
     Holder(core::objectmodel::BaseData* data) : type(BOOL), data(data) {}
     int getTrackbarRangedValue();
+    int getTrackbarMaxValue();
     void setDataValue(int val);
-    void drawDebug();
+    void refresh();
   };
 
   std::vector<Holder> m_params;

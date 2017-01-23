@@ -33,9 +33,9 @@ class CannyFilter : public ImageFilter
 
   void init()
   {
-    registerData(&d_minThreshold, 0.0, 255.0, 1);
-    registerData(&d_maxThreshold, 0.0, 255.0, 1);
-    registerData(&d_apertureSize, 0, 10, 1);
+    registerData(&d_minThreshold, 0.0, 255.0, 1.0);
+    registerData(&d_maxThreshold, 0.0, 255.0, 1.0);
+    registerData(&d_apertureSize, 3, 7, 1);
     registerData(&d_l2gradient);
     ImageFilter::init();
   }
@@ -43,6 +43,14 @@ class CannyFilter : public ImageFilter
   void applyFilter(const cv::Mat& in, cv::Mat& out)
   {
     if (in.empty()) return;
+    int apertureSize = d_apertureSize.getValue();
+    if (apertureSize != 3 && apertureSize != 5 && apertureSize != 7)
+    {
+      msg_warning("CannyFilter::applyFliter()")
+          << "Error: Aperture Size should be either 3, 5 or 7.";
+      return;
+    }
+
     cv::Mat img_grey;
     cv::cvtColor(in, img_grey, CV_BGRA2GRAY);
 
