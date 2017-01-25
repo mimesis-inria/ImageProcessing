@@ -1,4 +1,5 @@
 #include "FeatureDetector.h"
+#include <SofaORCommon/cvMatUtils.h>
 
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
@@ -17,10 +18,9 @@ int FeatureDetectorClass =
         .add<FeatureDetector>();
 
 FeatureDetector::FeatureDetector()
-    : d_detectMode(initData(&d_detectMode, "detectorMode",
+    : ImageFilter(),
+      d_detectMode(initData(&d_detectMode, "detectorMode",
                             "if true, does not compute the descriptors")),
-      d_image(
-          initData(&d_image, "image", "Image on which to look for features.")),
       d_mask(initData(&d_mask, common::cvMat(), "mask",
                       "Mask specifying where to look for keypoints "
                       "(optional). It must be a 8-bit integer matrix with "
@@ -34,7 +34,7 @@ FeatureDetector::FeatureDetector()
       d_descriptors(initData(&d_descriptors, "descriptors",
                              "output cvMat of feature descriptors", true, true))
 {
-  f_listening.setValue(true);
+  m_outputImage = false;
 
   sofa::helper::OptionsGroup* t = d_detectMode.beginEdit();
   t->setNames(3, "DETECT_ONLY", "COMPUTE_ONLY", "DETECT_AND_COMPUTE");
@@ -70,10 +70,12 @@ void FeatureDetector::init()
     if (d_detectorType.getValue().getSelectedId() != i)
       m_detectors[i]->toggleVisible(false);
     else
+    {
+      unregisterAllData();
+      m_detectors[i]->registerData(this);
       m_detectors[i]->init();
+    }
   }
-
-  addInput(&d_image);
 
   switch (d_detectMode.getValue().getSelectedId())
   {
@@ -99,121 +101,155 @@ void FeatureDetector::init()
       addOutput(&d_descriptors);
       break;
   }
+  m_dataTracker.trackData(d_detectMode);
+  m_dataTracker.trackData(d_detectorType);
+
   setDirtyValue();
+  ImageFilter::init();
 }
+
 void FeatureDetector::update()
+{
+  ImageFilter::update();
+
+  switch (d_detectMode.getValue().getSelectedId())
+  {
+    case DETECT_ONLY:
+    {
+      sofa::helper::vector<common::cvKeypoint>* vec = d_keypoints.beginEdit();
+      vec->clear();
+      for (cv::KeyPoint& kp : _v) vec->push_back(common::cvKeypoint(kp));
+      d_keypoints.endEdit();
+      d_keypoints.setDirtyOutputs();
+      break;
+    }
+    case COMPUTE_ONLY:
+    {
+      d_descriptors.setValue(_d);
+      d_keypoints.cleanDirty();
+      d_descriptors.setDirtyOutputs();
+      break;
+    }
+    case DETECT_AND_COMPUTE:
+    {
+      sofa::helper::vector<common::cvKeypoint>* vec =
+          d_keypoints.beginWriteOnly();
+      vec->clear();
+      for (cv::KeyPoint& kp : _v) vec->push_back(common::cvKeypoint(kp));
+      d_keypoints.endEdit();
+      d_descriptors.setValue(_d);
+      d_keypoints.setDirtyOutputs();
+      d_descriptors.setDirtyOutputs();
+      break;
+    }
+  }
+}
+
+void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 {
   if (!f_listening.getValue()) return;
 
-  updateAllInputsIfDirty();
-  cleanDirty();
   int detect = int(d_detectMode.getValue().getSelectedId());
   if (detect == DETECT_ONLY)
   {
+    if (in.empty()) return;
     std::cout << getName() << std::endl;
-    std::vector<cv::KeyPoint> v;
-    if (!d_keypoints.getValue().empty())
+    _v.clear();
+    if (!d_keypoints.getValue().empty() && !debug)
     {
       const cv::KeyPoint* arr =
           dynamic_cast<const cv::KeyPoint*>(d_keypoints.getValue().data());
 
-      v.assign(arr, arr + d_keypoints.getValue().size());
+      _v.assign(arr, arr + d_keypoints.getValue().size());
     }
-
+    m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->detect(
-        d_image.getValue(), d_mask.getValue(), v);
-    sofa::helper::vector<common::cvKeypoint>* vec = d_keypoints.beginEdit();
-    vec->clear();
-    for (cv::KeyPoint& kp : v) vec->push_back(common::cvKeypoint(kp));
-    d_keypoints.endEdit();
-    d_image.cleanDirty();
-    d_keypoints.setDirtyOutputs();
+        in, d_mask.getValue(), _v);
   }
   else if (detect == COMPUTE_ONLY)
   {
     std::cout << getName() << std::endl;
-    std::vector<cv::KeyPoint> v;
-    if (!d_keypoints.getValue().empty())
+    _v.clear();
+    if (!d_keypoints.getValue().empty() && !debug)
     {
       const cv::KeyPoint* arr =
           dynamic_cast<const cv::KeyPoint*>(d_keypoints.getValue().data());
 
-      v.assign(arr, arr + d_keypoints.getValue().size());
+      _v.assign(arr, arr + d_keypoints.getValue().size());
     }
-
-    common::cvMat* descr = d_descriptors.beginEdit();
-    m_detectors[d_detectorType.getValue().getSelectedId()]->compute(
-        d_image.getValue(), v, *descr);
-    d_descriptors.endEdit();
-    d_keypoints.cleanDirty();
-    d_descriptors.setDirtyOutputs();
+    _d = cv::Mat();
+    m_detectors[d_detectorType.getValue().getSelectedId()]->init();
+    m_detectors[d_detectorType.getValue().getSelectedId()]->compute(in, _v, _d);
   }
   else
   {
+    if (in.empty()) return;
     std::cout << getName() << std::endl;
-    std::vector<cv::KeyPoint> v;
-    if (!d_keypoints.getValue().empty())
+    _v.clear();
+    if (!d_keypoints.getValue().empty() && !debug)
     {
       const cv::KeyPoint* arr =
           dynamic_cast<const cv::KeyPoint*>(d_keypoints.getValue().data());
 
-      v.assign(arr, arr + d_keypoints.getValue().size());
+      _v.assign(arr, arr + d_keypoints.getValue().size());
     }
-
-    common::cvMat* descr = d_descriptors.beginEdit();
+    _d = cv::Mat();
+    m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->detectAndCompute(
-        d_image.getValue(), d_mask.getValue(), v, *descr);
-    d_descriptors.endEdit();
-    sofa::helper::vector<common::cvKeypoint>* vec =
-        d_keypoints.beginWriteOnly();
-    vec->clear();
-    for (cv::KeyPoint& kp : v) vec->push_back(common::cvKeypoint(kp));
-    d_keypoints.endEdit();
-    d_image.cleanDirty();
-    d_descriptors.setDirtyOutputs();
+        in, d_mask.getValue(), _v, _d);
+  }
+  if (d_displayDebugWindow.getValue())
+  {
+    in.copyTo(out);
+    cv::drawKeypoints(in, _v, out, cv::Scalar(0, 255, 0), 1);
   }
 }
+
 void FeatureDetector::reinit()
 {
-  for (size_t i = 0; i < DetectorType_COUNT; ++i)
+  if (m_dataTracker.isDirty(d_detectorType))
   {
-    if (i == d_detectorType.getValue().getSelectedId())
+    for (size_t i = 0; i < DetectorType_COUNT; ++i)
     {
-      m_detectors[i]->toggleVisible(true);
-      m_detectors[i]->init();
+      if (i == d_detectorType.getValue().getSelectedId())
+      {
+        m_detectors[i]->toggleVisible(true);
+        m_detectors[i]->init();
+        unregisterAllData();
+        m_detectors[i]->registerData(this);
+      }
+      else
+        m_detectors[i]->toggleVisible(false);
     }
-    else
-      m_detectors[i]->toggleVisible(false);
   }
-  switch (d_detectMode.getValue().getSelectedId())
+  if (m_dataTracker.isDirty(d_detectMode))
   {
-    case DETECT_ONLY:
-      d_descriptors.setDisplayed(false);
-      addInput(&d_mask);
-      delOutput(&d_descriptors);
-      delInput(&d_keypoints);
-      addOutput(&d_keypoints);
-      break;
-    case COMPUTE_ONLY:
-      d_descriptors.setDisplayed(true);
-      delInput(&d_mask);
-      delOutput(&d_keypoints);
-      addInput(&d_keypoints);
-      addOutput(&d_descriptors);
-      break;
-    case DETECT_AND_COMPUTE:
-      d_descriptors.setDisplayed(true);
-      addInput(&d_mask);
-      delInput(&d_keypoints);
-      addOutput(&d_keypoints);
-      addOutput(&d_descriptors);
-      break;
+    switch (d_detectMode.getValue().getSelectedId())
+    {
+      case DETECT_ONLY:
+        d_descriptors.setDisplayed(false);
+        addInput(&d_mask);
+        delOutput(&d_descriptors);
+        delInput(&d_keypoints);
+        addOutput(&d_keypoints);
+        break;
+      case COMPUTE_ONLY:
+        d_descriptors.setDisplayed(true);
+        delInput(&d_mask);
+        delOutput(&d_keypoints);
+        addInput(&d_keypoints);
+        addOutput(&d_descriptors);
+        break;
+      case DETECT_AND_COMPUTE:
+        d_descriptors.setDisplayed(true);
+        addInput(&d_mask);
+        delInput(&d_keypoints);
+        addOutput(&d_keypoints);
+        addOutput(&d_descriptors);
+        break;
+    }
   }
-}
-
-void FeatureDetector::handleEvent(sofa::core::objectmodel::Event* e)
-{
-  if (sofa::simulation::AnimateBeginEvent::checkEventType(e)) this->update();
+  ImageFilter::reinit();
 }
 
 }  // namespace processor

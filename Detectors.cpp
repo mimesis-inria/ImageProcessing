@@ -22,9 +22,10 @@ void BaseDetector::compute(const common::cvMat& img,
   m_detector->compute(img, keypoints, descriptors);
 }
 
-void BaseDetector::detectAndCompute(const common::cvMat& img, const common::cvMat& mask,
-                           std::vector<cv::KeyPoint>& keypoints,
-                           common::cvMat& descriptors)
+void BaseDetector::detectAndCompute(const common::cvMat& img,
+                                    const common::cvMat& mask,
+                                    std::vector<cv::KeyPoint>& keypoints,
+                                    common::cvMat& descriptors)
 {
   m_detector->detectAndCompute(img, mask, keypoints, descriptors);
 }

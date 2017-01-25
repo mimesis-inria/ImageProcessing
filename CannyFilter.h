@@ -40,7 +40,7 @@ class CannyFilter : public ImageFilter
     ImageFilter::init();
   }
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out)
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   {
     if (in.empty()) return;
     int apertureSize = d_apertureSize.getValue();
@@ -48,6 +48,14 @@ class CannyFilter : public ImageFilter
     {
       msg_warning("CannyFilter::applyFliter()")
           << "Error: Aperture Size should be either 3, 5 or 7.";
+      return;
+    }
+    if (d_minThreshold.getValue() < 0.0 || d_minThreshold.getValue() > 255.0 ||
+        d_maxThreshold.getValue() < 0.0 || d_maxThreshold.getValue() > 255.0)
+    {
+      msg_warning("CannyFilter::applyFliter()")
+          << "Error: Thresholds should be between 0 - 255 as we're using 8-bit "
+             "grayscale images.";
       return;
     }
 
@@ -61,6 +69,12 @@ class CannyFilter : public ImageFilter
     cv::cvtColor(img_grey, out, CV_GRAY2BGRA);
   }
 };
+
+SOFA_DECL_CLASS(CannyFilter)
+
+int CannyFilterClass =
+    core::RegisterObject("Canny edge detection filter from OpenCV")
+        .add<CannyFilter>();
 
 }  // namespace collision
 

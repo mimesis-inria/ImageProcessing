@@ -3,14 +3,15 @@
 
 #include "Detectors.h"
 #include "initplugin.h"
+#include "ImageFilter.h"
 
 #include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvDMatch.h>
 #include <SofaORCommon/cvMat.h>
 #include <SofaORCommon/StereoCalib.h>
 
-#include <sofa/core/DataEngine.h>
 #include <sofa/helper/OptionsGroup.h>
+#include <sofa/helper/SVector.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -20,10 +21,10 @@ namespace OR
 {
 namespace processor
 {
-class MatchingConstraints : public core::DataEngine
+class MatchingConstraints : public ImageFilter
 {
  public:
-  SOFA_CLASS(MatchingConstraints, core::DataEngine);
+  SOFA_CLASS(MatchingConstraints, ImageFilter);
 
  public:
   MatchingConstraints();
@@ -31,6 +32,7 @@ class MatchingConstraints : public core::DataEngine
 
   void init();
   void update();
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
   void reinit();
 
   // INPUTS
@@ -46,7 +48,7 @@ class MatchingConstraints : public core::DataEngine
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_in;
   Data<common::cvMat> d_descriptorsL_in;
   Data<common::cvMat> d_descriptorsR_in;
-  Data<helper::vector<helper::vector<common::cvDMatch> > > d_matches_in;
+  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_in;
 
 
   // OUTPUTS
@@ -69,8 +71,6 @@ class MatchingConstraints : public core::DataEngine
 
   // knn-specific outputs
   Data<sofa::helper::vector<float> > d_knnLambdas;
-
-  void handleEvent(sofa::core::objectmodel::Event* event);
 
 private:
   bool computeEpipolarLines();

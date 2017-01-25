@@ -17,7 +17,8 @@ int DescriptorMatcherClass =
         .add<DescriptorMatcher>();
 
 DescriptorMatcher::DescriptorMatcher()
-    : d_matcherType(initData(&d_matcherType, "matcher",
+    : ImageFilter(),
+      d_matcherType(initData(&d_matcherType, "matcher",
                              "type of matcher to use (BRUTEFORCE or FLANN).")),
       d_matchingAlgo(initData(
           &d_matchingAlgo, "algo",
@@ -39,9 +40,15 @@ DescriptorMatcher::DescriptorMatcher()
       d_trainDescriptors(initData(&d_trainDescriptors, "trainDescriptors",
                                   "Train set of descriptors")),
       d_matches(initData(&d_matches, "matches", "output array of matches", true,
-                         true))
+                         true)),
+      d_in2(initData(&d_in2, "in2", "second image, for debug")),
+      d_kptsL(
+          initData(&d_kptsL, "kpts_l", "left image's keypoints, for debug")),
+      d_kptsR(
+          initData(&d_kptsR, "kpts_r", "right image's keypoints, for debug"))
+
 {
-  f_listening.setValue(true);
+  m_outputImage = false;
 
   sofa::helper::OptionsGroup* t = d_matcherType.beginEdit();
   t->setNames(MatcherType_COUNT, "FLANN", "BRUTEFORCE");
@@ -71,20 +78,47 @@ void DescriptorMatcher::init()
       m_matchers[i]->init();
   }
 
+  addInput(&d_in2);
   addInput(&d_queryDescriptors);
   addInput(&d_trainDescriptors);
   addInput(&d_mask);
   addOutput(&d_matches);
   setDirtyValue();
+  ImageFilter::init();
 }
 void DescriptorMatcher::update()
 {
+  ImageFilter::update();
+
+  sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> >* vec =
+      d_matches.beginWriteOnly();
+  vec->clear();
+  if (!m_matches.empty() && !m_matches[0].empty())
+  {
+    for (std::vector<cv::DMatch>& matchVec : m_matches)
+    {
+      vec->push_back(helper::SVector<common::cvDMatch>());
+      for (cv::DMatch& match : matchVec)
+        vec->back().push_back(common::cvDMatch(match));
+    }
+  }
+  d_matches.endEdit();
+  std::cout << d_matches.getValue().size() << std::endl;
+
+  d_matches.setDirtyOutputs();
+}
+
+void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
+{
   if (!f_listening.getValue()) return;
 
-  std::cout << getName() << std::endl;
-  updateAllInputsIfDirty();
-  cleanDirty();
-
+  if (d_queryDescriptors.getValue().empty() ||
+      d_trainDescriptors.getValue().empty())
+  {
+      msg_error("DescriptorMatcher::applyFilter")
+          << "query.size != train.size";
+    return;
+  }
   unsigned m = d_matcherType.getValue().getSelectedId();
   if (!m_matchers[m]->acceptsBinary() &&
       (d_queryDescriptors.getValue().type() == 0 ||
@@ -104,36 +138,34 @@ void DescriptorMatcher::update()
     return;
   }
 
-  std::vector<std::vector<cv::DMatch> > matches;
+  m_matches.clear();
   if (d_matchingAlgo.getValue().getSelectedId() == STANDARD_MATCH)
     m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
-                            d_trainDescriptors.getValue(), matches, 1,
+                            d_trainDescriptors.getValue(), m_matches, 1,
                             d_mask.getValue());
   else if (d_matchingAlgo.getValue().getSelectedId() == KNN_MATCH)
     m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
-                            d_trainDescriptors.getValue(), matches,
+                            d_trainDescriptors.getValue(), m_matches,
                             d_k.getValue(), d_mask.getValue());
   else if (d_matchingAlgo.getValue().getSelectedId() == RADIUS_MATCH)
     m_matchers[m]->radiusMatch(d_queryDescriptors.getValue(),
-                               d_trainDescriptors.getValue(), matches,
+                               d_trainDescriptors.getValue(), m_matches,
                                d_maxDistance.getValue(), d_mask.getValue());
 
-  sofa::helper::vector<sofa::helper::vector<common::cvDMatch> >* vec =
-      d_matches.beginWriteOnly();
-  vec->clear();
-  if (!matches[0].empty())
+  if (d_displayDebugWindow.getValue())
   {
-    for (std::vector<cv::DMatch>& matchVec : matches)
+    if (d_in2.isSet() && d_kptsL.isSet() && d_kptsR.isSet())
     {
-      vec->push_back(helper::vector<common::cvDMatch>());
-      for (cv::DMatch& match : matchVec)
-        vec->back().push_back(common::cvDMatch(match));
+      std::vector<cv::KeyPoint> kpL, kpR;
+      const cv::KeyPoint* arr =
+          dynamic_cast<const cv::KeyPoint*>(d_kptsL.getValue().data());
+      kpL.assign(arr, arr + d_kptsL.getValue().size());
+      arr = dynamic_cast<const cv::KeyPoint*>(d_kptsR.getValue().data());
+      kpR.assign(arr, arr + d_kptsR.getValue().size());
+
+      cv::drawMatches(in, kpL, d_in2.getValue(), kpR, m_matches, out);
     }
   }
-  d_matches.endEdit();
-  std::cout << d_matches.getValue().size() << std::endl;
-
-  d_matches.setDirtyOutputs();
 }
 
 void DescriptorMatcher::reinit()
@@ -148,11 +180,7 @@ void DescriptorMatcher::reinit()
     else
       m_matchers[i]->toggleVisible(false);
   }
-}
-
-void DescriptorMatcher::handleEvent(sofa::core::objectmodel::Event* e)
-{
-  if (sofa::simulation::AnimateBeginEvent::checkEventType(e)) this->update();
+  ImageFilter::reinit();
 }
 
 }  // namespace processor

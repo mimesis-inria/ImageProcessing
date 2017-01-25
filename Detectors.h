@@ -2,8 +2,8 @@
 #define SOFA_OR_PROCESSOR_DETECTORS_H
 
 #include <SofaORCommon/cvMat.h>
+#include "ImageFilter.h"
 
-#include <sofa/core/DataEngine.h>
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/vector.h>
 
@@ -23,6 +23,8 @@ struct BaseDetector
 
   virtual void init() = 0;
 
+  virtual void registerData(ImageFilter* parent) = 0;
+
   virtual void detect(const common::cvMat&, const common::cvMat&,
                       std::vector<cv::KeyPoint>&);
   virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
@@ -38,6 +40,12 @@ struct FASTDetector : BaseDetector
   FASTDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  virtual void registerData(ImageFilter* parent)
+  {
+      parent->registerData(&threshold, 0, 255, 1);
+      parent->registerData(&nonmaxsuppression);
+      parent->registerData(&type, 0, 3, 1);
+  }
   virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
                        common::cvMat&)
   {
@@ -62,6 +70,20 @@ struct MSERDetector : BaseDetector
   MSERDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  virtual void registerData(ImageFilter* parent)
+  {
+      parent->registerData(&delta, 0, 10, 1);
+      parent->registerData(&minArea, 0, 255, 1);
+      parent->registerData(&maxArea, 10000, 20000, 200);
+
+      parent->registerData(&maxVariation, 0.0f, 1.0f, 0.01f);
+      parent->registerData(&minDiversity, 0.0f, 1.0f, 0.01f);
+      parent->registerData(&maxEvolution, 0, 400, 1);
+      parent->registerData(&areaThreshold, 1.0, 2.0, 0.01);
+      parent->registerData(&minMargin, 0.0, 0.1, 0.0001);
+      parent->registerData(&edgeBlurSize, 0, 10, 1);
+  }
+
   virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
                        common::cvMat&)
   {
@@ -93,6 +115,11 @@ struct ORBDetector : BaseDetector
   void toggleVisible(bool);
   void init();
 
+  virtual void registerData(ImageFilter* )
+  {
+      // TODO: find optimal range of values
+  }
+
   Data<int> nFeatures;
   Data<float> scaleFactor;
   Data<int> nLevels;
@@ -108,6 +135,11 @@ struct BRISKDetector : BaseDetector
   BRISKDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  virtual void registerData(ImageFilter* )
+  {
+      // TODO: find optimal range of values
+  }
+
 
   Data<int> threshold;
   Data<int> octaves;
@@ -118,6 +150,11 @@ struct KAZEDetector : BaseDetector
   KAZEDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  virtual void registerData(ImageFilter* )
+  {
+      // TODO: find optimal range of values
+  }
+
 
   Data<bool> extended;
   Data<bool> upright;
@@ -131,6 +168,11 @@ struct AKAZEDetector : BaseDetector
   AKAZEDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  virtual void registerData(ImageFilter* )
+  {
+      // TODO: find optimal range of values
+  }
+
 
   Data<sofa::helper::OptionsGroup> descriptorType;
   Data<int> descriptorSize;
@@ -145,6 +187,11 @@ struct SIFTDetector : BaseDetector
   SIFTDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  virtual void registerData(ImageFilter* )
+  {
+      // TODO: find optimal range of values
+  }
+
 
   Data<int> nFeatures;
   Data<int> nOctaveLayers;
@@ -158,6 +205,11 @@ struct SURFDetector : BaseDetector
   SURFDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  virtual void registerData(ImageFilter* )
+  {
+      // TODO: find optimal range of values
+  }
+
 
   Data<double> threshold;
   Data<int> nOctaves;
@@ -171,14 +223,18 @@ struct BRIEFDetector : BaseDetector
   BRIEFDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  virtual void registerData(ImageFilter* )
+  {
+      // TODO: find optimal range of values
+  }
+
   void detect(const common::cvMat&, const common::cvMat&,
               std::vector<cv::KeyPoint>&)
   {
     msg_error("BRIEFDetector::detect()")
         << "BRIEF is computeOnly. keypoints must be provided.";
   }
-  virtual void detectAndCompute(const common::cvMat&,
-                                const common::cvMat&,
+  virtual void detectAndCompute(const common::cvMat&, const common::cvMat&,
                                 std::vector<cv::KeyPoint>&, common::cvMat&)
   {
     msg_error("BRIEFDetector::detectAndCompute()")
@@ -195,14 +251,18 @@ struct DAISYDetector : BaseDetector
   DAISYDetector(core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
+  virtual void registerData(ImageFilter* )
+  {
+      // TODO: find optimal range of values
+  }
+
   void detect(const common::cvMat&, const common::cvMat&,
               std::vector<cv::KeyPoint>&)
   {
     msg_error("DAISYDetector::detect()")
         << "DAISY is computeOnly. keypoints must be provided.";
   }
-  virtual void detectAndCompute(const common::cvMat&,
-                                const common::cvMat&,
+  virtual void detectAndCompute(const common::cvMat&, const common::cvMat&,
                                 std::vector<cv::KeyPoint>&, common::cvMat&)
   {
     msg_error("DAISYDetector::detectAndCompute()")

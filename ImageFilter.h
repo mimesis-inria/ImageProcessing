@@ -3,6 +3,7 @@
 
 #include <SofaORCommon/cvMat.h>
 #include <sofa/core/DataEngine.h>
+#include <sofa/helper/OptionsGroup.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
@@ -27,18 +28,17 @@ class ImageFilter : public core::DataEngine
   virtual void reinit();
 
   // Implement the filter in this method;
-  virtual void applyFilter(const cv::Mat& in, cv::Mat& out) = 0;
+  virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug = false) = 0;
 
   // redraw the image for debugging purposes when changes are previewed on the
   // filter, but not yet applied
   virtual void drawDebug();
   void refreshDebugWindow();
-  void reinitDebugWindow();
+  bool reinitDebugWindow();
 
   Data<common::cvMat> d_in;
   Data<common::cvMat> d_out;
   Data<bool> d_displayDebugWindow;
-  bool m_debugDisplayed;
 
   virtual void handleEvent(sofa::core::objectmodel::Event* event)
   {
@@ -47,13 +47,21 @@ class ImageFilter : public core::DataEngine
   }
 
   // Pass data to this methods to bind them to the OpenCV UI
-  void registerData(Data<bool>* data);
+  void registerData(Data<bool>* data, int min = 0, int max = 1, int step = 1);
   void registerData(Data<int>* data, int min, int max, int step);
   void registerData(Data<double>* data, double min, double max, double step);
+  void registerData(Data<float>* data, float min, float max, float step);
+  void registerData(Data<helper::OptionsGroup>* data, int min, int max, int step);
+  void unregisterAllData();
 
  protected:
   static unsigned m_window_uid;
   cv::Mat m_debugImage;
+
+  // if set to false, will not write in the output image (useful for filters
+  // such as FeatureDetectors / matchers, where we want to visualize filters in
+  // the debug window, but we don't need the debug output for other filters)
+  bool m_outputImage;
 
  private:
   struct Holder
@@ -63,6 +71,7 @@ class ImageFilter : public core::DataEngine
       BOOL,
       INT,
       DOUBLE,
+      OPTIONSGROUP,
     } type;
 
     union Impl {
@@ -87,6 +96,7 @@ class ImageFilter : public core::DataEngine
           value_max._int = 1;
           step._int = 1;
         case INT:
+        case OPTIONSGROUP:
           value_min._int = min;
           value_max._int = max;
           step._int = _step;
@@ -98,8 +108,6 @@ class ImageFilter : public core::DataEngine
           break;
       }
     }
-
-    Holder(core::objectmodel::BaseData* data) : type(BOOL), data(data) {}
     int getTrackbarRangedValue();
     int getTrackbarMaxValue();
     void setDataValue(int val);

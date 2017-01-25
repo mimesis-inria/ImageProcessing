@@ -14,6 +14,12 @@ int ImageFilter::Holder::getTrackbarRangedValue()
   {
     case BOOL:
       return reinterpret_cast<Data<bool>*>(data)->getValue();
+    case OPTIONSGROUP:
+    {
+      return int(reinterpret_cast<Data<helper::OptionsGroup>*>(data)
+                     ->getValue()
+                     .getSelectedId());
+    }
     case INT:
     {
       return reinterpret_cast<Data<int>*>(data)->getValue() - value_min._int;
@@ -35,6 +41,7 @@ int ImageFilter::Holder::getTrackbarMaxValue()
   {
     case BOOL:
       return 1;
+    case OPTIONSGROUP:
     case INT:
       return value_max._int - value_min._int;
     case DOUBLE:
@@ -53,6 +60,11 @@ void ImageFilter::Holder::setDataValue(int val)
       break;
     case INT:
       reinterpret_cast<Data<int>*>(data)->setValue(val + value_min._int);
+      break;
+    case OPTIONSGROUP:
+      reinterpret_cast<Data<helper::OptionsGroup>*>(data)
+          ->beginEdit()
+          ->setSelectedItem(unsigned(val));
       break;
     case DOUBLE:
       double max = value_max._double - value_min._double;
@@ -89,6 +101,7 @@ ImageFilter::ImageFilter()
       d_displayDebugWindow(initData(&d_displayDebugWindow, false, "Debug",
                                     "Display a debug window to see in live "
                                     "the changes applied to the filter")),
+      m_outputImage(true),
       m_win_name(std::to_string(m_window_uid) + "_" + getClassName())
 {
   f_listening.setValue(true);
@@ -101,10 +114,12 @@ void ImageFilter::getInputFromContext()
   ImageFilter* lastFilter = this->getContext()->get<ImageFilter>();
   if (lastFilter && lastFilter != this)
   {
-    d_in.setParent(&lastFilter->d_out, "out");
-    msg_info("ImageFilter::init()") << "Note: no input image given to the "
-                                       "filter. Linking to last filter's "
-                                       "output image";
+    d_in.setParent(&lastFilter->d_out,
+                   "@" + lastFilter->getPathName() + ".out");
+    msg_info(getClassName() + "::init()")
+        << "ImageFilter Note: no input image given to the "
+           "filter. Linking to last filter's "
+           "output image";
   }
   else
   {
@@ -112,14 +127,17 @@ void ImageFilter::getInputFromContext()
         this->getContext()->get<acquisitor::BaseFrameGrabber>();
     if (grabber)
     {
-      d_in.setParent(&grabber->d_frame, "frame");
-      msg_warning("ImageFilter::init()") << "No input image given to the "
-                                            "filter. Linking to last grabber's"
-                                            "output frame";
+      d_in.setParent(&grabber->d_frame,
+                     "@" + grabber->getPathName() + ".frame");
+      msg_warning(getClassName() + "::init()")
+          << "ImageFilter: No input image given to the "
+             "filter. Linking to last grabber's"
+             "output frame";
     }
     else
-      msg_error("ImageFilter::init()") << "Error: No Previous ImageFilter nor "
-                                          "ImageGrabber found in sceneGraph.";
+      msg_error(getClassName() + "::init()")
+          << "ImageFilter Error: No Previous ImageFilter nor "
+             "ImageGrabber found in sceneGraph.";
   }
 }
 
@@ -139,57 +157,78 @@ void ImageFilter::update()
   if (!f_listening.getValue())
   {
     // filter inactive, out = in
-    d_in.getValue().copyTo(*d_out.beginWriteOnly());
+    d_out.setValue(d_in.getValue());
     d_out.endEdit();
-    return;
+    d_out.setDirtyOutputs();
   }
-  applyFilter(d_in.getValue(), *d_out.beginEdit());
-  d_out.endEdit();
+  cv::Mat empty = d_in.getValue().zeros(
+      d_in.getValue().rows, d_in.getValue().cols, d_in.getValue().type());
+  applyFilter(d_in.getValue(), empty);
+  if (!m_outputImage)
+  {
+    d_out.setValue(d_in.getValue());
+    d_out.endEdit();
+  }
+  else
+  {
+    d_out.setValue(empty);
+    d_out.endEdit();
+  }
   d_out.setDirtyOutputs();
+  if (d_displayDebugWindow.getValue()) cv::imshow(m_win_name, empty);
 }
 
 void ImageFilter::reinit()
 {
   drawDebug();
-  m_debugImage.copyTo(*d_out.beginEdit());
-  d_out.endEdit();
-}
-
-void ImageFilter::reinitDebugWindow()
-{
-  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
-  for (Holder& h : m_params)
+  if (m_outputImage)
   {
-    cv::createTrackbar(h.data->getName(), m_win_name, 0,
-                       h.getTrackbarMaxValue(), &ImageFilter::callback,
-                       &h);
-    cv::setTrackbarPos(h.data->getName(), m_win_name,
-                       h.getTrackbarRangedValue());
+    m_debugImage.copyTo(*d_out.beginEdit());
+    d_out.endEdit();
   }
 }
 
-void ImageFilter::refreshDebugWindow()
-{
-  applyFilter(d_in.getValue(), m_debugImage);
-  if (m_debugImage.empty()) return;
-  cv::imshow(m_win_name, m_debugImage);
-  cv::waitKey(1);
-}
-
-void ImageFilter::drawDebug()
+bool ImageFilter::reinitDebugWindow()
 {
   if (!d_displayDebugWindow.getValue())
   {
     cv::destroyWindow(m_win_name);
-    return;
+    return false;
   }
-  reinitDebugWindow();
-  refreshDebugWindow();
+
+  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
+  for (Holder& h : m_params)
+  {
+    cv::createTrackbar(h.data->getName(), m_win_name, 0,
+                       h.getTrackbarMaxValue(), &ImageFilter::callback, &h);
+    cv::setTrackbarPos(h.data->getName(), m_win_name,
+                       h.getTrackbarRangedValue());
+  }
+  return true;
 }
 
-void ImageFilter::registerData(Data<bool>* data)
+void ImageFilter::refreshDebugWindow()
 {
-  m_params.push_back(Holder(data));
+  applyFilter(d_in.getValue(), m_debugImage, true);
+  if (m_debugImage.empty()) return;
+  cv::imshow(m_win_name, m_debugImage);
+}
+
+void ImageFilter::drawDebug()
+{
+  if (reinitDebugWindow()) refreshDebugWindow();
+}
+
+void ImageFilter::unregisterAllData() { m_params.clear(); }
+void ImageFilter::registerData(Data<bool>* data, int min, int max, int step)
+{
+  m_params.push_back(Holder(Holder::BOOL, data, min, max, step));
+}
+
+void ImageFilter::registerData(Data<helper::OptionsGroup>* data, int min,
+                               int max, int step)
+{
+  m_params.push_back(Holder(Holder::OPTIONSGROUP, data, min, max, step));
 }
 
 void ImageFilter::registerData(Data<int>* data, int min, int max, int step)
@@ -198,6 +237,11 @@ void ImageFilter::registerData(Data<int>* data, int min, int max, int step)
 }
 void ImageFilter::registerData(Data<double>* data, double min, double max,
                                double step)
+{
+  m_params.push_back(Holder(Holder::DOUBLE, data, min, max, step));
+}
+void ImageFilter::registerData(Data<float>* data, float min, float max,
+                               float step)
 {
   m_params.push_back(Holder(Holder::DOUBLE, data, min, max, step));
 }

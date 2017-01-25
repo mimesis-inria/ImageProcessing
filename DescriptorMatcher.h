@@ -3,13 +3,14 @@
 
 #include "initplugin.h"
 #include "Matchers.h"
+#include "ImageFilter.h"
 
 #include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvDMatch.h>
 #include <SofaORCommon/cvMat.h>
 
-#include <sofa/core/DataEngine.h>
 #include <sofa/helper/OptionsGroup.h>
+#include <sofa/helper/SVector.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -19,7 +20,7 @@ namespace OR
 {
 namespace processor
 {
-class DescriptorMatcher : public core::DataEngine
+class DescriptorMatcher : public ImageFilter
 {
   enum MatcherType
   {
@@ -37,7 +38,7 @@ class DescriptorMatcher : public core::DataEngine
   };
 
  public:
-  SOFA_CLASS(DescriptorMatcher, core::DataEngine);
+  SOFA_CLASS(DescriptorMatcher, ImageFilter);
 
  public:
   DescriptorMatcher();
@@ -45,6 +46,7 @@ class DescriptorMatcher : public core::DataEngine
 
   void init();
   void update();
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
   void reinit();
 
   Data<sofa::helper::OptionsGroup> d_matcherType;
@@ -56,7 +58,13 @@ class DescriptorMatcher : public core::DataEngine
   Data<common::cvMat> d_queryDescriptors;
   Data<common::cvMat> d_trainDescriptors;
 
-  Data<helper::vector<helper::vector<common::cvDMatch> > > d_matches;
+  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
+
+  // Optional Debug data, necessary to draw matches on debug frame
+  Data<common::cvMat> d_in2;
+  Data<helper::vector<common::cvKeypoint> > d_kptsL;
+  Data<helper::vector<common::cvKeypoint> > d_kptsR;
+
 
   void match(const common::cvMat& queryDescriptors,
              std::vector<cv::DMatch>& matches);
@@ -66,10 +74,10 @@ class DescriptorMatcher : public core::DataEngine
                    std::vector<std::vector<cv::DMatch> >& matches,
                    float maxDistance);
 
-  void handleEvent(sofa::core::objectmodel::Event* event);
-
  private:
   BaseMatcher* m_matchers[MatcherType_COUNT];
+  std::vector<std::vector<cv::DMatch> > m_matches;
+
 };
 
 }  // namespace processor

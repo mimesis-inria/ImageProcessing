@@ -4,6 +4,7 @@
 #include <sofa/simulation/AnimateBeginEvent.h>
 
 #include <opencv2/calib3d.hpp>
+#include <opencv2/imgproc.hpp>
 namespace sofa
 {
 namespace OR
@@ -17,7 +18,8 @@ int MatchingConstraintsClass =
         .add<MatchingConstraints>();
 
 MatchingConstraints::MatchingConstraints()
-    : d_useEpipolarFilter(
+    : ImageFilter(),
+      d_useEpipolarFilter(
           initData(&d_useEpipolarFilter, false, "epipolarFilter",
                    "set to true to enable epipolar contrstraint filtering")),
       d_epipolarThreshold(
@@ -91,6 +93,7 @@ MatchingConstraints::MatchingConstraints()
 
 {
   f_listening.setValue(true);
+  m_outputImage = false;
 }
 
 MatchingConstraints::~MatchingConstraints() {}
@@ -136,6 +139,15 @@ void MatchingConstraints::init()
     d_knnLambda.setDisplayed(false);
   }
   setDirtyValue();
+
+  registerData(&d_useEpipolarFilter);
+  registerData(&d_epipolarThreshold, 0, 255, 1);
+  registerData(&d_useKNNFilter);
+  registerData(&d_knnLambda, 0.0f, 4.0f, 0.001f);
+  registerData(&d_useMDFilter);
+  registerData(&d_mdfRadius, 0.0f, 1.0f, 0.00001f);
+
+  ImageFilter::init();
 }
 
 bool MatchingConstraints::computeEpipolarLines()
@@ -196,12 +208,17 @@ void MatchingConstraints::computeEpipolarDistances()
 
 void MatchingConstraints::update()
 {
-  // All precomputations for the filters, only done once per new batch of inputs
-  if (!f_listening.getValue()) return;
-  std::cout << getName() << std::endl;
+  // All precomputations for the filters, only done once per new batch of
+  // inputs
   updateAllInputsIfDirty();
   cleanDirty();
+  if (!f_listening.getValue()) return;
 
+  if (d_keypointsR_in.getValue().size() != d_descriptorsR_in.getValue().rows)
+  {
+    std::cout << "WTF????" << std::endl;
+    return;
+  }
   m_maxDist = .0;
 
   m_kptsL.clear();
@@ -215,8 +232,10 @@ void MatchingConstraints::update()
   m_descR = cv::Mat(int(d_matches_in.getValue().size()),
                     d_descriptorsL_in.getValue().cols,
                     d_descriptorsL_in.getValue().type());
-  const helper::vector<common::cvKeypoint> PointsL = d_keypointsL_in.getValue();
-  const helper::vector<common::cvKeypoint> PointsR = d_keypointsR_in.getValue();
+  const helper::vector<common::cvKeypoint>& PointsL =
+      d_keypointsL_in.getValue();
+  const helper::vector<common::cvKeypoint>& PointsR =
+      d_keypointsR_in.getValue();
   const cv::Mat& DescriptorsLeft = d_descriptorsL_in.getValue();
   const cv::Mat& DescriptorsRight = d_descriptorsR_in.getValue();
 
@@ -240,11 +259,10 @@ void MatchingConstraints::update()
   if (d_useEpipolarFilter.getValue())
     if (computeEpipolarLines()) computeEpipolarDistances();
 
-  // reinit() to refresh outputs
-  reinit();
+  ImageFilter::update();
+  setDirtyOutputs();
 }
-
-void MatchingConstraints::reinit()
+void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   // Actual application of filters, filling outputs
   bool epipolar = d_useEpipolarFilter.getValue();
@@ -312,9 +330,15 @@ void MatchingConstraints::reinit()
   else
     knnLambdas.clear();
 
-  const helper::vector<helper::vector<common::cvDMatch> >& in_matches =
+  const helper::SVector<helper::SVector<common::cvDMatch> >& in_matches =
       d_matches_in.getValue();
 
+  if (d_displayDebugWindow.getValue()) in.copyTo(out);
+  if (m_kptsL.size() != in_matches.size())
+  {
+    std::cout << "WTF????" << std::endl;
+    return;
+  }
   for (size_t i = 0; i < m_kptsL.size(); ++i)
   {
     // Epipolar constraint filtering
@@ -326,11 +350,15 @@ void MatchingConstraints::reinit()
     }
 
     // KNN constraint filtering
-    float knnVal = (in_matches[i][1].distance / in_matches[i][0].distance);
-    if (knn && (knnVal < lambda))
+    float knnVal = -1;
+    if (knn && in_matches[i].size() > 1)
     {
-      outliers.push_back(i);
-      continue;
+      knnVal = (in_matches[i][1].distance / in_matches[i][0].distance);
+      if (knnVal < lambda)
+      {
+        outliers.push_back(i);
+        continue;
+      }
     }
 
     // Minimal distance filtering
@@ -350,6 +378,9 @@ void MatchingConstraints::reinit()
     m_descL.row(int(inliersIdx)).copyTo(descL.row(int(i)));
     m_descR.row(int(inliersIdx)).copyTo(descR.row(int(i)));
 
+    if (d_displayDebugWindow.getValue())
+      cv::circle(out, kptsL[inliersIdx].pt, 3, cv::Scalar(0, 255, 0));
+
     if (epipolar)
     {
       epidistL[inliersIdx] = m_epidistanceL[i];
@@ -358,7 +389,7 @@ void MatchingConstraints::reinit()
       epilinesR[inliersIdx] = defaulttype::Vec3f(m_epilinesR[i].val);
     }
     if (mdf) mdfDistances[inliersIdx] = mdfVal;
-    if (knn) knnLambdas[inliersIdx] = knnVal;
+    if (knn && in_matches[0].size() > 1) knnLambdas[inliersIdx] = knnVal;
   }
 
   d_outliers_out.endEdit();
@@ -375,14 +406,9 @@ void MatchingConstraints::reinit()
   d_mdfDistances.endEdit();
 
   d_knnLambdas.endEdit();
-  setDirtyOutputs();
 }
 
-void MatchingConstraints::handleEvent(sofa::core::objectmodel::Event* e)
-{
-  if (sofa::simulation::AnimateBeginEvent::checkEventType(e)) this->update();
-}
-
+void MatchingConstraints::reinit() { ImageFilter::reinit(); }
 }  // namespace processor
 }  // namespace OR
 }  // namespace sofa

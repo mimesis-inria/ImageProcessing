@@ -3,11 +3,12 @@
 
 #include "Detectors.h"
 #include "initplugin.h"
+#include "ImageFilter.h"
 
 #include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvMat.h>
 
-#include <sofa/core/DataEngine.h>
+#include <sofa/core/DataTracker.h>
 #include <sofa/helper/OptionsGroup.h>
 
 #include <opencv2/opencv.hpp>
@@ -18,7 +19,7 @@ namespace OR
 {
 namespace processor
 {
-class FeatureDetector : public core::DataEngine
+class FeatureDetector : public ImageFilter
 {
   enum DetectorMode
   {
@@ -50,20 +51,22 @@ class FeatureDetector : public core::DataEngine
   virtual ~FeatureDetector();
 
   void init();
-  void update();
+  virtual void update();
+  virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
   void reinit();
 
   Data<sofa::helper::OptionsGroup> d_detectMode;
-  Data<common::cvMat> d_image;
   Data<common::cvMat> d_mask;
   Data<sofa::helper::OptionsGroup> d_detectorType;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
   Data<common::cvMat> d_descriptors;
 
-  void handleEvent(sofa::core::objectmodel::Event* event);
-
  private:
   BaseDetector* m_detectors[DetectorType_COUNT];
+  core::DataTracker m_dataTracker;
+
+  std::vector<cv::KeyPoint> _v;
+  common::cvMat _d;
 };
 
 }  // namespace processor
