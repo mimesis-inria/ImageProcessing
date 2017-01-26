@@ -143,9 +143,9 @@ void MatchingConstraints::init()
   registerData(&d_useEpipolarFilter);
   registerData(&d_epipolarThreshold, 0, 255, 1);
   registerData(&d_useKNNFilter);
-  registerData(&d_knnLambda, 0.0f, 4.0f, 0.001f);
+  registerData(&d_knnLambda, 0.0f, 4.0f, 0.01f);
   registerData(&d_useMDFilter);
-  registerData(&d_mdfRadius, 0.0f, 1.0f, 0.00001f);
+  registerData(&d_mdfRadius, 0.0f, 1.0f, 0.001f);
 
   ImageFilter::init();
 }

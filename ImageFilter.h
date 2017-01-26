@@ -3,8 +3,8 @@
 
 #include <SofaORCommon/cvMat.h>
 #include <sofa/core/DataEngine.h>
-#include <sofa/helper/OptionsGroup.h>
 #include <sofa/core/ObjectFactory.h>
+#include <sofa/helper/OptionsGroup.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
 namespace sofa
@@ -28,7 +28,8 @@ class ImageFilter : public core::DataEngine
   virtual void reinit();
 
   // Implement the filter in this method;
-  virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug = false) = 0;
+  virtual void applyFilter(const cv::Mat& in, cv::Mat& out,
+                           bool debug = false) = 0;
 
   // redraw the image for debugging purposes when changes are previewed on the
   // filter, but not yet applied
@@ -51,7 +52,8 @@ class ImageFilter : public core::DataEngine
   void registerData(Data<int>* data, int min, int max, int step);
   void registerData(Data<double>* data, double min, double max, double step);
   void registerData(Data<float>* data, float min, float max, float step);
-  void registerData(Data<helper::OptionsGroup>* data, int min, int max, int step);
+  void registerData(Data<helper::OptionsGroup>* data, int min, int max,
+                    int step);
   void unregisterAllData();
 
  protected:
@@ -71,6 +73,7 @@ class ImageFilter : public core::DataEngine
       BOOL,
       INT,
       DOUBLE,
+      FLOAT,
       OPTIONSGROUP,
     } type;
 
@@ -78,6 +81,7 @@ class ImageFilter : public core::DataEngine
       bool _bool;
       int _int;
       double _double;
+      float _float;
     };
 
     core::objectmodel::BaseData* data;
@@ -105,6 +109,11 @@ class ImageFilter : public core::DataEngine
           value_min._double = min;
           value_max._double = max;
           step._double = _step;
+          break;
+        case FLOAT:
+          value_min._float = min;
+          value_max._float = max;
+          step._float = _step;
           break;
       }
     }
