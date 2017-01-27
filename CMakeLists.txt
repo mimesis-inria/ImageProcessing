@@ -16,7 +16,9 @@ set(HEADER_FILES
   ImageFilter.h
   CannyFilter.h
   ImageConverter.h
-  ImageRectifier.h)
+  ImageRectifier.h
+  FeatureRectifier.h
+  )
 
 set(SOURCE_FILES
   initPlugin.cpp
@@ -29,7 +31,9 @@ set(SOURCE_FILES
   ImageFilter.cpp
   CannyFilter.cpp
   ImageConverter.cpp
-  ImageRectifier.cpp)
+  ImageRectifier.cpp
+  FeatureRectifier.cpp
+  )
 
 set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon AcquisitOR SofaORCommon ${OpenCV_LIBRARIES})
 

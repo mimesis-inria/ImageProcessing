@@ -62,6 +62,11 @@ MatchingConstraints::MatchingConstraints()
       d_matches_in(initData(&d_matches_in, "input_matches",
                             "feature matches (usually from DescriptorMatcher)",
                             true, true)),
+      d_matches_out(initData(&d_matches_out, "output_matches",
+                             "output matches optional usage, as keypoints and "
+                             "descriptors are already paired in their "
+                             "respective vectors",
+                             true, true)),
       d_outliers_out(
           initData(&d_outliers_out, "outliers", "output vector of outliers")),
       d_keypointsL_out(initData(&d_keypointsL_out, "out_keypointsL",
@@ -221,10 +226,12 @@ void MatchingConstraints::update()
   }
   m_maxDist = .0;
 
+  m_matches_out.clear();
   m_kptsL.clear();
   m_kptsR.clear();
   m_kptsL.reserve(d_matches_in.getValue().size());
   m_kptsR.reserve(d_matches_in.getValue().size());
+  m_matches_out.reserve(d_matches_in.getValue().size());
 
   m_descL = cv::Mat(int(d_matches_in.getValue().size()),
                     d_descriptorsL_in.getValue().cols,
@@ -241,6 +248,7 @@ void MatchingConstraints::update()
 
   const helper::vector<common::cvDMatch>* ptr = d_matches_in.getValue().data();
   int l_index, r_index;
+  std::vector<cv::DMatch> dm(1, cv::DMatch());
   for (size_t i = 0; i < d_matches_in.getValue().size(); ++i)
   {
     float d = (*ptr)[0].distance;
@@ -248,6 +256,10 @@ void MatchingConstraints::update()
     l_index = (*ptr)[0].queryIdx;
     r_index = (*ptr)[0].trainIdx;
 
+    dm.push_back((*ptr)[0]);
+    dm.back().queryIdx = i;
+    dm.back().trainIdx = i;
+    m_matches_out.push_back(dm);
     m_kptsL.push_back(PointsL[unsigned(l_index)]);
     m_kptsR.push_back(PointsR[unsigned(r_index)]);
     DescriptorsLeft.row(l_index).copyTo(m_descL.row(int(i)));
@@ -275,6 +287,7 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   double lambda = d_knnLambda.getValue();
 
   helper::vector<size_t>& outliers = *d_outliers_out.beginWriteOnly();
+  helper::SVector<helper::SVector<common::cvDMatch> >& out_matches = *d_matches_out.beginWriteOnly();
   sofa::helper::vector<common::cvKeypoint>& kptsL =
       *d_keypointsL_out.beginWriteOnly();
   sofa::helper::vector<common::cvKeypoint>& kptsR =
@@ -294,6 +307,7 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   // outputs initialization
   outliers.clear();
   outliers.reserve(d_matches_in.getValue().size());
+  out_matches.resize(d_matches_in.getValue().size());
   kptsL.resize(d_matches_in.getValue().size());
   kptsR.resize(d_matches_in.getValue().size());
 
@@ -339,6 +353,7 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     std::cout << "WTF????" << std::endl;
     return;
   }
+  helper::SVector<common::cvDMatch> dm(1, common::cvDMatch());
   for (size_t i = 0; i < m_kptsL.size(); ++i)
   {
     // Epipolar constraint filtering
@@ -373,6 +388,10 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     // /!\ No push_back here, as vectors & matrices are not cleaned /!\ //
     size_t inliersIdx = i - outliers.size();
 
+    dm[0] = in_matches[i][0];
+    dm[0].trainIdx = i;
+    dm[0].queryIdx = i;
+    out_matches[inliersIdx] = dm;
     kptsL[inliersIdx] = m_kptsL[i];
     kptsR[inliersIdx] = m_kptsR[i];
     m_descL.row(int(inliersIdx)).copyTo(descL.row(int(i)));

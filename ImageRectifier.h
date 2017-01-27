@@ -1,3 +1,6 @@
+#ifndef SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
+#define SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
+
 #include "ImageFilter.h"
 #include "SofaORCommon/CalibLoader.h"
 #include "SofaORCommon/CameraCalib.h"
@@ -65,3 +68,5 @@ int ImageRectifierClass =
 }  // namespace component
 
 }  // namespace sofa
+
+#endif  // SOFA_OR_PROCESSOR_IMAGERECTIFIER_H

@@ -57,7 +57,7 @@ class MatchingConstraints : public ImageFilter
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_out;
   Data<common::cvMat> d_descriptorsL_out;
   Data<common::cvMat> d_descriptorsR_out;
-//  Data<helper::vector<common::cvDMatch> > d_matches_out;
+  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_out;
 
   // epipolar-specific outputs
   Data<sofa::helper::vector<defaulttype::Vec3f> > d_epilinesL;
@@ -76,6 +76,7 @@ private:
   bool computeEpipolarLines();
   void computeEpipolarDistances();
 
+  std::vector<std::vector<cv::DMatch> > m_matches_out;
   std::vector<cv::KeyPoint> m_kptsL, m_kptsR;
   cv::Mat m_descL, m_descR;
 
