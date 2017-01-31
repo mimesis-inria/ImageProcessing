@@ -18,6 +18,7 @@ set(HEADER_FILES
   ImageConverter.h
   ImageRectifier.h
   FeatureRectifier.h
+  OpticalFlow.h
   )
 
 set(SOURCE_FILES
@@ -33,6 +34,7 @@ set(SOURCE_FILES
   ImageConverter.cpp
   ImageRectifier.cpp
   FeatureRectifier.cpp
+  OpticalFlow.cpp
   )
 
 set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon AcquisitOR SofaORCommon ${OpenCV_LIBRARIES})

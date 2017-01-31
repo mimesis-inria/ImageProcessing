@@ -38,7 +38,7 @@ const char* getModuleDescription()
 
 const char* getModuleComponentList()
 {
-  return "FeatureDetector;FeatureDescriptor;FeatureMatcher;MatchingConstraints;FeatureTriangulator;CannyFilter"
+  return "FeatureDetector;FeatureDescriptor;FeatureMatcher;MatchingConstraints;FeatureTriangulator;FeatureRectifier;CannyFilter;OpticalFlow"
 #ifdef SOFAOR_ENABLE_PCL
          ";PCSmootherMLS;PCDownsampler"
 #endif  // SOFAOR_ENABLE_PCL
@@ -55,7 +55,9 @@ SOFA_LINK_CLASS(FeatureDetector);
 SOFA_LINK_CLASS(DescriptorMatcher);
 SOFA_LINK_CLASS(MatchingConstraints);
 SOFA_LINK_CLASS(CannyFilter);
-//SOFA_LINK_CLASS(FeatureTriangulator);
+SOFA_LINK_CLASS(FeatureRectifier);
+SOFA_LINK_CLASS(FeatureTriangulator);
+SOFA_LINK_CLASS(OpticalFlow);
 
 #ifdef SOFAOR_ENABLE_PCL
 SOFA_LINK_CLASS(PCSmootherMLS);

@@ -29,9 +29,9 @@ FeatureTriangulator::FeatureTriangulator()
                          "left intrinsics camera params", true, true)),
       d_camRight(initData(&d_camRight, "cam_right",
                           "right intrinsics camera params", true, true)),
-      d_keypointsL(initData(&d_keypointsL, "kpts_l",
+      d_keypointsL(initData(&d_keypointsL, "keypointsL",
                             "input vector of left keypoints", true, true)),
-      d_keypointsR(initData(&d_keypointsR, "kpts_l",
+      d_keypointsR(initData(&d_keypointsR, "keypointsR",
                             "input vector of right keypoints", true, true)),
       d_matches(initData(&d_matches, "matches",
                          "input array of matches between the 2 vectors "
@@ -46,6 +46,7 @@ FeatureTriangulator::FeatureTriangulator()
 FeatureTriangulator::~FeatureTriangulator() {}
 void FeatureTriangulator::init()
 {
+  getCalibFromContext();
   addInput(&d_extrinsics);
   addInput(&d_camLeft);
   addInput(&d_camRight);
@@ -58,7 +59,16 @@ void FeatureTriangulator::init()
   ImageFilter::init();
 }
 
-void FeatureTriangulator::update() { ImageFilter::update(); }
+void FeatureTriangulator::update()
+{
+  std::cout << getName() << std::endl;
+  updateAllInputsIfDirty();
+  cleanDirty();
+  ImageFilter::update();
+  d_pointCloud.setDirtyOutputs();
+  std::cout << "end" << getName() << std::endl;
+}
+
 cv::Point3d FeatureTriangulator::rectifyPoint(double x, double y,
                                               cv::Mat_<double> distortion_vec)
 {
@@ -73,12 +83,12 @@ cv::Point3d FeatureTriangulator::rectifyPoint(double x, double y,
 }
 
 cv::Mat_<double> FeatureTriangulator::iterativeLinearLSTriangulation(
-    cv::Point3d u, cv::Matx34d P, cv::Point3d u1, cv::Matx34d P1)
+    cv::Point3d u, cv::Point3d u1)
 {
   double wi = 1, wi1 = 1;
   cv::Mat_<double> X(4, 1);
 
-  cv::Mat_<double> X_ = linearLSTriangulation(u, P, u1, P1);
+  cv::Mat_<double> X_ = linearLSTriangulation(u, u1);
   X(0) = X_(0);
   X(1) = X_(1);
   X(2) = X_(2);
@@ -87,8 +97,8 @@ cv::Mat_<double> FeatureTriangulator::iterativeLinearLSTriangulation(
   for (int i = 0; i < 10; i++)
   {  // Hartley suggests 10 iterations at most
     // recalculate weights
-    double p2x = cv::Mat_<double>(cv::Mat_<double>(P).row(2) * X)(0);
-    double p2x1 = cv::Mat_<double>(cv::Mat_<double>(P1).row(2) * X)(0);
+    double p2x = cv::Mat_<double>(cv::Mat_<double>(PL).row(2) * X)(0);
+    double p2x1 = cv::Mat_<double>(cv::Mat_<double>(PR).row(2) * X)(0);
 
     // breaking point
     // if(fabsf(wi - p2x) <= EPSILON && fabsf(wi1 - p2x1) <= EPSILON) break;
@@ -98,17 +108,17 @@ cv::Mat_<double> FeatureTriangulator::iterativeLinearLSTriangulation(
 
     // reweight equations and solve
     cv::Matx43d A(
-        (u.x * P(2, 0) - P(0, 0)) / wi, (u.x * P(2, 1) - P(0, 1)) / wi,
-        (u.x * P(2, 2) - P(0, 2)) / wi, (u.y * P(2, 0) - P(1, 0)) / wi,
-        (u.y * P(2, 1) - P(1, 1)) / wi, (u.y * P(2, 2) - P(1, 2)) / wi,
-        (u1.x * P1(2, 0) - P1(0, 0)) / wi1, (u1.x * P1(2, 1) - P1(0, 1)) / wi1,
-        (u1.x * P1(2, 2) - P1(0, 2)) / wi1, (u1.y * P1(2, 0) - P1(1, 0)) / wi1,
-        (u1.y * P1(2, 1) - P1(1, 1)) / wi1, (u1.y * P1(2, 2) - P1(1, 2)) / wi1);
+        (u.x * PL(2, 0) - PL(0, 0)) / wi, (u.x * PL(2, 1) - PL(0, 1)) / wi,
+        (u.x * PL(2, 2) - PL(0, 2)) / wi, (u.y * PL(2, 0) - PL(1, 0)) / wi,
+        (u.y * PL(2, 1) - PL(1, 1)) / wi, (u.y * PL(2, 2) - PL(1, 2)) / wi,
+        (u1.x * PR(2, 0) - PR(0, 0)) / wi1, (u1.x * PR(2, 1) - PR(0, 1)) / wi1,
+        (u1.x * PR(2, 2) - PR(0, 2)) / wi1, (u1.y * PR(2, 0) - PR(1, 0)) / wi1,
+        (u1.y * PR(2, 1) - PR(1, 1)) / wi1, (u1.y * PR(2, 2) - PR(1, 2)) / wi1);
 
     cv::Mat_<double> B =
-        (cv::Mat_<double>(4, 1) << -(u.x * P(2, 3) - P(0, 3)) / wi,
-         -(u.y * P(2, 3) - P(1, 3)) / wi, -(u1.x * P1(2, 3) - P1(0, 3)) / wi1,
-         -(u1.y * P1(2, 3) - P1(1, 3)) / wi1);
+        (cv::Mat_<double>(4, 1) << -(u.x * PL(2, 3) - PL(0, 3)) / wi,
+         -(u.y * PL(2, 3) - PL(1, 3)) / wi, -(u1.x * PR(2, 3) - PR(0, 3)) / wi1,
+         -(u1.y * PR(2, 3) - PR(1, 3)) / wi1);
 
     cv::solve(A, B, X_, cv::DECOMP_SVD);
     X(0) = X_(0);
@@ -121,22 +131,20 @@ cv::Mat_<double> FeatureTriangulator::iterativeLinearLSTriangulation(
 }
 
 cv::Mat_<double> FeatureTriangulator::linearLSTriangulation(cv::Point3d u,
-                                                            cv::Matx34d P,
-                                                            cv::Point3d u1,
-                                                            cv::Matx34d P1)
+                                                            cv::Point3d u1)
 {
   /**
   From "Triangulation", Hartley, R.I. and Sturm, P., Computer vision and image
   understanding, 1997
   */
-  cv::Matx43d A(u.x * P(2, 0) - P(0, 0), u.x * P(2, 1) - P(0, 1),
-                u.x * P(2, 2) - P(0, 2), u.y * P(2, 0) - P(1, 0),
-                u.y * P(2, 1) - P(1, 1), u.y * P(2, 2) - P(1, 2),
-                u1.x * P1(2, 0) - P1(0, 0), u1.x * P1(2, 1) - P1(0, 1),
-                u1.x * P1(2, 2) - P1(0, 2), u1.y * P1(2, 0) - P1(1, 0),
-                u1.y * P1(2, 1) - P1(1, 1), u1.y * P1(2, 2) - P1(1, 2));
-  cv::Matx41d B(-(u.x * P(2, 3) - P(0, 3)), -(u.y * P(2, 3) - P(1, 3)),
-                -(u1.x * P1(2, 3) - P1(0, 3)), -(u1.y * P1(2, 3) - P1(1, 3)));
+  cv::Matx43d A(u.x * PL(2, 0) - PL(0, 0), u.x * PL(2, 1) - PL(0, 1),
+                u.x * PL(2, 2) - PL(0, 2), u.y * PL(2, 0) - PL(1, 0),
+                u.y * PL(2, 1) - PL(1, 1), u.y * PL(2, 2) - PL(1, 2),
+                u1.x * PR(2, 0) - PR(0, 0), u1.x * PR(2, 1) - PR(0, 1),
+                u1.x * PR(2, 2) - PR(0, 2), u1.y * PR(2, 0) - PR(1, 0),
+                u1.y * PR(2, 1) - PR(1, 1), u1.y * PR(2, 2) - PR(1, 2));
+  cv::Matx41d B(-(u.x * PL(2, 3) - PL(0, 3)), -(u.y * PL(2, 3) - PL(1, 3)),
+                -(u1.x * PR(2, 3) - PR(0, 3)), -(u1.y * PR(2, 3) - PR(1, 3)));
 
   cv::Mat_<double> X;
   cv::solve(A, B, X, cv::DECOMP_SVD);
@@ -148,8 +156,6 @@ void FeatureTriangulator::triangulate(const cv::Point2f& l,
                                       const cv::Point2f& r,
                                       defaulttype::Vec3d& p)
 {
-  cv::Matx34d PL = cv::Matx34d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
-
   cv::Point3d u(l.x, l.y, 1.0);
   cv::Point3d u1(r.x, r.y, 1.0);
 
@@ -174,11 +180,7 @@ void FeatureTriangulator::triangulate(const cv::Point2f& l,
   u.z = um(2);
   u1.z = um1(2);
 
-  cv::Matx34d PR =
-      cv::Matx34d(R[0][0], R[0][1], R[0][2], T[0][0], R[1][0], R[1][1], R[1][2],
-                  T[0][1], R[2][0], R[2][1], R[2][2], T[0][2]);
-
-  cv::Mat_<double> X = iterativeLinearLSTriangulation(u, PL, u1, PR);
+  cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
 
   p = defaulttype::Vec3d(X(0), X(1), X(2));
 }
@@ -193,6 +195,9 @@ void FeatureTriangulator::applyFilter(const cv::Mat&, cv::Mat&, bool)
   common::matrix::sofaMat2cvMat(d_camRight.getValue().cameraMatrix, cmR);
   common::matrix::sofaVector2cvMat(d_camLeft.getValue().distCoefs, dvL);
   common::matrix::sofaVector2cvMat(d_camRight.getValue().distCoefs, dvR);
+  PL = cv::Matx34d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
+  PR = cv::Matx34d(R[0][0], R[0][1], R[0][2], T[0][0], R[1][0], R[1][1],
+                   R[1][2], T[0][1], R[2][0], R[2][1], R[2][2], T[0][2]);
 
   helper::vector<defaulttype::Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
   const helper::vector<common::cvKeypoint>& kL = d_keypointsL.getValue();

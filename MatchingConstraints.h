@@ -38,7 +38,6 @@ class MatchingConstraints : public ImageFilter
   // INPUTS
   Data<bool> d_useEpipolarFilter;
   Data<int> d_epipolarThreshold;
-  Data<common::StereoCalib> d_extrinsics;
   Data<common::cvMat> d_F;
   Data<bool> d_useMDFilter;
   Data<float> d_mdfRadius;
@@ -49,6 +48,7 @@ class MatchingConstraints : public ImageFilter
   Data<common::cvMat> d_descriptorsL_in;
   Data<common::cvMat> d_descriptorsR_in;
   Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_in;
+  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_out;
 
 
   // OUTPUTS
@@ -57,7 +57,6 @@ class MatchingConstraints : public ImageFilter
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_out;
   Data<common::cvMat> d_descriptorsL_out;
   Data<common::cvMat> d_descriptorsR_out;
-  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_out;
 
   // epipolar-specific outputs
   Data<sofa::helper::vector<defaulttype::Vec3f> > d_epilinesL;

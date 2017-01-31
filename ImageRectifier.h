@@ -19,42 +19,38 @@ class ImageRectifier : public ImageFilter
  public:
   SOFA_CLASS(ImageRectifier, ImageFilter);
 
-  Data<common::CameraCalib> d_calib;
+  Data<defaulttype::Matrix3> d_projMat;
+  Data<helper::vector<double> > d_distCoefs;
 
   ImageRectifier()
-      : d_calib(initData(&d_calib, common::CameraCalib(), "calib",
-                         "camera calibration data for image undistortion"))
+      : d_projMat(initData(&d_projMat, "projMat",
+                           "3x3 projection matrix (from camera's "
+                           "intrinsic parameters)")),
+        d_distCoefs(initData(&d_distCoefs, "distCoefs",
+                             "distortion coefficients vector (from camera's "
+                             "intrinsic parameters)"))
   {
-  }
-
-  void getCalibFromContext()
-  {
-    common::CalibLoader* lastCalib = this->getContext()->get<common::CalibLoader>();
-    if (lastCalib)
-    {
-      d_calib.setParent(&lastCalib->d_leftCalib, "@" + lastCalib->getPathName() + ".left_calib");
-      msg_info(getClassName() + "::init()")
-          << "ImageRectifier Note: no input alib given to the "
-             "filter. Linking to last CalibLoader's "
-             "left_calib.";
-    }
   }
 
   void init()
   {
-      if (!d_calib.isSet()) getCalibFromContext();
+    std::cout << getName() << std::endl;
 
-      addInput(&d_calib);
-
-      ImageFilter::init();
+    bindInputData(&d_distCoefs);
+    d_distCoefs.setDirtyValue();
+    ImageFilter::init();
   }
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   {
-    if (in.empty() || d_calib.getValue().cameraMatrix.empty()) return;
-    cv::Mat_<double> cam(d_calib.getValue().cameraMatrix.getNbLines(),
-                         d_calib.getValue().cameraMatrix.getNbLines());
-    common::matrix::sofaMat2cvMat(d_calib.getValue().cameraMatrix, cam);
-    cv::undistort(in, out, cam, d_calib.getValue().distCoefs);
+    std::cout << getName() << std::endl;
+
+    d_distCoefs.updateIfDirty();
+    d_distCoefs.cleanDirty();
+    if (in.empty() || d_distCoefs.getValue().empty()) return;
+    cv::Mat_<double> cam;
+    common::matrix::sofaMat2cvMat(d_projMat.getValue(), cam);
+    cv::undistort(in, out, cam, d_distCoefs.getValue());
+    std::cout << "end" << getName() << std::endl;
   }
 };
 

@@ -1,2 +1,1 @@
 #include "CannyFilter.h"
-

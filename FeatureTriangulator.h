@@ -44,14 +44,15 @@ class FeatureTriangulator : public ImageFilter
         this->getContext()->get<common::CalibLoader>();
     if (lastCalib)
     {
-      d_extrinsics.setParent(&lastCalib->d_stereoCalib,
-                             "@" + lastCalib->getPathName() + ".stereo_calib");
-      d_camLeft.setParent(&lastCalib->d_leftCalib,
-                          "@" + lastCalib->getPathName() + ".left_calib");
-      d_camRight.setParent(&lastCalib->d_rightCalib,
-                           "@" + lastCalib->getPathName() + ".right_calib");
-      msg_info(getClassName() + "::init()")
-          << "Triangulator: Calibration data initialized from graph";
+        // TODO uncomment!!!!!
+//      d_extrinsics.setParent(&lastCalib->d_stereoCalib,
+//                             "@" + lastCalib->getPathName() + ".stereo_calib");
+//      d_camLeft.setParent(&lastCalib->d_leftCalib,
+//                          "@" + lastCalib->getPathName() + ".left_calib");
+//      d_camRight.setParent(&lastCalib->d_rightCalib,
+//                           "@" + lastCalib->getPathName() + ".right_calib");
+//      msg_info(getClassName() + "::init()")
+//          << "Triangulator: Calibration data initialized from graph";
     }
   }
 
@@ -74,14 +75,14 @@ class FeatureTriangulator : public ImageFilter
   cv::Mat_<double> cmR;
   cv::Mat_<double> dvL;
   cv::Mat_<double> dvR;
+  cv::Matx34d PL;
+  cv::Matx34d PR;
 
   cv::Point3d rectifyPoint(double x, double y, cv::Mat_<double> distortion_vec);
 
-  cv::Mat_<double> iterativeLinearLSTriangulation(cv::Point3d u, cv::Matx34d P,
-                                                  cv::Point3d u1,
-                                                  cv::Matx34d P1);
-  cv::Mat_<double> linearLSTriangulation(cv::Point3d u, cv::Matx34d P,
-                                         cv::Point3d u1, cv::Matx34d P1);
+  cv::Mat_<double> iterativeLinearLSTriangulation(cv::Point3d u,
+                                                  cv::Point3d u1);
+  cv::Mat_<double> linearLSTriangulation(cv::Point3d u, cv::Point3d u1);
 };
 
 }  // namespace processor

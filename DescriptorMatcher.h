@@ -58,12 +58,11 @@ class DescriptorMatcher : public ImageFilter
   Data<common::cvMat> d_queryDescriptors;
   Data<common::cvMat> d_trainDescriptors;
 
-  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
-
-  // Optional Debug data, necessary to draw matches on debug frame
   Data<common::cvMat> d_in2;
   Data<helper::vector<common::cvKeypoint> > d_kptsL;
   Data<helper::vector<common::cvKeypoint> > d_kptsR;
+
+  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
 
 
   void match(const common::cvMat& queryDescriptors,

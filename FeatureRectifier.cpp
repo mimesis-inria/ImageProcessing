@@ -1,5 +1,5 @@
-#include <SofaORCommon/cvMatUtils.h>
 #include "FeatureRectifier.h"
+#include <SofaORCommon/cvMatUtils.h>
 
 #include <sofa/core/ObjectFactory.h>
 
@@ -31,9 +31,9 @@ FeatureRectifier::FeatureRectifier()
 }
 
 FeatureRectifier::~FeatureRectifier() {}
-
 void FeatureRectifier::init()
 {
+    std::cout << getName() << std::endl;
   getCalibFromContext();
   addInput(&d_calib);
   addInput(&d_keypoints_in);
@@ -43,28 +43,38 @@ void FeatureRectifier::init()
   ImageFilter::init();
 }
 
-void FeatureRectifier::update() { ImageFilter::update(); }
+void FeatureRectifier::update()
+{
+  std::cout << getName() << std::endl;
+  d_keypoints_in.updateIfDirty();
+  d_calib.updateIfDirty();
+  cleanDirty();
+  ImageFilter::update();
+  d_keypoints_out.setDirtyOutputs();
+  std::cout << "end" << getName() << std::endl;
+}
 
-void FeatureRectifier::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
+void FeatureRectifier::applyFilter(const cv::Mat&, cv::Mat&, bool)
 {
   common::matrix::sofaVector2cvMat(d_calib.getValue().distCoefs, dist);
 
-  helper::vector<common::cvKeypoint>& kptsOut = *d_keypoints_out.beginWriteOnly();
+  helper::vector<common::cvKeypoint>& kptsOut =
+      *d_keypoints_out.beginWriteOnly();
   const helper::vector<common::cvKeypoint>& kptsIn = d_keypoints_in.getValue();
   kptsOut.reserve(kptsIn.size());
 
   for (common::cvKeypoint kp : kptsIn)
   {
-      double x = kp.pt.x;
-      double y = kp.pt.y;
-      double k1 = dist.at<double>(0);
-      double k2 = dist.at<double>(1);
-      double rr = x * x + y * y;
+    double x = kp.pt.x;
+    double y = kp.pt.y;
+    double k1 = dist.at<double>(0);
+    double k2 = dist.at<double>(1);
+    double rr = x * x + y * y;
 
-      kp.pt.x = x * (1 + k1 * rr + k2 * rr * rr);
-      kp.pt.y = y* (1 + k1 * rr + k2 * rr * rr);
+    kp.pt.x = x * (1 + k1 * rr + k2 * rr * rr);
+    kp.pt.y = y * (1 + k1 * rr + k2 * rr * rr);
 
-      kptsOut.push_back(kp);
+    kptsOut.push_back(kp);
   }
 }
 

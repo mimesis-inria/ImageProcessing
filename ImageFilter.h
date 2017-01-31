@@ -2,7 +2,7 @@
 #define SOFA_OR_PROCESSOR_IMAGEFILTER_H
 
 #include <SofaORCommon/cvMat.h>
-#include <sofa/core/DataEngine.h>
+#include <SofaORCommon/ImplicitDataEngine.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
@@ -13,12 +13,12 @@ namespace OR
 {
 namespace processor
 {
-class ImageFilter : public core::DataEngine
+class ImageFilter : public common::ImplicitDataEngine
 {
   static void callback(int val, void* holder);
 
  public:
-  SOFA_CLASS(ImageFilter, core::DataEngine);
+  SOFA_CLASS(ImageFilter, common::ImplicitDataEngine);
 
   ImageFilter();
   virtual ~ImageFilter();
@@ -37,8 +37,8 @@ class ImageFilter : public core::DataEngine
   void refreshDebugWindow();
   bool reinitDebugWindow();
 
-  Data<common::cvMat> d_in;
-  Data<common::cvMat> d_out;
+  Data<common::cvMat> d_img;
+  Data<common::cvMat> d_img_out;
   Data<bool> d_displayDebugWindow;
 
   virtual void handleEvent(sofa::core::objectmodel::Event* event)

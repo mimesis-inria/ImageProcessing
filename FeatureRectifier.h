@@ -37,8 +37,9 @@ class FeatureRectifier : public ImageFilter
         this->getContext()->get<common::CalibLoader>();
     if (lastCalib)
     {
-      d_calib.setParent(&lastCalib->d_leftCalib,
-                          "@" + lastCalib->getPathName() + ".left_calib");
+        // TODO: Uncomment!
+//      d_calib.setParent(&lastCalib->d_leftCalib,
+//                          "@" + lastCalib->getPathName() + ".left_calib");
       msg_info(getClassName() + "::init()")
           << "Rectifier: Calibration data initialized from graph";
     }

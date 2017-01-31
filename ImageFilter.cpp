@@ -111,60 +111,29 @@ void ImageFilter::callback(int val, void* holder)
 unsigned ImageFilter::m_window_uid = 0;
 
 ImageFilter::ImageFilter()
-    : d_in(initData(
-          &d_in, common::cvMat(), "in",
+    : d_img(initData(
+          &d_img, common::cvMat(), "img",
           "Input image, that will undergo changes through the filter.")),
-      d_out(
-          initData(&d_out, "out", "Output image, holding the filter's result")),
+      d_img_out(initData(&d_img_out, "img_out",
+                         "Output image, holding the filter's result")),
       d_displayDebugWindow(initData(&d_displayDebugWindow, false, "Debug",
                                     "Display a debug window to see in live "
                                     "the changes applied to the filter")),
       m_outputImage(true),
       m_win_name(std::to_string(m_window_uid) + "_" + getClassName())
 {
+  addAlias(&d_img_out, "img1_out");
   f_listening.setValue(true);
   m_window_uid++;
 }
 
 ImageFilter::~ImageFilter() {}
-void ImageFilter::getInputFromContext()
-{
-  ImageFilter* lastFilter = this->getContext()->get<ImageFilter>();
-  if (lastFilter && lastFilter != this)
-  {
-    d_in.setParent(&lastFilter->d_out,
-                   "@" + lastFilter->getPathName() + ".out");
-    msg_info(getClassName() + "::init()")
-        << "ImageFilter Note: no input image given to the "
-           "filter. Linking to last filter's "
-           "output image";
-  }
-  else
-  {
-    acquisitor::BaseFrameGrabber* grabber =
-        this->getContext()->get<acquisitor::BaseFrameGrabber>();
-    if (grabber)
-    {
-      d_in.setParent(&grabber->d_frame,
-                     "@" + grabber->getPathName() + ".frame");
-      msg_warning(getClassName() + "::init()")
-          << "ImageFilter: No input image given to the "
-             "filter. Linking to last grabber's"
-             "output frame";
-    }
-    else
-      msg_error(getClassName() + "::init()")
-          << "ImageFilter Error: No Previous ImageFilter nor "
-             "ImageGrabber found in sceneGraph.";
-  }
-}
-
 void ImageFilter::init()
 {
-  if (!d_in.isSet()) getInputFromContext();
+  std::cout << getClassName() << "init" << std::endl;
 
-  addInput(&d_in);
-  addOutput(&d_out);
+  bindInputData(&d_img);
+  addOutput(&d_img_out);
   setDirtyValue();
 }
 
@@ -175,25 +144,29 @@ void ImageFilter::update()
   if (!f_listening.getValue())
   {
     // filter inactive, out = in
-    d_out.setValue(d_in.getValue());
-    d_out.endEdit();
-    d_out.setDirtyOutputs();
+    d_img_out.setValue(d_img.getValue());
+    d_img_out.endEdit();
+    d_img_out.setDirtyOutputs();
   }
-  cv::Mat empty = d_in.getValue().zeros(
-      d_in.getValue().rows, d_in.getValue().cols, d_in.getValue().type());
-  applyFilter(d_in.getValue(), empty);
+  cv::Mat empty = d_img.getValue().zeros(
+      d_img.getValue().rows, d_img.getValue().cols, d_img.getValue().type());
+  applyFilter(d_img.getValue(), empty);
   if (!m_outputImage)
   {
-    d_out.setValue(d_in.getValue());
-    d_out.endEdit();
+    d_img_out.setValue(d_img.getValue());
+    d_img_out.endEdit();
   }
   else
   {
-    d_out.setValue(empty);
-    d_out.endEdit();
+    d_img_out.setValue(empty);
+    d_img_out.endEdit();
   }
-  d_out.setDirtyOutputs();
-  if (d_displayDebugWindow.getValue()) cv::imshow(m_win_name, empty);
+  d_img_out.setDirtyOutputs();
+  if (d_displayDebugWindow.getValue() && !empty.empty())
+  {
+    cv::imshow(m_win_name, empty);
+    cv::waitKey(1);
+  }
 }
 
 void ImageFilter::reinit()
@@ -201,8 +174,8 @@ void ImageFilter::reinit()
   drawDebug();
   if (m_outputImage)
   {
-    m_debugImage.copyTo(*d_out.beginEdit());
-    d_out.endEdit();
+    m_debugImage.copyTo(*d_img_out.beginEdit());
+    d_img_out.endEdit();
   }
 }
 
@@ -227,9 +200,11 @@ bool ImageFilter::reinitDebugWindow()
 
 void ImageFilter::refreshDebugWindow()
 {
-  applyFilter(d_in.getValue(), m_debugImage, true);
+  applyFilter(d_img.getValue(), m_debugImage, true);
   if (m_debugImage.empty()) return;
+
   cv::imshow(m_win_name, m_debugImage);
+  cv::waitKey(1);
 }
 
 void ImageFilter::drawDebug()

@@ -30,10 +30,12 @@ FeatureDetector::FeatureDetector()
                    "Available feature detection algoritms: FAST, "
                    "MSER, ORB, BRISK, KAZE, AKAZE, SIFT, SURF, BRIEF, DAISY")),
       d_keypoints(
-          initData(&d_keypoints, "keypoints", "output array of cvKeypoints")),
+          initData(&d_keypoints, "keypoints", "output array of cvKeypoints", false)),
       d_descriptors(initData(&d_descriptors, "descriptors",
-                             "output cvMat of feature descriptors", true, true))
+                             "output cvMat of feature descriptors", false, true))
 {
+  addAlias(&d_keypoints, "keypoints_out");
+  addAlias(&d_descriptors, "descriptors_out");
   m_outputImage = false;
 
   sofa::helper::OptionsGroup* t = d_detectMode.beginEdit();
@@ -90,7 +92,7 @@ void FeatureDetector::init()
       d_descriptors.setDisplayed(true);
       delInput(&d_mask);
       delOutput(&d_keypoints);
-      addInput(&d_keypoints);
+      bindInputData(&d_keypoints);
       addOutput(&d_descriptors);
       break;
     case DETECT_AND_COMPUTE:
@@ -110,6 +112,7 @@ void FeatureDetector::init()
 
 void FeatureDetector::update()
 {
+  std::cout << getName() << std::endl;
   ImageFilter::update();
 
   switch (d_detectMode.getValue().getSelectedId())
@@ -143,6 +146,7 @@ void FeatureDetector::update()
       break;
     }
   }
+  std::cout << "end" << getName() << std::endl;
 }
 
 void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
@@ -153,7 +157,6 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
   if (detect == DETECT_ONLY)
   {
     if (in.empty()) return;
-    std::cout << getName() << std::endl;
     _v.clear();
     if (!d_keypoints.getValue().empty() && !debug)
     {
@@ -168,7 +171,6 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
   }
   else if (detect == COMPUTE_ONLY)
   {
-    std::cout << getName() << std::endl;
     _v.clear();
     if (!d_keypoints.getValue().empty() && !debug)
     {
@@ -184,7 +186,6 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
   else
   {
     if (in.empty()) return;
-    std::cout << getName() << std::endl;
     _v.clear();
     if (!d_keypoints.getValue().empty() && !debug)
     {

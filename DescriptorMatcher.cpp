@@ -35,21 +35,20 @@ DescriptorMatcher::DescriptorMatcher()
       d_mask(initData(&d_mask, common::cvMat(), "mask",
                       "Mask specifying permissible matches between an input "
                       "query and train matrices of descriptors.")),
-      d_queryDescriptors(initData(&d_queryDescriptors, "queryDescriptors",
-                                  "Query set of descriptors")),
-      d_trainDescriptors(initData(&d_trainDescriptors, "trainDescriptors",
-                                  "Train set of descriptors")),
+      d_queryDescriptors(initData(&d_queryDescriptors, "descriptors1",
+                                  "Query set of descriptors", false)),
+      d_trainDescriptors(initData(&d_trainDescriptors, "descriptors2",
+                                  "Train set of descriptors", false)),
+      d_in2(initData(&d_in2, "img2", "second image, for debug", false)),
+      d_kptsL(initData(&d_kptsL, "keypoints1",
+                       "left image's keypoints, for debug", false)),
+      d_kptsR(initData(&d_kptsR, "keypoints2",
+                       "right image's keypoints, for debug", false)),
       d_matches(initData(&d_matches, "matches", "output array of matches", true,
-                         true)),
-      d_in2(initData(&d_in2, "in2", "second image, for debug")),
-      d_kptsL(
-          initData(&d_kptsL, "kpts_l", "left image's keypoints, for debug")),
-      d_kptsR(
-          initData(&d_kptsR, "kpts_r", "right image's keypoints, for debug"))
-
+                         true))
 {
+  addAlias(&d_matches, "matches_out");
   m_outputImage = false;
-
   sofa::helper::OptionsGroup* t = d_matcherType.beginEdit();
   t->setNames(MatcherType_COUNT, "FLANN", "BRUTEFORCE");
   t->setSelectedItem(0);
@@ -67,6 +66,7 @@ DescriptorMatcher::DescriptorMatcher()
 DescriptorMatcher::~DescriptorMatcher() {}
 void DescriptorMatcher::init()
 {
+  std::cout << getName() << std::endl;
   std::cout << "Matcher type: " << d_matcherType.getValue().getSelectedItem()
             << std::endl;
   for (size_t i = 0; i < MatcherType_COUNT; ++i)
@@ -78,16 +78,22 @@ void DescriptorMatcher::init()
       m_matchers[i]->init();
   }
 
+  bindInputData(&d_queryDescriptors);
+  bindInputData(&d_trainDescriptors);
+
+  // Debug data: purposely not binded implicitely
   addInput(&d_in2);
-  addInput(&d_queryDescriptors);
-  addInput(&d_trainDescriptors);
-  addInput(&d_mask);
+  addInput(&d_kptsL);
+  addInput(&d_kptsR);
+
+  bindInputData(&d_mask);
   addOutput(&d_matches);
   setDirtyValue();
   ImageFilter::init();
 }
 void DescriptorMatcher::update()
 {
+  std::cout << getName() << std::endl;
   ImageFilter::update();
 
   sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> >* vec =
@@ -103,9 +109,8 @@ void DescriptorMatcher::update()
     }
   }
   d_matches.endEdit();
-  std::cout << d_matches.getValue().size() << std::endl;
-
   d_matches.setDirtyOutputs();
+  std::cout << "end" << getName() << std::endl;
 }
 
 void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
@@ -114,11 +119,7 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 
   if (d_queryDescriptors.getValue().empty() ||
       d_trainDescriptors.getValue().empty())
-  {
-      msg_error("DescriptorMatcher::applyFilter")
-          << "query.size != train.size";
     return;
-  }
   unsigned m = d_matcherType.getValue().getSelectedId();
   if (!m_matchers[m]->acceptsBinary() &&
       (d_queryDescriptors.getValue().type() == 0 ||

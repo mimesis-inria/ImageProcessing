@@ -30,6 +30,31 @@ void BaseDetector::detectAndCompute(const common::cvMat& img,
   m_detector->detectAndCompute(img, mask, keypoints, descriptors);
 }
 
+ShiTomasiDetector::ShiTomasiDetector(core::objectmodel::BaseObject* c)
+    : maxCorners(c->initData(&maxCorners, 100, "ShiTomasiMaxCorners",
+                            "")),
+      qualityLevel(
+          c->initData(&qualityLevel, 0.3, "ShiTomasiQualityLevel",
+                      "")),
+      minDistance(c->initData(&minDistance, 7, "ShiTomasiMinDistance",
+                       "")),
+      blockSize(c->initData(&blockSize, 7, "ShiTomasiBlockSize",
+                       ""))
+{
+}
+
+void ShiTomasiDetector::init()
+{
+}
+
+void ShiTomasiDetector::toggleVisible(bool show)
+{
+  maxCorners.setDisplayed(show);
+  qualityLevel.setDisplayed(show);
+  minDistance.setDisplayed(show);
+  blockSize.setDisplayed(show);
+}
+
 FASTDetector::FASTDetector(core::objectmodel::BaseObject* c)
     : threshold(c->initData(&threshold, 0, "FASTThreshold",
                             "threshold on difference between intensity of the "
