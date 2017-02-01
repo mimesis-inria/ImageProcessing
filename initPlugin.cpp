@@ -1,5 +1,5 @@
 #include <sofa/helper/system/config.h>
-#include "initplugin.h"
+#include "initPlugin.h"
 
 namespace sofa
 {
@@ -33,16 +33,12 @@ const char* getModuleVersion() { return "0.1"; }
 const char* getModuleLicense() { return ""; }
 const char* getModuleDescription()
 {
-  return "ProcessOR module to perform computer vision tasks such as 2D mono/stereo image processing, point cloud processing etc.";
+  return "ProcessOR's Base module";
 }
 
 const char* getModuleComponentList()
 {
-  return "FeatureDetector;FeatureDescriptor;FeatureMatcher;MatchingConstraints;FeatureTriangulator;FeatureRectifier;CannyFilter;OpticalFlow"
-#ifdef SOFAOR_ENABLE_PCL
-         ";PCSmootherMLS;PCDownsampler"
-#endif  // SOFAOR_ENABLE_PCL
-      ;
+  return "";
 }
 
 }  // namespace processor
@@ -51,15 +47,3 @@ const char* getModuleComponentList()
 
 ////////// BEGIN CLASS LIST //////////
 
-SOFA_LINK_CLASS(FeatureDetector);
-SOFA_LINK_CLASS(DescriptorMatcher);
-SOFA_LINK_CLASS(MatchingConstraints);
-SOFA_LINK_CLASS(CannyFilter);
-SOFA_LINK_CLASS(FeatureRectifier);
-SOFA_LINK_CLASS(FeatureTriangulator);
-SOFA_LINK_CLASS(OpticalFlow);
-
-#ifdef SOFAOR_ENABLE_PCL
-SOFA_LINK_CLASS(PCSmootherMLS);
-SOFA_LINK_CLASS(PCDownsampler);
-#endif  // SOFAOR_ENABLE_PCL

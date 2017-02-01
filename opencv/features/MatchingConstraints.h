@@ -2,13 +2,11 @@
 #define SOFA_OR_PROCESSOR_MATCHINGCONSTRAINTS_H
 
 #include "Detectors.h"
-#include "initplugin.h"
-#include "ImageFilter.h"
+#include "core/ImageFilter.h"
 
 #include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvDMatch.h>
 #include <SofaORCommon/cvMat.h>
-#include <SofaORCommon/StereoCalib.h>
 
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/SVector.h>

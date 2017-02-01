@@ -1,5 +1,8 @@
+#ifndef SOFA_OR_PROCESSOR_CANNYFILTER_H
+#define SOFA_OR_PROCESSOR_CANNYFILTER_H
+
 #include <opencv2/imgproc.hpp>
-#include "ImageFilter.h"
+#include "core/ImageFilter.h"
 
 namespace sofa
 {
@@ -76,8 +79,10 @@ int CannyFilterClass =
     core::RegisterObject("Canny edge detection filter from OpenCV")
         .add<CannyFilter>();
 
-}  // namespace collision
+}  // namespace processor
 
-}  // namespace component
+}  // namespace OR
 
 }  // namespace sofa
+
+#endif  // SOFA_OR_PROCESSOR_CANNYFILTER_H

@@ -2,8 +2,7 @@
 #define SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
 
 #include "Detectors.h"
-#include "initplugin.h"
-#include "ImageFilter.h"
+#include "core/ImageFilter.h"
 
 #include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvMat.h>

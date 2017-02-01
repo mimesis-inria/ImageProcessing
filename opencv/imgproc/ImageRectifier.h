@@ -1,9 +1,7 @@
 #ifndef SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
 #define SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
 
-#include "ImageFilter.h"
-#include "SofaORCommon/CalibLoader.h"
-#include "SofaORCommon/CameraCalib.h"
+#include "core/ImageFilter.h"
 #include "SofaORCommon/cvMatUtils.h"
 
 #include <opencv2/imgproc.hpp>
@@ -59,9 +57,9 @@ SOFA_DECL_CLASS(ImageRectifier)
 int ImageRectifierClass =
     core::RegisterObject("Image undistortion").add<ImageRectifier>();
 
-}  // namespace collision
+}  // namespace processor
 
-}  // namespace component
+}  // namespace OR
 
 }  // namespace sofa
 

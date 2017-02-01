@@ -1,4 +1,7 @@
-#include "ImageFilter.h"
+#ifndef SOFA_OR_PROCESSOR_OPTICALFLOW_H
+#define SOFA_OR_PROCESSOR_OPTICALFLOW_H
+
+#include "core/ImageFilter.h"
 
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/helper/vector.h>
@@ -124,8 +127,11 @@ SOFA_DECL_CLASS(OpticalFlow)
 int OpticalFlowClass =
     core::RegisterObject("Optical flow filters from OpenCV").add<OpticalFlow>();
 
-}  // namespace collision
+}  // namespace processor
 
-}  // namespace component
+}  // namespace OR
 
 }  // namespace sofa
+
+#endif // SOFA_OR_PROCESSOR_OPTICALFLOW_H
+

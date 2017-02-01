@@ -1,9 +1,8 @@
-#ifndef SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
-#define SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
+#ifndef SOFA_OR_PROCESSOR_DESCRIPTORMATCHER_H
+#define SOFA_OR_PROCESSOR_DESCRIPTORMATCHER_H
 
-#include "initplugin.h"
 #include "Matchers.h"
-#include "ImageFilter.h"
+#include "core/ImageFilter.h"
 
 #include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvDMatch.h>
@@ -83,4 +82,4 @@ class DescriptorMatcher : public ImageFilter
 }  // namespace OR
 }  // namespace sofa
 
-#endif  // SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
+#endif  // SOFA_OR_PROCESSOR_DESCRIPTORMATCHER_H

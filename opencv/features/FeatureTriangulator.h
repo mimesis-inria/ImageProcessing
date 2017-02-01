@@ -1,15 +1,11 @@
 #ifndef SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
 #define SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
 
-#include "initplugin.h"
-
 #include <SofaORCommon/ImplicitDataEngine.h>
-#include <SofaORCommon/CalibLoader.h>
-#include <SofaORCommon/CameraCalib.h>
-#include <SofaORCommon/StereoCalib.h>
 #include <SofaORCommon/cvDMatch.h>
 #include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvMat.h>
+#include <SofaORCommon/cvMatUtils.h>
 
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/SVector.h>

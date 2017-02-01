@@ -1,8 +1,9 @@
 #ifndef SOFA_OR_PROCESSOR_DETECTORS_H
 #define SOFA_OR_PROCESSOR_DETECTORS_H
 
+#include "core/ImageFilter.h"
+
 #include <SofaORCommon/cvMat.h>
-#include "ImageFilter.h"
 
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/vector.h>

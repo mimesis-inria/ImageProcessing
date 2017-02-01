@@ -1,5 +1,5 @@
-#ifndef SOFA_OR_PROCESSOR_DETECTORS_H
-#define SOFA_OR_PROCESSOR_DETECTORS_H
+#ifndef SOFA_OR_PROCESSOR_MATCHERS_H
+#define SOFA_OR_PROCESSOR_MATCHERS_H
 
 #include <SofaORCommon/cvMat.h>
 
@@ -177,8 +177,8 @@ struct FlannMatcher : BaseMatcher
   IndexParams* m_indexParams;
 };
 
-}  // namespace sofa
-}  // namespace OR
 }  // namespace processor
+}  // namespace OR
+}  // namespace sofa
 
-#endif  // SOFA_OR_PROCESSOR_DETECTORS_H
+#endif  // SOFA_OR_PROCESSOR_MATCHERS_H
