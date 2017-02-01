@@ -176,8 +176,10 @@ bool MatchingConstraints::computeEpipolarLines()
 
   if (!d_F.getValue().empty())
   {
-    cv::computeCorrespondEpilines(ptsL, 1, d_F.getValue(), m_epilinesL);
-    cv::computeCorrespondEpilines(ptsR, 2, d_F.getValue(), m_epilinesR);
+    cv::Mat_<double> f;
+    common::matrix::sofaMat2cvMat(d_F.getValue(), f);
+    cv::computeCorrespondEpilines(ptsL, 1, f, m_epilinesL);
+    cv::computeCorrespondEpilines(ptsR, 2, f, m_epilinesR);
   }
   else
   {

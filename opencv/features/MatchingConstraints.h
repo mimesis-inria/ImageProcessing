@@ -7,6 +7,7 @@
 #include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvDMatch.h>
 #include <SofaORCommon/cvMat.h>
+#include <SofaORCommon/cvMatUtils.h>
 
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/SVector.h>
@@ -36,7 +37,7 @@ class MatchingConstraints : public ImageFilter
   // INPUTS
   Data<bool> d_useEpipolarFilter;
   Data<int> d_epipolarThreshold;
-  Data<common::cvMat> d_F;
+  Data<defaulttype::Matrix3> d_F;
   Data<bool> d_useMDFilter;
   Data<float> d_mdfRadius;
   Data<bool> d_useKNNFilter;

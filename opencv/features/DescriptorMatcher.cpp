@@ -86,7 +86,7 @@ void DescriptorMatcher::init()
   addInput(&d_kptsL);
   addInput(&d_kptsR);
 
-  bindInputData(&d_mask);
+  addInput(&d_mask);
   addOutput(&d_matches);
   setDirtyValue();
   ImageFilter::init();
