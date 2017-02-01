@@ -17,7 +17,7 @@ int DescriptorMatcherClass =
         .add<DescriptorMatcher>();
 
 DescriptorMatcher::DescriptorMatcher()
-    : ImageFilter(),
+    : ImageFilter(false),
       d_matcherType(initData(&d_matcherType, "matcher",
                              "type of matcher to use (BRUTEFORCE or FLANN).")),
       d_matchingAlgo(initData(

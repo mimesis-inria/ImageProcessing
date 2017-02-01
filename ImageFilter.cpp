@@ -110,7 +110,7 @@ void ImageFilter::callback(int val, void* holder)
 
 unsigned ImageFilter::m_window_uid = 0;
 
-ImageFilter::ImageFilter()
+ImageFilter::ImageFilter(bool outputImage)
     : d_img(initData(
           &d_img, common::cvMat(), "img",
           "Input image, that will undergo changes through the filter.")),
@@ -119,7 +119,7 @@ ImageFilter::ImageFilter()
       d_displayDebugWindow(initData(&d_displayDebugWindow, false, "Debug",
                                     "Display a debug window to see in live "
                                     "the changes applied to the filter")),
-      m_outputImage(true),
+      m_outputImage(outputImage),
       m_win_name(std::to_string(m_window_uid) + "_" + getClassName())
 {
   addAlias(&d_img_out, "img1_out");

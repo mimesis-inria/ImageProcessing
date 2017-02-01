@@ -18,7 +18,7 @@ int FeatureRectifierClass =
         .add<FeatureRectifier>();
 
 FeatureRectifier::FeatureRectifier()
-    : ImageFilter(),
+    : ImageFilter(false),
       d_calib(initData(
           &d_calib, "calib",
           "camera calibration data (only the distorsion vector is used)")),

@@ -40,7 +40,7 @@ class OpticalFlow : public ImageFilter
         d_epsilon(initData(&d_epsilon, 0.1, "epsilon", "")),
         d_flags(initData(&d_flags, 0, "flags", "")),
         d_minEigThresh(initData(&d_minEigThresh, 1e-4, "eigen_threshold", "")),
-        d_points_in(initData(&d_points_in, "points_in",
+        d_points_in(initData(&d_points_in, "points",
                              "set of input points to track")),
         d_points_out(initData(&d_points_out, "points_out",
                               "set of output points to track"))

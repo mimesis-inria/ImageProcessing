@@ -1,9 +1,9 @@
 #ifndef SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
 #define SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
 
-#include "ImageFilter.h"
 #include "initplugin.h"
 
+#include <SofaORCommon/ImplicitDataEngine.h>
 #include <SofaORCommon/CalibLoader.h>
 #include <SofaORCommon/CameraCalib.h>
 #include <SofaORCommon/StereoCalib.h>
@@ -22,10 +22,10 @@ namespace OR
 {
 namespace processor
 {
-class FeatureTriangulator : public ImageFilter
+class FeatureTriangulator : public common::ImplicitDataEngine
 {
  public:
-  SOFA_CLASS(FeatureTriangulator, ImageFilter);
+  SOFA_CLASS(FeatureTriangulator, common::ImplicitDataEngine);
 
  public:
   FeatureTriangulator();
@@ -33,35 +33,20 @@ class FeatureTriangulator : public ImageFilter
 
   void init();
   void update();
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
   void reinit();
   void triangulate(const cv::Point2f& l, const cv::Point2f& r,
                    defaulttype::Vec3d& p);
 
-  void getCalibFromContext()
-  {
-    common::CalibLoader* lastCalib =
-        this->getContext()->get<common::CalibLoader>();
-    if (lastCalib)
-    {
-        // TODO uncomment!!!!!
-//      d_extrinsics.setParent(&lastCalib->d_stereoCalib,
-//                             "@" + lastCalib->getPathName() + ".stereo_calib");
-//      d_camLeft.setParent(&lastCalib->d_leftCalib,
-//                          "@" + lastCalib->getPathName() + ".left_calib");
-//      d_camRight.setParent(&lastCalib->d_rightCalib,
-//                           "@" + lastCalib->getPathName() + ".right_calib");
-//      msg_info(getClassName() + "::init()")
-//          << "Triangulator: Calibration data initialized from graph";
-    }
-  }
-
   // DATA
   Data<bool> d_rectify;
   // INPUTS
-  Data<common::StereoCalib> d_extrinsics;
-  Data<common::CameraCalib> d_camLeft;
-  Data<common::CameraCalib> d_camRight;
+  Data<defaulttype::Matrix3> d_R;
+  Data<defaulttype::Vector3> d_T;
+  Data<defaulttype::Matrix3> d_cmL;
+  Data<defaulttype::Matrix3> d_cmR;
+  Data<helper::vector<double> > d_dvL;
+  Data<helper::vector<double> > d_dvR;
+
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR;
   Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;

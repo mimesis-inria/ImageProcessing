@@ -20,7 +20,7 @@ class ImageFilter : public common::ImplicitDataEngine
  public:
   SOFA_CLASS(ImageFilter, common::ImplicitDataEngine);
 
-  ImageFilter();
+  ImageFilter(bool outputImage = true);
   virtual ~ImageFilter();
 
   virtual void init();

@@ -18,45 +18,51 @@ int FeatureTriangulatorClass =
         .add<FeatureTriangulator>();
 
 FeatureTriangulator::FeatureTriangulator()
-    : ImageFilter(),
-      d_rectify(initData(
+    : d_rectify(initData(
           &d_rectify, false, "rectify",
           "if set to true, points will be rectified before triangulating")),
-      d_extrinsics(initData(&d_extrinsics, "extrinsics",
-                            "extrinsic parameters of a stereo camera", true,
+      d_R(initData(&d_R, "R",
+                            "3x3 rotation matrix (extrinsic parameter of the camera)", true,
                             true)),
-      d_camLeft(initData(&d_camLeft, "cam_left",
-                         "left intrinsics camera params", true, true)),
-      d_camRight(initData(&d_camRight, "cam_right",
-                          "right intrinsics camera params", true, true)),
-      d_keypointsL(initData(&d_keypointsL, "keypointsL",
+      d_T(initData(&d_T, "T",
+                         "translation vector (extrinsic parameter of the camera)", true, true)),
+      d_cmL(initData(&d_cmL, "projMat1",
+                          "projection matrix for the first camera", true, true)),
+      d_cmR(initData(&d_cmR, "projMat2",
+                            "projection matrix for the second camera", true,
+                            true)),
+      d_dvL(initData(&d_dvL, "distCoefs1",
+                         "distortion coefficients for the first camera", true, true)),
+      d_dvR(initData(&d_dvR, "distCoefs2",
+                          "distortion coefficients for the second camera", true, true)),
+      d_keypointsL(initData(&d_keypointsL, "keypoints1",
                             "input vector of left keypoints", true, true)),
-      d_keypointsR(initData(&d_keypointsR, "keypointsR",
+      d_keypointsR(initData(&d_keypointsR, "keypoints2",
                             "input vector of right keypoints", true, true)),
       d_matches(initData(&d_matches, "matches",
                          "input array of matches between the 2 vectors "
                          "(optional if keypoints are already sorted).",
                          true, true)),
       d_pointCloud(initData(&d_pointCloud, "pc", "output vector of 3D points"))
-
 {
-  m_outputImage = false;
 }
 
 FeatureTriangulator::~FeatureTriangulator() {}
 void FeatureTriangulator::init()
 {
-  getCalibFromContext();
-  addInput(&d_extrinsics);
-  addInput(&d_camLeft);
-  addInput(&d_camRight);
-  addInput(&d_matches);
-  addInput(&d_keypointsL);
-  addInput(&d_keypointsR);
+  bindInputData(&d_R);
+  bindInputData(&d_T);
+  bindInputData(&d_cmL);
+  bindInputData(&d_cmR);
+  bindInputData(&d_dvL);
+  bindInputData(&d_dvR);
+
+  bindInputData(&d_matches);
+  bindInputData(&d_keypointsL);
+  bindInputData(&d_keypointsR);
   addOutput(&d_pointCloud);
 
   setDirtyValue();
-  ImageFilter::init();
 }
 
 void FeatureTriangulator::update()
@@ -64,7 +70,31 @@ void FeatureTriangulator::update()
   std::cout << getName() << std::endl;
   updateAllInputsIfDirty();
   cleanDirty();
-  ImageFilter::update();
+  if (!f_listening.getValue()) return;
+
+  common::matrix::sofaMat2cvMat(d_R.getValue(), R);
+  common::matrix::sofaVector2cvMat(d_T.getValue(), T);
+  common::matrix::sofaMat2cvMat(d_cmL.getValue(), cmL);
+  common::matrix::sofaMat2cvMat(d_cmR.getValue(), cmR);
+  common::matrix::sofaVector2cvMat(d_dvL.getValue(), dvL);
+  common::matrix::sofaVector2cvMat(d_dvR.getValue(), dvR);
+  PL = cv::Matx34d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
+  PR = cv::Matx34d(R[0][0], R[0][1], R[0][2], T[0][0], R[1][0], R[1][1],
+                   R[1][2], T[0][1], R[2][0], R[2][1], R[2][2], T[0][2]);
+
+  helper::vector<defaulttype::Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
+  const helper::vector<common::cvKeypoint>& kL = d_keypointsL.getValue();
+  const helper::vector<common::cvKeypoint>& kR = d_keypointsR.getValue();
+  const helper::SVector<helper::SVector<common::cvDMatch> >& m =
+      d_matches.getValue();
+  pts.resize(kL.size());
+
+  if (m.size() == pts.size())
+    for (size_t i = 0; i < m.size(); ++i)
+      triangulate(kL[m[i][0].queryIdx].pt, kR[m[i][0].trainIdx].pt, pts[i]);
+  else
+    for (size_t i = 0; i < pts.size(); ++i)
+      triangulate(kL[i].pt, kR[i].pt, pts[i]);
   d_pointCloud.setDirtyOutputs();
   std::cout << "end" << getName() << std::endl;
 }
@@ -185,36 +215,7 @@ void FeatureTriangulator::triangulate(const cv::Point2f& l,
   p = defaulttype::Vec3d(X(0), X(1), X(2));
 }
 
-void FeatureTriangulator::applyFilter(const cv::Mat&, cv::Mat&, bool)
-{
-  if (!f_listening.getValue()) return;
-
-  common::matrix::sofaMat2cvMat(d_extrinsics.getValue().R, R);
-  common::matrix::sofaVector2cvMat(d_extrinsics.getValue().T, T);
-  common::matrix::sofaMat2cvMat(d_camLeft.getValue().cameraMatrix, cmL);
-  common::matrix::sofaMat2cvMat(d_camRight.getValue().cameraMatrix, cmR);
-  common::matrix::sofaVector2cvMat(d_camLeft.getValue().distCoefs, dvL);
-  common::matrix::sofaVector2cvMat(d_camRight.getValue().distCoefs, dvR);
-  PL = cv::Matx34d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
-  PR = cv::Matx34d(R[0][0], R[0][1], R[0][2], T[0][0], R[1][0], R[1][1],
-                   R[1][2], T[0][1], R[2][0], R[2][1], R[2][2], T[0][2]);
-
-  helper::vector<defaulttype::Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
-  const helper::vector<common::cvKeypoint>& kL = d_keypointsL.getValue();
-  const helper::vector<common::cvKeypoint>& kR = d_keypointsR.getValue();
-  const helper::SVector<helper::SVector<common::cvDMatch> >& m =
-      d_matches.getValue();
-  pts.resize(kL.size());
-
-  if (m.size() == pts.size())
-    for (size_t i = 0; i < m.size(); ++i)
-      triangulate(kL[m[i][0].queryIdx].pt, kR[m[i][0].trainIdx].pt, pts[i]);
-  else
-    for (size_t i = 0; i < pts.size(); ++i)
-      triangulate(kL[i].pt, kR[i].pt, pts[i]);
-}
-
-void FeatureTriangulator::reinit() { ImageFilter::reinit(); }
+void FeatureTriangulator::reinit() {}
 }  // namespace processor
 }  // namespace OR
 }  // namespace sofa

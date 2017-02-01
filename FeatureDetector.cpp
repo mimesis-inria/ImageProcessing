@@ -18,7 +18,7 @@ int FeatureDetectorClass =
         .add<FeatureDetector>();
 
 FeatureDetector::FeatureDetector()
-    : ImageFilter(),
+    : ImageFilter(false),
       d_detectMode(initData(&d_detectMode, "detectorMode",
                             "if true, does not compute the descriptors")),
       d_mask(initData(&d_mask, common::cvMat(), "mask",

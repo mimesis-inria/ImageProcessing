@@ -18,7 +18,7 @@ int MatchingConstraintsClass =
         .add<MatchingConstraints>();
 
 MatchingConstraints::MatchingConstraints()
-    : ImageFilter(),
+    : ImageFilter(false),
       d_useEpipolarFilter(
           initData(&d_useEpipolarFilter, false, "epipolarFilter",
                    "set to true to enable epipolar contrstraint filtering")),
@@ -101,7 +101,6 @@ MatchingConstraints::MatchingConstraints()
   addAlias(&d_knnLambdas, "knnScores_out");
 
   f_listening.setValue(true);
-  m_outputImage = false;
 }
 
 MatchingConstraints::~MatchingConstraints() {}
