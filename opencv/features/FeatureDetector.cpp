@@ -29,10 +29,11 @@ FeatureDetector::FeatureDetector()
           initData(&d_detectorType, "detectorType",
                    "Available feature detection algoritms: FAST, "
                    "MSER, ORB, BRISK, KAZE, AKAZE, SIFT, SURF, BRIEF, DAISY")),
-      d_keypoints(
-          initData(&d_keypoints, "keypoints", "output array of cvKeypoints", false)),
+      d_keypoints(initData(&d_keypoints, "keypoints",
+                           "output array of cvKeypoints", false)),
       d_descriptors(initData(&d_descriptors, "descriptors",
-                             "output cvMat of feature descriptors", false, true))
+                             "output cvMat of feature descriptors", false,
+                             true))
 {
   addAlias(&d_keypoints, "keypoints_out");
   addAlias(&d_descriptors, "descriptors_out");
@@ -113,12 +114,14 @@ void FeatureDetector::init()
 void FeatureDetector::update()
 {
   std::cout << getName() << std::endl;
+  if (!d_img.isDirty()) return;
   ImageFilter::update();
 
   switch (d_detectMode.getValue().getSelectedId())
   {
     case DETECT_ONLY:
     {
+      if (!d_img.isDirty()) return;
       sofa::helper::vector<common::cvKeypoint>* vec = d_keypoints.beginEdit();
       vec->clear();
       for (cv::KeyPoint& kp : _v) vec->push_back(common::cvKeypoint(kp));
@@ -128,6 +131,7 @@ void FeatureDetector::update()
     }
     case COMPUTE_ONLY:
     {
+      if (!d_keypoints.isDirty()) return;
       d_descriptors.setValue(_d);
       d_keypoints.cleanDirty();
       d_descriptors.setDirtyOutputs();
@@ -135,6 +139,7 @@ void FeatureDetector::update()
     }
     case DETECT_AND_COMPUTE:
     {
+      if (!d_img.isDirty()) return;
       sofa::helper::vector<common::cvKeypoint>* vec =
           d_keypoints.beginWriteOnly();
       vec->clear();

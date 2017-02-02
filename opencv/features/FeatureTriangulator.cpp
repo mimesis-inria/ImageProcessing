@@ -22,19 +22,21 @@ FeatureTriangulator::FeatureTriangulator()
           &d_rectify, false, "rectify",
           "if set to true, points will be rectified before triangulating")),
       d_R(initData(&d_R, "R",
-                            "3x3 rotation matrix (extrinsic parameter of the camera)", true,
-                            true)),
+                   "3x3 rotation matrix (extrinsic parameter of the camera)",
+                   true, true)),
       d_T(initData(&d_T, "T",
-                         "translation vector (extrinsic parameter of the camera)", true, true)),
+                   "translation vector (extrinsic parameter of the camera)",
+                   true, true)),
       d_cmL(initData(&d_cmL, "projMat1",
-                          "projection matrix for the first camera", true, true)),
+                     "projection matrix for the first camera", true, true)),
       d_cmR(initData(&d_cmR, "projMat2",
-                            "projection matrix for the second camera", true,
-                            true)),
+                     "projection matrix for the second camera", true, true)),
       d_dvL(initData(&d_dvL, "distCoefs1",
-                         "distortion coefficients for the first camera", true, true)),
+                     "distortion coefficients for the first camera", true,
+                     true)),
       d_dvR(initData(&d_dvR, "distCoefs2",
-                          "distortion coefficients for the second camera", true, true)),
+                     "distortion coefficients for the second camera", true,
+                     true)),
       d_keypointsL(initData(&d_keypointsL, "keypoints1",
                             "input vector of left keypoints", true, true)),
       d_keypointsR(initData(&d_keypointsR, "keypoints2",
@@ -43,8 +45,14 @@ FeatureTriangulator::FeatureTriangulator()
                          "input array of matches between the 2 vectors "
                          "(optional if keypoints are already sorted).",
                          true, true)),
-      d_pointCloud(initData(&d_pointCloud, "pc", "output vector of 3D points"))
+      d_pointCloud(
+          initData(&d_pointCloud, "positions", "output vector of 3D points")),
+      d_pointCloudColors(initData(&d_pointCloudColors, "colors",
+                                  "output vector of rgb point color"))
 {
+  f_listening.setValue(true);
+  addAlias(&d_pointCloud, "positions_out");
+  addAlias(&d_pointCloudColors, "colors_out");
 }
 
 FeatureTriangulator::~FeatureTriangulator() {}
@@ -60,13 +68,18 @@ void FeatureTriangulator::init()
   bindInputData(&d_matches);
   bindInputData(&d_keypointsL);
   bindInputData(&d_keypointsR);
+
+  addInput(&d_img);
+
   addOutput(&d_pointCloud);
+  addOutput(&d_pointCloudColors);
 
   setDirtyValue();
 }
 
 void FeatureTriangulator::update()
 {
+  if (!d_keypointsL.isDirty()) return;
   std::cout << getName() << std::endl;
   updateAllInputsIfDirty();
   cleanDirty();
@@ -82,20 +95,48 @@ void FeatureTriangulator::update()
   PR = cv::Matx34d(R[0][0], R[0][1], R[0][2], T[0][0], R[1][0], R[1][1],
                    R[1][2], T[0][1], R[2][0], R[2][1], R[2][2], T[0][2]);
 
-  helper::vector<defaulttype::Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
+  helper::vector<Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
+  helper::vector<Vec3b>& colors = *(d_pointCloudColors.beginWriteOnly());
+
   const helper::vector<common::cvKeypoint>& kL = d_keypointsL.getValue();
   const helper::vector<common::cvKeypoint>& kR = d_keypointsR.getValue();
   const helper::SVector<helper::SVector<common::cvDMatch> >& m =
       d_matches.getValue();
   pts.resize(kL.size());
+  colors.resize(kL.size());
 
-  if (m.size() == pts.size())
-    for (size_t i = 0; i < m.size(); ++i)
-      triangulate(kL[m[i][0].queryIdx].pt, kR[m[i][0].trainIdx].pt, pts[i]);
+  if (d_img.isSet() && !d_img.getValue().empty())
+  {
+    if (m.size() == pts.size())
+      for (size_t i = 0; i < m.size(); ++i)
+      {
+        cv::Point2f ptL = kL[m[i][0].queryIdx].pt;
+        triangulate(ptL, kR[m[i][0].trainIdx].pt, pts[i]);
+        cv::Vec3b c = d_img.getValue().at<cv::Vec3b>(ptL.y, ptL.x);
+        colors[i] = Vec3b(c[0], c[1], c[2]);
+      }
+    else
+      for (size_t i = 0; i < pts.size(); ++i)
+      {
+        triangulate(kL[i].pt, kR[i].pt, pts[i]);
+        cv::Vec3b c = d_img.getValue().at<cv::Vec3b>(kL[i].pt.y, kL[i].pt.x);
+        colors[i] = Vec3b(c[0], c[1], c[2]);
+      }
+    d_pointCloud.endEdit();
+    d_pointCloudColors.endEdit();
+  }
   else
-    for (size_t i = 0; i < pts.size(); ++i)
-      triangulate(kL[i].pt, kR[i].pt, pts[i]);
+  {
+    if (m.size() == pts.size())
+      for (size_t i = 0; i < m.size(); ++i)
+        triangulate(kL[m[i][0].queryIdx].pt, kR[m[i][0].trainIdx].pt, pts[i]);
+    else
+      for (size_t i = 0; i < pts.size(); ++i)
+        triangulate(kL[i].pt, kR[i].pt, pts[i]);
+    d_pointCloud.endEdit();
+  }
   d_pointCloud.setDirtyOutputs();
+  d_pointCloudColors.setDirtyOutputs();
   std::cout << "end" << getName() << std::endl;
 }
 

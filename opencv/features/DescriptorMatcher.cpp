@@ -93,6 +93,8 @@ void DescriptorMatcher::init()
 }
 void DescriptorMatcher::update()
 {
+  if (!d_queryDescriptors.isDirty()) return;
+
   std::cout << getName() << std::endl;
   ImageFilter::update();
 

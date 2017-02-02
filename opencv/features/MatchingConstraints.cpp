@@ -208,6 +208,7 @@ void MatchingConstraints::computeEpipolarDistances()
 
 void MatchingConstraints::update()
 {
+  if (!d_matches_in.isDirty()) return;
   std::cout << getName() << std::endl;
   // All precomputations for the filters, only done once per new batch of
   // inputs

@@ -20,6 +20,8 @@ namespace processor
 {
 class FeatureTriangulator : public common::ImplicitDataEngine
 {
+    typedef defaulttype::Vec<3,uint8_t> Vec3b;
+    typedef defaulttype::Vec3d Vec3d;
  public:
   SOFA_CLASS(FeatureTriangulator, common::ImplicitDataEngine);
 
@@ -46,8 +48,13 @@ class FeatureTriangulator : public common::ImplicitDataEngine
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR;
   Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
+
+  // INPUT (OPTIONAL)
+  Data<common::cvMat> d_img;
+
   // OUTPUTS
-  Data<sofa::helper::vector<defaulttype::Vec3d> > d_pointCloud;
+  Data<sofa::helper::vector<Vec3d> > d_pointCloud;
+  Data<sofa::helper::vector<Vec3b> > d_pointCloudColors;
 
  private:
   cv::Mat_<double> R;
