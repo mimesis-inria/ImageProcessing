@@ -119,6 +119,8 @@ ImageFilter::ImageFilter(bool outputImage)
       d_displayDebugWindow(initData(&d_displayDebugWindow, false, "Debug",
                                     "Display a debug window to see in live "
                                     "the changes applied to the filter")),
+      d_isActive(initData(&d_isActive, true, "isActive",
+                                    "if false, does not call applyFilter")),
       m_outputImage(outputImage),
       m_win_name(std::to_string(m_window_uid) + "_" + getClassName())
 {
@@ -141,12 +143,18 @@ void ImageFilter::update()
 {
   updateAllInputsIfDirty();
   cleanDirty();
-  if (!f_listening.getValue())
+  if (!d_isActive.getValue())
   {
     // filter inactive, out = in
     d_img_out.setValue(d_img.getValue());
     d_img_out.endEdit();
     d_img_out.setDirtyOutputs();
+    if (d_displayDebugWindow.getValue())
+    {
+      cv::imshow(m_win_name, d_img_out.getValue());
+      cv::waitKey(1);
+    }
+    return;
   }
   cv::Mat empty = d_img.getValue().zeros(
       d_img.getValue().rows, d_img.getValue().cols, d_img.getValue().type());

@@ -48,7 +48,10 @@ FeatureTriangulator::FeatureTriangulator()
       d_pointCloud(
           initData(&d_pointCloud, "positions", "output vector of 3D points")),
       d_pointCloudColors(initData(&d_pointCloudColors, "colors",
-                                  "output vector of rgb point color"))
+                                  "output vector of rgb point color")),
+      d_img(initData(
+          &d_img, "img",
+          "image from which to extract point color (based on left keypoints"))
 {
   f_listening.setValue(true);
   addAlias(&d_pointCloud, "positions_out");
@@ -79,7 +82,6 @@ void FeatureTriangulator::init()
 
 void FeatureTriangulator::update()
 {
-  if (!d_keypointsL.isDirty()) return;
   std::cout << getName() << std::endl;
   updateAllInputsIfDirty();
   cleanDirty();
@@ -137,7 +139,6 @@ void FeatureTriangulator::update()
   }
   d_pointCloud.setDirtyOutputs();
   d_pointCloudColors.setDirtyOutputs();
-  std::cout << "end" << getName() << std::endl;
 }
 
 cv::Point3d FeatureTriangulator::rectifyPoint(double x, double y,

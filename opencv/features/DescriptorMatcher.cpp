@@ -93,7 +93,6 @@ void DescriptorMatcher::init()
 }
 void DescriptorMatcher::update()
 {
-  if (!d_queryDescriptors.isDirty()) return;
 
   std::cout << getName() << std::endl;
   ImageFilter::update();
@@ -117,8 +116,6 @@ void DescriptorMatcher::update()
 
 void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 {
-  if (!f_listening.getValue()) return;
-
   if (d_queryDescriptors.getValue().empty() ||
       d_trainDescriptors.getValue().empty())
     return;

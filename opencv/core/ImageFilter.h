@@ -40,6 +40,7 @@ class ImageFilter : public common::ImplicitDataEngine
   Data<common::cvMat> d_img;
   Data<common::cvMat> d_img_out;
   Data<bool> d_displayDebugWindow;
+  Data<bool> d_isActive;
 
   virtual void handleEvent(sofa::core::objectmodel::Event* event)
   {
