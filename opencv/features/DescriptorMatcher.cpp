@@ -114,7 +114,7 @@ void DescriptorMatcher::update()
   std::cout << "end" << getName() << std::endl;
 }
 
-void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
+void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (d_queryDescriptors.getValue().empty() ||
       d_trainDescriptors.getValue().empty())

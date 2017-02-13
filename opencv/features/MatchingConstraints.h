@@ -47,10 +47,9 @@ class MatchingConstraints : public ImageFilter
   Data<common::cvMat> d_descriptorsL_in;
   Data<common::cvMat> d_descriptorsR_in;
   Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_in;
-  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_out;
-
 
   // OUTPUTS
+  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_out;
   Data<sofa::helper::vector<size_t> > d_outliers_out;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_out;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_out;

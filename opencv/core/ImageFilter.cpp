@@ -120,7 +120,7 @@ ImageFilter::ImageFilter(bool outputImage)
                                     "Display a debug window to see in live "
                                     "the changes applied to the filter")),
       d_isActive(initData(&d_isActive, true, "isActive",
-                                    "if false, does not call applyFilter")),
+                          "if false, does not call applyFilter")),
       m_outputImage(outputImage),
       m_win_name(std::to_string(m_window_uid) + "_" + getClassName())
 {
@@ -203,6 +203,8 @@ bool ImageFilter::reinitDebugWindow()
     cv::setTrackbarPos(h.data->getName(), m_win_name,
                        h.getTrackbarRangedValue());
   }
+  if (m_isMouseCallbackActive)
+    cv::setMouseCallback(m_win_name, &ImageFilter::_mouseCallback, this);
   return true;
 }
 
@@ -218,6 +220,11 @@ void ImageFilter::refreshDebugWindow()
 void ImageFilter::drawDebug()
 {
   if (reinitDebugWindow()) refreshDebugWindow();
+}
+
+void ImageFilter::activateMouseCallback()
+{
+  m_isMouseCallbackActive = !m_isMouseCallbackActive;
 }
 
 void ImageFilter::unregisterAllData() { m_params.clear(); }

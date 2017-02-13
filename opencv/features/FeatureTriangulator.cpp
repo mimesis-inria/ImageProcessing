@@ -109,7 +109,7 @@ void FeatureTriangulator::update()
 
   if (d_img.isSet() && !d_img.getValue().empty())
   {
-    if (m.size() == pts.size())
+    if (d_matches.isSet())
       for (size_t i = 0; i < m.size(); ++i)
       {
         cv::Point2f ptL = kL[m[i][0].queryIdx].pt;
@@ -129,7 +129,7 @@ void FeatureTriangulator::update()
   }
   else
   {
-    if (m.size() == pts.size())
+    if (d_matches.isSet())
       for (size_t i = 0; i < m.size(); ++i)
         triangulate(kL[m[i][0].queryIdx].pt, kR[m[i][0].trainIdx].pt, pts[i]);
     else

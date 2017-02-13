@@ -214,7 +214,8 @@ void MatchingConstraints::update()
   updateAllInputsIfDirty();
   cleanDirty();
 
-  if (d_keypointsR_in.getValue().size() != d_descriptorsR_in.getValue().rows)
+  if (d_keypointsR_in.getValue().size() !=
+      size_t(d_descriptorsR_in.getValue().rows))
   {
     std::cout << "-- WTF???? ##KPTS != DESC##" << std::endl;
     return;
@@ -230,8 +231,8 @@ void MatchingConstraints::update()
   m_kptsR.reserve(matches.size());
   m_matches_out.resize(matches.size(), std::vector<cv::DMatch>(2));
 
-  for (int i = 0; i < matches.size(); ++i)
-    for (int j = 0; j < 2; ++j) m_matches_out[i][j] = matches[i][j];
+  for (size_t i = 0; i < matches.size(); ++i)
+    for (size_t j = 0; j < 2; ++j) m_matches_out[i][j] = matches[i][j];
   m_descL = cv::Mat(int(matches.size()), d_descriptorsL_in.getValue().cols,
                     d_descriptorsL_in.getValue().type());
   m_descR = cv::Mat(int(matches.size()), d_descriptorsL_in.getValue().cols,
@@ -267,6 +268,8 @@ void MatchingConstraints::update()
 
   ImageFilter::update();
   setDirtyOutputs();
+  std::cout << d_matches_out.getValue().size() << std::endl;
+  std::cout << d_keypointsL_out.getValue().size() << std::endl;
   std::cout << "end" << getName() << std::endl;
 }
 void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
@@ -386,8 +389,8 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     inliersIdx = i - outliers.size();
 
     dm[0] = in_matches[i][0];
-    dm[0].trainIdx = i;
-    dm[0].queryIdx = i;
+    dm[0].trainIdx = inliersIdx;
+    dm[0].queryIdx = inliersIdx;
     out_matches[inliersIdx] = dm;
     kptsL[inliersIdx] = m_kptsL[i];
     kptsR[inliersIdx] = m_kptsR[i];
@@ -409,6 +412,8 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   }
 
   d_outliers_out.endEdit();
+  out_matches.resize(inliersIdx);
+  d_matches_out.endEdit();
   kptsL.resize(inliersIdx);
   d_keypointsL_out.endEdit();
   kptsR.resize(inliersIdx);

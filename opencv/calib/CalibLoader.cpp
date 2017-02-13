@@ -232,6 +232,8 @@ void CalibLoader::getAllCalibFiles(std::vector<std::string>& calibFiles)
 
 void CalibLoader::init()
 {
+  d_calibNames.beginWriteOnly()->setSelectedItemToDefault();
+  d_calibNames.endEdit();
   addOutput(&d_isStereo);
   addOutput(&d_calibNames);
 

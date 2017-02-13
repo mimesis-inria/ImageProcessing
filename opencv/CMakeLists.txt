@@ -16,8 +16,9 @@ set(HEADER_FILES
   features/MatchingConstraints.h
   features/OpticalFlow.h
   imgproc/CannyFilter.h
+  imgproc/SobelFilter.h
   imgproc/ImageRectifier.h
-  #imgproc/ImageConverter.h
+  imgproc/Segmenter2D.h
   calib/CalibLoader.h
   )
 
@@ -32,8 +33,9 @@ set(SOURCE_FILES
   features/MatchingConstraints.cpp
   features/OpticalFlow.cpp
   imgproc/CannyFilter.cpp
+  imgproc/SobelFilter.cpp
   imgproc/ImageRectifier.cpp
-  #imgproc/ImageConverter.cpp
+  imgproc/Segmenter2D.cpp
   calib/CalibLoader.cpp
   )
 

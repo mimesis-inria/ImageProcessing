@@ -1,8 +1,8 @@
 #ifndef SOFA_OR_PROCESSOR_IMAGEFILTER_H
 #define SOFA_OR_PROCESSOR_IMAGEFILTER_H
 
-#include <SofaORCommon/cvMat.h>
 #include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaORCommon/cvMat.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
@@ -16,6 +16,11 @@ namespace processor
 class ImageFilter : public common::ImplicitDataEngine
 {
   static void callback(int val, void* holder);
+
+  static void _mouseCallback(int e, int x, int y, int f, void* d)
+  {
+    reinterpret_cast<ImageFilter*>(d)->mouseCallback(e, x, y, f);
+  }
 
  public:
   SOFA_CLASS(ImageFilter, common::ImplicitDataEngine);
@@ -48,6 +53,7 @@ class ImageFilter : public common::ImplicitDataEngine
       this->update();
   }
 
+  void activateMouseCallback();
   // Pass data to this methods to bind them to the OpenCV UI
   void registerData(Data<bool>* data, int min = 0, int max = 1, int step = 1);
   void registerData(Data<int>* data, int min, int max, int step);
@@ -58,6 +64,7 @@ class ImageFilter : public common::ImplicitDataEngine
   void unregisterAllData();
 
  protected:
+  virtual void mouseCallback(int, int, int, int) {}
   static unsigned m_window_uid;
   cv::Mat m_debugImage;
 
@@ -65,6 +72,7 @@ class ImageFilter : public common::ImplicitDataEngine
   // such as FeatureDetectors / matchers, where we want to visualize filters in
   // the debug window, but we don't need the debug output for other filters)
   bool m_outputImage;
+  bool m_isMouseCallbackActive;
 
  private:
   struct Holder
