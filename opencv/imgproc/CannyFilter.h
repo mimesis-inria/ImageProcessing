@@ -62,14 +62,19 @@ class CannyFilter : public ImageFilter
       return;
     }
 
-    cv::Mat img_grey;
-    cv::cvtColor(in, img_grey, CV_BGRA2GRAY);
+    cv::Mat img_gray;
+    if (in.type() == CV_8UC4)
+        cv::cvtColor(in, img_gray, CV_BGRA2GRAY);
+    else img_gray = in.clone();
 
-    cv::Canny(img_grey, img_grey, d_minThreshold.getValue(),
+    cv::Canny(img_gray, img_gray, d_minThreshold.getValue(),
               d_maxThreshold.getValue(), d_apertureSize.getValue(),
               d_l2gradient.getValue());
 
-    cv::cvtColor(img_grey, out, CV_GRAY2BGRA);
+    if (out.type() == CV_8UC4)
+        cv::cvtColor(img_gray, out, CV_GRAY2BGRA);
+    else
+        out = img_gray;
   }
 };
 
