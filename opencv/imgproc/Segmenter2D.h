@@ -49,19 +49,16 @@ class Segmenter2D : public ImageFilter
 
   void init()
   {
-    bindInputData(&d_keypoints);
-    bindInputData(&d_matches);
-    addOutput(&d_regionPoly);
-    addOutput(&d_regionPoints);
-    addOutput(&d_regionLabel);
+    trackData(&d_keypoints);
+    trackData(&d_matches);
     ImageFilter::activateMouseCallback();
     setMouseState(&Segmenter2D::freeMove);
     ImageFilter::init();
   }
 
-  void updateData()
+  void update()
   {
-    update();
+    ImageFilter::update();
 
     if (d_regionPoly.getValue().empty()) return;
 
@@ -118,18 +115,6 @@ class Segmenter2D : public ImageFilter
     cv::Scalar color(255, 255, 255, 50);
     cv::fillPoly(out, pts, color);
     cv::addWeighted(in, 0.8, out, 0.2, 0.0, out);
-  }
-
-  void reinit()
-  {
-    updateData();
-    ImageFilter::reinit();
-  }
-
-  virtual void handleEvent(sofa::core::objectmodel::Event* event)
-  {
-    if (sofa::simulation::AnimateBeginEvent::checkEventType(event))
-      this->updateData();
   }
 
   // Mouse controls

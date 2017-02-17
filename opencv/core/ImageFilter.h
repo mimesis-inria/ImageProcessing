@@ -13,6 +13,34 @@ namespace OR
 {
 namespace processor
 {
+/**
+ *  \brief provides UI mechanisms for image filters
+ *
+ * Implementation good rules: @see ImplicitDataEngine for additional impl rules
+ *
+ * void init()
+ * {
+ *    // if your filter needs parameter tuning
+ *    registerData(&d_data, minVal, maxVal, step)
+ *
+ *    // if your filter requires manual interaction (e.g. Segmenter2D)
+ *    activateMouseCallback();
+ *
+ *    ImageFilter::init(); // Always call at the end of init()
+ * }
+ *
+ * // optional
+ * void reinit()
+ * {
+ *   ImageFilter::reinit();
+ * }
+ *
+ * void update()
+ * {
+ *   ImageFilter::update();
+ * }
+ *
+ */
 class ImageFilter : public common::ImplicitDataEngine
 {
   static void callback(int val, void* holder);
@@ -36,22 +64,13 @@ class ImageFilter : public common::ImplicitDataEngine
   virtual void applyFilter(const cv::Mat& in, cv::Mat& out,
                            bool debug = false) = 0;
 
-  // redraw the image for debugging purposes when changes are previewed on the
-  // filter, but not yet applied
-  virtual void drawDebug();
-  void refreshDebugWindow();
-  bool reinitDebugWindow();
+  // Creates the debugging window and its associated trackbars
+  void reinitDebugWindow();
 
   Data<common::cvMat> d_img;
   Data<common::cvMat> d_img_out;
   Data<bool> d_displayDebugWindow;
   Data<bool> d_isActive;
-
-  virtual void handleEvent(sofa::core::objectmodel::Event* event)
-  {
-    if (sofa::simulation::AnimateBeginEvent::checkEventType(event))
-      this->update();
-  }
 
   void activateMouseCallback();
   // Pass data to this methods to bind them to the OpenCV UI
@@ -75,6 +94,8 @@ class ImageFilter : public common::ImplicitDataEngine
   bool m_isMouseCallbackActive;
 
  private:
+  void refreshDebugWindow();
+  core::DataTracker m_displayDebugDataTracker;
   struct Holder
   {
     enum Type
@@ -134,7 +155,6 @@ class ImageFilter : public common::ImplicitDataEngine
 
   std::vector<Holder> m_params;
   const std::string m_win_name;
-  void getInputFromContext();
 };
 
 }  // namespace processor

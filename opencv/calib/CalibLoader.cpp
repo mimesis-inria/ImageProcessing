@@ -234,28 +234,21 @@ void CalibLoader::init()
 {
   d_calibNames.beginWriteOnly()->setSelectedItemToDefault();
   d_calibNames.endEdit();
-  addOutput(&d_isStereo);
-  addOutput(&d_calibNames);
 
-  addOutput(&d_projMat1);
-  addOutput(&d_distCoefs1);
-  addOutput(&d_error1);
+  trackData(&d_calibNames, true,
+            (ImplicitDataEngine::DataCallback)&CalibLoader::calibChanged);
+  trackData(&d_calibFolder, true,
+            (ImplicitDataEngine::DataCallback)&CalibLoader::calibFolderChanged);
 
-  addOutput(&d_projMat2);
-  addOutput(&d_distCoefs2);
-  addOutput(&d_error2);
-
-  addOutput(&d_R);
-  addOutput(&d_T);
-  addOutput(&d_F);
-  addOutput(&d_totalError);
-
-  reinit();
-  setDirtyOutputs();
+  calibFolderChanged(NULL);
 }
 
-void CalibLoader::update() {}
-void CalibLoader::reinit()
+void CalibLoader::calibChanged(core::objectmodel::BaseObject*)
+{
+  setCurrentCalib(d_calibNames.getValue().getSelectedItem());
+}
+
+void CalibLoader::calibFolderChanged(core::objectmodel::BaseObject*)
 {
   std::string calibname = d_calibNames.getValue().getSelectedItem();
 
@@ -297,6 +290,7 @@ void CalibLoader::reinit()
   }
 }
 
+void CalibLoader::update() {}
 }  // namespace processor
 }  // namespace OR
 }  // namespace sofa

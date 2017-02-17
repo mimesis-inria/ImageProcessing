@@ -31,7 +31,6 @@ class FeatureTriangulator : public common::ImplicitDataEngine
 
   void init();
   void update();
-  void reinit();
   void triangulate(const cv::Point2f& l, const cv::Point2f& r,
                    defaulttype::Vec3d& p);
 

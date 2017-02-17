@@ -67,54 +67,19 @@ void FeatureDetector::init()
 {
   std::cout << "Detector type: " << d_detectorType.getValue().getSelectedItem()
             << std::endl;
-  for (size_t i = 0; i < DetectorType_COUNT; ++i)
-  {
-    m_detectors[i]->init();
-    if (d_detectorType.getValue().getSelectedId() != i)
-      m_detectors[i]->toggleVisible(false);
-    else
-    {
-      unregisterAllData();
-      m_detectors[i]->registerData(this);
-      m_detectors[i]->init();
-    }
-  }
 
-  switch (d_detectMode.getValue().getSelectedId())
-  {
-    case DETECT_ONLY:
-      d_descriptors.setDisplayed(false);
-      addInput(&d_mask);
-      delOutput(&d_descriptors);
-      delInput(&d_keypoints);
-      addOutput(&d_keypoints);
-      break;
-    case COMPUTE_ONLY:
-      d_descriptors.setDisplayed(true);
-      delInput(&d_mask);
-      delOutput(&d_keypoints);
-      bindInputData(&d_keypoints);
-      addOutput(&d_descriptors);
-      break;
-    case DETECT_AND_COMPUTE:
-      d_descriptors.setDisplayed(true);
-      addInput(&d_mask);
-      delInput(&d_keypoints);
-      addOutput(&d_keypoints);
-      addOutput(&d_descriptors);
-      break;
-  }
-  m_dataTracker.trackData(d_detectMode);
-  m_dataTracker.trackData(d_detectorType);
+  detectTypeChanged(NULL);
+  detectModeChanged(NULL);
 
-  setDirtyValue();
+  trackData(&d_detectMode, true, (ImplicitDataEngine::DataCallback)&FeatureDetector::detectModeChanged);
+  trackData(&d_detectorType, true, (ImplicitDataEngine::DataCallback)&FeatureDetector::detectTypeChanged);
+
   ImageFilter::init();
 }
 
 void FeatureDetector::update()
 {
   std::cout << getName() << std::endl;
-  if (!d_img.isDirty()) return;
   ImageFilter::update();
 
   switch (d_detectMode.getValue().getSelectedId())
@@ -125,14 +90,11 @@ void FeatureDetector::update()
       vec->clear();
       for (cv::KeyPoint& kp : _v) vec->push_back(common::cvKeypoint(kp));
       d_keypoints.endEdit();
-      d_keypoints.setDirtyOutputs();
       break;
     }
     case COMPUTE_ONLY:
     {
       d_descriptors.setValue(_d);
-      d_keypoints.cleanDirty();
-      d_descriptors.setDirtyOutputs();
       break;
     }
     case DETECT_AND_COMPUTE:
@@ -143,8 +105,6 @@ void FeatureDetector::update()
       for (cv::KeyPoint& kp : _v) vec->push_back(common::cvKeypoint(kp));
       d_keypoints.endEdit();
       d_descriptors.setValue(_d);
-      d_keypoints.setDirtyOutputs();
-      d_descriptors.setDirtyOutputs();
       break;
     }
   }
@@ -153,7 +113,6 @@ void FeatureDetector::update()
 
 void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 {
-
   int detect = int(d_detectMode.getValue().getSelectedId());
   if (detect == DETECT_ONLY)
   {
@@ -207,51 +166,40 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
   }
 }
 
-void FeatureDetector::reinit()
+void FeatureDetector::detectModeChanged(core::objectmodel::BaseData*)
 {
-  if (m_dataTracker.isDirty(d_detectorType))
+  switch (d_detectMode.getValue().getSelectedId())
   {
-    for (size_t i = 0; i < DetectorType_COUNT; ++i)
-    {
-      if (i == d_detectorType.getValue().getSelectedId())
-      {
-        m_detectors[i]->toggleVisible(true);
-        m_detectors[i]->init();
-        unregisterAllData();
-        m_detectors[i]->registerData(this);
-      }
-      else
-        m_detectors[i]->toggleVisible(false);
-    }
+    case DETECT_ONLY:
+      d_descriptors.setDisplayed(false);
+      if (d_mask.isSet()) trackData(&d_mask);
+      break;
+    case COMPUTE_ONLY:
+      d_descriptors.setDisplayed(true);
+      if (d_mask.isSet()) trackData(&d_mask);
+      trackData(&d_keypoints);
+      break;
+    case DETECT_AND_COMPUTE:
+      d_descriptors.setDisplayed(true);
+      if (d_mask.isSet()) trackData(&d_mask);
+      break;
   }
-  if (m_dataTracker.isDirty(d_detectMode))
+}
+
+void FeatureDetector::detectTypeChanged(core::objectmodel::BaseData*)
+{
+  for (size_t i = 0; i < DetectorType_COUNT; ++i)
   {
-    switch (d_detectMode.getValue().getSelectedId())
+    if (i == d_detectorType.getValue().getSelectedId())
     {
-      case DETECT_ONLY:
-        d_descriptors.setDisplayed(false);
-        addInput(&d_mask);
-        delOutput(&d_descriptors);
-        delInput(&d_keypoints);
-        addOutput(&d_keypoints);
-        break;
-      case COMPUTE_ONLY:
-        d_descriptors.setDisplayed(true);
-        delInput(&d_mask);
-        delOutput(&d_keypoints);
-        addInput(&d_keypoints);
-        addOutput(&d_descriptors);
-        break;
-      case DETECT_AND_COMPUTE:
-        d_descriptors.setDisplayed(true);
-        addInput(&d_mask);
-        delInput(&d_keypoints);
-        addOutput(&d_keypoints);
-        addOutput(&d_descriptors);
-        break;
+      m_detectors[i]->toggleVisible(true);
+      m_detectors[i]->init();
+      unregisterAllData();
+      m_detectors[i]->registerData(this);
     }
+    else
+      m_detectors[i]->toggleVisible(false);
   }
-  ImageFilter::reinit();
 }
 
 }  // namespace processor

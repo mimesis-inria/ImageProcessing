@@ -66,7 +66,6 @@ class CalibLoader : public common::ImplicitDataEngine
 
   void init();
   void update();
-  void reinit();
 
   sofa::core::objectmodel::DataFileName d_calibFolder;
   Data<helper::OptionsGroup> d_calibNames;
@@ -87,6 +86,9 @@ class CalibLoader : public common::ImplicitDataEngine
 
  protected:
   std::map<std::string, CalibData> m_calibs;
+
+  void calibChanged(core::objectmodel::BaseObject*);
+  void calibFolderChanged(core::objectmodel::BaseObject*);
 
  private:
   void load(const std::string& calibfile);

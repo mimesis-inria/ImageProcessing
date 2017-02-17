@@ -113,9 +113,9 @@ unsigned ImageFilter::m_window_uid = 0;
 ImageFilter::ImageFilter(bool outputImage)
     : d_img(initData(
           &d_img, common::cvMat(), "img",
-          "Input image, that will undergo changes through the filter.")),
+          "Input image, that will undergo changes through the filter.", false)),
       d_img_out(initData(&d_img_out, "img_out",
-                         "Output image, holding the filter's result")),
+                         "Output image, holding the filter's result", false)),
       d_displayDebugWindow(initData(&d_displayDebugWindow, false, "Debug",
                                     "Display a debug window to see in live "
                                     "the changes applied to the filter")),
@@ -132,33 +132,30 @@ ImageFilter::ImageFilter(bool outputImage)
 ImageFilter::~ImageFilter() {}
 void ImageFilter::init()
 {
-  std::cout << getClassName() << "init" << std::endl;
-
-  bindInputData(&d_img);
-  addOutput(&d_img_out);
-  setDirtyValue();
+  std::cout << getName() << "init" << std::endl;
+  m_displayDebugDataTracker.trackData(d_displayDebugWindow);
+  trackData(&d_img);
 }
 
 void ImageFilter::update()
 {
-  updateAllInputsIfDirty();
-  cleanDirty();
+  std::cout << getName() << " update" << std::endl;
   if (!d_isActive.getValue())
   {
     // filter inactive, out = in
     d_img_out.setValue(d_img.getValue());
     d_img_out.endEdit();
-    d_img_out.setDirtyOutputs();
     if (d_displayDebugWindow.getValue())
     {
+      std::cout << "inactiveUpdate" << std::endl;
       cv::imshow(m_win_name, d_img_out.getValue());
       cv::waitKey(1);
     }
     return;
   }
-  cv::Mat empty = d_img.getValue().zeros(
+  m_debugImage = d_img.getValue().zeros(
       d_img.getValue().rows, d_img.getValue().cols, d_img.getValue().type());
-  applyFilter(d_img.getValue(), empty);
+  applyFilter(d_img.getValue(), m_debugImage);
   if (!m_outputImage)
   {
     d_img_out.setValue(d_img.getValue());
@@ -166,33 +163,36 @@ void ImageFilter::update()
   }
   else
   {
-    d_img_out.setValue(empty);
+    d_img_out.setValue(m_debugImage);
     d_img_out.endEdit();
   }
-  d_img_out.setDirtyOutputs();
-  if (d_displayDebugWindow.getValue() && !empty.empty())
+  if (d_displayDebugWindow.getValue() && !m_debugImage.empty())
   {
-    cv::imshow(m_win_name, empty);
+    std::cout << "applyFilterUpdate" << std::endl;
+    cv::imshow(m_win_name, m_debugImage);
     cv::waitKey(1);
   }
 }
 
 void ImageFilter::reinit()
 {
-  drawDebug();
-  if (m_outputImage)
+  std::cout << getName() << " reinit()" << std::endl;
+  if (m_displayDebugDataTracker.isDirty())
   {
-    m_debugImage.copyTo(*d_img_out.beginEdit());
-    d_img_out.endEdit();
+      reinitDebugWindow();
+      refreshDebugWindow();
   }
+
+  // to set needsRefresh to true
+  ImplicitDataEngine::reinit();
 }
 
-bool ImageFilter::reinitDebugWindow()
+void ImageFilter::reinitDebugWindow()
 {
   if (!d_displayDebugWindow.getValue())
   {
     cv::destroyWindow(m_win_name);
-    return false;
+    return;
   }
 
   cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
@@ -205,7 +205,6 @@ bool ImageFilter::reinitDebugWindow()
   }
   if (m_isMouseCallbackActive)
     cv::setMouseCallback(m_win_name, &ImageFilter::_mouseCallback, this);
-  return true;
 }
 
 void ImageFilter::refreshDebugWindow()
@@ -213,13 +212,9 @@ void ImageFilter::refreshDebugWindow()
   applyFilter(d_img.getValue(), m_debugImage, true);
   if (m_debugImage.empty()) return;
 
+  std::cout << "refreshDebugWindow" << std::endl;
   cv::imshow(m_win_name, m_debugImage);
   cv::waitKey(1);
-}
-
-void ImageFilter::drawDebug()
-{
-  if (reinitDebugWindow()) refreshDebugWindow();
 }
 
 void ImageFilter::activateMouseCallback()

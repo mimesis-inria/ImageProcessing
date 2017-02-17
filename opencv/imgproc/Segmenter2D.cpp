@@ -32,7 +32,7 @@ void Segmenter2D::freeMove(int event, int x, int y, int flags)
     d_regionLabel.beginWriteOnly()->clear();
     d_regionPoly.endEdit();
     d_regionLabel.endEdit();
-    update();
+    ImageFilter::update();
   }
 }
 void Segmenter2D::capture(int event, int x, int y, int flags)
@@ -109,7 +109,7 @@ void Segmenter2D::stopping(int event, int x, int y, int flags)
       d_regionLabel.beginWriteOnly()->push_back("regionName");
       m_poly.clear();
       setMouseState(&Segmenter2D::freeMove);
-      update();
+      ImageFilter::update();
     }
     break;
     default:

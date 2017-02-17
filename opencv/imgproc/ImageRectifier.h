@@ -32,23 +32,19 @@ class ImageRectifier : public ImageFilter
 
   void init()
   {
-    std::cout << getName() << std::endl;
+    std::cout << getName()<< "init" << std::endl;
 
-    bindInputData(&d_distCoefs);
-    d_distCoefs.setDirtyValue();
+    trackData(&d_distCoefs);
     ImageFilter::init();
   }
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   {
-    std::cout << getName() << std::endl;
+    std::cout << getName() << "applyFilter " << std::endl;;
 
-    d_distCoefs.updateIfDirty();
-    d_distCoefs.cleanDirty();
     if (in.empty() || d_distCoefs.getValue().empty()) return;
     cv::Mat_<double> cam;
     common::matrix::sofaMat2cvMat(d_projMat.getValue(), cam);
     cv::undistort(in, out, cam, d_distCoefs.getValue());
-    std::cout << "end" << getName() << std::endl;
   }
 };
 

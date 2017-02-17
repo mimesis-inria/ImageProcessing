@@ -43,7 +43,7 @@ class FeatureDetector : public ImageFilter
   };
 
  public:
-  SOFA_CLASS(FeatureDetector, core::DataEngine);
+  SOFA_CLASS(FeatureDetector, ImageFilter);
 
  public:
   FeatureDetector();
@@ -52,13 +52,16 @@ class FeatureDetector : public ImageFilter
   void init();
   virtual void update();
   virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
-  void reinit();
 
   Data<sofa::helper::OptionsGroup> d_detectMode;
   Data<common::cvMat> d_mask;
   Data<sofa::helper::OptionsGroup> d_detectorType;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
   Data<common::cvMat> d_descriptors;
+
+ protected:
+  void detectTypeChanged(core::objectmodel::BaseData*);
+  void detectModeChanged(core::objectmodel::BaseData*);
 
  private:
   BaseDetector* m_detectors[DetectorType_COUNT];

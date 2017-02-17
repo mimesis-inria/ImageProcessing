@@ -106,29 +106,13 @@ MatchingConstraints::MatchingConstraints()
 MatchingConstraints::~MatchingConstraints() {}
 void MatchingConstraints::init()
 {
-  bindInputData(&d_keypointsL_in);
-  bindInputData(&d_keypointsR_in);
-  bindInputData(&d_descriptorsL_in);
-  bindInputData(&d_descriptorsR_in);
-  bindInputData(&d_matches_in);
+  trackData(&d_keypointsL_in);
+  trackData(&d_keypointsR_in);
+  trackData(&d_descriptorsL_in);
+  trackData(&d_descriptorsR_in);
+  trackData(&d_matches_in);
 
-  bindInputData(&d_F);
-
-  addOutput(&d_keypointsL_out);
-  addOutput(&d_keypointsR_out);
-  addOutput(&d_descriptorsL_out);
-  addOutput(&d_descriptorsR_out);
-  addOutput(&d_outliers_out);
-
-  addOutput(&d_epidistL);
-  addOutput(&d_epidistR);
-  addOutput(&d_epilinesL);
-  addOutput(&d_epilinesR);
-
-  addOutput(&d_mdfDistances);
-  addOutput(&d_mdfMaxDist);
-
-  addOutput(&d_knnLambdas);
+  trackData(&d_F);
 
   if (!d_useEpipolarFilter.getValue())
   {
@@ -143,8 +127,6 @@ void MatchingConstraints::init()
   {
     d_knnLambda.setDisplayed(false);
   }
-  setDirtyValue();
-
   registerData(&d_useEpipolarFilter);
   registerData(&d_epipolarThreshold, 0, 255, 1);
   registerData(&d_useKNNFilter);
@@ -211,9 +193,6 @@ void MatchingConstraints::update()
   std::cout << getName() << std::endl;
   // All precomputations for the filters, only done once per new batch of
   // inputs
-  updateAllInputsIfDirty();
-  cleanDirty();
-
   if (d_keypointsR_in.getValue().size() !=
       size_t(d_descriptorsR_in.getValue().rows))
   {
@@ -267,7 +246,6 @@ void MatchingConstraints::update()
     if (computeEpipolarLines()) computeEpipolarDistances();
 
   ImageFilter::update();
-  setDirtyOutputs();
   std::cout << d_matches_out.getValue().size() << std::endl;
   std::cout << d_keypointsL_out.getValue().size() << std::endl;
   std::cout << "end" << getName() << std::endl;
@@ -439,7 +417,6 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   d_knnLambdas.endEdit();
 }
 
-void MatchingConstraints::reinit() { ImageFilter::reinit(); }
 }  // namespace processor
 }  // namespace OR
 }  // namespace sofa

@@ -32,7 +32,6 @@ class MatchingConstraints : public ImageFilter
   void init();
   void update();
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
-  void reinit();
 
   // INPUTS
   Data<bool> d_useEpipolarFilter;

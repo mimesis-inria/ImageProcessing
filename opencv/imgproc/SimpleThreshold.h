@@ -25,7 +25,7 @@ class SimpleThreshold : public ImageFilter
         d_max(initData(&d_max, 255.0, "max",
                        "maximum value to use with the THRESH_BINARY and "
                        "THRESH_BINARY_INV thresholding types")),
-        d_type(initData(&d_type, "type",
+        d_type(initData(&d_type, "thresholdType",
                         "thresholding type (see cv::ThresholdTypes"))
   {
     helper::OptionsGroup* t = d_type.beginEdit();
@@ -37,25 +37,40 @@ class SimpleThreshold : public ImageFilter
 
   void init()
   {
-    registerData(&d_threshold, 0.0, d_max.getValue(), d_max.getValue() / 255.0);
-    registerData(&d_max, 0.0, 255.0, 1.0);
-    registerData(&d_type, 0, 5, 1);
+    registerData(&d_threshold, 0.0, 1.0, .0001);
+    registerData(&d_max, 0.0, 1.0, .0001);
+    registerData(&d_type, 0, 4, 1);
     ImageFilter::init();
   }
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   {
     if (in.empty()) return;
-    if (in.depth() != CV_8U || in.channels() != 1)
+
+    double max, thresh;
+    if (in.type() == CV_8UC1)
+    {
+      max = d_max.getValue() * 255;
+      thresh = d_threshold.getValue() * 255;
+    }
+    else if (in.type() == CV_32FC1)
+    {
+      max = d_max.getValue();
+      thresh = d_threshold.getValue();
+    }
+    else
     {
       msg_error("SimpleThreshold::applyFliter()")
-          << "Error: Threshold can only be applied on 8-bit grayscale images";
+          << "Error: Threshold can only be applied on 8-bit or 32-bit single "
+             "channel images";
       return;
     }
-    try {
-      cv::threshold(in, out, d_threshold.getValue(), d_max.getValue(),
-                    d_type.getValue().getSelectedId());
-    } catch (cv::Exception& e) {
+    try
+    {
+      cv::threshold(in, out, thresh, max, d_type.getValue().getSelectedId());
+    }
+    catch (cv::Exception& e)
+    {
       std::cout << e.what() << std::endl;
       return;
     }
@@ -65,7 +80,8 @@ class SimpleThreshold : public ImageFilter
 SOFA_DECL_CLASS(SimpleThreshold)
 
 int SimpleThresholdClass =
-    core::RegisterObject("OpenCV's implementation of a simple image thresholding filter")
+    core::RegisterObject(
+        "OpenCV's implementation of a simple image thresholding filter")
         .add<SimpleThreshold>();
 
 }  // namespace processor

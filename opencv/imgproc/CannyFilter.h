@@ -64,17 +64,17 @@ class CannyFilter : public ImageFilter
 
     cv::Mat img_gray;
     if (in.type() == CV_8UC4)
-        cv::cvtColor(in, img_gray, CV_BGRA2GRAY);
-    else img_gray = in.clone();
+      cv::cvtColor(in, img_gray, CV_BGRA2GRAY);
+    else if (in.type() == CV_8UC3)
+      cv::cvtColor(in, img_gray, CV_BGR2GRAY);
+    else
+      img_gray = in.clone();
 
     cv::Canny(img_gray, img_gray, d_minThreshold.getValue(),
               d_maxThreshold.getValue(), d_apertureSize.getValue(),
               d_l2gradient.getValue());
 
-    if (out.type() == CV_8UC4)
-        cv::cvtColor(img_gray, out, CV_GRAY2BGRA);
-    else
-        out = img_gray;
+    out = img_gray;
   }
 };
 

@@ -61,31 +61,23 @@ FeatureTriangulator::FeatureTriangulator()
 FeatureTriangulator::~FeatureTriangulator() {}
 void FeatureTriangulator::init()
 {
-  bindInputData(&d_R);
-  bindInputData(&d_T);
-  bindInputData(&d_cmL);
-  bindInputData(&d_cmR);
-  bindInputData(&d_dvL);
-  bindInputData(&d_dvR);
+  trackData(&d_R);
+  trackData(&d_T);
+  trackData(&d_cmL);
+  trackData(&d_cmR);
+  trackData(&d_dvL);
+  trackData(&d_dvR);
 
-  bindInputData(&d_matches);
-  bindInputData(&d_keypointsL);
-  bindInputData(&d_keypointsR);
+  trackData(&d_matches);
+  trackData(&d_keypointsL);
+  trackData(&d_keypointsR);
 
-  addInput(&d_img);
-
-  addOutput(&d_pointCloud);
-  addOutput(&d_pointCloudColors);
-
-  setDirtyValue();
+  trackData(&d_img, true);
 }
 
 void FeatureTriangulator::update()
 {
   std::cout << getName() << std::endl;
-  updateAllInputsIfDirty();
-  cleanDirty();
-  if (!f_listening.getValue()) return;
 
   common::matrix::sofaMat2cvMat(d_R.getValue(), R);
   common::matrix::sofaVector2cvMat(d_T.getValue(), T);
@@ -137,8 +129,6 @@ void FeatureTriangulator::update()
         triangulate(kL[i].pt, kR[i].pt, pts[i]);
     d_pointCloud.endEdit();
   }
-  d_pointCloud.setDirtyOutputs();
-  d_pointCloudColors.setDirtyOutputs();
 }
 
 cv::Point3d FeatureTriangulator::rectifyPoint(double x, double y,
@@ -257,7 +247,6 @@ void FeatureTriangulator::triangulate(const cv::Point2f& l,
   p = defaulttype::Vec3d(X(0), X(1), X(2));
 }
 
-void FeatureTriangulator::reinit() {}
 }  // namespace processor
 }  // namespace OR
 }  // namespace sofa

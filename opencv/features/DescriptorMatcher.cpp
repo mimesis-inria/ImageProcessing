@@ -69,31 +69,23 @@ void DescriptorMatcher::init()
   std::cout << getName() << std::endl;
   std::cout << "Matcher type: " << d_matcherType.getValue().getSelectedItem()
             << std::endl;
-  for (size_t i = 0; i < MatcherType_COUNT; ++i)
-  {
-    m_matchers[i]->init();
-    if (d_matcherType.getValue().getSelectedId() != i)
-      m_matchers[i]->toggleVisible(false);
-    else
-      m_matchers[i]->init();
-  }
 
-  bindInputData(&d_queryDescriptors);
-  bindInputData(&d_trainDescriptors);
+  matcherTypeChanged(NULL);
+  trackData(
+      &d_matcherType, true,
+      (ImplicitDataEngine::DataCallback)&DescriptorMatcher::matcherTypeChanged);
 
-  // Debug data: purposely not binded implicitely
-  addInput(&d_in2);
-  addInput(&d_kptsL);
-  addInput(&d_kptsR);
+  trackData(&d_queryDescriptors);
+  trackData(&d_trainDescriptors);
 
-  addInput(&d_mask);
-  addOutput(&d_matches);
-  setDirtyValue();
+  trackData(&d_in2, true);
+  trackData(&d_kptsL, true);
+  trackData(&d_kptsR, true);
+  trackData(&d_mask, true);
   ImageFilter::init();
 }
 void DescriptorMatcher::update()
 {
-
   std::cout << getName() << std::endl;
   ImageFilter::update();
 
@@ -110,7 +102,6 @@ void DescriptorMatcher::update()
     }
   }
   d_matches.endEdit();
-  d_matches.setDirtyOutputs();
   std::cout << "end" << getName() << std::endl;
 }
 
@@ -168,7 +159,7 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   }
 }
 
-void DescriptorMatcher::reinit()
+void DescriptorMatcher::matcherTypeChanged(core::objectmodel::BaseObject*)
 {
   for (size_t i = 0; i < MatcherType_COUNT; ++i)
   {
@@ -180,7 +171,6 @@ void DescriptorMatcher::reinit()
     else
       m_matchers[i]->toggleVisible(false);
   }
-  ImageFilter::reinit();
 }
 
 }  // namespace processor

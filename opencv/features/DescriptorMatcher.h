@@ -4,8 +4,8 @@
 #include "Matchers.h"
 #include "core/ImageFilter.h"
 
-#include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvDMatch.h>
+#include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvMat.h>
 
 #include <sofa/helper/OptionsGroup.h>
@@ -39,14 +39,12 @@ class DescriptorMatcher : public ImageFilter
  public:
   SOFA_CLASS(DescriptorMatcher, ImageFilter);
 
- public:
   DescriptorMatcher();
   virtual ~DescriptorMatcher();
 
   void init();
   void update();
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
-  void reinit();
 
   Data<sofa::helper::OptionsGroup> d_matcherType;
   Data<sofa::helper::OptionsGroup> d_matchingAlgo;
@@ -63,7 +61,6 @@ class DescriptorMatcher : public ImageFilter
 
   Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
 
-
   void match(const common::cvMat& queryDescriptors,
              std::vector<cv::DMatch>& matches);
   void knnMatch(const common::cvMat& queryDescriptors,
@@ -72,10 +69,12 @@ class DescriptorMatcher : public ImageFilter
                    std::vector<std::vector<cv::DMatch> >& matches,
                    float maxDistance);
 
+ protected:
+  void matcherTypeChanged(core::objectmodel::BaseObject*);
+
  private:
   BaseMatcher* m_matchers[MatcherType_COUNT];
   std::vector<std::vector<cv::DMatch> > m_matches;
-
 };
 
 }  // namespace processor
