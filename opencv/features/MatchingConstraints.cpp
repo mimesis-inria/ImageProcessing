@@ -106,13 +106,30 @@ MatchingConstraints::MatchingConstraints()
 MatchingConstraints::~MatchingConstraints() {}
 void MatchingConstraints::init()
 {
-  trackData(&d_keypointsL_in);
-  trackData(&d_keypointsR_in);
-  trackData(&d_descriptorsL_in);
-  trackData(&d_descriptorsR_in);
-  trackData(&d_matches_in);
+  addInput(&d_keypointsL_in);
+  addInput(&d_keypointsR_in);
+  addInput(&d_descriptorsL_in);
+  addInput(&d_descriptorsR_in);
+  addInput(&d_matches_in);
 
-  trackData(&d_F);
+  addInput(&d_F);
+
+  addOutput(&d_matches_out);
+  addOutput(&d_outliers_out);
+  addOutput(&d_keypointsL_out);
+  addOutput(&d_keypointsR_out);
+  addOutput(&d_descriptorsL_out);
+  addOutput(&d_descriptorsR_out);
+
+  addOutput(&d_epidistL);
+  addOutput(&d_epidistR);
+  addOutput(&d_epilinesL);
+  addOutput(&d_epilinesR);
+
+  addOutput(&d_mdfDistances);
+  addOutput(&d_mdfMaxDist);
+
+  addOutput(&d_knnLambdas);
 
   if (!d_useEpipolarFilter.getValue())
   {

@@ -134,12 +134,13 @@ void ImageFilter::init()
 {
   std::cout << getName() << "init" << std::endl;
   m_displayDebugDataTracker.trackData(d_displayDebugWindow);
-  trackData(&d_img);
+  addInput(&d_img);
+  addOutput(&d_img_out);
 }
 
 void ImageFilter::update()
 {
-  std::cout << getName() << " update" << std::endl;
+    std::cout << getName() << " update" << std::endl;
   if (!d_isActive.getValue())
   {
     // filter inactive, out = in
@@ -176,11 +177,10 @@ void ImageFilter::update()
 
 void ImageFilter::reinit()
 {
-  std::cout << getName() << " reinit()" << std::endl;
   if (m_displayDebugDataTracker.isDirty())
   {
-      reinitDebugWindow();
-      refreshDebugWindow();
+    reinitDebugWindow();
+    refreshDebugWindow();
   }
 
   // to set needsRefresh to true

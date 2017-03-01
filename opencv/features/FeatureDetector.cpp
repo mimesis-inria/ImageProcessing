@@ -71,8 +71,8 @@ void FeatureDetector::init()
   detectTypeChanged(NULL);
   detectModeChanged(NULL);
 
-  trackData(&d_detectMode, true, (ImplicitDataEngine::DataCallback)&FeatureDetector::detectModeChanged);
-  trackData(&d_detectorType, true, (ImplicitDataEngine::DataCallback)&FeatureDetector::detectTypeChanged);
+  addDataCallback(&d_detectMode, (ImplicitDataEngine::DataCallback)&FeatureDetector::detectModeChanged);
+  addDataCallback(&d_detectorType, (ImplicitDataEngine::DataCallback)&FeatureDetector::detectTypeChanged);
 
   ImageFilter::init();
 }
@@ -172,16 +172,23 @@ void FeatureDetector::detectModeChanged(core::objectmodel::BaseData*)
   {
     case DETECT_ONLY:
       d_descriptors.setDisplayed(false);
-      if (d_mask.isSet()) trackData(&d_mask);
+      addInput(&d_mask, true);
+      removeInput(&d_keypoints);
+      removeOutput(&d_descriptors);
+      addOutput(&d_keypoints);
       break;
     case COMPUTE_ONLY:
       d_descriptors.setDisplayed(true);
-      if (d_mask.isSet()) trackData(&d_mask);
-      trackData(&d_keypoints);
+      addInput(&d_mask, true);
+      removeInput(&d_keypoints);
+      addOutput(&d_descriptors);
       break;
     case DETECT_AND_COMPUTE:
       d_descriptors.setDisplayed(true);
-      if (d_mask.isSet()) trackData(&d_mask);
+      addInput(&d_mask, true);
+      removeInput(&d_keypoints);
+      addOutput(&d_keypoints);
+      addOutput(&d_descriptors);
       break;
   }
 }

@@ -71,17 +71,20 @@ void DescriptorMatcher::init()
             << std::endl;
 
   matcherTypeChanged(NULL);
-  trackData(
-      &d_matcherType, true,
+  addDataCallback(
+      &d_matcherType,
       (ImplicitDataEngine::DataCallback)&DescriptorMatcher::matcherTypeChanged);
 
-  trackData(&d_queryDescriptors);
-  trackData(&d_trainDescriptors);
+  addInput(&d_queryDescriptors);
+  addInput(&d_trainDescriptors);
 
-  trackData(&d_in2, true);
-  trackData(&d_kptsL, true);
-  trackData(&d_kptsR, true);
-  trackData(&d_mask, true);
+  addInput(&d_in2, true);
+  addInput(&d_kptsL, true);
+  addInput(&d_kptsR, true);
+  addInput(&d_mask, true);
+
+  addOutput(&d_img_out);
+  addOutput(&d_matches);
   ImageFilter::init();
 }
 void DescriptorMatcher::update()

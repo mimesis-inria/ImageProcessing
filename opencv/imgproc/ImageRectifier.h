@@ -34,7 +34,7 @@ class ImageRectifier : public ImageFilter
   {
     std::cout << getName()<< "init" << std::endl;
 
-    trackData(&d_distCoefs);
+    addInput(&d_distCoefs);
     ImageFilter::init();
   }
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)

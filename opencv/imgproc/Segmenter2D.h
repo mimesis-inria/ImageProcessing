@@ -49,8 +49,11 @@ class Segmenter2D : public ImageFilter
 
   void init()
   {
-    trackData(&d_keypoints);
-    trackData(&d_matches);
+    addInput(&d_keypoints);
+    addInput(&d_matches);
+    addOutput(&d_regionLabel);
+    addOutput(&d_regionPoints);
+    addOutput(&d_regionPoly);
     ImageFilter::activateMouseCallback();
     setMouseState(&Segmenter2D::freeMove);
     ImageFilter::init();

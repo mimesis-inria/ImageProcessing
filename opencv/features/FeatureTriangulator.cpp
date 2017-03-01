@@ -61,18 +61,21 @@ FeatureTriangulator::FeatureTriangulator()
 FeatureTriangulator::~FeatureTriangulator() {}
 void FeatureTriangulator::init()
 {
-  trackData(&d_R);
-  trackData(&d_T);
-  trackData(&d_cmL);
-  trackData(&d_cmR);
-  trackData(&d_dvL);
-  trackData(&d_dvR);
+  addInput(&d_R);
+  addInput(&d_T);
+  addInput(&d_cmL);
+  addInput(&d_cmR);
+  addInput(&d_dvL);
+  addInput(&d_dvR);
 
-  trackData(&d_matches);
-  trackData(&d_keypointsL);
-  trackData(&d_keypointsR);
+  addInput(&d_matches);
+  addInput(&d_keypointsL);
+  addInput(&d_keypointsR);
 
-  trackData(&d_img, true);
+  addInput(&d_img, true);
+
+  addOutput(&d_pointCloud);
+  addOutput(&d_pointCloudColors);
 }
 
 void FeatureTriangulator::update()

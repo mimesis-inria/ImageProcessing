@@ -235,10 +235,22 @@ void CalibLoader::init()
   d_calibNames.beginWriteOnly()->setSelectedItemToDefault();
   d_calibNames.endEdit();
 
-  trackData(&d_calibNames, true,
+  addDataCallback(&d_calibNames,
             (ImplicitDataEngine::DataCallback)&CalibLoader::calibChanged);
-  trackData(&d_calibFolder, true,
+  addDataCallback(&d_calibFolder,
             (ImplicitDataEngine::DataCallback)&CalibLoader::calibFolderChanged);
+
+  addOutput(&d_isStereo);
+  addOutput(&d_distCoefs1);
+  addOutput(&d_distCoefs2);
+  addOutput(&d_projMat1);
+  addOutput(&d_projMat2);
+  addOutput(&d_error1);
+  addOutput(&d_error2);
+  addOutput(&d_totalError);
+  addOutput(&d_R);
+  addOutput(&d_T);
+  addOutput(&d_F);
 
   calibFolderChanged(NULL);
 }
