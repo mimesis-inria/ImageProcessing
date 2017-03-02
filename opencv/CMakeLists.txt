@@ -19,6 +19,7 @@ set(HEADER_FILES
   imgproc/SobelFilter.h
   imgproc/ImageRectifier.h
   imgproc/Segmenter2D.h
+  imgproc/PointPicker2D.h
   imgproc/SimpleThreshold.h
   calib/CalibLoader.h
   )
@@ -37,6 +38,7 @@ set(SOURCE_FILES
   imgproc/SobelFilter.cpp
   imgproc/ImageRectifier.cpp
   imgproc/Segmenter2D.cpp
+  imgproc/PointPicker2D.cpp
   imgproc/SimpleThreshold.cpp
   calib/CalibLoader.cpp
   )
