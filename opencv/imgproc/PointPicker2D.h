@@ -24,7 +24,8 @@ class PointPicker2D : public ImageFilter
   PointPicker2D()
       : ImageFilter(false),
         d_points(initData(&d_points, "points_out",
-                          "output vector of 2D points picked in the image"))
+                          "output vector of 2D points picked in the image",
+                          true, false))
   {
   }
 
@@ -36,20 +37,29 @@ class PointPicker2D : public ImageFilter
     ImageFilter::init();
   }
 
+  void update()
+  {
+    ImageFilter::update();
+    helper::vector<defaulttype::Vec2i>* points = d_points.beginWriteOnly();
+    points->clear();
+    if (!m_pointList.empty())
+      for (const cv::Point2i& pt : m_pointList)
+        points->push_back(defaulttype::Vec2i(pt.x, pt.y));
+    d_points.endEdit();
+  }
+
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   {
     if (in.empty()) return;
     in.copyTo(out);
     cv::Scalar color(255, 255, 255, 50);
-    std::vector<cv::Point2i> pts;
-    const helper::vector<defaulttype::Vec2i>& points = d_points.getValue();
 
-    if (points.empty()) return;
-    for (const defaulttype::Vec2i& pt : points)
-      cv::circle(out, cv::Point2i(pt.x(), pt.y()), 3, color, 2, cv::LINE_AA);
-    cv::addWeighted(in, 0.8, out, 0.2, 0.0, out);
+    if (m_pointList.empty()) return;
+    for (const cv::Point2i& pt : m_pointList)
+      cv::circle(out, pt, 3, color, 1, cv::LINE_AA);
   }
 
+ protected:
   // Mouse controls
   typedef void (PointPicker2D::*StateFunction)(int, int, int, int);
   void freeMove(int event, int x, int y,
@@ -60,6 +70,9 @@ class PointPicker2D : public ImageFilter
   StateFunction m_activeState;
   void setMouseState(StateFunction f) { m_activeState = f; }
   void mouseCallback(int event, int x, int y, int flags);
+
+ private:
+  std::list<cv::Point2i> m_pointList;
 };
 
 SOFA_DECL_CLASS(PointPicker2D)
