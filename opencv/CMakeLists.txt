@@ -8,6 +8,7 @@ set(SOFAOROPENCV_VERSION ${SOFAOROPENCV_MAJOR_VERSION}.${SOFAOROPENCV_MINOR_VERS
 set(HEADER_FILES
   initPlugin.h
   core/ImageFilter.h
+  core/ImageExporter.h
   features/Detectors.h
   features/Matchers.h
   features/FeatureDetector.h
@@ -27,6 +28,7 @@ set(HEADER_FILES
 set(SOURCE_FILES
   initPlugin.cpp
   core/ImageFilter.cpp
+  core/ImageExporter.cpp
   features/Detectors.cpp
   features/Matchers.cpp
   features/FeatureDetector.cpp

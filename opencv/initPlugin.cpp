@@ -39,7 +39,7 @@ const char* getModuleDescription()
 
 const char* getModuleComponentList()
 {
-  return "FeatureDetector;FeatureDescriptor;FeatureMatcher;MatchingConstraints;"
+  return "ImageExporter;FeatureDetector;FeatureDescriptor;FeatureMatcher;MatchingConstraints;"
          "FeatureTriangulator;OpticalFlow;CannyFilter;SobelFilter;"
          "ImageRectifier;CalibLoader;Segmenter2D;PointPicker2D;SimpleThreshold";
 }
@@ -50,6 +50,7 @@ const char* getModuleComponentList()
 
 ////////// BEGIN CLASS LIST //////////
 
+SOFA_LINK_CLASS(ImageExporter);
 SOFA_LINK_CLASS(FeatureDetector);
 SOFA_LINK_CLASS(DescriptorMatcher);
 SOFA_LINK_CLASS(MatchingConstraints);
