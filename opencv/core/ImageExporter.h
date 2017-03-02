@@ -101,6 +101,9 @@ class ImageExporter : public common::ImplicitDataEngine
       cv::Mat img;
       if (d_img.getValue().type() == CV_32FC1)
       {
+        msg_warning("ImageExporter::export()")
+            << "CV_32F matrices will be normalized into a CV_8U matrix. Consider "
+               "converting first to optimize performances";
         cv::normalize(d_img.getValue(), img, 0, 255, cv::NORM_MINMAX, CV_8UC1);
       }
 
