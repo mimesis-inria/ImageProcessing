@@ -23,6 +23,7 @@ set(HEADER_FILES
   imgproc/PointPicker2D.h
   imgproc/SimpleThreshold.h
   imgproc/AdaptiveThreshold.h
+  imgproc/MorphologyEx.h
   calib/CalibLoader.h
   )
 
@@ -44,6 +45,7 @@ set(SOURCE_FILES
   imgproc/PointPicker2D.cpp
   imgproc/SimpleThreshold.cpp
   imgproc/AdaptiveThreshold.cpp
+  imgproc/MorphologyEx.cpp
   calib/CalibLoader.cpp
   )
 

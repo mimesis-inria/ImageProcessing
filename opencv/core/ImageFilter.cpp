@@ -140,7 +140,7 @@ void ImageFilter::init()
 
 void ImageFilter::update()
 {
-    std::cout << getName() << " update" << std::endl;
+  std::cout << getName() << " update" << std::endl;
   if (!d_isActive.getValue())
   {
     // filter inactive, out = in
@@ -195,10 +195,12 @@ void ImageFilter::reinitDebugWindow()
     return;
   }
 
-  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
+  cv::namedWindow(m_win_name,
+                  CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
   for (Holder& h : m_params)
   {
-    cv::createTrackbar(h.data->getName(), m_win_name, 0,
+    int value = h.getTrackbarRangedValue();
+    cv::createTrackbar(h.data->getName(), m_win_name, &value,
                        h.getTrackbarMaxValue(), &ImageFilter::callback, &h);
     cv::setTrackbarPos(h.data->getName(), m_win_name,
                        h.getTrackbarRangedValue());

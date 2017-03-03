@@ -92,6 +92,7 @@ class ImageExporter : public common::ImplicitDataEngine
 
   void cleanup()
   {
+      std::cout << "cleanup called on exporter" << std::endl;
     if (d_exportType.getValue().getSelectedId() == 2)  // END
     {
       std::vector<int> qualityType;
@@ -106,7 +107,7 @@ class ImageExporter : public common::ImplicitDataEngine
                "converting first to optimize performances";
         cv::normalize(d_img.getValue(), img, 0, 255, cv::NORM_MINMAX, CV_8UC1);
       }
-
+        std::cout << "writing image" << std::endl;
       cv::imwrite(d_fileName.getValue(), img, qualityType);
     }
   }
