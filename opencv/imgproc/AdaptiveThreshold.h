@@ -15,10 +15,10 @@ class AdaptiveThreshold : public ImageFilter
  public:
   SOFA_CLASS(AdaptiveThreshold, ImageFilter);
 
+  Data<double> d_max;
   Data<helper::OptionsGroup> d_adaptiveMethod;
   Data<helper::OptionsGroup> d_thresholdType;
   Data<int> d_blockSize;
-  Data<double> d_max;
   Data<double> d_C;
 
   AdaptiveThreshold()

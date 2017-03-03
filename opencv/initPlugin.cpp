@@ -42,7 +42,7 @@ const char* getModuleComponentList()
   return "ImageExporter;FeatureDetector;FeatureDescriptor;FeatureMatcher;"
          "MatchingConstraints;FeatureTriangulator;OpticalFlow;CannyFilter;"
          "SobelFilter;ImageRectifier;CalibLoader;Segmenter2D;PointPicker2D;"
-         "SimpleThreshold;AdaptiveThreshold;MorphologyEx";
+         "SimpleThreshold;AdaptiveThreshold;MorphologyEx;ComputeRT";
 }
 
 }  // namespace processor
@@ -61,6 +61,7 @@ SOFA_LINK_CLASS(CannyFilter);
 SOFA_LINK_CLASS(SobelFilter);
 SOFA_LINK_CLASS(ImageRectifier);
 SOFA_LINK_CLASS(CalibLoader);
+SOFA_LINK_CLASS(ComputeRT);
 SOFA_LINK_CLASS(Segmenter2D);
 SOFA_LINK_CLASS(PointPicker2D);
 SOFA_LINK_CLASS(SimpleThreshold);

@@ -25,6 +25,7 @@ set(HEADER_FILES
   imgproc/AdaptiveThreshold.h
   imgproc/MorphologyEx.h
   calib/CalibLoader.h
+  calib/ComputeRT.h
   )
 
 set(SOURCE_FILES
@@ -47,6 +48,7 @@ set(SOURCE_FILES
   imgproc/AdaptiveThreshold.cpp
   imgproc/MorphologyEx.cpp
   calib/CalibLoader.cpp
+  calib/ComputeRT.cpp
   )
 
 set(OpenCV_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})
