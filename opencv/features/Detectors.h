@@ -87,7 +87,7 @@ struct FASTDetector : BaseDetector
   {
     parent->registerData(&threshold, 0, 255, 1);
     parent->registerData(&nonmaxsuppression);
-    parent->registerData(&type, 0, 3, 1);
+    parent->registerData(&type);
   }
   virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
                        common::cvMat&)

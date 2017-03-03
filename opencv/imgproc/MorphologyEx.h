@@ -41,8 +41,8 @@ class MorphologyEx : public ImageFilter
 
   void init()
   {
-    registerData(&d_operator, 0, 4, 1);
-    registerData(&d_element, 0, 2, 1);
+    registerData(&d_operator);
+    registerData(&d_element);
     registerData(&d_ksize, 0, 251, 1);
     ImageFilter::init();
   }

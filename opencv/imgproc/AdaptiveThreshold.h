@@ -22,7 +22,7 @@ class AdaptiveThreshold : public ImageFilter
   Data<double> d_C;
 
   AdaptiveThreshold()
-      : d_max(initData(&d_max, 255.0, "maxValue",
+      : d_max(initData(&d_max, 1.0, "maxValue",
                        "non-zero value assigned to the pixels for which the "
                        "condition is satisfied")),
         d_adaptiveMethod(initData(
@@ -51,10 +51,10 @@ class AdaptiveThreshold : public ImageFilter
 
   void init()
   {
-    registerData(&d_adaptiveMethod, 0, 1, 1);
-    registerData(&d_thresholdType, 0, 1, 1);
+    registerData(&d_adaptiveMethod);
+    registerData(&d_thresholdType);
     registerData(&d_max, 0.0, 1.0, .0001);
-    registerData(&d_blockSize, 3, 51, 2);
+    registerData(&d_blockSize, 3, 11, 2);
     registerData(&d_C, -10.0, 10.0, 1.0);
     ImageFilter::init();
   }
@@ -82,6 +82,7 @@ class AdaptiveThreshold : public ImageFilter
         img = in;
     try
     {
+        std::cout << d_max.getValue() << std::endl;
       cv::adaptiveThreshold(img, out, d_max.getValue() * 255,
                             d_adaptiveMethod.getValue().getSelectedId(),
                             d_thresholdType.getValue().getSelectedId(),

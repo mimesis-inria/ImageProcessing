@@ -61,7 +61,7 @@ class SobelFilter : public ImageFilter
     registerData(&d_ksize, 0, 6, 2);
     registerData(&d_scale, 0.0, 2, 0.01);
     registerData(&d_delta, 0.0, 10.0, 0.01);
-    registerData(&d_bordertype, 0, 5, 1);
+    registerData(&d_bordertype);
     ImageFilter::init();
   }
 

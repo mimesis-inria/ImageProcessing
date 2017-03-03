@@ -39,7 +39,7 @@ class SimpleThreshold : public ImageFilter
   {
     registerData(&d_threshold, 0.0, 1.0, .0001);
     registerData(&d_max, 0.0, 1.0, .0001);
-    registerData(&d_type, 0, 4, 1);
+    registerData(&d_type);
     ImageFilter::init();
   }
 

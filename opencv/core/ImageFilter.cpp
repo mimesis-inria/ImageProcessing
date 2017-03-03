@@ -22,21 +22,20 @@ int ImageFilter::Holder::getTrackbarRangedValue()
     }
     case INT:
     {
-      return reinterpret_cast<Data<int>*>(data)->getValue() - value_min._int;
+      return (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._int) /
+             step._int;
     }
     case DOUBLE:
     {
-      double max = value_max._double - value_min._double;
-      double val =
-          reinterpret_cast<Data<double>*>(data)->getValue() - value_min._double;
-      return int((val * (value_max._double / step._double)) / max);
+      return int(
+          (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._double) /
+          step._double);
     }
     case FLOAT:
     {
-      float max = value_max._float - value_min._float;
-      float val =
-          reinterpret_cast<Data<float>*>(data)->getValue() - value_min._float;
-      return int((val * (value_max._float / step._float)) / max);
+      return int(
+          (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._float) /
+          step._float);
     }
   }
   return 0;
@@ -50,11 +49,11 @@ int ImageFilter::Holder::getTrackbarMaxValue()
       return 1;
     case OPTIONSGROUP:
     case INT:
-      return value_max._int - value_min._int;
+      return (value_max._int - value_min._int) / step._int;
     case DOUBLE:
-      return int(value_max._double / step._double);
+      return int((value_max._double - value_min._double) / step._double);
     case FLOAT:
-      return int(value_max._float / step._float);
+      return int((value_max._float - value_min._float) / step._float);
   }
   return 0;
 }
@@ -68,7 +67,8 @@ void ImageFilter::Holder::setDataValue(int val)
                                                                : (false));
       break;
     case INT:
-      reinterpret_cast<Data<int>*>(data)->setValue(val + value_min._int);
+      reinterpret_cast<Data<int>*>(data)->setValue(val * step._int +
+                                                   value_min._int);
       break;
     case OPTIONSGROUP:
       reinterpret_cast<Data<helper::OptionsGroup>*>(data)
@@ -76,19 +76,13 @@ void ImageFilter::Holder::setDataValue(int val)
           ->setSelectedItem(unsigned(val));
       break;
     case DOUBLE:
-    {
-      double max = value_max._double - value_min._double;
-      reinterpret_cast<Data<double>*>(data)->setValue(
-          (double(val) * max) / (value_max._double / step._double));
+      reinterpret_cast<Data<double>*>(data)->setValue(val * step._double +
+                                                      value_min._double);
       break;
-    }
     case FLOAT:
-    {
-      float max = value_max._float - value_min._float;
-      reinterpret_cast<Data<float>*>(data)->setValue(
-          (float(val) * max) / (value_max._float / step._float));
+      reinterpret_cast<Data<double>*>(data)->setValue(val * step._float +
+                                                      value_min._float);
       break;
-    }
   }
 }
 
@@ -225,15 +219,15 @@ void ImageFilter::activateMouseCallback()
 }
 
 void ImageFilter::unregisterAllData() { m_params.clear(); }
-void ImageFilter::registerData(Data<bool>* data, int min, int max, int step)
+void ImageFilter::registerData(Data<bool>* data)
 {
-  m_params.push_back(Holder(Holder::BOOL, data, min, max, step));
+  m_params.push_back(Holder(Holder::BOOL, data, 0, 1, 1));
 }
 
-void ImageFilter::registerData(Data<helper::OptionsGroup>* data, int min,
-                               int max, int step)
+void ImageFilter::registerData(Data<helper::OptionsGroup>* data)
 {
-  m_params.push_back(Holder(Holder::OPTIONSGROUP, data, min, max, step));
+  m_params.push_back(Holder(Holder::OPTIONSGROUP, data, int(0),
+                            int(data->getValue().size() - 1), int(1)));
 }
 
 void ImageFilter::registerData(Data<int>* data, int min, int max, int step)

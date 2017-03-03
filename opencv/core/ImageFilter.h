@@ -74,12 +74,11 @@ class ImageFilter : public common::ImplicitDataEngine
 
   void activateMouseCallback();
   // Pass data to this methods to bind them to the OpenCV UI
-  void registerData(Data<bool>* data, int min = 0, int max = 1, int step = 1);
+  void registerData(Data<bool>* data);
   void registerData(Data<int>* data, int min, int max, int step);
   void registerData(Data<double>* data, double min, double max, double step);
   void registerData(Data<float>* data, float min, float max, float step);
-  void registerData(Data<helper::OptionsGroup>* data, int min, int max,
-                    int step);
+  void registerData(Data<helper::OptionsGroup>* data);
   void unregisterAllData();
 
  protected:
