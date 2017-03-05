@@ -23,10 +23,11 @@ class PointPicker2D : public ImageFilter
 
   PointPicker2D()
       : ImageFilter(false),
-        d_points(initData(&d_points, "points_out",
+        d_points(initData(&d_points, "points",
                           "output vector of 2D points picked in the image",
                           true, false))
   {
+      addAlias(&d_points, "points_out");
   }
 
   void init()

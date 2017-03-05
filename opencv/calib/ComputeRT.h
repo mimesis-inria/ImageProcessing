@@ -33,6 +33,8 @@ class ComputeRT : public common::ImplicitDataEngine
         d_R(initData(&d_R, "R", "output Rotation matrix")),
         d_t(initData(&d_t, "t", "output translation vector"))
   {
+      addAlias(&d_R, "R_out");
+      addAlias(&d_t, "t_out");
   }
 
   ~ComputeRT() {}
@@ -45,6 +47,8 @@ class ComputeRT : public common::ImplicitDataEngine
     addInput(&d_dir2);
 //    addInput(&d_up1);
 //    addInput(&d_up2);
+    addOutput(&d_R);
+    addOutput(&d_t);
   }
 
   void update()

@@ -9,6 +9,11 @@ set(HEADER_FILES
   initPlugin.h
   core/ImageFilter.h
   core/ImageExporter.h
+
+#  utils/PointVectorConverter.h
+#  utils/PointVectorConverter.inl
+  utils/PointVec2Keypoint.h
+
   features/Detectors.h
   features/Matchers.h
   features/FeatureDetector.h
@@ -16,6 +21,7 @@ set(HEADER_FILES
   features/FeatureTriangulator.h
   features/MatchingConstraints.h
   features/OpticalFlow.h
+
   imgproc/CannyFilter.h
   imgproc/SobelFilter.h
   imgproc/ImageRectifier.h
@@ -24,14 +30,20 @@ set(HEADER_FILES
   imgproc/SimpleThreshold.h
   imgproc/AdaptiveThreshold.h
   imgproc/MorphologyEx.h
+
   calib/CalibLoader.h
   calib/ComputeRT.h
   )
 
 set(SOURCE_FILES
   initPlugin.cpp
+
   core/ImageFilter.cpp
   core/ImageExporter.cpp
+
+#  utils/PointVectorConverter.cpp
+  utils/PointVec2Keypoint.cpp
+
   features/Detectors.cpp
   features/Matchers.cpp
   features/FeatureDetector.cpp
@@ -39,6 +51,7 @@ set(SOURCE_FILES
   features/FeatureTriangulator.cpp
   features/MatchingConstraints.cpp
   features/OpticalFlow.cpp
+
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
   imgproc/ImageRectifier.cpp
@@ -47,6 +60,7 @@ set(SOURCE_FILES
   imgproc/SimpleThreshold.cpp
   imgproc/AdaptiveThreshold.cpp
   imgproc/MorphologyEx.cpp
+
   calib/CalibLoader.cpp
   calib/ComputeRT.cpp
   )
