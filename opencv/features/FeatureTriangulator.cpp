@@ -101,6 +101,8 @@ void FeatureTriangulator::update()
       d_matches.getValue();
   pts.resize(kL.size());
   colors.resize(kL.size());
+  int sizePts = 0;
+  (kL.size() > kR.size()) ? (sizePts = kR.size()) : (sizePts = kL.size());
 
   if (d_img.isSet() && !d_img.getValue().empty())
   {
@@ -113,12 +115,14 @@ void FeatureTriangulator::update()
         colors[i] = Vec3b(c[0], c[1], c[2]);
       }
     else
-      for (size_t i = 0; i < pts.size(); ++i)
+    {
+      for (size_t i = 0; i < sizePts; ++i)
       {
         triangulate(kL[i].pt, kR[i].pt, pts[i]);
         cv::Vec3b c = d_img.getValue().at<cv::Vec3b>(kL[i].pt.y, kL[i].pt.x);
         colors[i] = Vec3b(c[0], c[1], c[2]);
       }
+    }
     d_pointCloud.endEdit();
     d_pointCloudColors.endEdit();
   }
@@ -128,7 +132,7 @@ void FeatureTriangulator::update()
       for (size_t i = 0; i < m.size(); ++i)
         triangulate(kL[m[i][0].queryIdx].pt, kR[m[i][0].trainIdx].pt, pts[i]);
     else
-      for (size_t i = 0; i < pts.size(); ++i)
+      for (size_t i = 0; i < sizePts; ++i)
         triangulate(kL[i].pt, kR[i].pt, pts[i]);
     d_pointCloud.endEdit();
   }
