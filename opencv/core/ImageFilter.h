@@ -66,6 +66,7 @@ class ImageFilter : public common::ImplicitDataEngine
 
   // Creates the debugging window and its associated trackbars
   void reinitDebugWindow();
+	void refreshDebugWindow();
 
   Data<common::cvMat> d_img;
   Data<common::cvMat> d_img_out;
@@ -92,9 +93,8 @@ class ImageFilter : public common::ImplicitDataEngine
   bool m_outputImage;
   bool m_isMouseCallbackActive;
 
- private:
-  void refreshDebugWindow();
-  core::DataTracker m_displayDebugDataTracker;
+private:
+	core::DataTracker m_displayDebugDataTracker;
   struct Holder
   {
     enum Type

@@ -23,33 +23,39 @@ class ComputeRT : public common::ImplicitDataEngine
         d_pos2(
             initData(&d_pos2, "pos2",
                      "position of the second camera (usually the right one)")),
-        d_dir1(initData(&d_dir1, "dir1", "position of the reference camera's target")),
-        d_dir2(initData(&d_dir2, "dir2", "position of the second camera's target")),
-        //        d_up1(initData(&d_up1, "up1",
-        //                       "up direction vector of the reference
-        //                       camera")),
-        //        d_up2(initData(&d_up2, "up2",
-        //                       "up direction vector of the second camera")),
-        d_R(initData(&d_R, "R", "output Rotation matrix")),
-        d_t(initData(&d_t, "t", "output translation vector"))
-  {
-      addAlias(&d_R, "R_out");
-      addAlias(&d_t, "t_out");
-  }
+				d_dir1(initData(&d_dir1, "dir1",
+												"position of the reference camera's target")),
+				d_dir2(initData(&d_dir2, "dir2",
+												"position of the second camera's target")),
+				d_P1(initData(&d_P1, "projMat1",
+											"Projection matrix of the reference camera", true, true)),
+				d_P2(initData(&d_P2, "projMat2",
+											"Projection matrix of the second camera", true, true)),
+				d_R(initData(&d_R, "R", "output Rotation matrix")),
+				d_t(initData(&d_t, "t", "output translation vector")),
+				d_E(initData(&d_E, "E", "output Essential matrix")),
+				d_F(initData(&d_F, "F", "output Fundamental matrix"))
+	{
+		addAlias(&d_R, "R_out");
+		addAlias(&d_t, "t_out");
+		addAlias(&d_E, "E_out");
+		addAlias(&d_F, "F_out");
+	}
 
   ~ComputeRT() {}
-
   void init()
   {
-    addInput(&d_pos1);
+		addInput(&d_P1);
+		addInput(&d_P2);
+		addInput(&d_pos1);
     addInput(&d_pos2);
     addInput(&d_dir1);
     addInput(&d_dir2);
-//    addInput(&d_up1);
-//    addInput(&d_up2);
     addOutput(&d_R);
     addOutput(&d_t);
-  }
+		addOutput(&d_E);
+		addOutput(&d_F);
+	}
 
   void update()
   {
@@ -62,19 +68,37 @@ class ComputeRT : public common::ImplicitDataEngine
 
     d_R.setValue(R);
     d_t.setValue(d_pos2.getValue() - d_pos1.getValue());
-  }
+
+		defaulttype::Vec3d t = d_t.getValue();
+		// COMPUTING F:
+		// F = PL * R*[t]x * PR
+		// Where [t]x is the matrix representation of the cross product with t
+		double p[9] = {0, -t.z(), t.y(), t.z(), 0, -t.x(), -t.y(), t.x(), 0};
+		defaulttype::Matrix3 T(p);
+		d_E.setValue(R * T);
+
+		if (d_P1.isSet() && d_P2.isSet())
+		{
+			// Computing Fundamental matrix:
+			// F = P2' * E * P1
+			d_F.setValue(d_P2.getValue().transposed() * d_E.getValue() *
+									 d_P1.getValue());
+		}
+	}
 
   // INPUTS
   Data<defaulttype::Vector3> d_pos1;
   Data<defaulttype::Vector3> d_pos2;
   Data<defaulttype::Vector3> d_dir1;
   Data<defaulttype::Vector3> d_dir2;
-  //  Data<defaulttype::Vector3> d_up1;
-  //  Data<defaulttype::Vector3> d_up2;
+	Data<defaulttype::Matrix3> d_P1;
+	Data<defaulttype::Matrix3> d_P2;
 
   // OUTPUTS
   Data<defaulttype::Matrix3> d_R;
   Data<defaulttype::Vector3> d_t;
+	Data<defaulttype::Matrix3> d_E;
+	Data<defaulttype::Matrix3> d_F;
 };
 
 SOFA_DECL_CLASS(ComputeRT)

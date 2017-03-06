@@ -10,8 +10,8 @@ set(HEADER_FILES
   core/ImageFilter.h
   core/ImageExporter.h
 
-#  utils/PointVectorConverter.h
-#  utils/PointVectorConverter.inl
+  utils/PointVectorConverter.h
+  utils/PointVectorConverter.inl
   utils/PointVec2Keypoint.h
 
   features/Detectors.h
@@ -41,7 +41,7 @@ set(SOURCE_FILES
   core/ImageFilter.cpp
   core/ImageExporter.cpp
 
-#  utils/PointVectorConverter.cpp
+  utils/PointVectorConverter.cpp
   utils/PointVec2Keypoint.cpp
 
   features/Detectors.cpp

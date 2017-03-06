@@ -1,5 +1,8 @@
 #include "PointPicker2D.h"
+#include <SofaORCommon/cvMatUtils.h>
+#include <opencv2/calib3d.hpp>
 #include <opencv2/highgui.hpp>
+
 namespace sofa
 {
 namespace OR
@@ -42,20 +45,36 @@ void PointPicker2D::capture(int event, int x, int y, int flags)
     break;
     case cv::EVENT_LBUTTONUP:
     {
-      cv::Point2i pos(x, y);
+			cv::Point2f pos(x, y);
       if (flags & cv::EVENT_FLAG_CTRLKEY)
       {
         for (int _x = 0; _x < 6; ++_x)
           for (int _y = 0; _y < 6; ++_y)
           {
-            pos = cv::Point2i(x - 2 + _x, y - 2 + _y);
+						pos = cv::Point2f(x - 2 + _x, y - 2 + _y);
             m_pointList.remove(pos);
           }
         std::cout << "removing" << std::endl;
       }
       else
         m_pointList.push_back(pos);
-      setMouseState(&PointPicker2D::freeMove);
+
+			std::vector<cv::Vec3f> lines;
+			epilines.clear();
+			if (!m_pointList.empty())
+			{
+				cv::Mat_<double> F;
+				common::matrix::sofaMat2cvMat(d_F.getValue(), F);
+				std::vector<cv::Point2f> points(m_pointList.begin(), m_pointList.end());
+				cv::computeCorrespondEpilines(points, d_whichImage.getValue(), F,
+																			lines);
+				for (const cv::Vec3f& pt : lines)
+					epilines.push_back(defaulttype::Vec3f(pt.val));
+			}
+			m_picker->reinitDebugWindow();
+			m_picker->refreshDebugWindow();
+
+			setMouseState(&PointPicker2D::freeMove);
       break;
     }
   }

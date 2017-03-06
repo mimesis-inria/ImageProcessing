@@ -18,24 +18,43 @@ class PointPicker2D : public ImageFilter
  public:
   SOFA_CLASS(PointPicker2D, ImageFilter);
 
-  // OUTPUT
-  Data<helper::vector<defaulttype::Vec2i> > d_points;
+	// INPUTS
+	Data<defaulttype::Matrix3> d_F;
+	Data<int> d_whichImage;
+	Data<std::string> d_getEpilinesFrom;
+	// OUTPUTS
+	Data<helper::vector<defaulttype::Vec2i> > d_points;
+	helper::vector<defaulttype::Vec3f> epilines;
 
   PointPicker2D()
       : ImageFilter(false),
-        d_points(initData(&d_points, "points",
+				d_F(initData(
+						&d_F, "F",
+						"optional input fundamental matrix to compute epipolar lines")),
+				d_whichImage(initData(&d_whichImage, "whichImage",
+															"optional input integer to define if it's Left "
+															"(1) or Right(2) image, to compute epipolar "
+															"lines")),
+				d_getEpilinesFrom(initData(
+						&d_getEpilinesFrom, "getEpilinesFrom",
+						"optional input component from which to look for epipolar lines")),
+				d_points(initData(&d_points, "points",
                           "output vector of 2D points picked in the image",
-                          true, false))
-  {
-      addAlias(&d_points, "points_out");
-  }
+													true, false))
+	{
+		addAlias(&d_points, "points_out");
+	}
 
   void init()
   {
-    addOutput(&d_points);
-    ImageFilter::activateMouseCallback();
+		addInput(&d_F);
+		addInput(&d_whichImage);
+		addOutput(&d_points);
+		ImageFilter::activateMouseCallback();
     setMouseState(&PointPicker2D::freeMove);
     ImageFilter::init();
+		m_picker =
+				this->getContext()->get<PointPicker2D>(d_getEpilinesFrom.getValue());
   }
 
   void update()
@@ -53,6 +72,17 @@ class PointPicker2D : public ImageFilter
   {
     if (in.empty()) return;
     in.copyTo(out);
+
+		if (d_getEpilinesFrom.isSet())
+		{
+			cv::Scalar color(0, 255, 0, 255);
+			for (auto line : m_picker->epilines)
+			{
+				cv::line(out, cv::Point(0, -line[2] / line[1]),
+								 cv::Point(out.cols, -(line[2] + line[0] * out.cols) / line[1]),
+								 color);
+			}
+		}
     cv::Scalar color(0, 255, 0, 255);
 
     if (m_pointList.empty()) return;
@@ -61,6 +91,8 @@ class PointPicker2D : public ImageFilter
   }
 
  protected:
+	PointPicker2D* m_picker;
+
   // Mouse controls
   typedef void (PointPicker2D::*StateFunction)(int, int, int, int);
   void freeMove(int event, int x, int y,
@@ -73,7 +105,7 @@ class PointPicker2D : public ImageFilter
   void mouseCallback(int event, int x, int y, int flags);
 
  private:
-  std::list<cv::Point2i> m_pointList;
+	std::list<cv::Point2f> m_pointList;
 };
 
 SOFA_DECL_CLASS(PointPicker2D)

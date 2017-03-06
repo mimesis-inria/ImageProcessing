@@ -99,7 +99,7 @@ void ImageFilter::callback(int val, void* holder)
   {
     reinterpret_cast<Holder*>(holder)->setDataValue(val);
     reinterpret_cast<Holder*>(holder)->refresh();
-  }
+	}
 }
 
 unsigned ImageFilter::m_window_uid = 0;
