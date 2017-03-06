@@ -53,7 +53,7 @@ class PointPicker2D : public ImageFilter
   {
     if (in.empty()) return;
     in.copyTo(out);
-    cv::Scalar color(255, 255, 255, 50);
+    cv::Scalar color(0, 255, 0, 255);
 
     if (m_pointList.empty()) return;
     for (const cv::Point2i& pt : m_pointList)
