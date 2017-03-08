@@ -40,7 +40,7 @@ class PointPicker2D : public ImageFilter
 						"optional input component from which to look for epipolar lines")),
 				d_points(initData(&d_points, "points",
                           "output vector of 2D points picked in the image",
-													true, false))
+													true, true))
 	{
 		addAlias(&d_points, "points_out");
 	}

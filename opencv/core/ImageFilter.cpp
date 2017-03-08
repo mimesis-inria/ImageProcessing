@@ -171,7 +171,7 @@ void ImageFilter::update()
 
 void ImageFilter::reinit()
 {
-	if (m_displayDebugDataTracker.isDirty() && d_displayDebugWindow.getValue())
+	if (m_displayDebugDataTracker.isDirty())
   {
     reinitDebugWindow();
     refreshDebugWindow();
@@ -205,7 +205,9 @@ void ImageFilter::reinitDebugWindow()
 
 void ImageFilter::refreshDebugWindow()
 {
-  applyFilter(d_img.getValue(), m_debugImage, true);
+	if (!d_displayDebugWindow.getValue())
+		return;
+	applyFilter(d_img.getValue(), m_debugImage, true);
   if (m_debugImage.empty()) return;
 
   std::cout << "refreshDebugWindow" << std::endl;

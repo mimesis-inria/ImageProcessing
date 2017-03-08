@@ -52,7 +52,7 @@ void PointPicker2D::freeMove(int event, int /*x*/, int /*y*/, int /*flags*/)
   {
     m_pointList.clear();
 		computeEpipolarLines();
-    ImageFilter::update();
+		update();
   }
 }
 

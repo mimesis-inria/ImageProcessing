@@ -12,7 +12,6 @@ namespace OR
 {
 namespace processor
 {
-
 template <class SrcType, class DstType>
 class PointVectorConverter : public common::ImplicitDataEngine
 {
@@ -35,12 +34,9 @@ class PointVectorConverter : public common::ImplicitDataEngine
 
 	void update();
 
-	virtual std::string getTemplateName() const
-	{
-			return templateName(this);
-	}
-
-	static std::string templateName(const PointVectorConverter<SrcType, DstType>* = NULL);
+	virtual std::string getTemplateName() const { return templateName(this); }
+	static std::string templateName(
+			const PointVectorConverter<SrcType, DstType>* = NULL);
 
 	// INPUTS
 	Data<helper::vector<SrcType> > d_src;
