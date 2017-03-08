@@ -101,7 +101,7 @@ void FeatureTriangulator::update()
       d_matches.getValue();
   pts.resize(kL.size());
   colors.resize(kL.size());
-  int sizePts = 0;
+	unsigned sizePts = 0;
   (kL.size() > kR.size()) ? (sizePts = kR.size()) : (sizePts = kL.size());
 
   if (d_img.isSet() && !d_img.getValue().empty())

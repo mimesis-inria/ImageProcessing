@@ -171,7 +171,7 @@ void ImageFilter::update()
 
 void ImageFilter::reinit()
 {
-  if (m_displayDebugDataTracker.isDirty())
+	if (m_displayDebugDataTracker.isDirty() && d_displayDebugWindow.getValue())
   {
     reinitDebugWindow();
     refreshDebugWindow();

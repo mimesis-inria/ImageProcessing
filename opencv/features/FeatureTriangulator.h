@@ -48,12 +48,12 @@ class FeatureTriangulator : public common::ImplicitDataEngine
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR;
   Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
 
-  // INPUT (OPTIONAL)
-  Data<common::cvMat> d_img;
-
   // OUTPUTS
   Data<sofa::helper::vector<Vec3d> > d_pointCloud;
   Data<sofa::helper::vector<Vec3b> > d_pointCloudColors;
+
+	// INPUT (OPTIONAL)
+	Data<common::cvMat> d_img;
 
  private:
   cv::Mat_<double> R;

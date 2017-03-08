@@ -73,7 +73,7 @@ class PointPicker2D : public ImageFilter
     if (in.empty()) return;
     in.copyTo(out);
 
-		if (d_getEpilinesFrom.isSet())
+		if (m_picker != NULL)
 		{
 			cv::Scalar color(0, 255, 0, 255);
 			for (auto line : m_picker->epilines)
@@ -90,7 +90,9 @@ class PointPicker2D : public ImageFilter
       cv::circle(out, pt, 3, color, 1, cv::LINE_AA);
   }
 
- protected:
+	void computeEpipolarLines();
+
+protected:
 	PointPicker2D* m_picker;
 
   // Mouse controls

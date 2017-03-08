@@ -21,9 +21,8 @@ namespace processor
 ///        +--------->+------+-----------+
 ///
 
-void Segmenter2D::freeMove(int event, int x, int y, int flags)
+void Segmenter2D::freeMove(int event, int /*x*/, int /*y*/, int /*flags*/)
 {
-    std::cout << "freemove" << std::endl;
   if (event == cv::EVENT_LBUTTONDOWN)
     setMouseState(&Segmenter2D::capture);
   else if (event == cv::EVENT_MBUTTONDOWN)
@@ -37,7 +36,6 @@ void Segmenter2D::freeMove(int event, int x, int y, int flags)
 }
 void Segmenter2D::capture(int event, int x, int y, int flags)
 {
-    std::cout << "capture" << std::endl;
   switch (event)
   {
     case cv::EVENT_MOUSEMOVE:
@@ -51,7 +49,6 @@ void Segmenter2D::capture(int event, int x, int y, int flags)
             pos = cv::Point2i(x - 2 + _x, y - 2 + _y);
             m_poly.remove(pos);
           }
-        std::cout << "removing" << std::endl;
       }
       else
         m_poly.push_back(pos);
@@ -67,7 +64,6 @@ void Segmenter2D::capture(int event, int x, int y, int flags)
             pos = cv::Point2i(x - 2 + _x, y - 2 + _y);
             m_poly.remove(pos);
           }
-        std::cout << "removing" << std::endl;
       }
       else
         m_poly.push_back(pos);
@@ -77,9 +73,8 @@ void Segmenter2D::capture(int event, int x, int y, int flags)
   update();
 }
 
-void Segmenter2D::capturePaused(int event, int x, int y, int flags)
+void Segmenter2D::capturePaused(int event, int /*x*/, int /*y*/, int /*flags*/)
 {
-    std::cout << "paused" << std::endl;
   switch (event)
   {
     case cv::EVENT_LBUTTONDOWN:
@@ -91,9 +86,8 @@ void Segmenter2D::capturePaused(int event, int x, int y, int flags)
   }
 }
 
-void Segmenter2D::stopping(int event, int x, int y, int flags)
+void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
 {
-    std::cout << "stopping" << std::endl;
   switch (event)
   {
     case cv::EVENT_RBUTTONUP:

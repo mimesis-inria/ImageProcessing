@@ -19,8 +19,8 @@ class Segmenter2D : public ImageFilter
   SOFA_CLASS(Segmenter2D, ImageFilter);
 
   // INPUTS
-  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
-  Data<helper::vector<common::cvKeypoint> > d_keypoints;
+	Data<helper::vector<common::cvKeypoint> > d_keypoints;
+	Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
 
   // OUTPUTS
   Data<helper::SVector<helper::SVector<defaulttype::Vec2i> > > d_regionPoly;

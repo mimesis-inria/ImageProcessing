@@ -1,48 +1,55 @@
-//#ifndef SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H
-//#define SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H
+#ifndef SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H
+#define SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H
 
-//#include "initPlugin.h"
+#include "initPlugin.h"
 
-//#include <SofaORCommon/ImplicitDataEngine.h>
-//#include <SofaORCommon/DataTypes.h>
+#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaORCommon/cvKeypoint.h>
 
-//namespace sofa
-//{
-//namespace OR
-//{
-//namespace processor
-//{
+namespace sofa
+{
+namespace OR
+{
+namespace processor
+{
 
-//template <class ConversionType>
-//class PointVectorConverter : public common::ImplicitDataEngine
-//{
-// public:
-//	SOFA_CLASS(SOFA_TEMPLATE(PointVectorConverter, ConversionType),
-//             common::ImplicitDataEngine);
+template <class SrcType, class DstType>
+class PointVectorConverter : public common::ImplicitDataEngine
+{
+ public:
+	SOFA_CLASS(SOFA_TEMPLATE2(PointVectorConverter, SrcType, DstType),
+						 common::ImplicitDataEngine);
 
-//  PointVectorConverter()
-//      : d_src(initData(&d_src, "points", "input vector to convert")),
-//        d_dst(initData(&d_dst, "points_out", "converted output vector"))
-//  {
-//  }
+	PointVectorConverter()
+			: d_src(initData(&d_src, "points", "input vector to convert")),
+				d_dst(initData(&d_dst, "points_out", "converted output vector"))
+	{
+	}
 
-//  ~PointVectorConverter() {}
-//  void init()
-//  {
-//    addInput(&d_src);
-//    addOutput(&d_dst);
-//  }
+	~PointVectorConverter() {}
+	void init()
+	{
+		addInput(&d_src);
+		addOutput(&d_dst);
+	}
 
-//  void update();
+	void update();
 
-//  // INPUTS
-//	Data<helper::vector<typename ConversionType::SrcType> > d_src;
-//  // OUTPUTS
-//	Data<helper::vector<typename ConversionType::DstType> > d_dst;
-//};
+	virtual std::string getTemplateName() const
+	{
+			return templateName(this);
+	}
 
-//}  // namespace processor
-//}  // namespace OR
-//}  // namespace sofa
+	static std::string templateName(const PointVectorConverter<SrcType, DstType>* = NULL);
 
-//#endif  // SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H
+	// INPUTS
+	Data<helper::vector<SrcType> > d_src;
+	// OUTPUTS
+	Data<helper::vector<DstType> > d_dst;
+};
+
+}  // namespace processor
+}  // namespace OR
+}  // namespace sofa
+
+#endif  // SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H

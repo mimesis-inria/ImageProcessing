@@ -18,9 +18,9 @@ class ImageExporter : public common::ImplicitDataEngine
 {
   Data<std::string> d_fileName;
   Data<common::cvMat> d_img;
-  Data<bool> d_activate;
-  Data<helper::OptionsGroup> d_exportType;
-  Data<unsigned> d_nSteps;
+	Data<unsigned> d_nSteps;
+	Data<helper::OptionsGroup> d_exportType;
+	Data<bool> d_activate;
 
  public:
   SOFA_CLASS(ImageExporter, common::ImplicitDataEngine);

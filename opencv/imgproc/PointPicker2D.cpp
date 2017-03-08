@@ -24,16 +24,38 @@ namespace processor
 ///        +--------->+------+-----------+
 ///
 
-void PointPicker2D::freeMove(int event, int x, int y, int flags)
+void PointPicker2D::computeEpipolarLines()
 {
-  if (event == cv::EVENT_LBUTTONDOWN)
+	if (!m_picker)
+		return;
+	std::vector<cv::Vec3f> lines;
+	epilines.clear();
+	if (!m_pointList.empty())
+	{
+		cv::Mat_<double> F;
+		common::matrix::sofaMat2cvMat(d_F.getValue(), F);
+		std::vector<cv::Point2f> points(m_pointList.begin(), m_pointList.end());
+		cv::computeCorrespondEpilines(points, d_whichImage.getValue(), F,
+																	lines);
+		for (const cv::Vec3f& pt : lines)
+			epilines.push_back(defaulttype::Vec3f(pt.val));
+	}
+	m_picker->reinitDebugWindow();
+	m_picker->refreshDebugWindow();
+}
+
+void PointPicker2D::freeMove(int event, int /*x*/, int /*y*/, int /*flags*/)
+{
+	if (event == cv::EVENT_LBUTTONDOWN)
     setMouseState(&PointPicker2D::capture);
-  else if (event == cv::EVENT_RBUTTONDOWN)
+	else if (event == cv::EVENT_MBUTTONDOWN)
   {
     m_pointList.clear();
+		computeEpipolarLines();
     ImageFilter::update();
   }
 }
+
 void PointPicker2D::capture(int event, int x, int y, int flags)
 {
   switch (event)
@@ -54,25 +76,11 @@ void PointPicker2D::capture(int event, int x, int y, int flags)
 						pos = cv::Point2f(x - 2 + _x, y - 2 + _y);
             m_pointList.remove(pos);
           }
-        std::cout << "removing" << std::endl;
       }
       else
         m_pointList.push_back(pos);
 
-			std::vector<cv::Vec3f> lines;
-			epilines.clear();
-			if (!m_pointList.empty())
-			{
-				cv::Mat_<double> F;
-				common::matrix::sofaMat2cvMat(d_F.getValue(), F);
-				std::vector<cv::Point2f> points(m_pointList.begin(), m_pointList.end());
-				cv::computeCorrespondEpilines(points, d_whichImage.getValue(), F,
-																			lines);
-				for (const cv::Vec3f& pt : lines)
-					epilines.push_back(defaulttype::Vec3f(pt.val));
-			}
-			m_picker->reinitDebugWindow();
-			m_picker->refreshDebugWindow();
+			computeEpipolarLines();
 
 			setMouseState(&PointPicker2D::freeMove);
       break;
