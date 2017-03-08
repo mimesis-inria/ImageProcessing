@@ -12,8 +12,8 @@ template <class SrcType, class DstType>
 std::string PointVectorConverter<SrcType, DstType>::templateName(
 		const PointVectorConverter<SrcType, DstType>* /*converter*/)
 {
-	return std::string(defaulttype::DataTypeInfo<SrcType>::name()) + "," +
-				 defaulttype::DataTypeInfo<DstType>::name();
+	return std::string(defaulttype::DataTypeName<SrcType>::name()) + "," +
+				 defaulttype::DataTypeName<DstType>::name();
 }
 
 template <>
