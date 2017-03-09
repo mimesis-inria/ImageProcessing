@@ -112,10 +112,11 @@ class OpticalFlow : public ImageFilter
 		cv::imshow("RIGHT", gray);
 		cv::waitKey(1);
 
-		cv::calcOpticalFlowPyrLK(m_prev, gray, pts_in, pts_out, status, error /*,
+		cv::calcOpticalFlowPyrLK(
+				m_prev, gray, pts_in, pts_out, status, error,
 				cv::Size(d_winSize.getValue().x(), d_winSize.getValue().y()),
 				d_maxLevel.getValue(), tc, d_flags.getValue(),
-				d_minEigThresh.getValue()*/);
+				d_minEigThresh.getValue());
 
 		helper::vector<defaulttype::Vec2f>* points_out = d_points_out.beginEdit();
 		helper::vector<defaulttype::Vec2f>* points_in = d_points_in.beginEdit();

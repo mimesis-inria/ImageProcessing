@@ -99,7 +99,7 @@ void ImageFilter::callback(int val, void* holder)
   {
     reinterpret_cast<Holder*>(holder)->setDataValue(val);
     reinterpret_cast<Holder*>(holder)->refresh();
-	}
+  }
 }
 
 unsigned ImageFilter::m_window_uid = 0;
@@ -171,8 +171,8 @@ void ImageFilter::update()
 
 void ImageFilter::reinit()
 {
-	if (m_displayDebugDataTracker.isDirty() && d_isActive.getValue())
-	{
+  if (m_displayDebugDataTracker.isDirty() && d_isActive.getValue())
+  {
     reinitDebugWindow();
     refreshDebugWindow();
   }
@@ -184,20 +184,20 @@ void ImageFilter::reinit()
 void ImageFilter::reinitDebugWindow()
 {
   if (!d_displayDebugWindow.getValue())
-	{
-		cv::setMouseCallback(m_win_name, NULL, NULL);
-		cv::destroyWindow(m_win_name);
+  {
+    if (m_isMouseCallbackActive) cv::setMouseCallback(m_win_name, NULL, NULL);
+    cv::destroyWindow(m_win_name);
     return;
   }
 
   cv::namedWindow(m_win_name,
-									CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
+                  CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
   for (Holder& h : m_params)
   {
     int value = h.getTrackbarRangedValue();
     cv::createTrackbar(h.data->getName(), m_win_name, &value,
                        h.getTrackbarMaxValue(), &ImageFilter::callback, &h);
-		cv::setTrackbarPos(h.data->getName(), m_win_name,
+    cv::setTrackbarPos(h.data->getName(), m_win_name,
                        h.getTrackbarRangedValue());
   }
   if (m_isMouseCallbackActive)
@@ -206,8 +206,8 @@ void ImageFilter::reinitDebugWindow()
 
 void ImageFilter::refreshDebugWindow()
 {
-	if (!d_displayDebugWindow.getValue()) return;
-	applyFilter(d_img.getValue(), m_debugImage, true);
+  if (!d_displayDebugWindow.getValue()) return;
+  applyFilter(d_img.getValue(), m_debugImage, true);
   if (m_debugImage.empty()) return;
 
   std::cout << "refreshDebugWindow" << std::endl;
