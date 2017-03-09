@@ -17,15 +17,6 @@ std::string PointVectorConverter<SrcType, DstType>::templateName(
 }
 
 template <>
-void PointVectorConverter<common::cvKeypoint, defaulttype::Vec2i>::update()
-{
-	helper::vector<defaulttype::Vec2i>& dst = *(d_dst.beginWriteOnly());
-	dst.clear();
-	const helper::vector<common::cvKeypoint>& src = d_src.getValue();
-	for (auto kp : src) dst.push_back(defaulttype::Vec2i(kp.pt.x, kp.pt.y));
-}
-
-template <>
 void PointVectorConverter<defaulttype::Vec2i, common::cvKeypoint>::update()
 {
 	helper::vector<common::cvKeypoint>& dst = *(d_dst.beginWriteOnly());
@@ -36,12 +27,31 @@ void PointVectorConverter<defaulttype::Vec2i, common::cvKeypoint>::update()
 }
 
 template <>
-void PointVectorConverter<int, double>::update()
+void PointVectorConverter<common::cvKeypoint, defaulttype::Vec2i>::update()
 {
-	helper::vector<double>& dst = *(d_dst.beginWriteOnly());
+	helper::vector<defaulttype::Vec2i>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
-	const helper::vector<int>& src = d_src.getValue();
-	for (auto val : src) dst.push_back(double(val));
+	const helper::vector<common::cvKeypoint>& src = d_src.getValue();
+	for (auto kp : src) dst.push_back(defaulttype::Vec2i(kp.pt.x, kp.pt.y));
+}
+
+template <>
+void PointVectorConverter<defaulttype::Vec2f, common::cvKeypoint>::update()
+{
+	helper::vector<common::cvKeypoint>& dst = *(d_dst.beginWriteOnly());
+	dst.clear();
+	const helper::vector<defaulttype::Vec2f>& src = d_src.getValue();
+	for (auto pt : src)
+		dst.push_back(common::cvKeypoint(cv::Point2f(pt.x(), pt.y()), 0));
+}
+
+template <>
+void PointVectorConverter<common::cvKeypoint, defaulttype::Vec2f>::update()
+{
+	helper::vector<defaulttype::Vec2f>& dst = *(d_dst.beginWriteOnly());
+	dst.clear();
+	const helper::vector<common::cvKeypoint>& src = d_src.getValue();
+	for (auto kp : src) dst.push_back(defaulttype::Vec2f(kp.pt.x, kp.pt.y));
 }
 
 }  // namespace processor

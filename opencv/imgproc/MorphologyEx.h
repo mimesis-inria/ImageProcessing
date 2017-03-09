@@ -54,9 +54,10 @@ class MorphologyEx : public ImageFilter
     try
     {
       int operation = d_operator.getValue().getSelectedId() + 2;
-      cv::Mat element = cv::getStructuringElement(d_element.getValue().getSelectedId(),
-                                          cv::Size(d_ksize.getValue()*2+1, d_ksize.getValue()*2+1),
-                                          cv::Point(d_ksize.getValue(), d_ksize.getValue()));
+			cv::Mat element = cv::getStructuringElement(
+					d_element.getValue().getSelectedId(),
+					cv::Size(d_ksize.getValue() * 2 + 1, d_ksize.getValue() * 2 + 1),
+					cv::Point(d_ksize.getValue(), d_ksize.getValue()));
       cv::morphologyEx(in, out, operation, element);
     }
     catch (cv::Exception& e)

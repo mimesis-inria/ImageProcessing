@@ -23,7 +23,7 @@ namespace processor
 
 void Segmenter2D::freeMove(int event, int /*x*/, int /*y*/, int /*flags*/)
 {
-  if (event == cv::EVENT_LBUTTONDOWN)
+	if (event == cv::EVENT_LBUTTONDOWN)
     setMouseState(&Segmenter2D::capture);
   else if (event == cv::EVENT_MBUTTONDOWN)
   {
@@ -36,7 +36,7 @@ void Segmenter2D::freeMove(int event, int /*x*/, int /*y*/, int /*flags*/)
 }
 void Segmenter2D::capture(int event, int x, int y, int flags)
 {
-  switch (event)
+	switch (event)
   {
     case cv::EVENT_MOUSEMOVE:
     {
@@ -73,34 +73,31 @@ void Segmenter2D::capture(int event, int x, int y, int flags)
   update();
 }
 
-void Segmenter2D::capturePaused(int event, int /*x*/, int /*y*/, int /*flags*/)
+void Segmenter2D::capturePaused(int event, int /*x*/, int /*y*/, int flags)
 {
-  switch (event)
-  {
-    case cv::EVENT_LBUTTONDOWN:
-      setMouseState(&Segmenter2D::capture);
-      break;
-    case cv::EVENT_RBUTTONDOWN:
-      setMouseState(&Segmenter2D::stopping);
-      break;
+	if (event == cv::EVENT_LBUTTONDOWN)
+	{
+		if (flags & cv::EVENT_FLAG_SHIFTKEY)
+			setMouseState(&Segmenter2D::stopping);
+		else
+			setMouseState(&Segmenter2D::capture);
   }
 }
 
 void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
 {
-  switch (event)
+	switch (event)
   {
-    case cv::EVENT_RBUTTONUP:
+		case cv::EVENT_LBUTTONUP:
     {
-      helper::SVector<helper::SVector<defaulttype::Vec2i> >* regionsPoly =
+			std::cout << "STOPPED" << std::endl;
+			helper::vector<defaulttype::Vec2i>* regionsPoly =
           d_regionPoly.beginEdit();
-      helper::vector<defaulttype::Vec2i> tmp;
-      tmp.reserve(m_poly.size());
+			regionsPoly->clear();
+			regionsPoly->reserve(m_poly.size());
       for (const cv::Point2i& pt : m_poly)
-        tmp.push_back(defaulttype::Vec2i(pt.x, pt.y));
-      regionsPoly->push_back(tmp);
+				regionsPoly->push_back(defaulttype::Vec2i(pt.x, pt.y));
       d_regionPoly.endEdit();
-      d_regionLabel.beginWriteOnly()->push_back("regionName");
       m_poly.clear();
       setMouseState(&Segmenter2D::freeMove);
       ImageFilter::update();
@@ -114,7 +111,8 @@ void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
 
 void Segmenter2D::mouseCallback(int event, int x, int y, int flags)
 {
-  (this->*m_activeState)(event, x, y, flags);
+	if (d_displayDebugWindow.getValue())
+		(this->*m_activeState)(event, x, y, flags);
 }
 
 }  // namespace processor

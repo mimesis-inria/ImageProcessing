@@ -26,8 +26,7 @@ namespace processor
 
 void PointPicker2D::computeEpipolarLines()
 {
-	if (!m_picker)
-		return;
+	if (!m_picker) return;
 	std::vector<cv::Vec3f> lines;
 	epilines.clear();
 	if (!m_pointList.empty())
@@ -35,8 +34,7 @@ void PointPicker2D::computeEpipolarLines()
 		cv::Mat_<double> F;
 		common::matrix::sofaMat2cvMat(d_F.getValue(), F);
 		std::vector<cv::Point2f> points(m_pointList.begin(), m_pointList.end());
-		cv::computeCorrespondEpilines(points, d_whichImage.getValue(), F,
-																	lines);
+		cv::computeCorrespondEpilines(points, d_whichImage.getValue(), F, lines);
 		for (const cv::Vec3f& pt : lines)
 			epilines.push_back(defaulttype::Vec3f(pt.val));
 	}

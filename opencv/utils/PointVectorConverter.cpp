@@ -15,11 +15,10 @@ SOFA_DECL_CLASS(PointVectorConverter)
 int PointVectorConverterClass =
 		core::RegisterObject(
 				"Converts vector of cvKeyPoints to sofa vectors, and vice versa")
-				.add<PointVectorConverter<common::cvKeypoint, defaulttype::Vec2i> >(
-						)
 				.add<PointVectorConverter<defaulttype::Vec2i, common::cvKeypoint> >()
-				.add<PointVectorConverter<int, double> >(true);
-
+				.add<PointVectorConverter<common::cvKeypoint, defaulttype::Vec2i> >()
+				.add<PointVectorConverter<defaulttype::Vec2f, common::cvKeypoint> >()
+				.add<PointVectorConverter<common::cvKeypoint, defaulttype::Vec2f> >();
 }  // namespace processor
 }  // namespace OR
 }  // namespace sofa

@@ -92,7 +92,7 @@ class PointPicker2D : public ImageFilter
 
 	void computeEpipolarLines();
 
-protected:
+ protected:
 	PointPicker2D* m_picker;
 
   // Mouse controls
