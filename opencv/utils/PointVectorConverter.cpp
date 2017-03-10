@@ -18,7 +18,8 @@ int PointVectorConverterClass =
 				.add<PointVectorConverter<defaulttype::Vec2i, common::cvKeypoint> >()
 				.add<PointVectorConverter<common::cvKeypoint, defaulttype::Vec2i> >()
 				.add<PointVectorConverter<defaulttype::Vec2f, common::cvKeypoint> >()
-				.add<PointVectorConverter<common::cvKeypoint, defaulttype::Vec2f> >();
+				.add<PointVectorConverter<common::cvKeypoint, defaulttype::Vec2f> >()
+				.add<PointVectorConverter<defaulttype::Vec2f, defaulttype::Vec3f> >();
 }  // namespace processor
 }  // namespace OR
 }  // namespace sofa

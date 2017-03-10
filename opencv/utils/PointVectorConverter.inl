@@ -54,6 +54,15 @@ void PointVectorConverter<common::cvKeypoint, defaulttype::Vec2f>::update()
 	for (auto kp : src) dst.push_back(defaulttype::Vec2f(kp.pt.x, kp.pt.y));
 }
 
+template <>
+void PointVectorConverter<defaulttype::Vec2f, defaulttype::Vec3f>::update()
+{
+	helper::vector<defaulttype::Vec3f>& dst = *(d_dst.beginWriteOnly());
+	dst.clear();
+	const helper::vector<defaulttype::Vec2f>& src = d_src.getValue();
+	for (auto pt : src) dst.push_back(defaulttype::Vec3f(pt.x(), pt.y(), 0));
+}
+
 }  // namespace processor
 }  // namespace OR
 }  // namespace sofa
