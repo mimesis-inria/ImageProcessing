@@ -190,9 +190,12 @@ void ImageFilter::reinitDebugWindow()
     return;
   }
 
-  cv::namedWindow(m_win_name,
-                  CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
-  for (Holder& h : m_params)
+
+	// WITH QT:
+	//  cv::namedWindow(m_win_name,
+	//                  CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
+	cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
+	for (Holder& h : m_params)
   {
     int value = h.getTrackbarRangedValue();
     cv::createTrackbar(h.data->getName(), m_win_name, &value,
