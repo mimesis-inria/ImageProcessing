@@ -32,7 +32,7 @@ class Segmenter2D : public ImageFilter
 				d_regionLabel(initData(&d_regionLabel, "label",
 															 "label for the segmented region")),
 				d_points(initData(&d_points, "points", "input vector keypoints")),
-				d_regionPoly(initData(&d_regionPoly, "poly", "output polygon")),
+				d_regionPoly(initData(&d_regionPoly, "poly", "optional input polygon")),
 				d_regionPoints(initData(&d_regionPoints, "points_out",
 																"output vector of points fitting in the poly"))
   {
@@ -42,8 +42,8 @@ class Segmenter2D : public ImageFilter
   void init()
   {
 		addInput(&d_points);
-    addOutput(&d_regionPoints);
-    addOutput(&d_regionPoly);
+		addInput(&d_regionPoly);
+		addOutput(&d_regionPoints);
     ImageFilter::activateMouseCallback();
     setMouseState(&Segmenter2D::freeMove);
     ImageFilter::init();

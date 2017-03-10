@@ -33,17 +33,20 @@ class OpticalFlow : public ImageFilter
   Data<helper::vector<float> > d_error_out;
 	Data<bool> d_startTracking;
 
+	std::vector<cv::Point2f> m_pts_in;
+	std::vector<cv::Point2f> m_pts_out;
+
   OpticalFlow()
       : d_winSize(
-						initData(&d_winSize, defaulttype::Vec2i(51, 51), "win_size", "")),
-				d_maxLevel(initData(&d_maxLevel, 0, "max_level", "")),
+						initData(&d_winSize, defaulttype::Vec2i(21, 21), "win_size", "")),
+				d_maxLevel(initData(&d_maxLevel, 3, "max_level", "")),
 				d_criteria_type(initData(&d_criteria_type,
 																 CV_TERMCRIT_ITER + CV_TERMCRIT_EPS,
 																 "crit_type", "")),
-				d_maxCount(initData(&d_maxCount, 20, "max_count", "")),
-				d_epsilon(initData(&d_epsilon, 0.03, "epsilon", "")),
+				d_maxCount(initData(&d_maxCount, 30, "max_count", "")),
+				d_epsilon(initData(&d_epsilon, 0.01, "epsilon", "")),
         d_flags(initData(&d_flags, 0, "flags", "")),
-				d_minEigThresh(initData(&d_minEigThresh, 0.05, "eigen_threshold", "")),
+				d_minEigThresh(initData(&d_minEigThresh, 1e-4, "eigen_threshold", "")),
 				d_points_in(
 						initData(&d_points_in, "points", "set of input points to track")),
         d_points_out(initData(&d_points_out, "points_out",
@@ -61,7 +64,10 @@ class OpticalFlow : public ImageFilter
     registerData(&d_maxCount, 0, 100, 1);
 		registerData(&d_epsilon, 0.0, 0.2, 0.001);
 		registerData(&d_minEigThresh, 0.001, 0.1, 0.001);
-    ImageFilter::init();
+
+		addInput(&d_points_in);
+		addOutput(&d_points_out);
+		ImageFilter::init();
   }
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
@@ -71,78 +77,88 @@ class OpticalFlow : public ImageFilter
 
 		if (!d_startTracking.getValue())
 		{
-			addInput(&d_points_in);
+			// Keep things well initialized:
+			if (!m_prev.empty())  // m_prev should stay empty
+				m_prev.zeros(m_prev.rows, m_prev.cols, m_prev.type());
+
+			// set prev_points to the current input
+			if (d_points_in.getValue().empty()) return;
+			m_pts_in.reserve(d_points_in.getValue().size());
+			m_pts_in.clear();
+			for (const defaulttype::Vec2f& pt : d_points_in.getValue())
+				m_pts_in.push_back(cv::Point2f(pt.x(), pt.y()));
+
+			// copy in in out
 			in.copyTo(out);
 			return;
 		}
-		else
-			removeInput(&d_points_in);  // stop reading from input, start looping on
-																	// self-extracted points
 
+		// IF THE TRACKER HAS BEEN STARTED:
 		if (in.type() != CV_8UC1)
 			cv::cvtColor(in, gray, CV_BGRA2GRAY);
 		else
 			gray = in;
 
+		// If it's the first step of the optical flow:
 		if (m_prev.empty())
 		{
+			// we then want to initialize some of the prev values:
 			m_prev = gray.clone();
 			return;
 		}
+		m_pts_out = m_pts_in;
 
-		if (d_points_in.getValue().size() < 2) return;
-		std::vector<cv::Vec2f> pts_in;
-		pts_in.reserve(d_points_in.getValue().size());
-		std::vector<cv::Vec2f> pts_out;
-		pts_out.reserve(d_points_out.getValue().size());
-		std::vector<uchar> status;
-		status.reserve(pts_in.capacity());
-		std::vector<float> error;
-		error.reserve(pts_in.capacity());
+		if (m_pts_in.empty() || m_prev.empty() || gray.empty())
+		{
+			std::cout << "something is wrong: please check your input frames and / "
+									 "or input points"
+								<< std::endl;
+			return;
+		}
+		std::cout << "optical flow started" << std::endl;
+		std::cout << m_pts_in.size() << std::endl;
 
-		for (const defaulttype::Vec2f& pt : d_points_in.getValue())
-			pts_in.push_back(cv::Point2f(pt.x(), pt.y()));
-		//		for (const defaulttype::Vec2f& pt : d_points_out.getValue())
-		//			pts_out.push_back(cv::Point2f(pt.x(), pt.y()));
+		std::vector<uchar> status = d_status_out.getValue();
+		std::vector<float> error = d_error_out.getValue();
 
 		cv::TermCriteria tc =
 				cv::TermCriteria(d_criteria_type.getValue(), d_maxCount.getValue(),
 												 d_epsilon.getValue());
-		cv::imshow("LEFT", m_prev);
-		cv::imshow("RIGHT", gray);
-		cv::waitKey(1);
+		cv::Size winSize(d_winSize.getValue().x(), d_winSize.getValue().y());
 
-		cv::calcOpticalFlowPyrLK(
-				m_prev, gray, pts_in, pts_out, status, error,
-				cv::Size(d_winSize.getValue().x(), d_winSize.getValue().y()),
-				d_maxLevel.getValue(), tc, d_flags.getValue(),
-				d_minEigThresh.getValue());
+		cv::calcOpticalFlowPyrLK(m_prev, gray, m_pts_in, m_pts_out, status, error,
+														 winSize, d_maxLevel.getValue(), tc,
+														 d_flags.getValue(), d_minEigThresh.getValue());
 
 		helper::vector<defaulttype::Vec2f>* points_out = d_points_out.beginEdit();
 		helper::vector<defaulttype::Vec2f>* points_in = d_points_in.beginEdit();
 		points_out->clear();
 		points_in->clear();
-		for (const cv::Point2f& pt : pts_out)
+		for (size_t i = 0; i < m_pts_out.size(); ++i)
 		{
-			points_out->push_back(defaulttype::Vec2f(pt.x, pt.y));
-			points_in->push_back(defaulttype::Vec2f(pt.x, pt.y));
+			cv::Point2f ptPrev, ptNext;
+			ptPrev = m_pts_in[i];
+			ptNext = m_pts_out[i];
+			points_out->push_back(defaulttype::Vec2f(ptNext.x, ptNext.y));
+			points_in->push_back(defaulttype::Vec2f(ptPrev.x, ptPrev.y));
 		}
-		helper::vector<uchar>& status_out = *d_status_out.beginEdit();
-		status_out.assign(status.begin(), status.end());
-		helper::vector<float>& error_out = *d_error_out.beginEdit();
-		error_out.assign(error.begin(), error.end());
+		d_status_out.setValue(status);
+		d_error_out.setValue(error);
 
+		m_pts_in = m_pts_out;
 		d_points_out.endEdit();
 		d_points_in.endEdit();
-		d_status_out.endEdit();
-		d_error_out.endEdit();
-		m_prev.release();
 		m_prev = gray.clone();
 		if (d_displayDebugWindow.getValue())
 		{
 			in.copyTo(out);
-      for (const cv::Point2f& pt : pts_out)
-				cv::circle(out, pt, 2, cv::Scalar(0, 255, 0), 1);
+			for (size_t i = 0 ; i < m_pts_out.size() ; ++i)
+			{
+				if (!status[i])
+					cv::circle(out, m_pts_out[i], 2, cv::Scalar(0, 0, 255), 1);
+				else
+					cv::circle(out, m_pts_out[i], 2, cv::Scalar(0, 255, 0), 1);
+			}
 		}
 	}
 
