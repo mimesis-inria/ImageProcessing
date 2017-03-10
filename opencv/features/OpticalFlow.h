@@ -151,7 +151,6 @@ class OpticalFlow : public ImageFilter
 		m_prev = gray.clone();
 		if (d_displayDebugWindow.getValue())
 		{
-			in.copyTo(out);
 			for (size_t i = 0 ; i < m_pts_out.size() ; ++i)
 			{
 				if (!status[i])
