@@ -75,6 +75,7 @@ void FeatureDetector::init()
   addDataCallback(&d_detectorType, (ImplicitDataEngine::DataCallback)&FeatureDetector::detectTypeChanged);
 
   ImageFilter::init();
+	update();
 }
 
 void FeatureDetector::update()

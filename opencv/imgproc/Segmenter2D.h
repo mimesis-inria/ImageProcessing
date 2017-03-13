@@ -47,6 +47,7 @@ class Segmenter2D : public ImageFilter
     ImageFilter::activateMouseCallback();
     setMouseState(&Segmenter2D::freeMove);
     ImageFilter::init();
+		update();
   }
 
   void update()

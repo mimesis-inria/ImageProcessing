@@ -30,6 +30,7 @@ class PointVectorConverter : public common::ImplicitDataEngine
 	{
 		addInput(&d_src);
 		addOutput(&d_dst);
+		update();
 	}
 
 	void update();

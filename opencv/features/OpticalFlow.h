@@ -68,6 +68,7 @@ class OpticalFlow : public ImageFilter
 		addInput(&d_points_in);
 		addOutput(&d_points_out);
 		ImageFilter::init();
+		update();
   }
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
@@ -90,6 +91,7 @@ class OpticalFlow : public ImageFilter
 
 			// copy in in out
 			in.copyTo(out);
+			d_points_out.setValue(d_points_in.getValue());
 			return;
 		}
 

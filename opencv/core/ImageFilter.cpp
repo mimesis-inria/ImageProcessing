@@ -134,7 +134,6 @@ void ImageFilter::init()
 
 void ImageFilter::update()
 {
-  std::cout << getName() << " update" << std::endl;
   if (!d_isActive.getValue())
   {
     // filter inactive, out = in
@@ -142,7 +141,6 @@ void ImageFilter::update()
     d_img_out.endEdit();
     if (d_displayDebugWindow.getValue())
     {
-      std::cout << "inactiveUpdate" << std::endl;
       cv::imshow(m_win_name, d_img_out.getValue());
       cv::waitKey(1);
     }
@@ -163,7 +161,6 @@ void ImageFilter::update()
   }
   if (d_displayDebugWindow.getValue() && !m_debugImage.empty())
   {
-    std::cout << "applyFilterUpdate" << std::endl;
     cv::imshow(m_win_name, m_debugImage);
     cv::waitKey(1);
   }
