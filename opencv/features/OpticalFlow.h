@@ -76,7 +76,7 @@ class OpticalFlow : public ImageFilter
     cv::Mat gray;
     if (in.empty()) return;
 
-		if (!d_startTracking.getValue())
+		if (!d_startTracking.getValue() || m_pts_in.empty())
 		{
 			// Keep things well initialized:
 			if (!m_prev.empty())  // m_prev should stay empty
