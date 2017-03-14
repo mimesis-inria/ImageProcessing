@@ -46,7 +46,7 @@ FeatureDetector::FeatureDetector()
 
   t = d_detectorType.beginEdit();
   t->setNames(DetectorType_COUNT, "FAST", "MSER", "ORB", "BRISK", "KAZE",
-              "AKAZE", "SIFT", "SURF", "BRIEF", "DAISY");
+							"AKAZE", "SIFT", "SURF", "BRIEF", "DAISY", "BLOB");
   t->setSelectedItem("SIFT");
   d_detectorType.endEdit();
 
@@ -60,6 +60,7 @@ FeatureDetector::FeatureDetector()
   m_detectors[SURF] = new SURFDetector(this);
   m_detectors[BRIEF] = new BRIEFDetector(this);
   m_detectors[DAISY] = new DAISYDetector(this);
+	m_detectors[BLOB] = new SimpleBlobDetector(this);
 }
 
 FeatureDetector::~FeatureDetector() {}

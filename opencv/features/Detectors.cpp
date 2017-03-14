@@ -30,23 +30,52 @@ void BaseDetector::detectAndCompute(const common::cvMat& img,
   m_detector->detectAndCompute(img, mask, keypoints, descriptors);
 }
 
+SimpleBlobDetector::SimpleBlobDetector(core::objectmodel::BaseObject* c)
+		: minThreshold(c->initData(&minThreshold, 10, "BLOBminThreshold", "")),
+			maxThreshold(c->initData(&maxThreshold, 200, "BLOBmaxThreshold", "")),
+			filterByArea(c->initData(&filterByArea, true, "BLOBfilterByArea", "")),
+			minArea(c->initData(&minArea, 1500, "BLOBminArea", "")),
+			filterByCircularity(c->initData(&filterByCircularity, true,
+																			"BLOBfilterByCircularity", "")),
+			minCircularity(
+					c->initData(&minCircularity, 0.1, "BLOBminCircularity", "")),
+			filterByConvexity(
+					c->initData(&filterByConvexity, true, "BLOBfilterByConvexity", "")),
+			minConvexity(c->initData(&minConvexity, 0.87, "BLOBminConvexity", "")),
+			filterByInertia(
+					c->initData(&filterByInertia, true, "BLOBfilterByInertia", "")),
+			minInertiaRatio(
+					c->initData(&minInertiaRatio, 0.1, "BLOBminInertiaRatio", ""))
+{
+}
+
+void SimpleBlobDetector::toggleVisible(bool show)
+{
+	minThreshold.setDisplayed(show);
+	maxThreshold.setDisplayed(show);
+	filterByArea.setDisplayed(show);
+	minArea.setDisplayed(show);
+	filterByCircularity.setDisplayed(show);
+	minCircularity.setDisplayed(show);
+	filterByConvexity.setDisplayed(show);
+	minConvexity.setDisplayed(show);
+	filterByInertia.setDisplayed(show);
+	minInertiaRatio.setDisplayed(show);
+}
+
+void SimpleBlobDetector::init() {}
+
+
 ShiTomasiDetector::ShiTomasiDetector(core::objectmodel::BaseObject* c)
-    : maxCorners(c->initData(&maxCorners, 100, "ShiTomasiMaxCorners",
-                            "")),
+		: maxCorners(c->initData(&maxCorners, 100, "ShiTomasiMaxCorners", "")),
       qualityLevel(
-          c->initData(&qualityLevel, 0.3, "ShiTomasiQualityLevel",
-                      "")),
-      minDistance(c->initData(&minDistance, 7, "ShiTomasiMinDistance",
-                       "")),
-      blockSize(c->initData(&blockSize, 7, "ShiTomasiBlockSize",
-                       ""))
+					c->initData(&qualityLevel, 0.3, "ShiTomasiQualityLevel", "")),
+			minDistance(c->initData(&minDistance, 7, "ShiTomasiMinDistance", "")),
+			blockSize(c->initData(&blockSize, 7, "ShiTomasiBlockSize", ""))
 {
 }
 
-void ShiTomasiDetector::init()
-{
-}
-
+void ShiTomasiDetector::init() {}
 void ShiTomasiDetector::toggleVisible(bool show)
 {
   maxCorners.setDisplayed(show);

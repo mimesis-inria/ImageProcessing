@@ -39,7 +39,8 @@ class FeatureDetector : public ImageFilter
     SURF = 7,
     BRIEF = 8,
     DAISY = 9,
-    DetectorType_COUNT
+		BLOB = 10,
+		DetectorType_COUNT
   };
 
  public:

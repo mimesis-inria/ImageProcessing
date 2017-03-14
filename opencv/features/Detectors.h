@@ -37,6 +37,99 @@ struct BaseDetector
   cv::Ptr<cv::Feature2D> m_detector;
 };
 
+struct SimpleBlobDetector : BaseDetector
+{
+	SimpleBlobDetector(core::objectmodel::BaseObject* c);
+	void toggleVisible(bool);
+	void init();
+
+	virtual void registerData(ImageFilter *parent)
+	{
+		parent->registerData(&minThreshold, 0, 255, 1);
+		parent->registerData(&maxThreshold, 0, 255, 1);
+		parent->registerData(&filterByArea);
+		parent->registerData(&minArea, 0, 3000, 2);
+		parent->registerData(&filterByCircularity);
+		parent->registerData(&minCircularity, 0.0, 1.0, 0.001);
+		parent->registerData(&filterByConvexity);
+		parent->registerData(&minConvexity, 0.0, 1.0, 0.01);
+		parent->registerData(&filterByInertia);
+		parent->registerData(&minInertiaRatio, 0.0, 1.0, 0.01);
+	}
+
+	virtual void detect(const common::cvMat& img, const common::cvMat& mask,
+																	std::vector<cv::KeyPoint>& keypoints)
+	{
+		// Setup SimpleBlobDetector parameters.
+		cv::SimpleBlobDetector::Params params;
+
+		// Change thresholds
+		params.minThreshold = minThreshold.getValue();
+		params.maxThreshold = maxThreshold.getValue();
+
+		// Filter by Area.
+		params.filterByArea = filterByArea.getValue();
+		params.minArea = minArea.getValue();
+
+		// Filter by Circularity
+		params.filterByCircularity = filterByCircularity.getValue();
+		params.minCircularity = minCircularity.getValue();
+
+		// Filter by Convexity
+		params.filterByConvexity = filterByConvexity.getValue();
+		params.minConvexity = minConvexity.getValue();
+
+		// Filter by Inertia
+		params.filterByInertia = filterByInertia.getValue();
+		params.minInertiaRatio = minInertiaRatio.getValue();
+
+	#if CV_MAJOR_VERSION < 3  // If you are using OpenCV 2
+
+		// Set up detector with params
+		cv::SimpleBlobDetector detector(params);
+
+	// You can use the detector this way
+	detector.detect( img, keypoints);
+
+	#else
+
+		// Set up detector with params
+		cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
+
+		// SimpleBlobDetector::create creates a smart pointer.
+		// So you need to use arrow ( ->) instead of dot ( . )
+		detector->detect(img, keypoints, mask);
+
+	#endif
+	}
+
+	virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
+											 common::cvMat&)
+	{
+		msg_error("SimpleBlobDetector::compute()")
+				<< "SimpleBlob is detectOnly. descriptors won't be computed.";
+	}
+	virtual void detectAndCompute(const common::cvMat& img,
+																const common::cvMat& mask,
+																std::vector<cv::KeyPoint>& kpts, common::cvMat&)
+	{
+		msg_warning("SimpleBlobDetector::detectAndCompute()")
+				<< "SimpleBlob is detectOnly. descriptors won't be computed.";
+		detect(img, mask, kpts);
+	}
+
+	Data<int> minThreshold;
+	Data<int> maxThreshold;
+	Data<bool> filterByArea;
+	Data<int> minArea;
+	Data<bool> filterByCircularity;
+	Data<double> minCircularity;
+	Data<bool> filterByConvexity;
+	Data<double> minConvexity;
+	Data<bool> filterByInertia;
+	Data<double> minInertiaRatio;
+};
+
 struct ShiTomasiDetector : BaseDetector
 {
   ShiTomasiDetector(core::objectmodel::BaseObject* c);
