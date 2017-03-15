@@ -63,8 +63,15 @@ class PointPicker2D : public ImageFilter
     helper::vector<defaulttype::Vec2i>* points = d_points.beginWriteOnly();
     points->clear();
     if (!m_pointList.empty())
-      for (const cv::Point2i& pt : m_pointList)
-        points->push_back(defaulttype::Vec2i(pt.x, pt.y));
+		{
+			std::cout << std::endl << std::endl;
+			for (const cv::Point2i& pt : m_pointList)
+			{
+				points->push_back(defaulttype::Vec2i(pt.x, pt.y));
+				std::cout << pt.x << " " << pt.y;
+			}
+			std::cout << std::endl << std::endl;
+		}
     d_points.endEdit();
   }
 

@@ -13,6 +13,8 @@ set(HEADER_FILES
   utils/PointVectorConverter.h
   utils/PointVectorConverter.inl
   utils/PointVec2Keypoint.h
+#  utils/ConversionFunctor.h
+#  utils/ConversionFunctor.inl
 
   features/Detectors.h
   features/Matchers.h
@@ -33,6 +35,9 @@ set(HEADER_FILES
 
   calib/CalibLoader.h
   calib/ComputeRT.h
+  calib/CameraSettings.h
+  calib/CameraProjection.h
+  calib/CameraModelview.h
   )
 
 set(SOURCE_FILES
@@ -43,6 +48,7 @@ set(SOURCE_FILES
 
   utils/PointVectorConverter.cpp
   utils/PointVec2Keypoint.cpp
+#  utils/ConversionFunctor.cpp
 
   features/Detectors.cpp
   features/Matchers.cpp
@@ -63,6 +69,9 @@ set(SOURCE_FILES
 
   calib/CalibLoader.cpp
   calib/ComputeRT.cpp
+  calib/CameraSettings.cpp
+  calib/CameraProjection.cpp
+  calib/CameraModelview.cpp
   )
 
 set(OpenCV_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})

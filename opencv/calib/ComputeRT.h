@@ -119,12 +119,12 @@ class ComputeRT : public common::ImplicitDataEngine
 
 			defaulttype::Matrix3 P2;
 			//see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
-			P2[0][0] =  0.5 * 1000 * fx;
-			P2[0][1] = -0.5 * 1000 * s;
-			P2[0][2] = -0.5 * (1000 * x0 - 2.0 * oglCenter[0] - 1000);
+			P2[0][0] =  0.5 * w * fx;
+			P2[0][1] = -0.5 * w * s;
+			P2[0][2] = -0.5 * (w * x0 - 2.0 * oglCenter[0] - w);
 
-			P2[1][1] =  0.5 * 1000 * fy;
-			P2[1][2] =  0.5 * (1000 * y0 - 2.0 * oglCenter[1] + 1000);
+			P2[1][1] =  0.5 * h * fy;
+			P2[1][2] =  0.5 * (h * y0 - 2.0 * oglCenter[1] + h);
 
 			P2[2][2] =  1.0;
 
