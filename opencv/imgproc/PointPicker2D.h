@@ -68,7 +68,7 @@ class PointPicker2D : public ImageFilter
 			for (const cv::Point2i& pt : m_pointList)
 			{
 				points->push_back(defaulttype::Vec2i(pt.x, pt.y));
-				std::cout << pt.x << " " << pt.y;
+				std::cout << pt.x << " " << pt.y << " ";
 			}
 			std::cout << std::endl << std::endl;
 		}

@@ -22,15 +22,16 @@ namespace OR
 namespace processor
 {
 class CameraProjection : public common::ImplicitDataEngine,
-											 public core::visual::VisualManager
+												 public core::visual::VisualManager
 {
  public:
-	SOFA_CLASS2(CameraProjection, common::ImplicitDataEngine, core::visual::VisualManager);
+	SOFA_CLASS2(CameraProjection, common::ImplicitDataEngine,
+							core::visual::VisualManager);
 
 	CameraProjection()
 			: d_freeCam(initData(&d_freeCam, true, "freeCam",
-													 "set to false if you DON'T want the modelview matrix "
-													 "to be overriden by this component")),
+													 "when true, camera is not set. when false, OpenGL's "
+													 "camera is overriden by the new params")),
 				d_glProjection(initData(&d_glProjection, "glProjection",
 																"OpenGL's 4x4 Projection matrix")),
 				d_glModelview(initData(&d_glModelview, "glModelview",
@@ -46,8 +47,8 @@ class CameraProjection : public common::ImplicitDataEngine,
 		update();
 	}
 
-	// HACK: ONCE SOFA WILL ACTUALLY USE THE DRAWTOOLS TO RENDER STUFF, THIS WILL
-	// BE COMPLETELY OBSOLETE
+	// HACK: MIGHT BECOME DEPRECATED ONCE SOFA WILL ACTUALLY USE THE DRAWTOOLS TO
+	// RENDER STUFF
 	void preDrawScene(core::visual::VisualParams* /*vp*/)
 	{
 		glMatrixMode(GL_PROJECTION);
@@ -64,12 +65,13 @@ class CameraProjection : public common::ImplicitDataEngine,
 		}
 	}
 
-	// HACK: ONCE SOFA WILL ACTUALLY USE THE DRAWTOOLS TO RENDER STUFF, THIS WILL
-	// BE COMPLETELY OBSOLETE
+	// HACK: MIGHT BECOME DEPRECATED ONCE SOFA WILL ACTUALLY USE THE DRAWTOOLS TO
+	// RENDER STUFF
 	void postDrawScene(core::visual::VisualParams* /*vp*/)
 	{
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
+
 		if (!d_freeCam.getValue())
 		{
 			glMatrixMode(GL_MODELVIEW);

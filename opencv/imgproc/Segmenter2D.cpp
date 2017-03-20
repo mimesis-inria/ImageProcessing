@@ -96,8 +96,12 @@ void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
 			regionsPoly->clear();
 			regionsPoly->reserve(m_poly.size());
       for (const cv::Point2i& pt : m_poly)
+			{
 				regionsPoly->push_back(defaulttype::Vec2i(pt.x, pt.y));
-      d_regionPoly.endEdit();
+				std::cout << pt.x << " " << pt.y << " ";
+			}
+			std::cout << std::endl << std::endl;
+			d_regionPoly.endEdit();
       m_poly.clear();
       setMouseState(&Segmenter2D::freeMove);
       ImageFilter::update();

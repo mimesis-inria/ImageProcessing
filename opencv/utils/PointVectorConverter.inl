@@ -1,6 +1,7 @@
 #include "PointVectorConverter.h"
 
 #include <SofaORCommon/cvKeypoint.h>
+#include <SofaORCommon/CameraUtils.h>
 
 namespace sofa
 {
@@ -57,37 +58,13 @@ void PointVectorConverter<common::cvKeypoint, defaulttype::Vec2f>::update()
 }
 
 
-defaulttype::Vector3 get3DFrom2DPosition(double x, double y, defaulttype::Mat3x4d P, double depth)
-{
-	defaulttype::Matrix3 C;
-	defaulttype::Vector3 T;
-
-	for (unsigned j = 0; j < 3; j++)
-	{
-		for (unsigned i = 0; i < 3; i++)
-		{
-			C[j][i] = P[j][i];
-		}
-		T[j] = P[j][3];
-	}
-
-	if (defaulttype::oneNorm(C) == 0) return defaulttype::Vector3();
-
-	defaulttype::Matrix3 iC;
-	iC.invert(C);
-
-	defaulttype::Vector3 camera_pos = -iC * T;
-
-	return iC * defaulttype::Vector3(x, y, 1) * depth + camera_pos;
-}
-
 template <>
 void PointVectorConverter<defaulttype::Vec2f, defaulttype::Vec3f>::update()
 {
 	helper::vector<defaulttype::Vec3f>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
 	const helper::vector<defaulttype::Vec2f>& src = d_src.getValue();
-	for (auto pt : src) dst.push_back(get3DFrom2DPosition(pt.x(), pt.y(), d_projection.getValue(), d_depth.getValue()));
+	for (auto pt : src) dst.push_back(common::camera::get3DFrom2DPosition(pt.x(), pt.y(), d_projection.getValue(), d_depth.getValue()));
 }
 
 }  // namespace processor

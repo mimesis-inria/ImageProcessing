@@ -11,6 +11,54 @@ namespace processor
 {
 using namespace defaulttype;
 
+// Computes the modelview and projection matrix from the intrinsic parameters
+// (focal, aperture, znear zfar, and image size) and the camera position /
+// orientation
+void CameraSettings::assembleOpenGL(Matrix4& glProjection, Matrix4& glModelview,
+																		const Vector3& camera_pos,
+																		const Quat& camera_ori, double fx,
+																		double fy, double s, double x0, double y0,
+																		double w, double h, double n, double f)
+{
+	glProjection[0][0] = fx;
+	glProjection[1][0] = s;
+	glProjection[2][0] = x0;
+	glProjection[3][0] = 0;
+
+	glProjection[0][1] = 0;
+	glProjection[1][1] = fy;
+	glProjection[2][1] = y0;
+	glProjection[3][1] = 0;
+
+	glProjection[0][2] = 0;
+	glProjection[1][2] = 0;
+	glProjection[2][2] = -(f + n) / (f - n);
+	glProjection[3][2] = (-2.0 * n * f) / (f - n);
+
+	glProjection[0][3] = 0;
+	glProjection[1][3] = 0;
+	glProjection[2][3] = -1;
+	glProjection[3][3] = 0;
+
+	Mat3x3d R;
+	camera_ori.toMatrix(R);
+	Mat3x3d iR = R.transposed();
+
+	Vector3 p = -iR * camera_pos;
+
+	for (unsigned int j = 0; j < 3; j++)
+	{
+		for (unsigned int i = 0; i < 3; i++)
+		{
+			glModelview[j][i] = R[j][i];
+		}
+
+		glModelview[3][j] = p[j];
+		glModelview[j][3] = 0;
+	}
+	glModelview[3][3] = 1.0;
+}
+
 // Build the 3x4 projection matrix from the 3x3 opencv camera matrix, R and t
 void CameraSettings::assembleProjection(const Matrix3& cameraMatrix,
 																				const Matrix3& R, const Vector3& t,
@@ -36,8 +84,9 @@ void CameraSettings::assembleProjection(const Matrix3& cameraMatrix,
 }
 
 // From a glProjection and a glModelview matrix, build the Projection matrix
-void CameraSettings::assembleProjection(const Matrix4& glProjection, const Matrix4& glModelview,
-												Mat3x4d& projection)
+void CameraSettings::assembleProjection(const Matrix4& glProjection,
+																				const Matrix4& glModelview,
+																				Mat3x4d& projection)
 {
 	// retrieve Opengl's viewport
 	GLint viewport[4];
@@ -49,8 +98,9 @@ void CameraSettings::assembleProjection(const Matrix4& glProjection, const Matri
 
 // From a glProjection, a glModelview matrix and the pixel dimensions of the
 // viewport, build the Projection matrix
-void CameraSettings::assembleProjection(const Matrix4& glProjection, const Matrix4& glModelview,
-												Mat3x4d& projection, int w, int h)
+void CameraSettings::assembleProjection(const Matrix4& glProjection,
+																				const Matrix4& glModelview,
+																				Mat3x4d& projection, unsigned w, unsigned h)
 {
 	double fx = glProjection[0][0];
 	double s = glProjection[1][0];
@@ -62,7 +112,7 @@ void CameraSettings::assembleProjection(const Matrix4& glProjection, const Matri
 	for (unsigned j = 0; j < 3; j++)
 		for (unsigned i = 0; i < 3; i++) R[j][i] = glModelview[j][i];
 
-	Vec2f oglCenter(0.0, 0.0);
+	Vector2 oglCenter(0.0, 0.0);
 	Matrix3 K;
 	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
 	K[0][0] = 0.5 * w * fx;
@@ -100,8 +150,8 @@ void CameraSettings::assembleProjection(const Matrix4& glProjection, const Matri
 // won't be computed
 void CameraSettings::decomposeProjection(
 		const Mat3x4d& projection, Matrix3& cameraMatrix, Matrix3& rotation,
-		Vector3& translation, Matrix4& glModelview, Matrix4& glProjection, int w,
-		int h, float n, float f)
+		Vector3& translation, Matrix4& glModelview, Matrix4& glProjection, unsigned w,
+		unsigned h, float n, float f)
 {
 	cv::Mat_<double> K, R, t;
 	cv::Matx34d M(projection.ptr());
@@ -128,6 +178,11 @@ void CameraSettings::decomposeProjection(
 	camera_ori.toMatrix(Ro);
 	Matrix3 iRo = Ro.transposed();
 	Vector3 p = -iRo * camera_pos;
+
+	Rigid cpos;
+	cpos.getCenter() = camera_pos;
+	cpos.getOrientation() = camera_ori;
+	d_camPos.setValue(cpos);
 
 	for (unsigned int j = 0; j < 3; j++)
 	{

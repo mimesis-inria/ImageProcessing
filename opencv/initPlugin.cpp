@@ -70,4 +70,5 @@ SOFA_LINK_CLASS(MorphologyEx);
 SOFA_LINK_CLASS(PointVec2Keypoint);
 SOFA_LINK_CLASS(CameraSettings);
 SOFA_LINK_CLASS(CameraProjection);
+SOFA_LINK_CLASS(CamGizmo);
 //SOFA_LINK_CLASS(PointVectorConverter);
