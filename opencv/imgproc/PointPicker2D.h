@@ -55,6 +55,9 @@ class PointPicker2D : public ImageFilter
     ImageFilter::init();
 		m_picker =
 				this->getContext()->get<PointPicker2D>(d_getEpilinesFrom.getValue());
+		if (!d_points.getValue().empty())
+			for (auto pt : d_points.getValue())
+				m_pointList.push_back(cv::Point2f(pt.x(), pt.y()));
   }
 
   void update()
@@ -78,7 +81,10 @@ class PointPicker2D : public ImageFilter
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   {
     if (in.empty()) return;
-    in.copyTo(out);
+		if (in.channels() == 1)
+			cv::cvtColor(in, out, CV_GRAY2BGR);
+		else
+			in.copyTo(out);
 
 		if (m_picker != NULL)
 		{
@@ -94,7 +100,7 @@ class PointPicker2D : public ImageFilter
 
     if (m_pointList.empty()) return;
     for (const cv::Point2i& pt : m_pointList)
-      cv::circle(out, pt, 3, color, 1, cv::LINE_AA);
+			cv::circle(out, pt, 3, color, 1, cv::LINE_AA);
   }
 
 	void computeEpipolarLines();

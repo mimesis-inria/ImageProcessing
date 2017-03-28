@@ -103,7 +103,7 @@ class CameraSettings : public common::ImplicitDataEngine
 				addInput(&d_R);
 				addInput(&d_t);
 
-				addOutput(&d_P);
+				addOutput(&d_P_out);
 				addOutput(&d_glProjection);
 				addOutput(&d_glModelview);
 				addOutput(&d_camPos);
@@ -156,12 +156,9 @@ class CameraSettings : public common::ImplicitDataEngine
 			{
 				assembleProjection(d_K.getValue(), d_R.getValue(), d_t.getValue(),
 													 *d_P.beginEdit());
-				decomposeProjection(d_P.getValue(), *d_K.beginEdit(), *d_R.beginEdit(),
-														*d_t.beginEdit(), *d_glModelview.beginEdit(),
-														*d_glProjection.beginEdit(),
-														d_imageWidth.getValue(), d_imageHeight.getValue(),
-														d_zNear.getValue(), d_zFar.getValue());
-				d_P_out.setValue(d_P.getValue());
+				setCamera(d_P.getValue(), d_imageWidth.getValue(),
+									d_imageHeight.getValue(), d_zNear.getValue(),
+									d_zFar.getValue());
 			}
 			break;
 			case CURRENT_GL_AS_INPUT:
@@ -344,7 +341,8 @@ class CameraSettings : public common::ImplicitDataEngine
 
 		// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
 		double fx = 2.0 * cvmGet(cvK, 0, 0) / w;
-		double s = -2.0 * cvmGet(cvK, 0, 1) / w;
+//		double s = -2.0 * cvmGet(cvK, 0, 1) / w;
+		double s = 0;
 		double x0 =
 				(w - 2.0 * cvmGet(cvK, 0, 2) /*+ 2.0*d_oglCenter.getValue()[0]*/) / w;
 
@@ -450,6 +448,8 @@ class CameraSettings : public common::ImplicitDataEngine
 			}
 		}
 
+		d_R.setValue(R);
+
 		Vector2 oglCenter(0.0, 0.0);
 		Matrix3 K;
 		// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
@@ -461,6 +461,8 @@ class CameraSettings : public common::ImplicitDataEngine
 		K[1][2] = 0.5 * (h * y0 - 2.0 * oglCenter[1] + h);
 
 		K[2][2] = 1.0;
+
+		d_K.setValue(K);
 
 		Quat camera_ori;
 		camera_ori.fromMatrix(R);
@@ -474,6 +476,8 @@ class CameraSettings : public common::ImplicitDataEngine
 
 		Matrix3 C = K * Rq.transposed();
 		Vector3 T = -C * camera_pos;
+
+		d_t.setValue(T);
 
 		Mat3x4d M;
 

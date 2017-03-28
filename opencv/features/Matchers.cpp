@@ -91,6 +91,7 @@ FlannMatcher::FlannMatcher(core::objectmodel::BaseObject* c)
   m_AllIndexParams[SAVED] = new SavedIndexParams(c);
 
   m_searchParams = new SearchParams(c);
+	m_indexParams = m_AllIndexParams[KDTREE];
 }
 
 void FlannMatcher::init()
@@ -112,7 +113,7 @@ void FlannMatcher::init()
 void FlannMatcher::toggleVisible(bool show)
 {
   indexParamsType.setDisplayed(show);
-  m_indexParams->toggleVisible(show);
+	m_indexParams->toggleVisible(show);
 }
 
 FlannMatcher::AutotunedIndexParams::AutotunedIndexParams(

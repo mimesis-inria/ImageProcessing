@@ -151,14 +151,18 @@ class OpticalFlow : public ImageFilter
 		d_points_out.endEdit();
 		d_points_in.endEdit();
 		m_prev = gray.clone();
+
+		// copy in in out
+		in.copyTo(out);
 		if (d_displayDebugWindow.getValue())
 		{
+
 			for (size_t i = 0 ; i < m_pts_out.size() ; ++i)
 			{
 				if (!status[i])
-					cv::circle(out, m_pts_out[i], 2, cv::Scalar(0, 0, 255), 1);
+					cv::circle(out, m_pts_out[i], 3, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 				else
-					cv::circle(out, m_pts_out[i], 2, cv::Scalar(0, 255, 0), 1);
+					cv::circle(out, m_pts_out[i], 3, cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
 			}
 		}
 	}

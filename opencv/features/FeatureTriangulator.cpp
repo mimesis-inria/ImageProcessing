@@ -24,7 +24,7 @@ FeatureTriangulator::FeatureTriangulator()
       d_R(initData(&d_R, "R",
                    "3x3 rotation matrix (extrinsic parameter of the camera)",
                    true, true)),
-      d_T(initData(&d_T, "T",
+			d_T(initData(&d_T, "T",
                    "translation vector (extrinsic parameter of the camera)",
                    true, true)),
       d_cmL(initData(&d_cmL, "projMat1",
