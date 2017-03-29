@@ -110,6 +110,9 @@ void DescriptorMatcher::update()
 
 void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
+	std::cout << d_queryDescriptors.getValue().size() << std::endl;
+	std::cout << d_trainDescriptors.getValue().size() << std::endl<< std::endl;
+
   if (d_queryDescriptors.getValue().empty() ||
       d_trainDescriptors.getValue().empty())
     return;
@@ -157,7 +160,8 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
       arr = dynamic_cast<const cv::KeyPoint*>(d_kptsR.getValue().data());
       kpR.assign(arr, arr + d_kptsR.getValue().size());
 
-      cv::drawMatches(in, kpL, d_in2.getValue(), kpR, m_matches, out);
+			std::cout << m_matches.size() << std::endl;
+			cv::drawMatches(in, kpL, d_in2.getValue(), kpR, m_matches, out);
     }
   }
 }

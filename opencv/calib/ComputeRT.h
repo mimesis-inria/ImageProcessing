@@ -29,14 +29,24 @@ class ComputeRT : public common::ImplicitDataEngine
 												"position of the reference camera's target")),
 				d_dir2(initData(&d_dir2, "dir2",
 												"position of the second camera's target")),
-				d_P1(initData(&d_P1, "K1",
-											"Projection matrix of the reference camera", true, false)),
-				d_P2(initData(&d_P2, "K2",
-											"Projection matrix of the second camera", true, false)),
+				d_up1(initData(&d_up1, "up1",
+												"up vector of the reference camera")),
+				d_up2(initData(&d_up2, "up2",
+												"up vector of the second camera")),
+				d_R1(initData(&d_R1, "R1",
+												"up vector of the reference camera")),
+				d_R2(initData(&d_R2, "R2",
+												"up vector of the second camera")),
+				d_P1(initData(&d_P1, "K1", "Projection matrix of the reference camera",
+											true, false)),
+				d_P2(initData(&d_P2, "K2", "Projection matrix of the second camera",
+											true, false)),
 				d_P1_out(initData(&d_P1_out, "K1_out",
-											"3x3 Projection matrix of the reference camera", true, false)),
+													"3x3 Projection matrix of the reference camera", true,
+													false)),
 				d_P2_out(initData(&d_P2_out, "K2_out",
-											"3x3 Projection matrix of the second camera", true, false)),
+													"3x3 Projection matrix of the second camera", true,
+													false)),
 				d_R(initData(&d_R, "R", "output Rotation matrix")),
 				d_t(initData(&d_t, "t", "output translation vector")),
 				d_E(initData(&d_E, "E", "output Essential matrix")),
@@ -53,36 +63,68 @@ class ComputeRT : public common::ImplicitDataEngine
   {
 		addInput(&d_P1);
 		addInput(&d_P2);
+		addInput(&d_R1);
+		addInput(&d_R2);
 		addInput(&d_pos1);
     addInput(&d_pos2);
-    addInput(&d_dir1);
-    addInput(&d_dir2);
-    addOutput(&d_R);
+		addInput(&d_dir1);
+		addInput(&d_dir2);
+		addInput(&d_up1);
+		addInput(&d_up2);
+		addOutput(&d_R);
     addOutput(&d_t);
 		addOutput(&d_E);
 		addOutput(&d_F);
 	}
 
-  void update()
-  {
-		if (!d_R.isSet() || !d_t.isSet())
-		{
-			defaulttype::Vector3 B = d_dir1.getValue();
+	// retieves the rotation matrix R that rotates an object who's up vector and
+	// normal vector are respectively up1 and normal1, to an object who's up
+	// vector and normal vector are respectivelt up2 and normal2
+	void computeRotation(const defaulttype::Vector3& x0,
+											 const defaulttype::Vector3& y0,
+											 const defaulttype::Vector3& x1,
+											 const defaulttype::Vector3& y1, defaulttype::Matrix3& R)
+	{
+		defaulttype::Vector3 up = x0.normalized();  // 1st camera's up vector
+		defaulttype::Vector3 norm = y0.normalized();
+		defaulttype::Vector3 Z(up);
+		defaulttype::Vector3 Y(norm);
+		defaulttype::Vector3 X(Y.cross(Z));
+
+		up = x1.normalized();
+		norm = y1.normalized();
+
+		defaulttype::Vector3 Z2(up);
+		defaulttype::Vector3 Y2(norm);
+		defaulttype::Vector3 X2(Y.cross(Z));
+
+		double r[9] = {X2 * X, Y2 * X, Z2 * X, X2 * Y, Y2 * Y,
+									 Z2 * Y, X2 * Z, Y2 * Z, Z2 * Z};
+		R = r;
+	}
+
+	void update()
+	{
+
+		defaulttype::Matrix3 R2inv;
+		defaulttype::invertMatrix(R2inv, d_R2.getValue());
+
+		d_R.setValue(R2inv * d_R1.getValue());
+
+//		if (!d_R.isSet() || !d_t.isSet())
+//		{
+//			defaulttype::Vector3 x0 = d_up1.getValue();
 			defaulttype::Vector3 A = d_pos1.getValue();
+//			defaulttype::Vector3 x1 = d_up2.getValue();
+			defaulttype::Vector3 B = d_pos2.getValue();
+//			defaulttype::Vector3 y0 = d_dir1.getValue() - d_pos1.getValue();
+//			defaulttype::Vector3 y1 = d_dir2.getValue() - d_pos2.getValue();
+//			defaulttype::Matrix3 R;
 
-			std::cout << "Distance source-detecteur: " << std::sqrt((B.x() - A.x()) * (B.x() - A.x()) +
-									 (B.y() - A.y()) * (B.y() - A.y()) +
-									 (B.z() - A.z()) * (B.z() - A.z())) << std::endl;
-			defaulttype::Vector3 dir1 = d_dir1.getValue() - d_pos1.getValue();
-			defaulttype::Vector3 dir2 = d_dir2.getValue() - d_pos2.getValue();
-			defaulttype::Matrix3 R;
-			R.x() = dir1.normalized();
-			R.z() = dir1.cross(dir2).normalized();
-			R.y() = -(R.z().cross(dir1).normalized());
-
-			d_R.setValue(R);
-			d_t.setValue(d_pos2.getValue() - d_pos1.getValue());
-		}
+//			computeRotation(x0, y0, x1, y1, R);
+//			d_R.setValue(R);
+			d_t.setValue(B - A);
+//		}
 		defaulttype::Matrix3 R = d_R.getValue();
 		defaulttype::Vec3d t = d_t.getValue();
 		// COMPUTING F:
@@ -94,15 +136,15 @@ class ComputeRT : public common::ImplicitDataEngine
 
 		if (d_P1.isSet() && d_P2.isSet())
 		{
-			const defaulttype::Matrix3 & P1 = d_P1.getValue();
-			const defaulttype::Matrix3 & P2 = d_P2.getValue();
+			const defaulttype::Matrix3& P1 = d_P1.getValue();
+			const defaulttype::Matrix3& P2 = d_P2.getValue();
 
 			d_P1_out.setValue(P1);
 			d_P2_out.setValue(P2);
 
 			// Computing Fundamental matrix:
 			//  -T         -1
-			//P2   * E * P1
+			// P2   * E * P1
 			//
 
 			defaulttype::Matrix3 P2_T_Inv;
@@ -119,8 +161,12 @@ class ComputeRT : public common::ImplicitDataEngine
   Data<defaulttype::Vector3> d_pos2;
   Data<defaulttype::Vector3> d_dir1;
   Data<defaulttype::Vector3> d_dir2;
+	Data<defaulttype::Vector3> d_up1;
+	Data<defaulttype::Vector3> d_up2;
 	Data<defaulttype::Matrix3> d_P1;
 	Data<defaulttype::Matrix3> d_P2;
+	Data<defaulttype::Matrix3> d_R1;
+	Data<defaulttype::Matrix3> d_R2;
 
   // OUTPUTS
 	Data<defaulttype::Matrix3> d_P1_out;

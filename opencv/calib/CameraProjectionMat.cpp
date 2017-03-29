@@ -1,4 +1,4 @@
-#include "CameraModelview.h"
+#include "CameraProjectionMat.h"
 #include <opencv/cv.h>
 #include <opencv/cxcore.h>
 #include <opencv/highgui.h>
@@ -12,7 +12,7 @@ namespace processor
 {
 using namespace defaulttype;
 
-defaulttype::Vector2 CameraModelview::get2DFrom3DPosition(const Vector3& p)
+defaulttype::Vector2 CameraProjectionMat::get2DFrom3DPosition(const Vector3& p)
 {
 	const Mat3x4d& P = d_projection.getValue();
 
@@ -23,10 +23,10 @@ defaulttype::Vector2 CameraModelview::get2DFrom3DPosition(const Vector3& p)
 	return Vector2(rx, ry) * 1.0 / rz;
 }
 
-void CameraModelview::remapVectors(const helper::vector<Vector3>& inpos3d,
-																	 const helper::vector<Vector2>& inpos2d,
-																	 std::vector<cv::Point3d>& outpos3d,
-																	 std::vector<cv::Point2d>& outpos2d)
+void CameraProjectionMat::remapVectors(const helper::vector<Vector3>& inpos3d,
+																			 const helper::vector<Vector2>& inpos2d,
+																			 std::vector<cv::Point3f>& outpos3d,
+																			 std::vector<cv::Point2f>& outpos2d)
 {
 	if (inpos3d.empty() || inpos2d.empty()) return;
 
@@ -52,8 +52,8 @@ void CameraModelview::remapVectors(const helper::vector<Vector3>& inpos3d,
 			if ((p - proj2d[min]).norm() < d_remapdist.getValue())
 			{
 				outpos3d.push_back(
-						cv::Point3d(inpos3d[min][0], inpos3d[min][1], inpos3d[min][2]));
-				outpos2d.push_back(cv::Point2d(inpos2d[i][0], inpos2d[i][1]));
+						cv::Point3f(inpos3d[min][0], inpos3d[min][1], inpos3d[min][2]));
+				outpos2d.push_back(cv::Point2f(inpos2d[i][0], inpos2d[i][1]));
 			}
 		}
 	}
@@ -69,8 +69,8 @@ void CameraModelview::remapVectors(const helper::vector<Vector3>& inpos3d,
 			int id2d = map[1];
 
 			outpos3d.push_back(
-					cv::Point3d(inpos3d[id3d][0], inpos3d[id3d][1], inpos3d[id3d][2]));
-			outpos2d.push_back(cv::Point2d(inpos2d[id2d][0], inpos2d[id2d][1]));
+					cv::Point3f(inpos3d[id3d][0], inpos3d[id3d][1], inpos3d[id3d][2]));
+			outpos2d.push_back(cv::Point2f(inpos2d[id2d][0], inpos2d[id2d][1]));
 		}
 	}
 	else
@@ -79,19 +79,19 @@ void CameraModelview::remapVectors(const helper::vector<Vector3>& inpos3d,
 
 		for (unsigned i = 0; i < nbpts; i++)
 		{
-			cv::Point3d pos3d(inpos3d[i][0], inpos3d[i][1], inpos3d[i][2]);
+			cv::Point3f pos3d(inpos3d[i][0], inpos3d[i][1], inpos3d[i][2]);
 			outpos3d.push_back(pos3d);
 		}
 
 		for (unsigned i = 0; i < nbpts; i++)
 		{
-			cv::Point2d pos2d(inpos2d[i][0], inpos2d[i][1]);
+			cv::Point2f pos2d(inpos2d[i][0], inpos2d[i][1]);
 			outpos2d.push_back(pos2d);
 		}
 	}
 }
 
-void CameraModelview::setCamera(unsigned w, unsigned h)
+void CameraProjectionMat::setCamera(unsigned w, unsigned h)
 {
 	const Mat4x4d& mp = d_projectionMatrixOpenGL.getValue();
 	const Mat4x4d& mm = d_modelViewMatrixOpenGL.getValue();
@@ -174,9 +174,9 @@ void CameraModelview::setCamera(unsigned w, unsigned h)
 	sout << "projectionMatrix=\"" << d_projection.getValue() << "\"" << sendl;
 }
 
-void CameraModelview::setCamera(Vector3 camera_pos, Quat camera_ori, double fx,
-																double fy, double s, double x0, double y0,
-																unsigned w, unsigned h)
+void CameraProjectionMat::setCamera(Vector3 camera_pos, Quat camera_ori,
+																		double fx, double fy, double s, double x0,
+																		double y0, unsigned w, unsigned h)
 {
 	double n = d_zNear.getValue();
 	double f = d_zFar.getValue();  // these values are used only for rendering not
@@ -231,7 +231,7 @@ void CameraModelview::setCamera(Vector3 camera_pos, Quat camera_ori, double fx,
 	setCamera(w, h);
 }
 
-void CameraModelview::setCamera(const Mat3x4d& M, unsigned w, unsigned h)
+void CameraProjectionMat::setCamera(const Mat3x4d& M, unsigned w, unsigned h)
 {
 	CvMat* cvM = cvCreateMat(3, 4, CV_32F);
 	CvMat* cvK = cvCreateMat(3, 3, CV_32F);
@@ -283,45 +283,64 @@ void CameraModelview::setCamera(const Mat3x4d& M, unsigned w, unsigned h)
 	setCamera(camera_pos, camera_ori, fx, fy, s, x0, y0, w, h);
 }
 
-bool CameraModelview::poseEstimation(const helper::vector<Vector3>& p3d,
-																		 const helper::vector<Vector2>& p2d,
-																		 unsigned w, unsigned h, Mat3x4d& M)
+bool CameraProjectionMat::poseEstimation(const helper::vector<Vector3>& p3d,
+																				 const helper::vector<Vector2>& p2d1,
+																				 const helper::vector<Vector2>& p2d2,
+																				 unsigned w, unsigned h, Mat3x4d& M)
 {
-	std::vector<cv::Point3d> pos3d;
-	std::vector<cv::Point2d> pos2d;
-	remapVectors(p3d, p2d, pos3d, pos2d);
+	std::vector<cv::Point3f> pos3d;
+	std::vector<cv::Point2f> pos2d1;
+	std::vector<cv::Point2f> pos2d2;
+	std::vector<std::vector<cv::Point2f> > pos2D;
+	std::vector<std::vector<cv::Point3f> > pos3D;
+	remapVectors(p3d, p2d1, pos3d, pos2d1);
+	remapVectors(p3d, p2d2, pos3d, pos2d2);
+
+	pos2D.push_back(pos2d1);
+	pos2D.push_back(pos2d2);
+	pos3D.push_back(pos3d);
+	pos3D.push_back(pos3d);
 	unsigned nbpts = pos3d.size();
 	if (nbpts == 0) return false;
 
-	// camMatrix based on img size
-	int max_d = std::max(w, h);
-	cv::Mat camMatrix = (cv::Mat_<double>(3, 3) << max_d, 0, w / 2.0, 0, max_d,
+//	// camMatrix based on img size
+//	int max_d = std::max(w, h);
+	cv::Mat camMatrix = (cv::Mat_<double>(3, 3) << 2000, 0, w / 2.0, 0, 2000,
 											 h / 2.0, 0, 0, 1.0);
 
-	cv::Mat rvec, tvec;
-	//    cv::solvePnP(pts3d, pts2d, camMatrix, cv::Mat(1,4,CV_64F,0.0), rvec,
-	//    tvec, false, CV_ITERATIVE );
-	cv::solvePnP(pos3d, pos2d, camMatrix, cv::Mat(1, 4, CV_64F, 0.0), rvec, tvec,
-							 false, CV_EPNP);
+//	std::vector<cv::Mat> rvecs, tvecs;
+//	//    cv::solvePnP(pts3d, pts2d, camMatrix, cv::Mat(1,4,CV_64F,0.0), rvec,
+//	//    tvec, false, CV_ITERATIVE );
+//	cv::Mat dc;
+//	cv::calibrateCamera(pos3d, pos2D, cv::Size(w, h), camMatrix, dc, rvecs, tvecs);
 
-	//    std::vector<std::vector<cv::Point2d> > imagePoints;
-	//    imagePoints.push_back(pts2d);
-	//    std::vector<std::vector<cv::Point3d> > objectPoints;
-	//    objectPoints.push_back(pts3d);
-	//    cv::Mat cameraMatrix;
-	//    cv::Mat distCoeffs;
-	//    std::vector<cv::Mat> rvecs;
-	//    std::vector<cv::Mat> tvecs;
-	//    cv::calibrateCamera(objectPoints, imagePoints, image.size(),
-	//    cameraMatrix, distCoeffs, rvecs, tvecs);
+			std::vector<std::vector<cv::Point2f> > imagePoints;
+			imagePoints.push_back(pos2d1);
+			imagePoints.push_back(pos2d2);
+			std::vector<std::vector<cv::Point3f> > objectPoints;
+			objectPoints.push_back(pos3d);
+			objectPoints.push_back(pos3d);
+//			cv::Mat camMatrix;
+			cv::Mat distCoeffs;
+			std::vector<cv::Mat> rvecs;
+			std::vector<cv::Mat> tvecs;
+			std::cout << imagePoints.size() << " == " << objectPoints.size() << std::endl;
+
+			objectPoints[0].resize(objectPoints[0].size() / 2);
+			objectPoints[1].resize(objectPoints[1].size() / 2);
+
+			std::cout << imagePoints[0].size() << " == " << objectPoints[0].size() << std::endl;
+			std::cout << imagePoints[1].size() << " == " << objectPoints[1].size() << std::endl;
+			cv::calibrateCamera(objectPoints, imagePoints, cv::Size(w,h),
+			camMatrix, distCoeffs, rvecs, tvecs, CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_PRINCIPAL_POINT | CV_CALIB_FIX_ASPECT_RATIO);
 
 	// get 3d rot mat
 	cv::Mat rotM(3, 3, CV_64F);
-	cv::Rodrigues(rvec, rotM);
+	cv::Rodrigues(rvecs[0], rotM);
 
 	// push tvec to transposed Mat
 	cv::Mat rotMT = rotM.t();
-	rotMT.push_back(tvec.reshape(1, 1));
+	rotMT.push_back(tvecs[0].reshape(1, 1));
 
 	// transpose back, and multiply
 	cv::Mat Proj = camMatrix * rotMT.t();
@@ -337,12 +356,11 @@ bool CameraModelview::poseEstimation(const helper::vector<Vector3>& p3d,
 	return true;
 }
 
-void CameraModelview::update()
+void CameraProjectionMat::update()
 {
 	Mat3x4d M;
-	//    calibrationLinear(pos3d,pos2d,w,h,M);
-	if (poseEstimation(d_pts3d.getValue(), d_pts2d.getValue(), d_w.getValue(),
-										 d_h.getValue(), M))
+	if (poseEstimation(d_pts3d.getValue(), d_pts2d1.getValue(),
+										 d_pts2d2.getValue(), d_w.getValue(), d_h.getValue(), M))
 		setCamera(M, d_w.getValue(), d_h.getValue());
 }
 }

@@ -182,9 +182,9 @@ void FeatureDetector::detectModeChanged(core::objectmodel::BaseData*)
     case COMPUTE_ONLY:
       d_descriptors.setDisplayed(true);
       addInput(&d_mask, true);
-      removeInput(&d_keypoints);
-      addOutput(&d_descriptors);
-      break;
+			addInput(&d_keypoints);
+			addOutput(&d_descriptors);
+			break;
     case DETECT_AND_COMPUTE:
       d_descriptors.setDisplayed(true);
       addInput(&d_mask, true);

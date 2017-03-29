@@ -37,6 +37,7 @@ set(HEADER_FILES
   calib/ComputeRT.h
   calib/CameraSettings.h
   calib/CameraProjection.h
+  calib/CameraProjectionMat.h
   calib/CameraModelview.h
   calib/CamGizmo.h
   )
@@ -72,6 +73,7 @@ set(SOURCE_FILES
   calib/ComputeRT.cpp
   calib/CameraSettings.cpp
   calib/CameraProjection.cpp
+  calib/CameraProjectionMat.cpp
   calib/CameraModelview.cpp
   calib/CamGizmo.cpp
   )
