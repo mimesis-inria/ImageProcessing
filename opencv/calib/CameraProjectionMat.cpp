@@ -303,36 +303,44 @@ bool CameraProjectionMat::poseEstimation(const helper::vector<Vector3>& p3d,
 	unsigned nbpts = pos3d.size();
 	if (nbpts == 0) return false;
 
-//	// camMatrix based on img size
-//	int max_d = std::max(w, h);
-	cv::Mat camMatrix = (cv::Mat_<double>(3, 3) << 2000, 0, w / 2.0, 0, 2000,
-											 h / 2.0, 0, 0, 1.0);
+	//	// camMatrix based on img size
+	//	int max_d = std::max(w, h);
+	cv::Mat camMatrix =
+			(cv::Mat_<double>(3, 3) << 2000, 0, w / 2.0, 0, 2000, h / 2.0, 0, 0, 1.0);
 
-//	std::vector<cv::Mat> rvecs, tvecs;
-//	//    cv::solvePnP(pts3d, pts2d, camMatrix, cv::Mat(1,4,CV_64F,0.0), rvec,
-//	//    tvec, false, CV_ITERATIVE );
-//	cv::Mat dc;
-//	cv::calibrateCamera(pos3d, pos2D, cv::Size(w, h), camMatrix, dc, rvecs, tvecs);
+	//	std::vector<cv::Mat> rvecs, tvecs;
+	//	//    cv::solvePnP(pts3d, pts2d, camMatrix, cv::Mat(1,4,CV_64F,0.0),
+	// rvec,
+	//	//    tvec, false, CV_ITERATIVE );
+	//	cv::Mat dc;
+	//	cv::calibrateCamera(pos3d, pos2D, cv::Size(w, h), camMatrix, dc, rvecs,
+	// tvecs);
 
-			std::vector<std::vector<cv::Point2f> > imagePoints;
-			imagePoints.push_back(pos2d1);
-			imagePoints.push_back(pos2d2);
-			std::vector<std::vector<cv::Point3f> > objectPoints;
-			objectPoints.push_back(pos3d);
-			objectPoints.push_back(pos3d);
-//			cv::Mat camMatrix;
-			cv::Mat distCoeffs;
-			std::vector<cv::Mat> rvecs;
-			std::vector<cv::Mat> tvecs;
-			std::cout << imagePoints.size() << " == " << objectPoints.size() << std::endl;
+	std::vector<std::vector<cv::Point2f> > imagePoints;
+	imagePoints.push_back(pos2d1);
+	imagePoints.push_back(pos2d2);
+	std::vector<std::vector<cv::Point3f> > objectPoints;
+	objectPoints.push_back(pos3d);
+	objectPoints.push_back(pos3d);
+	//			cv::Mat camMatrix;
+	cv::Mat distCoeffs;
+	std::vector<cv::Mat> rvecs;
+	std::vector<cv::Mat> tvecs;
+	//			std::cout << imagePoints.size() << " == " <<
+	//objectPoints.size()
+	//<< std::endl;
 
-			objectPoints[0].resize(objectPoints[0].size() / 2);
-			objectPoints[1].resize(objectPoints[1].size() / 2);
+	objectPoints[0].resize(objectPoints[0].size() / 2);
+	objectPoints[1].resize(objectPoints[1].size() / 2);
 
-			std::cout << imagePoints[0].size() << " == " << objectPoints[0].size() << std::endl;
-			std::cout << imagePoints[1].size() << " == " << objectPoints[1].size() << std::endl;
-			cv::calibrateCamera(objectPoints, imagePoints, cv::Size(w,h),
-			camMatrix, distCoeffs, rvecs, tvecs, CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_PRINCIPAL_POINT | CV_CALIB_FIX_ASPECT_RATIO);
+	std::cout << imagePoints[0].size() << " == " << objectPoints[0].size()
+						<< std::endl;
+	std::cout << imagePoints[1].size() << " == " << objectPoints[1].size()
+						<< std::endl;
+	cv::calibrateCamera(
+			objectPoints, imagePoints, cv::Size(w, h), camMatrix, distCoeffs, rvecs,
+			tvecs, CV_CALIB_USE_INTRINSIC_GUESS | CV_CALIB_FIX_PRINCIPAL_POINT |
+								 CV_CALIB_FIX_ASPECT_RATIO);
 
 	// get 3d rot mat
 	cv::Mat rotM(3, 3, CV_64F);

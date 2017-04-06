@@ -1,7 +1,7 @@
 #include "PointVectorConverter.h"
 
 #include <SofaORCommon/cvKeypoint.h>
-#include <SofaORCommon/CameraUtils.h>
+//#include <SofaORCommon/CameraUtils.h>
 
 namespace sofa
 {
@@ -64,7 +64,7 @@ void PointVectorConverter<defaulttype::Vec2f, defaulttype::Vec3f>::update()
 	helper::vector<defaulttype::Vec3f>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
 	const helper::vector<defaulttype::Vec2f>& src = d_src.getValue();
-	for (auto pt : src) dst.push_back(common::camera::get3DFrom2DPosition(pt.x(), pt.y(), d_projection.getValue(), d_depth.getValue()));
+//	for (auto pt : src) dst.push_back(common::camera::get3DFrom2DPosition(pt.x(), pt.y(), d_projection.getValue(), d_depth.getValue()));
 }
 
 }  // namespace processor

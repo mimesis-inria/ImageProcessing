@@ -40,6 +40,11 @@ set(HEADER_FILES
   calib/CameraProjectionMat.h
   calib/CameraModelview.h
   calib/CamGizmo.h
+
+  calib/CalibrateCamera.h
+  calib/SolvePnP.h
+#  calib/CalibrateStereo.h
+#  calib/CalibStereo.h
   )
 
 set(SOURCE_FILES
@@ -76,6 +81,11 @@ set(SOURCE_FILES
   calib/CameraProjectionMat.cpp
   calib/CameraModelview.cpp
   calib/CamGizmo.cpp
+
+  calib/CalibrateCamera.cpp
+  calib/SolvePnP.cpp
+#  calib/CalibrateStereo.cpp
+#  calib/CalibStereo.cpp
   )
 
 set(OpenCV_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})

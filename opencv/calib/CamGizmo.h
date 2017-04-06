@@ -3,7 +3,7 @@
 
 #include "initPlugin.h"
 
-#include <SofaORCommon/CameraUtils.h>
+#include "CameraSettings.h"
 #include <SofaORCommon/ImplicitDataEngine.h>
 
 #include <sofa/core/visual/DrawToolGL.h>
@@ -24,50 +24,52 @@ namespace processor
 {
 class CamGizmo : public common::ImplicitDataEngine
 {
+	typedef sofa::core::objectmodel::SingleLink<
+			CamGizmo, CameraSettings,
+			BaseLink::FLAG_STOREPATH | BaseLink::FLAG_STRONGLINK>
+			CamSettings;
 	typedef typename defaulttype::Vector3 Vector3;
 
  public:
 	SOFA_CLASS(CamGizmo, common::ImplicitDataEngine);
 
 	CamGizmo()
-			: d_camPos(initData(&d_camPos, "camPos",
-													"Camera position & orientation (Rigid3D)")),
-				d_P(initData(&d_P, "P", "Camera's Projection matrix"))
+			: l_cam(initLink("cam",
+											 "link to CameraSettings component containing and "
+											 "maintaining the camera's parameters"))
 	{
 	}
 
 	~CamGizmo() {}
 	void init()
 	{
-		addInput(&d_camPos);
-		addInput(&d_P);
 		update();
 	}
 
 	void draw(const core::visual::VisualParams* vparams)
 	{
+		defaulttype::RigidTypes::Coord camPos = l_cam->getCamPos();
 		Vector3 camera_X =
-				d_camPos.getValue().getOrientation().rotate(Vector3(1, 0, 0));
+				camPos.getOrientation().rotate(Vector3(1, 0, 0));
 		Vector3 camera_Y =
-				d_camPos.getValue().getOrientation().rotate(Vector3(0, 1, 0));
+				camPos.getOrientation().rotate(Vector3(0, 1, 0));
 		Vector3 camera_Z =
-				d_camPos.getValue().getOrientation().rotate(Vector3(0, 0, -1));
+				camPos.getOrientation().rotate(Vector3(0, 0, -1));
 
 		glColor4f(1, 0, 0, 1);
 		glLineWidth(1);
 
 		defaulttype::Vector3 p1, p2, p3, p4;
-		common::camera::getCornersPosition(p1, p2, p3, p4, 1280, 720,
-																			 d_P.getValue(), 1.0f);
+		l_cam->getCornersPosition(p1, p2, p3, p4, 1.0f);
 
 		glBegin(GL_LINES);
-		helper::gl::glVertexT(d_camPos.getValue().getCenter());
+		helper::gl::glVertexT(camPos.getCenter());
 		helper::gl::glVertexT(p1);
-		helper::gl::glVertexT(d_camPos.getValue().getCenter());
+		helper::gl::glVertexT(camPos.getCenter());
 		helper::gl::glVertexT(p2);
-		helper::gl::glVertexT(d_camPos.getValue().getCenter());
+		helper::gl::glVertexT(camPos.getCenter());
 		helper::gl::glVertexT(p3);
-		helper::gl::glVertexT(d_camPos.getValue().getCenter());
+		helper::gl::glVertexT(camPos.getCenter());
 		helper::gl::glVertexT(p4);
 		glEnd();
 
@@ -85,21 +87,20 @@ class CamGizmo : public common::ImplicitDataEngine
 		glEnd();
 
 		vparams->drawTool()->drawArrow(
-				d_camPos.getValue().getCenter(),
-				d_camPos.getValue().getCenter() + camera_X * 0.01, 0.001,
+				camPos.getCenter(),
+				camPos.getCenter() + camera_X * 0.01, 0.001,
 				defaulttype::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 		vparams->drawTool()->drawArrow(
-				d_camPos.getValue().getCenter(),
-				d_camPos.getValue().getCenter() + camera_Y * 0.01, 0.001,
+				camPos.getCenter(),
+				camPos.getCenter() + camera_Y * 0.01, 0.001,
 				defaulttype::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 		vparams->drawTool()->drawArrow(
-				d_camPos.getValue().getCenter(),
-				d_camPos.getValue().getCenter() + camera_Z * 0.01, 0.001,
+				camPos.getCenter(),
+				camPos.getCenter() + camera_Z * 0.01, 0.001,
 				defaulttype::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
 	}
 
-	Data<defaulttype::RigidTypes::Coord> d_camPos;
-	Data<defaulttype::Mat3x4d> d_P;
+	CamSettings l_cam;
 };
 
 SOFA_DECL_CLASS(CamGizmo)

@@ -46,7 +46,7 @@ FeatureDetector::FeatureDetector()
 
   t = d_detectorType.beginEdit();
   t->setNames(DetectorType_COUNT, "FAST", "MSER", "ORB", "BRISK", "KAZE",
-							"AKAZE", "SIFT", "SURF", "BRIEF", "DAISY", "BLOB");
+              "AKAZE", "SIFT", "SURF", "BRIEF", "DAISY", "BLOB");
   t->setSelectedItem("SIFT");
   d_detectorType.endEdit();
 
@@ -60,7 +60,7 @@ FeatureDetector::FeatureDetector()
   m_detectors[SURF] = new SURFDetector(this);
   m_detectors[BRIEF] = new BRIEFDetector(this);
   m_detectors[DAISY] = new DAISYDetector(this);
-	m_detectors[BLOB] = new SimpleBlobDetector(this);
+  m_detectors[BLOB] = new SimpleBlobDetector(this);
 }
 
 FeatureDetector::~FeatureDetector() {}
@@ -72,11 +72,15 @@ void FeatureDetector::init()
   detectTypeChanged(NULL);
   detectModeChanged(NULL);
 
-  addDataCallback(&d_detectMode, (ImplicitDataEngine::DataCallback)&FeatureDetector::detectModeChanged);
-  addDataCallback(&d_detectorType, (ImplicitDataEngine::DataCallback)&FeatureDetector::detectTypeChanged);
+  addDataCallback(
+      &d_detectMode,
+      (ImplicitDataEngine::DataCallback)&FeatureDetector::detectModeChanged);
+  addDataCallback(
+      &d_detectorType,
+      (ImplicitDataEngine::DataCallback)&FeatureDetector::detectTypeChanged);
 
   ImageFilter::init();
-	update();
+  update();
 }
 
 void FeatureDetector::update()
@@ -182,9 +186,9 @@ void FeatureDetector::detectModeChanged(core::objectmodel::BaseData*)
     case COMPUTE_ONLY:
       d_descriptors.setDisplayed(true);
       addInput(&d_mask, true);
-			addInput(&d_keypoints);
-			addOutput(&d_descriptors);
-			break;
+      addInput(&d_keypoints);
+      addOutput(&d_descriptors);
+      break;
     case DETECT_AND_COMPUTE:
       d_descriptors.setDisplayed(true);
       addInput(&d_mask, true);
