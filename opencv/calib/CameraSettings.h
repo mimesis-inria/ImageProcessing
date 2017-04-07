@@ -42,21 +42,19 @@ class CameraSettings : public common::ImplicitDataEngine
 	// CameraSettings ctor. All parameters are optional and can be set using
 	// calibration components, Opengl components, or file loaders
 	CameraSettings()
-			: d_P(initData(&d_P,
-										 "P", "3x4 Projection matrix")),
-				d_K(initData(&d_K, Matrix3::Identity(),
-										 "K", "3x3 camera matrix from OpenCV")),
+			: d_P(initData(&d_P, "P", "3x4 Projection matrix")),
+				d_K(initData(&d_K, "K", "3x3 camera matrix from OpenCV")),
 				d_distCoefs(initData(&d_distCoefs, "distCoefs",
 														 "The camera's distortion coefficients")),
-				d_R(initData(&d_R, Matrix3::Identity(), "R", "3x3 rotation matrix")),
-				d_t(initData(&d_t, Vector3(), "t", "translation vector")),
-				d_imageSize(initData(&d_imageSize, Vec2i(), "imageSize",
-														 "Image resolution in pixels")),
-				d_glProjection(initData(&d_glProjection, Matrix4::Identity(), "glProjection",
+				d_R(initData(&d_R, "R", "3x3 rotation matrix")),
+				d_t(initData(&d_t, "t", "translation vector")),
+				d_imageSize(
+						initData(&d_imageSize, "imageSize", "Image resolution in pixels")),
+				d_glProjection(initData(&d_glProjection, "glProjection",
 																"OpenGL's 4x4 Projection matrix")),
-				d_glModelview(initData(&d_glModelview, Matrix4::Identity(), "glModelview",
+				d_glModelview(initData(&d_glModelview, "glModelview",
 															 "OpenGL's 4x4 Modelview matrix")),
-				d_viewportSize(initData(&d_viewportSize, Vec2i(), "viewportSize",
+				d_viewportSize(initData(&d_viewportSize, "viewportSize",
 																"projected image size in scene "
 																"unit. If not provided, the whole OpenGL "
 																"viewport size is used as projection plane")),
@@ -67,7 +65,7 @@ class CameraSettings : public common::ImplicitDataEngine
 				d_fz(initData(&d_fz, "fz", "distance camera -> plane")),
 				d_c(initData(&d_c, "c",
 										 "principal point position in the image (in pixel units)")),
-				d_s(initData(&d_s, 0, "s",
+				d_s(initData(&d_s, "s",
 										 "Axis skew (usually set to 0. Used in some very specific "
 										 "digitalization processes)"))
 
@@ -76,7 +74,9 @@ class CameraSettings : public common::ImplicitDataEngine
 
 	~CameraSettings() {}
 	void init();
-	void update() {}
+	void update() {
+		clean();
+	}
 	// returns the 2D pixel position of a given 3D point
 	Vector2 get2DFrom3DPosition(const Vector3& p);
 
@@ -129,12 +129,17 @@ class CameraSettings : public common::ImplicitDataEngine
 	void setFz(float fz);
 
 	const Vec2i& getPrincipalPointPosition();
-	void setPrincipalPointPosition(const Vec2i& c);
+	void setPrincipalPointPosition(const Vector2& c);
 
 	float getAxisSkew();
 	void setAxisSkew(float s);
 
  private:
+	void dumpValues()
+	{
+		std::cout << "f: " << d_f.getValue() << " c: " << d_c.getValue() << " s: " << d_s.getValue() << std::endl;
+	}
+
 	Data<Mat3x4d> d_P;
 	Data<Matrix3> d_K;
 	Data<helper::vector<double> > d_distCoefs;
@@ -148,7 +153,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	Data<Rigid> d_camPos;
 	Data<Vector2> d_f;
 	Data<float> d_fz;
-	Data<Vec2i> d_c;
+	Data<Vector2> d_c;
 	Data<float> d_s;
 
 	// Decomposes P
@@ -174,61 +179,117 @@ class CameraSettings : public common::ImplicitDataEngine
 	// Data callbacks for GUI
 	void ProjectionMatrixChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setProjectionMatrix(d_P.getValue());
+		this->checkData(false);
 	}
 	void IntrinsicCameraMatrixChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setIntrinsicCameraMatrix(d_K.getValue());
+		this->checkData(false);
 	}
 	void DistortionCoefficientsChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setDistortionCoefficients(d_distCoefs.getValue());
+		this->checkData(false);
 	}
 	void RotationMatrixChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setRotationMatrix(d_R.getValue());
+		this->checkData(false);
 	}
 	void TranslationVectorChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setTranslationVector(d_t.getValue());
+		this->checkData(false);
 	}
 	void ImageSizeChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setImageSize(d_imageSize.getValue());
+		this->checkData(false);
 	}
-	void GLProjectionMatrixChanged(core::objectmodel::BaseObject*)
+	void GLProjectionChanged(core::objectmodel::BaseObject*)
 	{
-		setGLProjectionMatrix(d_glProjection.getValue());
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
+		setGLProjection(d_glProjection.getValue());
+		this->checkData(false);
 	}
-	void GLModelviewMatrixChanged(core::objectmodel::BaseObject*)
+	void GLModelviewChanged(core::objectmodel::BaseObject*)
 	{
-		setGLModelviewMatrix(d_glModelview.getValue());
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
+		setGLModelview(d_glModelview.getValue());
+		this->checkData(false);
 	}
 	void ViewportSizeChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setViewportSize(d_viewportSize.getValue());
+		this->checkData(false);
 	}
 	void GLZClipChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setGLZClip(d_zClip.getValue());
+		this->checkData(false);
 	}
 	void CamPosChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setCamPos(d_camPos.getValue());
+		this->checkData(false);
 	}
 	void FocalLengthChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setFocalLength(d_f.getValue());
+		this->checkData(false);
 	}
-	void FzChanged(core::objectmodel::BaseObject*) { setFz(d_fz.getValue()); }
+	void FzChanged(core::objectmodel::BaseObject*)
+	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
+		setFz(d_fz.getValue());
+		this->checkData(false);
+	}
 	void PrincipalPointPositionChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setPrincipalPointPosition(d_c.getValue());
+		this->checkData(false);
 	}
 	void AxisSkewChanged(core::objectmodel::BaseObject*)
 	{
+		this->checkData(false);
+		std::cout << "lol" << std::endl;
 		setAxisSkew(d_s.getValue());
+		this->checkData(false);
 	}
+
+//	/// default handleEvent behavior. Can be overloaded.
+//	/// First checks for dirty data and call their respective callbacks
+//	/// Then calls update
+//	virtual void handleEvent(sofa::core::objectmodel::Event* e)
+//	{
+//	}
+
 };
 
 }  // namespace processor

@@ -48,6 +48,8 @@ class CamGizmo : public common::ImplicitDataEngine
 
 	void draw(const core::visual::VisualParams* vparams)
 	{
+		if (!f_listening.getValue())
+			return;
 		defaulttype::RigidTypes::Coord camPos = l_cam->getCamPos();
 		Vector3 camera_X =
 				camPos.getOrientation().rotate(Vector3(1, 0, 0));

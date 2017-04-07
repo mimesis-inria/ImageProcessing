@@ -2,6 +2,7 @@
 #define SOFA_OR_PROCESSOR_CALIBLOADER_H
 
 #include "initPlugin.h"
+#include "CameraSettings.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <SofaORCommon/cvMat.h>
@@ -22,6 +23,11 @@ namespace processor
 {
 class CalibLoader : public common::ImplicitDataEngine
 {
+	typedef sofa::core::objectmodel::SingleLink<CalibLoader, CameraSettings,
+																							BaseLink::FLAG_STOREPATH |
+																									BaseLink::FLAG_STRONGLINK>
+			CamSettings;
+
   struct CalibData
   {
     CalibData() {}
@@ -67,7 +73,9 @@ class CalibLoader : public common::ImplicitDataEngine
   void init();
   void update();
 
-  sofa::core::objectmodel::DataFileName d_calibFolder;
+	CamSettings l_cam1;
+	CamSettings l_cam2;
+	sofa::core::objectmodel::DataFileName d_calibFolder;
   Data<helper::OptionsGroup> d_calibNames;
   Data<bool> d_isStereo;
 

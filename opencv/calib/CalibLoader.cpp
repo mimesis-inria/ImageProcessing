@@ -24,7 +24,13 @@ int CalibLoaderClass =
         .add<CalibLoader>();
 
 CalibLoader::CalibLoader()
-    : d_calibFolder(initData(&d_calibFolder, "calibDir",
+		: l_cam1(initLink("cam",
+											"link to CameraSettings component containing and "
+											"maintaining the camera's parameters")),
+			l_cam2(initLink("cam2",
+											"link to a second CameraSettings component in case of "
+											"stereo calibration data")),
+			d_calibFolder(initData(&d_calibFolder, "calibDir",
                              "directory in which calibrations are stored")),
       d_calibNames(initData(&d_calibNames, "calibName",
                             "name of the calib settings currently used")),
@@ -120,7 +126,7 @@ bool CalibLoader::canLoad(const std::string& calibfile) const
 
 void CalibLoader::setCurrentCalib(CalibData& d)
 {
-  d_projMat1.setValue(d.projMat1);
+	d_projMat1.setValue(d.projMat1);
   d_projMat2.setValue(d.projMat2);
   d_distCoefs1.setValue(d.distCoefs1);
   d_distCoefs2.setValue(d.distCoefs2);
@@ -131,7 +137,15 @@ void CalibLoader::setCurrentCalib(CalibData& d)
   d_F.setValue(d.F);
   d_totalError.setValue(d.totalError);
 
-  if (d_projMat2.getValue().empty()) d_isStereo.setValue(false);
+	if (d_projMat2.getValue().empty() || !d_isStereo.getValue())
+		d_isStereo.setValue(false);
+	else
+	{
+			l_cam2->setDistortionCoefficients(d.distCoefs2);
+			l_cam2->setIntrinsicCameraMatrix(d.projMat2);
+	}
+	l_cam1->setDistortionCoefficients(d.distCoefs1);
+	l_cam1->setIntrinsicCameraMatrix(d.projMat1);
 }
 
 void CalibLoader::setCurrentCalib(const std::string& calibName)
@@ -236,9 +250,10 @@ void CalibLoader::init()
   d_calibNames.endEdit();
 
   addDataCallback(&d_calibNames,
-            (ImplicitDataEngine::DataCallback)&CalibLoader::calibChanged);
-  addDataCallback(&d_calibFolder,
-            (ImplicitDataEngine::DataCallback)&CalibLoader::calibFolderChanged);
+									(ImplicitDataEngine::DataCallback)&CalibLoader::calibChanged);
+	addDataCallback(
+			&d_calibFolder,
+			(ImplicitDataEngine::DataCallback)&CalibLoader::calibFolderChanged);
 
   addOutput(&d_isStereo);
   addOutput(&d_distCoefs1);

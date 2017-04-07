@@ -88,6 +88,8 @@ void CameraSettings::setProjectionMatrix(const Mat3x4d& P)
 	decomposeP();
 	composeCV();
 	composeGL();
+
+	this->clean();
 }
 
 const defaulttype::Matrix3& CameraSettings::getIntrinsicCameraMatrix()
@@ -146,7 +148,6 @@ void CameraSettings::setImageSize(const Vec2i& imgSize)
 {
 	d_imageSize.setValue(imgSize);
 	composeP();
-	composeCV();
 	composeGL();
 }
 const defaulttype::Matrix4& CameraSettings::getGLProjection()
@@ -158,7 +159,6 @@ void CameraSettings::setGLProjection(const Matrix4& glProjection)
 	d_glProjection.setValue(glProjection);
 	decomposeGL();
 	composeP();
-	composeCV();
 }
 const defaulttype::Matrix4& CameraSettings::getGLModelview()
 {
@@ -169,7 +169,6 @@ void CameraSettings::setGLModelview(const Matrix4& glModelview)
 	d_glModelview.setValue(glModelview);
 	decomposeGL();
 	composeP();
-	composeCV();
 }
 const defaulttype::Vec2i& CameraSettings::getViewportSize()
 {
@@ -198,7 +197,6 @@ void CameraSettings::setCamPos(const Rigid& camPos)
 {
 	d_camPos.setValue(camPos);
 	composeP();
-	composeCV();
 	composeGL();
 }
 
@@ -210,7 +208,6 @@ void CameraSettings::setFocalLength(const Vector2& f)
 {
 	d_f.setValue(f);
 	composeP();
-	composeCV();
 	composeGL();
 }
 float CameraSettings::getFz() { return d_fz.getValue(); }
@@ -223,11 +220,10 @@ const defaulttype::Vec2i& CameraSettings::getPrincipalPointPosition()
 {
 	return d_c.getValue();
 }
-void CameraSettings::setPrincipalPointPosition(const Vec2i& c)
+void CameraSettings::setPrincipalPointPosition(const Vector2& c)
 {
 	d_c.setValue(c);
 	composeP();
-	composeCV();
 	composeGL();
 }
 float CameraSettings::getAxisSkew() { return d_s.getValue(); }
@@ -235,7 +231,6 @@ void CameraSettings::setAxisSkew(float s)
 {
 	d_s.setValue(s);
 	composeP();
-	composeCV();
 	composeGL();
 }
 void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
@@ -248,13 +243,12 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 		return;
 	}
 
-	float w = d_imageSize.getValue().x();
-	float h = d_imageSize.getValue().y();
+	double w = d_imageSize.getValue().x();
+	double h = d_imageSize.getValue().y();
 
 	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
 	double fx = 2.0 * K[0][0] / w;
-	//		double s = -2.0 * K[0][1] / d_imageSize.getValue().w();
-	double s = 0;
+	double s = -2.0 * K[0][1] / w;
 	double cx = (w - 2.0 * K[0][2]) / w;
 
 	double fy = 2.0 * K[1][1] / h;
@@ -263,6 +257,7 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 	d_f.setValue(defaulttype::Vector2(fx, fy));
 	d_c.setValue(defaulttype::Vector2(cx, cy));
 	d_s.setValue(s);
+	d_s.setValue(0.0);
 
 	Matrix3 rotation;
 	for (unsigned j = 0; j < 3; j++)
@@ -282,6 +277,7 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 // Decomposes P (sets f, c, s, camPos)
 void CameraSettings::decomposeP()
 {
+	dumpValues();
 	cv::Mat_<double> P, K, R, t;
 	common::matrix::sofaMat2cvMat(d_P.getValue(), P);
 
@@ -305,8 +301,8 @@ void CameraSettings::decomposeGL()
 
 	d_f.setValue(Vector2(glP[0][0], glP[1][1]));
 	d_s.setValue(glP[1][0]);
+	d_s.setValue(0);
 	d_c.setValue(Vector2(glP[2][0], glP[2][1]));
-
 	Matrix3 R;
 	for (unsigned j = 0; j < 3; j++)
 	{
@@ -340,14 +336,6 @@ void CameraSettings::decomposeCV()
 // Composes OpenGL's Modelview and Projection matrices
 void CameraSettings::composeGL()
 {
-	if (d_zClip.getValue().x() == 0 || d_zClip.getValue().y() == 0)
-	{
-		msg_error(getName() + "::composeGL()") << "Error: trying to compose OpenGL "
-																							"settings while z clipping "
-																							"values have not been set";
-		return;
-	}
-
 	float f = d_zClip.getValue().x();
 	float n = d_zClip.getValue().y();
 
@@ -355,6 +343,7 @@ void CameraSettings::composeGL()
 
 	glP[0][0] = d_f.getValue().x();
 	glP[1][0] = d_s.getValue();
+	glP[1][0] = 0;
 	glP[2][0] = d_c.getValue().x();
 	glP[3][0] = 0;
 
@@ -365,7 +354,7 @@ void CameraSettings::composeGL()
 
 	glP[0][2] = 0;
 	glP[1][2] = 0;
-	glP[2][2] = -(f + n) / (f - n);
+	glP[2][2] = (f + n) / (f - n);
 	glP[3][2] = (-2.0 * n * f) / (f - n);
 
 	glP[0][3] = 0;
@@ -398,18 +387,29 @@ void CameraSettings::composeGL()
 // Composes K, R, t and camPos
 void CameraSettings::composeCV()
 {
+	double w = d_imageSize.getValue().x();
+	double h = d_imageSize.getValue().y();
+	double fx = d_f.getValue().x();
+	double fy = d_f.getValue().y();
+	double s = d_s.getValue();
+	double cx = d_c.getValue().x();
+	double cy = d_c.getValue().y();
+
+	Vector2 oglCenter(0.0, 0.0);
 	Matrix3 K;
-	K[0][0] = d_f.getValue().x();
-	K[0][1] = d_s.getValue();
-	K[0][2] = d_c.getValue().x();
+	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
+	K[0][0] = 0.5 * w * fx;
+	K[0][1] = -0.5 * w * s;
+	K[0][1] = 0;
+	K[0][2] = -0.5 * (w * cx - 2.0 * oglCenter[0] - w);
 
 	K[1][0] = 0;
-	K[1][1] = d_f.getValue().y();
-	K[1][2] = d_c.getValue().y();
+	K[1][1] = 0.5 * h * fy;
+	K[1][2] = 0.5 * (h * cy - 2.0 * oglCenter[1] + h);
 
 	K[2][0] = 0;
 	K[2][1] = 0;
-	K[2][2] = 1;
+	K[2][2] = 1.0;
 	d_K.setValue(K);
 
 	Matrix3 R;
@@ -443,9 +443,9 @@ void CameraSettings::init()
 	addDataCallback(&d_t, (callback)&CameraSettings::TranslationVectorChanged);
 	addDataCallback(&d_imageSize, (callback)&CameraSettings::ImageSizeChanged);
 	addDataCallback(&d_glProjection,
-									(callback)&CameraSettings::GLProjectionMatrixChanged);
+									(callback)&CameraSettings::GLProjectionChanged);
 	addDataCallback(&d_glModelview,
-									(callback)&CameraSettings::GLModelviewMatrixChanged);
+									(callback)&CameraSettings::GLModelviewChanged);
 	addDataCallback(&d_viewportSize,
 									(callback)&CameraSettings::ViewportSizeChanged);
 	addDataCallback(&d_zClip, (callback)&CameraSettings::GLZClipChanged);
@@ -455,6 +455,25 @@ void CameraSettings::init()
 	addDataCallback(&d_c,
 									(callback)&CameraSettings::PrincipalPointPositionChanged);
 	addDataCallback(&d_s, (callback)&CameraSettings::AxisSkewChanged);
+
+	if (d_P.isSet())
+	{
+		decomposeP();
+		composeCV();
+		composeGL();
+	}
+	else if (d_K.isSet() || d_R.isSet() || d_t.isSet())
+	{
+		decomposeCV();
+		composeP();
+		composeGL();
+	}
+	else if (d_glProjection.isSet() || d_glModelview.isSet())
+	{
+		decomposeGL();
+		composeP();
+	}
+	checkData(false);
 }
 
 }  // namespace processor

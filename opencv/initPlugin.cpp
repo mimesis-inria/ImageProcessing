@@ -39,10 +39,7 @@ const char* getModuleDescription()
 
 const char* getModuleComponentList()
 {
-  return "ImageExporter;FeatureDetector;FeatureDescriptor;FeatureMatcher;"
-         "MatchingConstraints;FeatureTriangulator;OpticalFlow;CannyFilter;"
-         "SobelFilter;ImageRectifier;CalibLoader;Segmenter2D;PointPicker2D;"
-				 "SimpleThreshold;AdaptiveThreshold;MorphologyEx;ComputeRT;PointVec2Keypoint;CameraSettings";
+	return "CameraSettings";
 }
 
 }  // namespace processor
@@ -51,24 +48,24 @@ const char* getModuleComponentList()
 
 ////////// BEGIN CLASS LIST //////////
 
-SOFA_LINK_CLASS(ImageExporter);
-SOFA_LINK_CLASS(FeatureDetector);
-SOFA_LINK_CLASS(DescriptorMatcher);
-SOFA_LINK_CLASS(MatchingConstraints);
-SOFA_LINK_CLASS(FeatureTriangulator);
-SOFA_LINK_CLASS(OpticalFlow);
-SOFA_LINK_CLASS(CannyFilter);
-SOFA_LINK_CLASS(SobelFilter);
-SOFA_LINK_CLASS(ImageRectifier);
-SOFA_LINK_CLASS(CalibLoader);
-SOFA_LINK_CLASS(ComputeRT);
-SOFA_LINK_CLASS(Segmenter2D);
-SOFA_LINK_CLASS(PointPicker2D);
-SOFA_LINK_CLASS(SimpleThreshold);
-SOFA_LINK_CLASS(AdaptiveThreshold);
-SOFA_LINK_CLASS(MorphologyEx);
-SOFA_LINK_CLASS(PointVec2Keypoint);
-SOFA_LINK_CLASS(CameraSettings);
-SOFA_LINK_CLASS(CameraProjection);
-SOFA_LINK_CLASS(CamGizmo);
+//SOFA_LINK_CLASS(ImageExporter);
+//SOFA_LINK_CLASS(FeatureDetector);
+//SOFA_LINK_CLASS(DescriptorMatcher);
+//SOFA_LINK_CLASS(MatchingConstraints);
+//SOFA_LINK_CLASS(FeatureTriangulator);
+//SOFA_LINK_CLASS(OpticalFlow);
+//SOFA_LINK_CLASS(CannyFilter);
+//SOFA_LINK_CLASS(SobelFilter);
+//SOFA_LINK_CLASS(ImageRectifier);
+//SOFA_LINK_CLASS(CalibLoader);
+//SOFA_LINK_CLASS(ComputeRT);
+//SOFA_LINK_CLASS(Segmenter2D);
+//SOFA_LINK_CLASS(PointPicker2D);
+//SOFA_LINK_CLASS(SimpleThreshold);
+//SOFA_LINK_CLASS(AdaptiveThreshold);
+//SOFA_LINK_CLASS(MorphologyEx);
+//SOFA_LINK_CLASS(PointVec2Keypoint);
+//SOFA_LINK_CLASS(CameraSettings);
+//SOFA_LINK_CLASS(CameraProjection);
+//SOFA_LINK_CLASS(CamGizmo);
 //SOFA_LINK_CLASS(PointVectorConverter);

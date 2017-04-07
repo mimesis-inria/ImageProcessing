@@ -34,18 +34,20 @@ set(HEADER_FILES
   imgproc/MorphologyEx.h
 
   calib/CalibLoader.h
-  calib/ComputeRT.h
+#  calib/ComputeRT.h
   calib/CameraSettings.h
-  calib/CameraProjection.h
-  calib/CameraProjectionMat.h
-  calib/CameraModelview.h
+#  calib/CameraProjection.h
+#  calib/CameraProjectionMat.h
+#  calib/CameraModelview.h
   calib/CamGizmo.h
 
   calib/CalibrateCamera.h
   calib/SolvePnP.h
   calib/CalibratedCamera.h
-#  calib/CalibrateStereo.h
-#  calib/CalibStereo.h
+  #  calib/CalibrateStereo.h
+  #  calib/CalibStereo.h
+  calib/FrameViewer.cpp
+  calib/PCViewer.cpp
   )
 
 set(SOURCE_FILES
@@ -76,18 +78,20 @@ set(SOURCE_FILES
   imgproc/MorphologyEx.cpp
 
   calib/CalibLoader.cpp
-  calib/ComputeRT.cpp
+#  calib/ComputeRT.cpp
   calib/CameraSettings.cpp
-  calib/CameraProjection.cpp
-  calib/CameraProjectionMat.cpp
-  calib/CameraModelview.cpp
+#  calib/CameraProjection.cpp
+#  calib/CameraProjectionMat.cpp
+#  calib/CameraModelview.cpp
   calib/CamGizmo.cpp
 
   calib/CalibrateCamera.cpp
   calib/SolvePnP.cpp
   calib/CalibratedCamera.cpp
-#  calib/CalibrateStereo.cpp
-#  calib/CalibStereo.cpp
+  #  calib/CalibrateStereo.cpp
+  #  calib/CalibStereo.cpp
+  calib/FrameViewer.cpp
+  calib/PCViewer.cpp
   )
 
 set(OpenCV_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})

@@ -51,13 +51,13 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 
 	void preDrawScene(core::visual::VisualParams* /*vp*/)
 	{
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		helper::gl::glMultMatrix(l_cam->getGLProjection().ptr());
-
 		if (!d_freeCam.getValue())
 		{
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+			helper::gl::glMultMatrix(l_cam->getGLProjection().ptr());
+
 			glMatrixMode(GL_MODELVIEW);
 			glPushMatrix();
 			glLoadIdentity();
@@ -67,11 +67,11 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 
 	void postDrawScene(core::visual::VisualParams* /*vp*/)
 	{
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-
 		if (!d_freeCam.getValue())
 		{
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
+
 			glMatrixMode(GL_MODELVIEW);
 			glPopMatrix();
 		}
@@ -80,12 +80,6 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 	Data<bool> d_freeCam;
 	CamSettings l_cam;
 };
-
-SOFA_DECL_CLASS(CalibratedCamera)
-
-int CalibratedCameraClass =
-		core::RegisterObject("Component setting the CameraSettings to the camera")
-				.add<CalibratedCamera>();
 
 }  // namespace processor
 }  // namespace OR
