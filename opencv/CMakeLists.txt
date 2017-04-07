@@ -43,6 +43,7 @@ set(HEADER_FILES
 
   calib/CalibrateCamera.h
   calib/SolvePnP.h
+  calib/CalibratedCamera.h
 #  calib/CalibrateStereo.h
 #  calib/CalibStereo.h
   )
@@ -84,6 +85,7 @@ set(SOURCE_FILES
 
   calib/CalibrateCamera.cpp
   calib/SolvePnP.cpp
+  calib/CalibratedCamera.cpp
 #  calib/CalibrateStereo.cpp
 #  calib/CalibStereo.cpp
   )

@@ -149,11 +149,11 @@ void CameraSettings::setImageSize(const Vec2i& imgSize)
 	composeCV();
 	composeGL();
 }
-const defaulttype::Matrix4& CameraSettings::getGLProjectionMatrix()
+const defaulttype::Matrix4& CameraSettings::getGLProjection()
 {
 	return d_glProjection.getValue();
 }
-void CameraSettings::setGLProjectionMatrix(const Matrix4& glProjection)
+void CameraSettings::setGLProjection(const Matrix4& glProjection)
 {
 	d_glProjection.setValue(glProjection);
 	decomposeGL();
@@ -164,7 +164,7 @@ const defaulttype::Matrix4& CameraSettings::getGLModelview()
 {
 	return d_glModelview.getValue();
 }
-void CameraSettings::setGLModelviewMatrix(const Matrix4& glModelview)
+void CameraSettings::setGLModelview(const Matrix4& glModelview)
 {
 	d_glModelview.setValue(glModelview);
 	decomposeGL();

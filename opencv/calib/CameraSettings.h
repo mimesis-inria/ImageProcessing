@@ -107,11 +107,11 @@ class CameraSettings : public common::ImplicitDataEngine
 
 	const Vec2i& getImageSize();
 	void setImageSize(const Vec2i& imgSize);
-	const Matrix4& getGLProjectionMatrix();
-	void setGLProjectionMatrix(const Matrix4& glProjection);
+	const Matrix4& getGLProjection();
+	void setGLProjection(const Matrix4& glProjection);
 
 	const Matrix4& getGLModelview();
-	void setGLModelviewMatrix(const Matrix4& glModelview);
+	void setGLModelview(const Matrix4& glModelview);
 
 	const Vec2i& getViewportSize();
 	void setViewportSize(const Vec2i& viewportSize);
