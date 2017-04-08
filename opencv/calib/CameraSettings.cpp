@@ -170,16 +170,6 @@ void CameraSettings::setGLModelview(const Matrix4& glModelview)
 	decomposeGL();
 	composeP();
 }
-const defaulttype::Vec2i& CameraSettings::getViewportSize()
-{
-	return d_viewportSize.getValue();
-}
-void CameraSettings::setViewportSize(const Vec2i& viewportSize)
-{
-	// No need to recompose, viewport only used for point projection
-	// operations
-	d_viewportSize.setValue(viewportSize);
-}
 const defaulttype::Vector2& CameraSettings::getGLZClip()
 {
 	return d_zClip.getValue();
@@ -379,7 +369,7 @@ void CameraSettings::composeGL()
 		MM[3][j] = p[j];
 		MM[j][3] = 0;
 	}
-	MM[3][3] = 1.0;
+	MM[3][3] = -1.0;
 
 	d_glModelview.setValue(MM);
 }
@@ -446,8 +436,6 @@ void CameraSettings::init()
 									(callback)&CameraSettings::GLProjectionChanged);
 	addDataCallback(&d_glModelview,
 									(callback)&CameraSettings::GLModelviewChanged);
-	addDataCallback(&d_viewportSize,
-									(callback)&CameraSettings::ViewportSizeChanged);
 	addDataCallback(&d_zClip, (callback)&CameraSettings::GLZClipChanged);
 	addDataCallback(&d_camPos, (callback)&CameraSettings::CamPosChanged);
 	addDataCallback(&d_f, (callback)&CameraSettings::FocalLengthChanged);

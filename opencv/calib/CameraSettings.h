@@ -54,10 +54,6 @@ class CameraSettings : public common::ImplicitDataEngine
 																"OpenGL's 4x4 Projection matrix")),
 				d_glModelview(initData(&d_glModelview, "glModelview",
 															 "OpenGL's 4x4 Modelview matrix")),
-				d_viewportSize(initData(&d_viewportSize, "viewportSize",
-																"projected image size in scene "
-																"unit. If not provided, the whole OpenGL "
-																"viewport size is used as projection plane")),
 				d_zClip(initData(&d_zClip, Vector2(0.01f, 1000.0f), "zClip",
 												 "OpenGL's z clipping values in scene unit")),
 				d_camPos(initData(&d_camPos, "camPos", "3D position of the camera")),
@@ -113,9 +109,6 @@ class CameraSettings : public common::ImplicitDataEngine
 	const Matrix4& getGLModelview();
 	void setGLModelview(const Matrix4& glModelview);
 
-	const Vec2i& getViewportSize();
-	void setViewportSize(const Vec2i& viewportSize);
-
 	const Vector2& getGLZClip();
 	void setGLZClip(const Vector2& zClip);
 
@@ -148,7 +141,6 @@ class CameraSettings : public common::ImplicitDataEngine
 	Data<Vec2i> d_imageSize;
 	Data<Matrix4> d_glProjection;
 	Data<Matrix4> d_glModelview;
-	Data<Vec2i> d_viewportSize;
 	Data<Vector2> d_zClip;
 	Data<Rigid> d_camPos;
 	Data<Vector2> d_f;
@@ -231,13 +223,6 @@ class CameraSettings : public common::ImplicitDataEngine
 		this->checkData(false);
 		std::cout << "lol" << std::endl;
 		setGLModelview(d_glModelview.getValue());
-		this->checkData(false);
-	}
-	void ViewportSizeChanged(core::objectmodel::BaseObject*)
-	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
-		setViewportSize(d_viewportSize.getValue());
 		this->checkData(false);
 	}
 	void GLZClipChanged(core::objectmodel::BaseObject*)
