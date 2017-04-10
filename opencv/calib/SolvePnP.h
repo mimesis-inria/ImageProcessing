@@ -42,7 +42,7 @@ class SolvePnP : public common::ImplicitDataEngine
 										 "a vector of calibration pattern "
 										 "points in the calibration pattern's coordinate "
 										 "space")),
-				d_imgSize(initData(&d_imgSize, "imgSize",
+				d_imgSize(initData(&d_imgSize, "imageSize",
 													 "[Optional] size in px of the image. If not "
 													 "provided, recovered from CameraSettings")),
 				d_K(initData(&d_K, "K",
@@ -52,18 +52,18 @@ class SolvePnP : public common::ImplicitDataEngine
 				d_distCoefs(
 						initData(&d_distCoefs, "distCoefs",
 										 "[Optional] distortion coefficients initial guess")),
-			d_pnpFlags(initData(
-					&d_pnpFlags, 4, "pnpFlags",
-					"One or a combination of the following flags:\n"
-					"ITERATIVE (1): Iterative method based on Levenberg-Marquardt "
-					"optimization.\n"
-					"P3P (2): Method based on the paper of X.S. Gao, X.-R. Hou, J. "
-					"Tang, H.-F. Chang “Complete Solution Classification for the "
-					"Perspective-Three-Point Problem”. In this case the function "
-					"requires exactly four object and image points.\n"
-					"EPNP (4): Method introduced by F.Moreno-Noguer, V.Lepetit and "
-					"P.Fua in the paper “EPnP: Efficient Perspective-n-Point Camera "
-					"Pose Estimation\n"))
+				d_pnpFlags(initData(
+						&d_pnpFlags, 4, "pnpFlags",
+						"One or a combination of the following flags:\n"
+						"ITERATIVE (1): Iterative method based on Levenberg-Marquardt "
+						"optimization.\n"
+						"P3P (2): Method based on the paper of X.S. Gao, X.-R. Hou, J. "
+						"Tang, H.-F. Chang “Complete Solution Classification for the "
+						"Perspective-Three-Point Problem”. In this case the function "
+						"requires exactly four object and image points.\n"
+						"EPNP (4): Method introduced by F.Moreno-Noguer, V.Lepetit and "
+						"P.Fua in the paper “EPnP: Efficient Perspective-n-Point Camera "
+						"Pose Estimation\n"))
 	{
 	}
 
@@ -76,6 +76,10 @@ class SolvePnP : public common::ImplicitDataEngine
 		addOutput(&d_K);
 		addOutput(&d_distCoefs);
 
+		if (!(l_cam.get()))
+			msg_error(this->getName() + "::init()") << "Error: No camera link set. "
+																								 "Please use attribute 'cam' "
+																								 "to define one";
 		update();
 	}
 

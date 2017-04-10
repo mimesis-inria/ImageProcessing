@@ -29,6 +29,7 @@ void SolvePnP::update()
 	cv::Mat_<double> camMatrix;
 	cv::Mat_<double> dc;
 	cv::Mat rvec, tvec;
+	defaulttype::Vec2i imsize = d_imgSize.getValue();
 	try
 	{
 		if (d_K.isSet())
@@ -39,7 +40,6 @@ void SolvePnP::update()
 																		camMatrix);
 		else
 		{
-			defaulttype::Vec2i imsize;
 			int max_d;
 			if (d_imgSize.isSet())
 				imsize = d_imgSize.getValue();
@@ -54,11 +54,12 @@ void SolvePnP::update()
 		else
 			common::matrix::sofaVector2cvMat(l_cam->getDistortionCoefficients(), dc);
 
-		cv::solvePnP(objPts, imgPts, camMatrix, dc, rvec, tvec, d_pnpFlags.getValue());
+		cv::solvePnP(objPts, imgPts, camMatrix, dc, rvec, tvec, false, d_pnpFlags.getValue());
 	}
 	catch (cv::Exception& e)
 	{
 		msg_error(getName() + "::update()") << e.what();
+		return;
 	}
 
 	defaulttype::Mat3x4d P;
@@ -83,6 +84,8 @@ void SolvePnP::update()
 	helper::vector<double> distCoefs;
 	common::matrix::cvMat2sofaVector(dc, distCoefs);
 
+	if (l_cam->getImageSize() != imsize)
+		l_cam->setImageSize(d_imgSize.getValue());
 	l_cam->setProjectionMatrix(P);
 	l_cam->setDistortionCoefficients(distCoefs);
 }
