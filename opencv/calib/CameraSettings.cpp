@@ -369,6 +369,7 @@ void CameraSettings::composeGL()
 		MM[3][j] = p[j];
 		MM[j][3] = 0;
 	}
+	// negate to follow OpenGL's right hand rule
 	MM[3][3] = -1.0;
 
 	d_glModelview.setValue(MM);
@@ -444,22 +445,25 @@ void CameraSettings::init()
 									(callback)&CameraSettings::PrincipalPointPositionChanged);
 	addDataCallback(&d_s, (callback)&CameraSettings::AxisSkewChanged);
 
-	if (d_P.isSet())
+	if (d_imageSize.getValue().x() && d_imageSize.getValue().y())
 	{
-		decomposeP();
-		composeCV();
-		composeGL();
-	}
-	else if (d_K.isSet() || d_R.isSet() || d_t.isSet())
-	{
-		decomposeCV();
-		composeP();
-		composeGL();
-	}
-	else if (d_glProjection.isSet() || d_glModelview.isSet())
-	{
-		decomposeGL();
-		composeP();
+		if (d_P.isSet())
+		{
+			decomposeP();
+			composeCV();
+			composeGL();
+		}
+		else if (d_K.isSet() || d_R.isSet() || d_t.isSet())
+		{
+			decomposeCV();
+			composeP();
+			composeGL();
+		}
+		else if (d_glProjection.isSet() || d_glModelview.isSet())
+		{
+			decomposeGL();
+			composeP();
+		}
 	}
 	checkData(false);
 }

@@ -70,9 +70,7 @@ class CameraSettings : public common::ImplicitDataEngine
 
 	~CameraSettings() {}
 	void init();
-	void update() {
-		clean();
-	}
+	void update() { clean(); }
 	// returns the 2D pixel position of a given 3D point
 	Vector2 get2DFrom3DPosition(const Vector3& p);
 
@@ -130,7 +128,8 @@ class CameraSettings : public common::ImplicitDataEngine
  private:
 	void dumpValues()
 	{
-		std::cout << "f: " << d_f.getValue() << " c: " << d_c.getValue() << " s: " << d_s.getValue() << std::endl;
+		std::cout << "f: " << d_f.getValue() << " c: " << d_c.getValue()
+							<< " s: " << d_s.getValue() << std::endl;
 	}
 
 	Data<Mat3x4d> d_P;
@@ -171,109 +170,74 @@ class CameraSettings : public common::ImplicitDataEngine
 	// Data callbacks for GUI
 	void ProjectionMatrixChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setProjectionMatrix(d_P.getValue());
 		this->checkData(false);
 	}
 	void IntrinsicCameraMatrixChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setIntrinsicCameraMatrix(d_K.getValue());
 		this->checkData(false);
 	}
 	void DistortionCoefficientsChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setDistortionCoefficients(d_distCoefs.getValue());
 		this->checkData(false);
 	}
 	void RotationMatrixChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setRotationMatrix(d_R.getValue());
 		this->checkData(false);
 	}
 	void TranslationVectorChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setTranslationVector(d_t.getValue());
 		this->checkData(false);
 	}
 	void ImageSizeChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setImageSize(d_imageSize.getValue());
 		this->checkData(false);
 	}
 	void GLProjectionChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setGLProjection(d_glProjection.getValue());
 		this->checkData(false);
 	}
 	void GLModelviewChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setGLModelview(d_glModelview.getValue());
 		this->checkData(false);
 	}
 	void GLZClipChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setGLZClip(d_zClip.getValue());
 		this->checkData(false);
 	}
 	void CamPosChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setCamPos(d_camPos.getValue());
 		this->checkData(false);
 	}
 	void FocalLengthChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setFocalLength(d_f.getValue());
 		this->checkData(false);
 	}
 	void FzChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setFz(d_fz.getValue());
 		this->checkData(false);
 	}
 	void PrincipalPointPositionChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setPrincipalPointPosition(d_c.getValue());
 		this->checkData(false);
 	}
 	void AxisSkewChanged(core::objectmodel::BaseObject*)
 	{
-		this->checkData(false);
-		std::cout << "lol" << std::endl;
 		setAxisSkew(d_s.getValue());
 		this->checkData(false);
 	}
-
-//	/// default handleEvent behavior. Can be overloaded.
-//	/// First checks for dirty data and call their respective callbacks
-//	/// Then calls update
-//	virtual void handleEvent(sofa::core::objectmodel::Event* e)
-//	{
-//	}
 
 };
 
