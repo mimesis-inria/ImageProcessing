@@ -47,7 +47,13 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 	}
 
 	~CalibratedCamera() {}
-	void init() { update(); }
+	void init()
+	{
+		if (!l_cam.get())
+			msg_error(getName() + "::init()") << "Error: No camera link set. "
+																					 "Please use attribute 'cam' "
+																					 "to define one";
+	}
 
 	void preDrawScene(core::visual::VisualParams* /*vp*/)
 	{

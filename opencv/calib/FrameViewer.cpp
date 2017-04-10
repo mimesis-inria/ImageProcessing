@@ -44,6 +44,10 @@ void FrameViewer::init()
 	addInput(&d_frame);
 	addInput(&d_depth);
 
+	if (!l_cam.get())
+		msg_error(getName() + "::init()") << "Error: No camera link set. "
+																				 "Please use attribute 'cam' "
+																				 "to define one";
 	update();
 }
 

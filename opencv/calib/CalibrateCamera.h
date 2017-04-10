@@ -88,6 +88,10 @@ class CalibrateCamera : public common::ImplicitDataEngine
 		addOutput(&d_rvecs);
 		addOutput(&d_tvecs);
 
+		if (!l_cam.get())
+			msg_error(getName() + "::init()") << "Error: No camera link set. "
+																					 "Please use attribute 'cam' "
+																					 "to define one";
 		update();
 	}
 

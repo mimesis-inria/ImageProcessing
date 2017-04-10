@@ -3,8 +3,8 @@
 
 #include "initPlugin.h"
 
-#include "CameraSettings.h"
 #include <SofaORCommon/ImplicitDataEngine.h>
+#include "CameraSettings.h"
 
 #include <sofa/core/visual/DrawToolGL.h>
 #include <sofa/core/visual/VisualParams.h>
@@ -24,9 +24,9 @@ namespace processor
 {
 class CamGizmo : public common::ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<
-			CamGizmo, CameraSettings,
-			BaseLink::FLAG_STOREPATH | BaseLink::FLAG_STRONGLINK>
+	typedef sofa::core::objectmodel::SingleLink<CamGizmo, CameraSettings,
+																							BaseLink::FLAG_STOREPATH |
+																									BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 	typedef typename defaulttype::Vector3 Vector3;
 
@@ -43,20 +43,20 @@ class CamGizmo : public common::ImplicitDataEngine
 	~CamGizmo() {}
 	void init()
 	{
+		if (!l_cam.get())
+			msg_error(getName() + "::init()") << "Error: No camera link set. "
+																					 "Please use attribute 'cam' "
+																					 "to define one";
 		update();
 	}
 
 	void draw(const core::visual::VisualParams* vparams)
 	{
-		if (!f_listening.getValue())
-			return;
+		if (!f_listening.getValue()) return;
 		defaulttype::RigidTypes::Coord camPos = l_cam->getCamPos();
-		Vector3 camera_X =
-				camPos.getOrientation().rotate(Vector3(1, 0, 0));
-		Vector3 camera_Y =
-				camPos.getOrientation().rotate(Vector3(0, 1, 0));
-		Vector3 camera_Z =
-				camPos.getOrientation().rotate(Vector3(0, 0, -1));
+		Vector3 camera_X = camPos.getOrientation().rotate(Vector3(1, 0, 0));
+		Vector3 camera_Y = camPos.getOrientation().rotate(Vector3(0, 1, 0));
+		Vector3 camera_Z = camPos.getOrientation().rotate(Vector3(0, 0, -1));
 
 		glColor4f(1, 0, 0, 1);
 		glLineWidth(1);
@@ -88,18 +88,15 @@ class CamGizmo : public common::ImplicitDataEngine
 		helper::gl::glVertexT(p1);
 		glEnd();
 
-		vparams->drawTool()->drawArrow(
-				camPos.getCenter(),
-				camPos.getCenter() + camera_X * 0.01, 0.001,
-				defaulttype::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-		vparams->drawTool()->drawArrow(
-				camPos.getCenter(),
-				camPos.getCenter() + camera_Y * 0.01, 0.001,
-				defaulttype::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
-		vparams->drawTool()->drawArrow(
-				camPos.getCenter(),
-				camPos.getCenter() + camera_Z * 0.01, 0.001,
-				defaulttype::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+		vparams->drawTool()->drawArrow(camPos.getCenter(),
+																	 camPos.getCenter() + camera_X * 0.01, 0.001,
+																	 defaulttype::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+		vparams->drawTool()->drawArrow(camPos.getCenter(),
+																	 camPos.getCenter() + camera_Y * 0.01, 0.001,
+																	 defaulttype::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+		vparams->drawTool()->drawArrow(camPos.getCenter(),
+																	 camPos.getCenter() + camera_Z * 0.01, 0.001,
+																	 defaulttype::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
 	}
 
 	CamSettings l_cam;

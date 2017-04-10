@@ -238,7 +238,6 @@ class CameraSettings : public common::ImplicitDataEngine
 		setAxisSkew(d_s.getValue());
 		this->checkData(false);
 	}
-
 };
 
 }  // namespace processor
