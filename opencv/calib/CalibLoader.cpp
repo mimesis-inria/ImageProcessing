@@ -141,8 +141,8 @@ void CalibLoader::setCurrentCalib(CalibData& d)
 		d_isStereo.setValue(false);
 	else
 	{
-			l_cam2->setDistortionCoefficients(d.distCoefs2);
-			l_cam2->setIntrinsicCameraMatrix(d.projMat2);
+		l_cam2->setDistortionCoefficients(d.distCoefs2);
+		l_cam2->setIntrinsicCameraMatrix(d.projMat2);
 	}
 	l_cam1->setDistortionCoefficients(d.distCoefs1);
 	l_cam1->setIntrinsicCameraMatrix(d.projMat1);
@@ -266,6 +266,11 @@ void CalibLoader::init()
   addOutput(&d_R);
   addOutput(&d_T);
   addOutput(&d_F);
+
+	if (!l_cam1.get())
+		msg_error(getName() + "::init()") << "Error: No camera link set. "
+																				 "Please use attribute 'cam' "
+																				 "to define one";
 
   calibFolderChanged(NULL);
 }
