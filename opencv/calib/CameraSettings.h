@@ -70,7 +70,7 @@ class CameraSettings : public common::ImplicitDataEngine
 
 	~CameraSettings() {}
 	void init();
-	void update() { clean(); }
+	void update() {}
 	// returns the 2D pixel position of a given 3D point
 	Vector2 get2DFrom3DPosition(const Vector3& p);
 
@@ -128,8 +128,8 @@ class CameraSettings : public common::ImplicitDataEngine
  private:
 	void dumpValues()
 	{
-		std::cout << "f: " << d_f.getValue() << " c: " << d_c.getValue()
-							<< " s: " << d_s.getValue() << std::endl;
+//		std::cout << "f: " << d_f.getValue() << " c: " << d_c.getValue()
+//							<< " s: " << d_s.getValue() << std::endl;
 	}
 
 	Data<Mat3x4d> d_P;

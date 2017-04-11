@@ -326,8 +326,8 @@ void CameraSettings::decomposeCV()
 // Composes OpenGL's Modelview and Projection matrices
 void CameraSettings::composeGL()
 {
-	float f = d_zClip.getValue().x();
-	float n = d_zClip.getValue().y();
+	float n = d_zClip.getValue().x();
+	float f = d_zClip.getValue().y();
 
 	Matrix4 glP;
 
@@ -344,7 +344,7 @@ void CameraSettings::composeGL()
 
 	glP[0][2] = 0;
 	glP[1][2] = 0;
-	glP[2][2] = (f + n) / (f - n);
+	glP[2][2] = -(f + n) / (f - n);
 	glP[3][2] = (-2.0 * n * f) / (f - n);
 
 	glP[0][3] = 0;
@@ -370,7 +370,7 @@ void CameraSettings::composeGL()
 		MM[j][3] = 0;
 	}
 	// negate to follow OpenGL's right hand rule
-	MM[3][3] = -1.0;
+	MM[3][3] = 1.0;
 
 	d_glModelview.setValue(MM);
 }
