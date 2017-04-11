@@ -40,9 +40,17 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			: l_cam(initLink("cam",
 											 "link to CameraSettings component containing and "
 											 "maintaining the camera's parameters")),
-				d_freeCam(initData(&d_freeCam, true, "freeCam",
-													 "when true, camera is not set. when false, OpenGL's "
-													 "camera is overriden by the new params"))
+				d_freeCam(initData(
+						&d_freeCam, true, "freeCam",
+						"when true, camera's modelview is not set. when false, OpenGL's "
+						"camera is overriden by the new params")),
+				d_freeProj(initData(&d_freeProj, true, "freeProj",
+														"when true, camera's projection matrix is not set. "
+														"when false, OpenGL's "
+														"camera is overriden by the new params")),
+				d_drawGizmo(initData(
+						&d_drawGizmo, false, "drawGizmo",
+						"displays the camera's reference frame and projection cone"))
 	{
 	}
 
@@ -55,36 +63,89 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 																					 "to define one";
 	}
 
-	void preDrawScene(core::visual::VisualParams* /*vp*/)
+	void preDrawScene(core::visual::VisualParams* vparams)
 	{
-		if (!d_freeCam.getValue())
+		if (!d_freeProj.getValue())
 		{
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
 			glLoadIdentity();
 			helper::gl::glMultMatrix(l_cam->getGLProjection().ptr());
-
+		}
+		if (!d_freeCam.getValue())
+		{
 			glMatrixMode(GL_MODELVIEW);
 			glPushMatrix();
 			glLoadIdentity();
 			helper::gl::glMultMatrix(l_cam->getGLModelview().ptr());
 		}
+		if (d_drawGizmo.getValue())
+		{
+			defaulttype::RigidTypes::Coord camPos = l_cam->getCamPos();
+			Vector3 camera_X = camPos.getOrientation().rotate(Vector3(1, 0, 0));
+			Vector3 camera_Y = camPos.getOrientation().rotate(Vector3(0, 1, 0));
+			Vector3 camera_Z = camPos.getOrientation().rotate(Vector3(0, 0, -1));
+
+			glColor4f(1, 0, 0, 1);
+			glLineWidth(1);
+
+			defaulttype::Vector3 p1, p2, p3, p4;
+			l_cam->getCornersPosition(p1, p2, p3, p4);
+
+			glBegin(GL_LINES);
+			helper::gl::glVertexT(camPos.getCenter());
+			helper::gl::glVertexT(p1);
+			helper::gl::glVertexT(camPos.getCenter());
+			helper::gl::glVertexT(p2);
+			helper::gl::glVertexT(camPos.getCenter());
+			helper::gl::glVertexT(p3);
+			helper::gl::glVertexT(camPos.getCenter());
+			helper::gl::glVertexT(p4);
+			glEnd();
+
+			glLineWidth(3);
+
+			glBegin(GL_LINES);
+			helper::gl::glVertexT(p1);
+			helper::gl::glVertexT(p2);
+			helper::gl::glVertexT(p2);
+			helper::gl::glVertexT(p3);
+			helper::gl::glVertexT(p3);
+			helper::gl::glVertexT(p4);
+			helper::gl::glVertexT(p4);
+			helper::gl::glVertexT(p1);
+			glEnd();
+
+			vparams->drawTool()->drawArrow(
+					camPos.getCenter(), camPos.getCenter() + camera_X * 0.01, 0.001,
+					defaulttype::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+			vparams->drawTool()->drawArrow(
+					camPos.getCenter(), camPos.getCenter() + camera_Y * 0.01, 0.001,
+					defaulttype::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+			vparams->drawTool()->drawArrow(
+					camPos.getCenter(), camPos.getCenter() + camera_Z * 0.01, 0.001,
+					defaulttype::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+		}
 	}
 
 	void postDrawScene(core::visual::VisualParams* /*vp*/)
 	{
-		if (!d_freeCam.getValue())
+		if (!d_freeProj.getValue())
 		{
 			glMatrixMode(GL_PROJECTION);
 			glPopMatrix();
-
+		}
+		if (!d_freeCam.getValue())
+		{
 			glMatrixMode(GL_MODELVIEW);
 			glPopMatrix();
 		}
 	}
 
-	Data<bool> d_freeCam;
 	CamSettings l_cam;
+	Data<bool> d_freeCam;
+	Data<bool> d_freeProj;
+	Data<bool> d_drawGizmo;
 };
 
 }  // namespace processor
