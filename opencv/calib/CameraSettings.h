@@ -54,7 +54,7 @@ class CameraSettings : public common::ImplicitDataEngine
 																"OpenGL's 4x4 Projection matrix")),
 				d_glModelview(initData(&d_glModelview, "glModelview",
 															 "OpenGL's 4x4 Modelview matrix")),
-				d_zClip(initData(&d_zClip, Vector2(0.01f, 1000.0f), "zClip",
+				d_zClip(initData(&d_zClip, Vector2(0.001f, 1000.0f), "zClip",
 												 "OpenGL's z clipping values in scene unit")),
 				d_camPos(initData(&d_camPos, "camPos", "3D position of the camera")),
 				d_f(initData(&d_f, "f", "focal length")),
@@ -70,7 +70,8 @@ class CameraSettings : public common::ImplicitDataEngine
 
 	~CameraSettings() {}
 	void init();
-	void update() {}
+	void update() { checkData(true); }
+
 	// returns the 2D pixel position of a given 3D point
 	Vector2 get2DFrom3DPosition(const Vector3& p);
 
@@ -128,14 +129,16 @@ class CameraSettings : public common::ImplicitDataEngine
  private:
 	void dumpValues()
 	{
-//		std::cout << "f: " << d_f.getValue() << " c: " << d_c.getValue()
-//							<< " s: " << d_s.getValue() << std::endl;
+		//		std::cout << "f: " << d_f.getValue() << " c: " << d_c.getValue()
+		//							<< " s: " << d_s.getValue() <<
+		//std::endl;
 	}
 
 	Data<Mat3x4d> d_P;
 	Data<Matrix3> d_K;
 	Data<helper::vector<double> > d_distCoefs;
 	Data<Matrix3> d_R;
+	Data<Matrix3> d_rotation;
 	Data<Vector3> d_t;
 	Data<Vec2i> d_imageSize;
 	Data<Matrix4> d_glProjection;
@@ -170,73 +173,62 @@ class CameraSettings : public common::ImplicitDataEngine
 	// Data callbacks for GUI
 	void ProjectionMatrixChanged(core::objectmodel::BaseObject*)
 	{
+		std::cout << "why P???" << std::endl;
 		setProjectionMatrix(d_P.getValue());
-		this->checkData(false);
 	}
 	void IntrinsicCameraMatrixChanged(core::objectmodel::BaseObject*)
 	{
+		std::cout << "why K???" << std::endl;
 		setIntrinsicCameraMatrix(d_K.getValue());
-		this->checkData(false);
 	}
 	void DistortionCoefficientsChanged(core::objectmodel::BaseObject*)
 	{
 		setDistortionCoefficients(d_distCoefs.getValue());
-		this->checkData(false);
 	}
 	void RotationMatrixChanged(core::objectmodel::BaseObject*)
 	{
+		std::cout << "why R???" << std::endl;
 		setRotationMatrix(d_R.getValue());
-		this->checkData(false);
 	}
 	void TranslationVectorChanged(core::objectmodel::BaseObject*)
 	{
 		setTranslationVector(d_t.getValue());
-		this->checkData(false);
 	}
 	void ImageSizeChanged(core::objectmodel::BaseObject*)
 	{
 		setImageSize(d_imageSize.getValue());
-		this->checkData(false);
 	}
 	void GLProjectionChanged(core::objectmodel::BaseObject*)
 	{
 		setGLProjection(d_glProjection.getValue());
-		this->checkData(false);
 	}
 	void GLModelviewChanged(core::objectmodel::BaseObject*)
 	{
 		setGLModelview(d_glModelview.getValue());
-		this->checkData(false);
 	}
 	void GLZClipChanged(core::objectmodel::BaseObject*)
 	{
 		setGLZClip(d_zClip.getValue());
-		this->checkData(false);
 	}
 	void CamPosChanged(core::objectmodel::BaseObject*)
 	{
 		setCamPos(d_camPos.getValue());
-		this->checkData(false);
 	}
 	void FocalLengthChanged(core::objectmodel::BaseObject*)
 	{
 		setFocalLength(d_f.getValue());
-		this->checkData(false);
 	}
 	void FzChanged(core::objectmodel::BaseObject*)
 	{
 		setFz(d_fz.getValue());
-		this->checkData(false);
 	}
 	void PrincipalPointPositionChanged(core::objectmodel::BaseObject*)
 	{
 		setPrincipalPointPosition(d_c.getValue());
-		this->checkData(false);
 	}
 	void AxisSkewChanged(core::objectmodel::BaseObject*)
 	{
 		setAxisSkew(d_s.getValue());
-		this->checkData(false);
 	}
 };
 
