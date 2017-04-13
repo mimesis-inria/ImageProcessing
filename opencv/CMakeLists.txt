@@ -36,10 +36,11 @@ set(HEADER_FILES
   calib/CalibLoader.h
 #  calib/ComputeRT.h
   calib/CameraSettings.h
+  calib/StereoSettings.h
 #  calib/CameraProjection.h
 #  calib/CameraProjectionMat.h
 #  calib/CameraModelview.h
-  calib/CamGizmo.h
+#  calib/CamGizmo.h
 
   calib/CalibrateCamera.h
   calib/SolvePnP.h
@@ -80,10 +81,11 @@ set(SOURCE_FILES
   calib/CalibLoader.cpp
 #  calib/ComputeRT.cpp
   calib/CameraSettings.cpp
+  calib/StereoSettings.cpp
 #  calib/CameraProjection.cpp
 #  calib/CameraProjectionMat.cpp
 #  calib/CameraModelview.cpp
-  calib/CamGizmo.cpp
+#  calib/CamGizmo.cpp
 
   calib/CalibrateCamera.cpp
   calib/SolvePnP.cpp
