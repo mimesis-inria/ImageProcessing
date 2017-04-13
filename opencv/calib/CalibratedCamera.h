@@ -6,6 +6,7 @@
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include "CameraSettings.h"
 
+#include <sofa/core/objectmodel/KeyreleasedEvent.h>
 #include <sofa/core/visual/DrawToolGL.h>
 #include <sofa/core/visual/VisualManager.h>
 #include <sofa/helper/OptionsGroup.h>
@@ -70,15 +71,16 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
 			glLoadIdentity();
-			helper::gl::glMultMatrix(l_cam->getGLProjection().ptr());
+			glMultMatrixd(l_cam->getGLProjection().ptr());
 		}
 		if (!d_freeCam.getValue())
 		{
 			glMatrixMode(GL_MODELVIEW);
 			glPushMatrix();
 			glLoadIdentity();
-			helper::gl::glMultMatrix(l_cam->getGLModelview().ptr());
+			glMultMatrixd(l_cam->getGLModelview().ptr());
 		}
+
 		if (d_drawGizmo.getValue())
 		{
 			defaulttype::RigidTypes::Coord camPos = l_cam->getCamPos();
@@ -140,6 +142,58 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			glMatrixMode(GL_MODELVIEW);
 			glPopMatrix();
 		}
+	}
+
+	virtual void handleEvent(sofa::core::objectmodel::Event* e)
+	{
+		if (sofa::core::objectmodel::KeyreleasedEvent::checkEventType(e))
+		{
+			sofa::core::objectmodel::KeyreleasedEvent* kre =
+					static_cast<core::objectmodel::KeyreleasedEvent*>(e);
+			char keyPressed = kre->getKey();
+
+			if (keyPressed == 'u' || keyPressed == 'U')
+			{
+				if (!d_freeProj.getValue())
+				{
+					glMatrixMode(GL_PROJECTION);
+					glPushMatrix();
+					glLoadIdentity();
+					helper::gl::glMultMatrix(l_cam->getGLProjection().ptr());
+				}
+				if (!d_freeCam.getValue())
+				{
+					glMatrixMode(GL_MODELVIEW);
+					glPushMatrix();
+					glLoadIdentity();
+					helper::gl::glMultMatrix(l_cam->getGLModelview().ptr());
+				}
+
+				defaulttype::Matrix4 p, m;
+				glGetDoublev(GL_PROJECTION_MATRIX, p.ptr());
+				glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
+
+				std::cout << "Storing current Projection and Modelview "
+										 "Matrices:\nProjection:\n"
+									<< p << "\nModelview:\n"
+									<< m << std::endl;
+
+				l_cam->setGLProjection(p);
+				l_cam->setGLModelview(m);
+
+				if (!d_freeProj.getValue())
+				{
+					glMatrixMode(GL_PROJECTION);
+					glPopMatrix();
+				}
+				if (!d_freeCam.getValue())
+				{
+					glMatrixMode(GL_MODELVIEW);
+					glPopMatrix();
+				}
+			}
+		}
+		ImplicitDataEngine::handleEvent(e);
 	}
 
 	CamSettings l_cam;
