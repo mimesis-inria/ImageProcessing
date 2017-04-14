@@ -111,14 +111,6 @@ void FrameViewer::orthoDraw()
 	imageString.write((const char *)d_frame.getValue().data,
 										d_frame.getValue().total() * d_frame.getValue().elemSize());
 
-	glMatrixMode(GL_PROJECTION);  // init the projection matrix
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0, 1, 0, 1, -1, 1);  // orthogonal view
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
 	glEnable(GL_TEXTURE_2D);  // enable the texture
 	glDisable(GL_LIGHTING);   // disable the light
 
@@ -139,8 +131,17 @@ void FrameViewer::orthoDraw()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask(GL_FALSE);
 
-	glBegin(GL_QUADS);
 
+
+	glMatrixMode(GL_PROJECTION);  // init the projection matrix
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, 1, 0, 1, -1, 1);  // orthogonal view
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glBegin(GL_QUADS);
 	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 	glTexCoord2f(0, 1);
 	glVertex2f(0, 0);
@@ -150,8 +151,13 @@ void FrameViewer::orthoDraw()
 	glVertex2f(1, 1);
 	glTexCoord2f(0, 0);
 	glVertex2f(0, 1);
-
 	glEnd();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
 
 	// glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);     // enable light
@@ -159,11 +165,6 @@ void FrameViewer::orthoDraw()
 														 // glDepthMask (GL_TRUE);		// enable zBuffer
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
-
-	glPopMatrix();
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
 }
 
 void FrameViewer::draw(const core::visual::VisualParams *)

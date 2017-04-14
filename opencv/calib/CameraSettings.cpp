@@ -217,8 +217,9 @@ void CameraSettings::setFz(float fz)
 {
 	// No need to recompose, fz only used for projection operations
 	d_fz.setValue(fz);
+	this->checkData(false);
 }
-const defaulttype::Vec2i& CameraSettings::getPrincipalPointPosition()
+const defaulttype::Vector2& CameraSettings::getPrincipalPointPosition()
 {
 	return d_c.getValue();
 }
@@ -312,11 +313,9 @@ void CameraSettings::decomposeGL()
 		}
 	}
 
-	R = R.transposed();
 	Quat camera_ori;
 	camera_ori.fromMatrix(R);
-	Vector3 p(glM[3][0], glM[3][1], glM[3][2]);
-	Vector3 camera_pos = -R * p;
+	Vector3 camera_pos(glM[0][3], glM[1][3], glM[2][3]);
 
 	// multiply by the inverse of the operation made on :
 	camera_ori *=
@@ -365,29 +364,28 @@ void CameraSettings::composeGL()
 	glP[3][2] = -1;
 	glP[3][3] = 0;
 
-	d_glProjection.setValue(glP.transposed());
+	d_glProjection.setValue(glP);
 
 	Matrix4 MM;
 
 	Matrix3 R;
 	Quat Orig = d_camPos.getValue().getOrientation() *
-							Quat(Vector3(0, 0, 1), M_PI) * Quat(Vector3(0, 1, 0), M_PI);
+							Quat(Vector3(0, 0, 1), -M_PI) * Quat(Vector3(0, 1, 0), -M_PI);
 	Orig.toMatrix(R);
-	Matrix3 iR = R.transposed();
 
-	Vector3 p = -iR * d_camPos.getValue().getCenter();
+	Vector3 p = d_camPos.getValue().getCenter();
 
 	for (unsigned int j = 0; j < 3; j++)
 	{
 		for (unsigned int i = 0; i < 3; i++) MM[j][i] = R[j][i];
 
-		MM[3][j] = p[j];
-		MM[j][3] = 0;
+		MM[j][3] = p[j];
+		MM[3][j] = 0;
 	}
 	// negate to follow OpenGL's right hand rule
 	MM[3][3] = 1.0;
 
-	d_glModelview.setValue(MM.transposed());
+	d_glModelview.setValue(MM);
 }
 
 // Composes K, R, t and camPos
@@ -430,20 +428,24 @@ void CameraSettings::composeP()
 {
 	std::cout << "composeP" << std::endl;
 	composeCV();
-	const Vector3& t = d_t.getValue();
+	Vector3 t = d_t.getValue();
 	const Matrix3& R = d_R.getValue();
 	const Matrix3& K = d_K.getValue();
 
-	double ptr[12] = {K[0][0], K[0][1], K[0][2], 0.0,     K[1][0], K[1][1],
-										K[1][2], 0.0,     K[2][0], K[2][1], K[2][2], 0.0};
-	Mat3x4d KI(ptr);
+	// WHY???
+//	t = -R * t;
 
-	double ptr2[16] = {R[0][0], R[0][1], R[0][2], t[0],    R[1][0], R[1][1],
-										 R[1][2], t[1],    R[2][0], R[2][1], R[2][2], t[2],
+	double ptr[12] = {1.0, 0.0, 0.0, 0.0,     0.0, 1.0, 0.0, 0.0,     0.0, 0.0, 1.0, 0.0};
+	Mat3x4d I(ptr);
+
+	double ptr2[16] = {R[0][0], R[0][1], R[0][2], t[0],
+										 R[1][0], R[1][1], R[1][2], t[1],
+										 R[2][0], R[2][1], R[2][2], t[2],
 										 0.0,     0.0,     0.0,     1.0};
 	Matrix4 Rt(ptr2);
 
-	Mat3x4d M = KI * Rt;
+	// http://perception.inrialpes.fr/~Horaud/livre-fichiersPS/VO-HoraudMonga.pdf p.146
+	Mat3x4d M = K * I * Rt;
 
 	d_P.setValue(M);
 }

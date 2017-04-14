@@ -120,7 +120,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	float getFz();
 	void setFz(float fz);
 
-	const Vec2i& getPrincipalPointPosition();
+	const Vector2& getPrincipalPointPosition();
 	void setPrincipalPointPosition(const Vector2& c);
 
 	float getAxisSkew();

@@ -53,6 +53,7 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 						&d_drawGizmo, false, "drawGizmo",
 						"displays the camera's reference frame and projection cone"))
 	{
+		m_storeMatrices = false;
 	}
 
 	~CalibratedCamera() {}
@@ -71,19 +72,39 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
 			glLoadIdentity();
-			glMultMatrixd(l_cam->getGLProjection().ptr());
+			glMultMatrixd(l_cam->getGLProjection().transposed().ptr());
 		}
 		if (!d_freeCam.getValue())
 		{
 			glMatrixMode(GL_MODELVIEW);
 			glPushMatrix();
 			glLoadIdentity();
-			glMultMatrixd(l_cam->getGLModelview().ptr());
+			glMultMatrixd(l_cam->getGLModelview().transposed().ptr());
 		}
 
+		if (m_storeMatrices)
+		{
+			defaulttype::Matrix4 p, m;
+			glGetDoublev(GL_PROJECTION_MATRIX, p.ptr());
+			glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
+			l_cam->setGLProjection(p.transposed());
+			l_cam->setGLModelview(m.transposed());
+
+			std::cout << "Displaying current Projection and Modelview "
+									 "Matrices:\nProjection:\n"
+								<< p.transposed() << "\nModelview:\n"
+								<< m.transposed() << std::endl;
+			m_storeMatrices = false;
+		}
 		if (d_drawGizmo.getValue())
 		{
 			defaulttype::RigidTypes::Coord camPos = l_cam->getCamPos();
+
+//			defaulttype::Matrix3 R;
+//			camPos.getOrientation() *= defaulttype::Quat(Vector3(0, 0, 1), M_PI) *
+//																 defaulttype::Quat(Vector3(0, 1, 0), M_PI);
+//			camPos.getOrientation().toMatrix(R);
+//			camPos.getCenter() = -R * camPos.getCenter();
 			Vector3 camera_X = camPos.getOrientation().rotate(Vector3(1, 0, 0));
 			Vector3 camera_Y = camPos.getOrientation().rotate(Vector3(0, 1, 0));
 			Vector3 camera_Z = camPos.getOrientation().rotate(Vector3(0, 0, -1));
@@ -152,46 +173,7 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 					static_cast<core::objectmodel::KeyreleasedEvent*>(e);
 			char keyPressed = kre->getKey();
 
-			if (keyPressed == 'u' || keyPressed == 'U')
-			{
-				if (!d_freeProj.getValue())
-				{
-					glMatrixMode(GL_PROJECTION);
-					glPushMatrix();
-					glLoadIdentity();
-					helper::gl::glMultMatrix(l_cam->getGLProjection().ptr());
-				}
-				if (!d_freeCam.getValue())
-				{
-					glMatrixMode(GL_MODELVIEW);
-					glPushMatrix();
-					glLoadIdentity();
-					helper::gl::glMultMatrix(l_cam->getGLModelview().ptr());
-				}
-
-				defaulttype::Matrix4 p, m;
-				glGetDoublev(GL_PROJECTION_MATRIX, p.ptr());
-				glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
-
-				std::cout << "Storing current Projection and Modelview "
-										 "Matrices:\nProjection:\n"
-									<< p << "\nModelview:\n"
-									<< m << std::endl;
-
-				l_cam->setGLProjection(p);
-				l_cam->setGLModelview(m);
-
-				if (!d_freeProj.getValue())
-				{
-					glMatrixMode(GL_PROJECTION);
-					glPopMatrix();
-				}
-				if (!d_freeCam.getValue())
-				{
-					glMatrixMode(GL_MODELVIEW);
-					glPopMatrix();
-				}
-			}
+			if (keyPressed == 'u' || keyPressed == 'U') m_storeMatrices = true;
 		}
 		ImplicitDataEngine::handleEvent(e);
 	}
@@ -200,6 +182,9 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 	Data<bool> d_freeCam;
 	Data<bool> d_freeProj;
 	Data<bool> d_drawGizmo;
+
+ private:
+	bool m_storeMatrices;
 };
 
 }  // namespace processor
