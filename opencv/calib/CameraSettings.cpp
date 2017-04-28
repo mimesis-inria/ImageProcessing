@@ -80,7 +80,7 @@ void CameraSettings::getCornersPosition(Vector3& p1, Vector3& p2, Vector3& p3,
 	p4 = get3DFrom2DPosition(w, 0, fz);
 }
 
-const defaulttype::Mat3x4d& CameraSettings::getProjectionMatrix()
+const defaulttype::Mat3x4d& CameraSettings::getProjectionMatrix() const
 {
 	return d_P.getValue();
 }
@@ -94,20 +94,23 @@ void CameraSettings::setProjectionMatrix(const Mat3x4d& P)
 	this->checkData(false);
 }
 
-const defaulttype::Matrix3& CameraSettings::getIntrinsicCameraMatrix()
+const defaulttype::Matrix3& CameraSettings::getIntrinsicCameraMatrix() const
 {
 	return d_K.getValue();
 }
-void CameraSettings::setIntrinsicCameraMatrix(const Matrix3& K)
+void CameraSettings::setIntrinsicCameraMatrix(const Matrix3& K, bool update)
 {
 	d_K.setValue(K);
-	decomposeCV();
-	composeP();
-	composeGL();
+	if (update)
+	{
+		decomposeCV();
+		composeP();
+		composeGL();
+	}
 	this->checkData(false);
 }
 
-const helper::vector<double>& CameraSettings::getDistortionCoefficients()
+const helper::vector<double>& CameraSettings::getDistortionCoefficients() const
 {
 	return d_distCoefs.getValue();
 }
@@ -120,33 +123,39 @@ void CameraSettings::setDistortionCoefficients(
 	this->checkData(false);
 }
 
-const defaulttype::Matrix3& CameraSettings::getRotationMatrix()
+const defaulttype::Matrix3& CameraSettings::getRotationMatrix() const
 {
 	return d_R.getValue();
 }
-void CameraSettings::setRotationMatrix(const Matrix3& R)
+void CameraSettings::setRotationMatrix(const Matrix3& R, bool update)
 {
 	d_R.setValue(R);
-	decomposeCV();
-	composeP();
-	composeGL();
+	if (update)
+	{
+		decomposeCV();
+		composeP();
+		composeGL();
+	}
 	this->checkData(false);
 }
 
-const defaulttype::Vector3& CameraSettings::getTranslationVector()
+const defaulttype::Vector3& CameraSettings::getTranslationVector() const
 {
 	return d_t.getValue();
 }
-void CameraSettings::setTranslationVector(const Vector3& t)
+void CameraSettings::setTranslationVector(const Vector3& t, bool update)
 {
 	d_t.setValue(t);
-	decomposeCV();
-	composeP();
-	composeGL();
+	if (update)
+	{
+		decomposeCV();
+		composeP();
+		composeGL();
+	}
 	this->checkData(false);
 }
 
-const defaulttype::Vec2i& CameraSettings::getImageSize()
+const defaulttype::Vec2i& CameraSettings::getImageSize() const
 {
 	return d_imageSize.getValue();
 }
@@ -157,7 +166,7 @@ void CameraSettings::setImageSize(const Vec2i& imgSize)
 	composeGL();
 	this->checkData(false);
 }
-const defaulttype::Matrix4& CameraSettings::getGLProjection()
+const defaulttype::Matrix4& CameraSettings::getGLProjection() const
 {
 	return d_glProjection.getValue();
 }
@@ -168,7 +177,7 @@ void CameraSettings::setGLProjection(const Matrix4& glProjection)
 	composeP();
 	this->checkData(false);
 }
-const defaulttype::Matrix4& CameraSettings::getGLModelview()
+const defaulttype::Matrix4& CameraSettings::getGLModelview() const
 {
 	return d_glModelview.getValue();
 }
@@ -179,7 +188,7 @@ void CameraSettings::setGLModelview(const Matrix4& glModelview)
 	composeP();
 	this->checkData(false);
 }
-const defaulttype::Vector2& CameraSettings::getGLZClip()
+const defaulttype::Vector2& CameraSettings::getGLZClip() const
 {
 	return d_zClip.getValue();
 }
@@ -189,7 +198,7 @@ void CameraSettings::setGLZClip(const Vector2& zClip)
 	composeGL();
 	this->checkData(false);
 }
-const defaulttype::RigidTypes::Coord& CameraSettings::getCamPos()
+const defaulttype::RigidTypes::Coord& CameraSettings::getCamPos() const
 {
 	return d_camPos.getValue();
 }
@@ -201,7 +210,7 @@ void CameraSettings::setCamPos(const Rigid& camPos)
 	this->checkData(false);
 }
 
-const defaulttype::Vector2& CameraSettings::getFocalLength()
+const defaulttype::Vector2& CameraSettings::getFocalLength() const
 {
 	return d_f.getValue();
 }
@@ -212,14 +221,14 @@ void CameraSettings::setFocalLength(const Vector2& f)
 	composeGL();
 	this->checkData(false);
 }
-float CameraSettings::getFz() { return d_fz.getValue(); }
+float CameraSettings::getFz() const { return d_fz.getValue(); }
 void CameraSettings::setFz(float fz)
 {
 	// No need to recompose, fz only used for projection operations
 	d_fz.setValue(fz);
 	this->checkData(false);
 }
-const defaulttype::Vector2& CameraSettings::getPrincipalPointPosition()
+const defaulttype::Vector2& CameraSettings::getPrincipalPointPosition() const
 {
 	return d_c.getValue();
 }
@@ -230,7 +239,7 @@ void CameraSettings::setPrincipalPointPosition(const Vector2& c)
 	composeGL();
 	this->checkData(false);
 }
-float CameraSettings::getAxisSkew() { return d_s.getValue(); }
+float CameraSettings::getAxisSkew() const { return d_s.getValue(); }
 void CameraSettings::setAxisSkew(float s)
 {
 	d_s.setValue(s);
@@ -253,15 +262,15 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 
 	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
 	double fx = 2.0 * K[0][0] / w;
-	double s = -2.0 * K[0][1] / w;
-	double cx = (w - 2.0 * K[0][2]) / w;
+	//	double s = -2.0 * K[0][1] / w;
+	double cx = 1 - 2.0 * K[0][2] / w;
 
-	double fy = 2.0 * K[1][1] / h;
-	double cy = (-1.0 * h + 2.0 * K[1][2]) / h;
+	double fy = -2.0 * K[1][1] / h;
+	double cy = 1.0 - 2.0 * K[1][2] / h;
 
 	d_f.setValue(defaulttype::Vector2(fx, fy));
 	d_c.setValue(defaulttype::Vector2(cx, cy));
-	d_s.setValue(s);
+	//	d_s.setValue(s);
 	d_s.setValue(0.0);
 
 	Quat camera_ori;
@@ -278,7 +287,6 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 void CameraSettings::decomposeP()
 {
 	std::cout << "decomposeP" << std::endl;
-	dumpValues();
 	cv::Mat_<double> P, K, R, t;
 	common::matrix::sofaMat2cvMat(d_P.getValue(), P);
 
@@ -318,8 +326,7 @@ void CameraSettings::decomposeGL()
 	Vector3 camera_pos(glM[0][3], glM[1][3], glM[2][3]);
 
 	// multiply by the inverse of the operation made on :
-	camera_ori *=
-			(Quat(Vector3(0, 0, 1), M_PI) * Quat(Vector3(0, 1, 0), M_PI)).inverse();
+	camera_ori = Quat(Vector3(1, 0, 0), M_PI) * camera_ori;
 	Rigid cpos;
 	cpos.getCenter() = camera_pos;
 	cpos.getOrientation() = camera_ori;
@@ -369,8 +376,8 @@ void CameraSettings::composeGL()
 	Matrix4 MM;
 
 	Matrix3 R;
-	Quat Orig = d_camPos.getValue().getOrientation() *
-							Quat(Vector3(0, 0, 1), -M_PI) * Quat(Vector3(0, 1, 0), -M_PI);
+	Quat Orig =
+			Quat(Vector3(1, 0, 0), M_PI) * d_camPos.getValue().getOrientation();
 	Orig.toMatrix(R);
 
 	Vector3 p = d_camPos.getValue().getCenter();
@@ -388,7 +395,7 @@ void CameraSettings::composeGL()
 	d_glModelview.setValue(MM);
 }
 
-// Composes K, R, t and camPos
+// Composes K, R, t
 void CameraSettings::composeCV()
 {
 	std::cout << "composeCV" << std::endl;
@@ -396,21 +403,20 @@ void CameraSettings::composeCV()
 	double h = d_imageSize.getValue().y();
 	double fx = d_f.getValue().x();
 	double fy = d_f.getValue().y();
-	double s = d_s.getValue();
+	//	double s = d_s.getValue();
 	double cx = d_c.getValue().x();
 	double cy = d_c.getValue().y();
 
-	Vector2 oglCenter(0.0, 0.0);
 	Matrix3 K;
 	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
 	K[0][0] = 0.5 * w * fx;
-	K[0][1] = -0.5 * w * s;
+	//	K[0][1] = -0.5 * w * s;
 	K[0][1] = 0;
-	K[0][2] = -0.5 * (w * cx - 2.0 * oglCenter[0] - w);
+	K[0][2] = 0.5 * w * (1 - cx);
 
 	K[1][0] = 0;
-	K[1][1] = 0.5 * h * fy;
-	K[1][2] = 0.5 * (h * cy - 2.0 * oglCenter[1] + h);
+	K[1][1] = -0.5 * h * fy;
+	K[1][2] = 0.5 * h * (1 - cy);
 
 	K[2][0] = 0;
 	K[2][1] = 0;
@@ -432,19 +438,20 @@ void CameraSettings::composeP()
 	const Matrix3& R = d_R.getValue();
 	const Matrix3& K = d_K.getValue();
 
-	// WHY???
-//	t = -R * t;
+	// gets the camera position from the position of the world's reference frame
+	// in camera coordinates
+	t = -R * t;
 
-	double ptr[12] = {1.0, 0.0, 0.0, 0.0,     0.0, 1.0, 0.0, 0.0,     0.0, 0.0, 1.0, 0.0};
+	double ptr[12] = {1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0};
 	Mat3x4d I(ptr);
 
-	double ptr2[16] = {R[0][0], R[0][1], R[0][2], t[0],
-										 R[1][0], R[1][1], R[1][2], t[1],
-										 R[2][0], R[2][1], R[2][2], t[2],
+	double ptr2[16] = {R[0][0], R[0][1], R[0][2], t[0],    R[1][0], R[1][1],
+										 R[1][2], t[1],    R[2][0], R[2][1], R[2][2], t[2],
 										 0.0,     0.0,     0.0,     1.0};
 	Matrix4 Rt(ptr2);
 
-	// http://perception.inrialpes.fr/~Horaud/livre-fichiersPS/VO-HoraudMonga.pdf p.146
+	// http://perception.inrialpes.fr/~Horaud/livre-fichiersPS/VO-HoraudMonga.pdf
+	// p.146
 	Mat3x4d M = K * I * Rt;
 
 	d_P.setValue(M);
@@ -505,11 +512,6 @@ void CameraSettings::init()
 			d_glModelview.setValue(m);
 			decomposeGL();
 			composeP();
-			std::cout << std::endl
-								<< "ProjectionMatrix:\n"
-								<< p << "\nModelviewMatrix:\n"
-								<< m << std::endl
-								<< std::endl;
 		}
 	}
 	checkData(false);

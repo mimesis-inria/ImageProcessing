@@ -82,6 +82,7 @@ class ImageFilter : public common::ImplicitDataEngine
   void registerData(Data<helper::OptionsGroup>* data);
   void unregisterAllData();
 
+	void drawImage();
  protected:
   virtual void mouseCallback(int, int, int, int) {}
   static unsigned m_window_uid;

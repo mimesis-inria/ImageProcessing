@@ -64,6 +64,9 @@ class StereoSettings : public common::ImplicitDataEngine
 	const Vector3& getTranslationVector();
 	void setTranslationVector(const Vector3& t);
 
+	const CameraSettings& getCamera1() { return *l_cam1.get(); }
+	const CameraSettings& getCamera2() { return *l_cam2.get(); }
+
  private:
 	CamSettings l_cam1;
 	CamSettings l_cam2;

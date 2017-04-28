@@ -4,7 +4,7 @@
 #include "initPlugin.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
-#include "CameraSettings.h"
+#include "StereoSettings.h"
 
 #include <sofa/core/objectmodel/Link.h>
 #include <sofa/helper/OptionsGroup.h>
@@ -19,21 +19,18 @@ namespace processor
 {
 class CalibrateStereo : public common::ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<CalibrateStereo, CameraSettings,
+	typedef sofa::core::objectmodel::SingleLink<CalibrateStereo, StereoSettings,
 																							BaseLink::FLAG_STOREPATH |
 																									BaseLink::FLAG_STRONGLINK>
-			CamSettings;
+			Settings;
 
  public:
 	SOFA_CLASS(CalibrateStereo, common::ImplicitDataEngine);
 
 	CalibrateStereo()
-			: l_cam1(initLink("cam1",
+			: l_cam(initLink("cam",
 												"link to the CameraSettings component containing and "
 												"maintaining the reference camera's parameters")),
-				l_cam2(initLink("cam2",
-												"link to the CameraSettings component containing and "
-												"maintaining the second camera's parameters")),
 				d_imagePoints1(
 						initData(&d_imagePoints1, "imagePoints1",
 										 "a vector of vectors of the projections of the 3D "
@@ -57,7 +54,7 @@ class CalibrateStereo : public common::ImplicitDataEngine
 													 "size in px of the image (used to initialize the "
 													 "intrinsic camera matrix")),
 				d_calibFlags(initData(
-						&d_calibFlags, 0, "calibFlags",
+						&d_calibFlags, 0x00101, "calibFlags",
 						"One or a combination of the following flags:\n"
 						"USE_INTRINSIC_GUESS (1): cameraMatrix contains "
 						"valid initial values of fx, fy, cx, cy that are "
@@ -65,69 +62,38 @@ class CalibrateStereo : public common::ImplicitDataEngine
 						"FIX_ASPECT_RATIO (2): preserves the fx/fy ratio\n"
 						"FIX_PRINCIPAL_POINT (4): The principal point won't "
 						"change during optimization\n"
-						"ZERO_TANGENT_DIST (8): Tangential distortion is set to 0")),
-				d_K1(initData(&d_K1, "K1",
-											"[Optional] reference camera's intrinsic params used to "
-											"provide initial guesses (depending on "
-											"used calibFlags)")),
-				d_K2(initData(&d_K2, "K2",
-											"[Optional] reference camera's intrinsic params used to "
-											"provide initial guesses (depending on "
-											"used calibFlags)")),
-				d_distCoefs1(initData(&d_distCoefs1, "distCoefs1",
-														 "[Optional] ref camera's distortion coefficients initial guess "
-														 "(check calibFlags)")),
-				d_distCoefs2(initData(&d_distCoefs2, "distCoefs2",
-														 "[Optional] 2nd camera's distortion coefficients initial guess "
-														 "(check calibFlags)")),
-				d_R(initData(&d_R, "R",
-												 "rotation matrix for each 2D "
-												 "projections provided by imagePoints (expressed in "
-												 "the object's coordinate space")),
-				d_t(initData(&d_t, "tvecs_out",
-												 "translation vectors for each 2D "
-												 "projections provided by imagePoints (expressed in "
-												 "the object's coordinate space"))
+						"ZERO_TANGENT_DIST (8): Tangential distortion is set to 0"))
 	{
 	}
 
 	~CalibrateStereo() {}
 	void init()
 	{
-		addInput(&d_imagePoints);
+		addInput(&d_imagePoints1);
+		addInput(&d_imagePoints2);
 		addInput(&d_objectPoints);
 		addInput(&d_imgSize);
-		addOutput(&d_K);
-		addOutput(&d_distCoefs);
 
-		addOutput(&d_rvecs);
-		addOutput(&d_tvecs);
-
+		if (!l_cam.get())
+			msg_error(getName() + "::init()") << "Error: No Stereo camera settings link set. "
+																					 "Please use attribute 'cam' "
+																					 "to define one";
 		update();
 	}
 
 	void update();
 	void calibrate();
 
-	CamSettings l_cam;
+	Settings l_cam;
 
 	// INPUTS
-	Data<helper::SVector<helper::SVector<defaulttype::Vector2> > > d_imagePoints;
+	Data<helper::SVector<helper::SVector<defaulttype::Vector2> > > d_imagePoints1;
+	Data<helper::SVector<helper::SVector<defaulttype::Vector2> > > d_imagePoints2;
 	Data<helper::SVector<helper::SVector<defaulttype::Vector3> > > d_objectPoints;
 	Data<defaulttype::Vec2i> d_imgSize;
 
 	// OPTIONAL INPUTS
 	Data<int> d_calibFlags;
-	Data<defaulttype::Matrix3> d_K;
-	Data<helper::vector<double> > d_distCoefs;
-
-	// OUTPUTS
-	Data<helper::vector<defaulttype::Matrix3> > d_rvecs;
-	Data<helper::vector<defaulttype::Vector3> > d_tvecs;
-
- private:
-	defaulttype::Matrix3 m_K;
-	helper::vector<double> m_distCoefs;
 };
 
 }  // namespace processor

@@ -51,7 +51,7 @@ void FrameViewer::init()
 	update();
 }
 
-void FrameViewer::update() {}
+void FrameViewer::update() { std::cout << "FrameViewer::update()" << std::endl;}
 // Render from the viewpoint of the opengl's context
 void FrameViewer::perspectiveDraw()
 {

@@ -46,7 +46,7 @@ class CalibrateCamera : public common::ImplicitDataEngine
 													 "size in px of the image (used to initialize the "
 													 "intrinsic camera matrix")),
 				d_calibFlags(initData(
-						&d_calibFlags, 0, "calibFlags",
+						&d_calibFlags, 1, "calibFlags",
 						"One or a combination of the following flags:\n"
 						"USE_INTRINSIC_GUESS (1): cameraMatrix contains "
 						"valid initial values of fx, fy, cx, cy that are "
@@ -56,7 +56,8 @@ class CalibrateCamera : public common::ImplicitDataEngine
 						"change during optimization\n"
 						"ZERO_TANGENT_DIST (8): Tangential distortion is set to 0")),
 				d_K(initData(&d_K, "K",
-										 "[Optional] used to provide initial guesses (depending on "
+										 "Required for non-planar calbiration rigs, Optional "
+										 "otherwise. used to provide initial guesses (depending on "
 										 "used calibFlags)")),
 				d_distCoefs(initData(&d_distCoefs, "distCoefs",
 														 "[Optional] distortion coefficients initial guess "
@@ -99,7 +100,6 @@ class CalibrateCamera : public common::ImplicitDataEngine
 	void calibrate();
 
 	CamSettings l_cam;
-	Data<bool> d_preserveExtrinsics;
 
 	// INPUTS
 	Data<helper::SVector<helper::SVector<defaulttype::Vector2> > > d_imagePoints;
@@ -114,6 +114,8 @@ class CalibrateCamera : public common::ImplicitDataEngine
 	// OUTPUTS
 	Data<helper::vector<defaulttype::Matrix3> > d_rvecs;
 	Data<helper::vector<defaulttype::Vector3> > d_tvecs;
+
+	Data<bool> d_preserveExtrinsics;
 
  private:
 	defaulttype::Matrix3 m_K;

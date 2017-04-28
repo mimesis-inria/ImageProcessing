@@ -18,38 +18,42 @@ int CalibrateCameraClass =
 				"available for further processing")
 				.add<CalibrateCamera>();
 
-
 void CalibrateCamera::calibrate()
 {
-	std::vector<std::vector<cv::Point2d> > imgPts;
-	std::vector<std::vector<cv::Point3d> > objPts;
+	std::vector<std::vector<cv::Point2f> > imgPts;
+	std::vector<std::vector<cv::Point3f> > objPts;
 
 	for (auto pts : d_objectPoints.getValue())
 	{
-		std::vector<cv::Point3d> objPoints;
+		std::vector<cv::Point3f> objPoints;
 		for (auto pt : pts)
 			objPoints.push_back(cv::Point3f(pt.x(), pt.y(), pt.z()));
 		objPts.push_back(objPoints);
 	}
 	for (auto pts : d_imagePoints.getValue())
 	{
-		std::vector<cv::Point2d> imgPoints;
+		std::vector<cv::Point2f> imgPoints;
 		for (auto pt : pts) imgPoints.push_back(cv::Point2f(pt.x(), pt.y()));
 		imgPts.push_back(imgPoints);
 	}
 
-	cv::Mat_<double> camMatrix;
-	cv::Mat_<double> dc;
-	std::vector<cv::Mat_<double> > rvecs;
-	std::vector<cv::Mat_<double> > tvecs;
+	//	cv::Mat_<double> camMatrix;
+	cv::Mat camMatrix =
+			(cv::Mat_<double>(3, 3) << 2000, 0, d_imgSize.getValue().x() / 2.0, 0,
+			 2000, d_imgSize.getValue().y() / 2.0, 0, 0, 1.0);
+	cv::Mat dc;
+	std::vector<cv::Mat> rvecs;
+	std::vector<cv::Mat> tvecs;
 	try
 	{
-		common::matrix::sofaMat2cvMat(d_K.getValue(), camMatrix);
-		common::matrix::sofaVector2cvMat(d_distCoefs.getValue(), dc);
+		if (d_K.isSet()) common::matrix::sofaMat2cvMat(d_K.getValue(), camMatrix);
+		if (d_distCoefs.isSet())
+			common::matrix::sofaVector2cvMat(d_distCoefs.getValue(), dc);
 
 		cv::calibrateCamera(objPts, imgPts, cv::Size(d_imgSize.getValue().x(),
 																								 d_imgSize.getValue().y()),
 												camMatrix, dc, rvecs, tvecs, d_calibFlags.getValue());
+		std::cout << camMatrix << "    " << dc << std::endl;
 	}
 	catch (cv::Exception& e)
 	{
@@ -80,24 +84,18 @@ void CalibrateCamera::update()
 
 	const defaulttype::Matrix3& K = m_K;
 
-	if (d_preserveExtrinsics.getValue())
-	{
-		l_cam->setIntrinsicCameraMatrix(K);
-		l_cam->setDistortionCoefficients(m_distCoefs);
-	}
-	else
+	if (!d_preserveExtrinsics.getValue())
 	{
 		const defaulttype::Matrix3& R = d_rvecs.getValue().back();
 		const defaulttype::Vector3& t = d_tvecs.getValue().back();
 
-		defaulttype::Mat3x4d P =
-				defaulttype::Mat3x4d(defaulttype::Vec4d(R[0][0], R[0][1], R[0][2], t[0]),
-				defaulttype::Vec4d(R[1][0], R[1][1], R[1][2], t[1]),
-				defaulttype::Vec4d(R[2][0], R[2][1], R[2][2], t[2]));
-		P = K * P;
-		l_cam->setProjectionMatrix(P);
-		l_cam->setDistortionCoefficients(m_distCoefs);
+		l_cam->setRotationMatrix(R, false);
+		l_cam->setTranslationVector(t, false);
 	}
+
+	l_cam->setIntrinsicCameraMatrix(K, true);
+	l_cam->setDistortionCoefficients(m_distCoefs);
+
 }
 
 }  // namespace processor

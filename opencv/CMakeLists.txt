@@ -13,6 +13,8 @@ set(HEADER_FILES
   utils/PointVectorConverter.h
   utils/PointVectorConverter.inl
   utils/PointVec2Keypoint.h
+  utils/Vector2SSVector.h
+  utils/Vector2SSVector.inl
 #  utils/ConversionFunctor.h
 #  utils/ConversionFunctor.inl
 
@@ -43,12 +45,14 @@ set(HEADER_FILES
 #  calib/CamGizmo.h
 
   calib/CalibrateCamera.h
+  calib/CalibrateStereo.h
   calib/SolvePnP.h
   calib/CalibratedCamera.h
-  #  calib/CalibrateStereo.h
   #  calib/CalibStereo.h
-  calib/FrameViewer.cpp
-  calib/PCViewer.cpp
+  calib/FrameViewer.h
+  calib/PCViewer.h
+
+#  PointPicker3D.h
   )
 
 set(SOURCE_FILES
@@ -59,6 +63,7 @@ set(SOURCE_FILES
 
   utils/PointVectorConverter.cpp
   utils/PointVec2Keypoint.cpp
+  utils/Vector2SSVector.cpp
 #  utils/ConversionFunctor.cpp
 
   features/Detectors.cpp
@@ -88,13 +93,64 @@ set(SOURCE_FILES
 #  calib/CamGizmo.cpp
 
   calib/CalibrateCamera.cpp
+  calib/CalibrateStereo.cpp
   calib/SolvePnP.cpp
   calib/CalibratedCamera.cpp
-  #  calib/CalibrateStereo.cpp
   #  calib/CalibStereo.cpp
   calib/FrameViewer.cpp
   calib/PCViewer.cpp
+
+#  PointPicker3D.cpp
   )
+
+find_package(SofaQtQuickGUI QUIET)
+
+if(SofaQtQuickGUI_FOUND)
+    find_package(Qt5QuickControls2 REQUIRED)
+    find_package(Qt5Quick REQUIRED)
+    find_package(Qt5Qml REQUIRED)
+
+    include_directories("/home/bruno/dev/sofaqtquick/applications-dev/plugins")
+
+    list(APPEND SOURCE_FILES
+	core/gui/ImageViewerDisplay.cpp
+	core/gui/ImageViewerModel.cpp
+    )
+    list(APPEND HEADER_FILES
+	core/gui/ImageViewerDisplay.h
+	core/gui/ImageViewerModel.h
+    )
+
+    set(MOC_HEADER_FILES
+	core/gui/ImageViewerDisplay.h
+	core/gui/ImageViewerModel.h
+    )
+
+    # set(MOC_FILES
+    #     ${XRAYRENDERING_PLUGIN_SOURCE_DIR}/gui/XRayViewerDisplay.h
+    # )
+
+    set(QML_FILES
+	# ${XRAYRENDERING_PLUGIN_SOURCE_DIR}/gui/qml/qmldir
+	core/gui/qml/SofaWidgets/ImageViewerWidget.qml
+    )
+
+    set(QRC_FILES
+	core/gui/qml/imagerenderer_qml.qrc
+    )
+
+    # to fix a bug when one is compiling a debug version of the code
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_definitions(-DQT_NO_DEBUG)
+    endif()
+    add_definitions(-DQT_PLUGIN)
+
+    set(CMAKE_AUTOMOC ON)
+    qt5_wrap_cpp(MOC_FILES ${MOC_HEADER_FILES}) # do not use "set(CMAKE_AUTOMOC ON)" since all the mocced files will be compiled by a single compilation unit leading to a "out of heap space" issue on MSVC
+    qt5_add_resources(RESOURCE_FILES ${QRC_FILES})
+
+    set(OpenCV_LIBRARIES SofaQtQuickGUI ${OpenCV_LIBRARIES})
+endif()
 
 set(OpenCV_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})
 

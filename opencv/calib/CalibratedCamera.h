@@ -98,16 +98,11 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		}
 		if (d_drawGizmo.getValue())
 		{
-			defaulttype::RigidTypes::Coord camPos = l_cam->getCamPos();
+			Vector3 camPos = l_cam->getCamPos().getCenter();
 
-//			defaulttype::Matrix3 R;
-//			camPos.getOrientation() *= defaulttype::Quat(Vector3(0, 0, 1), M_PI) *
-//																 defaulttype::Quat(Vector3(0, 1, 0), M_PI);
-//			camPos.getOrientation().toMatrix(R);
-//			camPos.getCenter() = -R * camPos.getCenter();
-			Vector3 camera_X = camPos.getOrientation().rotate(Vector3(1, 0, 0));
-			Vector3 camera_Y = camPos.getOrientation().rotate(Vector3(0, 1, 0));
-			Vector3 camera_Z = camPos.getOrientation().rotate(Vector3(0, 0, -1));
+			Vector3 camera_X = l_cam->getRotationMatrix().line(0);
+			Vector3 camera_Y = l_cam->getRotationMatrix().line(1);
+			Vector3 camera_Z = l_cam->getRotationMatrix().line(2);
 
 			glColor4f(1, 0, 0, 1);
 			glLineWidth(1);
@@ -116,13 +111,13 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			l_cam->getCornersPosition(p1, p2, p3, p4);
 
 			glBegin(GL_LINES);
-			helper::gl::glVertexT(camPos.getCenter());
+			helper::gl::glVertexT(camPos);
 			helper::gl::glVertexT(p1);
-			helper::gl::glVertexT(camPos.getCenter());
+			helper::gl::glVertexT(camPos);
 			helper::gl::glVertexT(p2);
-			helper::gl::glVertexT(camPos.getCenter());
+			helper::gl::glVertexT(camPos);
 			helper::gl::glVertexT(p3);
-			helper::gl::glVertexT(camPos.getCenter());
+			helper::gl::glVertexT(camPos);
 			helper::gl::glVertexT(p4);
 			glEnd();
 
@@ -140,13 +135,13 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			glEnd();
 
 			vparams->drawTool()->drawArrow(
-					camPos.getCenter(), camPos.getCenter() + camera_X * 0.01, 0.001,
+					camPos, camPos + camera_X * 0.01, 0.001,
 					defaulttype::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 			vparams->drawTool()->drawArrow(
-					camPos.getCenter(), camPos.getCenter() + camera_Y * 0.01, 0.001,
+					camPos, camPos + camera_Y * 0.01, 0.001,
 					defaulttype::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 			vparams->drawTool()->drawArrow(
-					camPos.getCenter(), camPos.getCenter() + camera_Z * 0.01, 0.001,
+					camPos, camPos + camera_Z * 0.01, 0.001,
 					defaulttype::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
 		}
 	}

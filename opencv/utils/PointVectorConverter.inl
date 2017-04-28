@@ -24,9 +24,33 @@ void PointVectorConverter<defaulttype::Vec2i, common::cvKeypoint>::update()
 	dst.clear();
 	const helper::vector<defaulttype::Vec2i>& src = d_src.getValue();
 
-//	if (l_functor.)
+	//	if (l_functor.)
 	for (auto pt : src)
 		dst.push_back(common::cvKeypoint(cv::Point2f(pt.x(), pt.y()), 0));
+}
+
+template <>
+void PointVectorConverter<defaulttype::Vec2i, defaulttype::Vec2f>::update()
+{
+	helper::vector<defaulttype::Vec2f>& dst = *(d_dst.beginWriteOnly());
+	dst.clear();
+	const helper::vector<defaulttype::Vec2i>& src = d_src.getValue();
+
+	//	if (l_functor.)
+	for (auto pt : src)
+		dst.push_back(defaulttype::Vec2f(pt.x(), pt.y()));
+}
+
+template <>
+void PointVectorConverter<defaulttype::Vec2i, defaulttype::Vec2d>::update()
+{
+	helper::vector<defaulttype::Vec2d>& dst = *(d_dst.beginWriteOnly());
+	dst.clear();
+	const helper::vector<defaulttype::Vec2i>& src = d_src.getValue();
+
+	//	if (l_functor.)
+	for (auto pt : src)
+		dst.push_back(defaulttype::Vec2d(pt.x(), pt.y()));
 }
 
 template <>
@@ -57,14 +81,31 @@ void PointVectorConverter<common::cvKeypoint, defaulttype::Vec2f>::update()
 	for (auto kp : src) dst.push_back(defaulttype::Vec2f(kp.pt.x, kp.pt.y));
 }
 
-
 template <>
 void PointVectorConverter<defaulttype::Vec2f, defaulttype::Vec3f>::update()
 {
 	helper::vector<defaulttype::Vec3f>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
 	const helper::vector<defaulttype::Vec2f>& src = d_src.getValue();
-//	for (auto pt : src) dst.push_back(common::camera::get3DFrom2DPosition(pt.x(), pt.y(), d_projection.getValue(), d_depth.getValue()));
+
+	if (!l_cam.get())
+		for (auto pt : src) dst.push_back(defaulttype::Vec3f(pt.x(), pt.y(), 0.0));
+	else
+		for (auto pt : src)
+			dst.push_back(l_cam->get3DFrom2DPosition(pt.x(), pt.y(), d_depth.getValue()));
+}
+template <>
+void PointVectorConverter<defaulttype::Vec2i, defaulttype::Vec3f>::update()
+{
+	helper::vector<defaulttype::Vec3f>& dst = *(d_dst.beginWriteOnly());
+	dst.clear();
+	const helper::vector<defaulttype::Vec2i>& src = d_src.getValue();
+
+	if (!l_cam.get())
+		for (auto pt : src) dst.push_back(defaulttype::Vec3f(pt.x(), pt.y(), 0.0));
+	else
+		for (auto pt : src)
+			dst.push_back(l_cam->get3DFrom2DPosition(pt.x(), pt.y(), d_depth.getValue()));
 }
 
 }  // namespace processor

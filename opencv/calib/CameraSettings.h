@@ -85,69 +85,75 @@ class CameraSettings : public common::ImplicitDataEngine
 
 	// Getters & setters for the private Data (also used as callbacks when
 	// modifying values in the GUI
-	const Mat3x4d& getProjectionMatrix();
+	const Mat3x4d& getProjectionMatrix() const;
 	void setProjectionMatrix(const Mat3x4d& P);
 
-	const Matrix3& getIntrinsicCameraMatrix();
-	void setIntrinsicCameraMatrix(const Matrix3& K);
+	const Matrix3& getIntrinsicCameraMatrix() const;
+	void setIntrinsicCameraMatrix(const Matrix3& K, bool update = true);
 
-	const helper::vector<double>& getDistortionCoefficients();
+	const helper::vector<double>& getDistortionCoefficients() const;
 	void setDistortionCoefficients(const helper::vector<double>& distCoefs);
 
-	const Matrix3& getRotationMatrix();
-	void setRotationMatrix(const Matrix3& R);
+	const Matrix3& getRotationMatrix() const;
+	void setRotationMatrix(const Matrix3& R, bool update = true);
 
-	const Vector3& getTranslationVector();
-	void setTranslationVector(const Vector3& t);
+	const Vector3& getTranslationVector() const;
+	void setTranslationVector(const Vector3& t, bool update = true);
 
-	const Vec2i& getImageSize();
+	const Vec2i& getImageSize() const;
 	void setImageSize(const Vec2i& imgSize);
-	const Matrix4& getGLProjection();
+	const Matrix4& getGLProjection() const;
 	void setGLProjection(const Matrix4& glProjection);
 
-	const Matrix4& getGLModelview();
+	const Matrix4& getGLModelview() const;
 	void setGLModelview(const Matrix4& glModelview);
 
-	const Vector2& getGLZClip();
+	const Vector2& getGLZClip() const;
 	void setGLZClip(const Vector2& zClip);
 
-	const Rigid& getCamPos();
+	const Rigid& getCamPos() const;
 	void setCamPos(const Rigid& camPos);
 
-	const Vector2& getFocalLength();
+	const Vector2& getFocalLength() const;
 	void setFocalLength(const Vector2& f);
 
-	float getFz();
+	float getFz() const;
 	void setFz(float fz);
 
-	const Vector2& getPrincipalPointPosition();
+	const Vector2& getPrincipalPointPosition() const;
 	void setPrincipalPointPosition(const Vector2& c);
 
-	float getAxisSkew();
+	float getAxisSkew() const;
 	void setAxisSkew(float s);
 
  private:
-	void dumpValues()
-	{
-		//		std::cout << "f: " << d_f.getValue() << " c: " << d_c.getValue()
-		//							<< " s: " << d_s.getValue() <<
-		//std::endl;
-	}
-
+	// 3x4 global projection matrix
 	Data<Mat3x4d> d_P;
+	// Intrinsic camera matrix
 	Data<Matrix3> d_K;
+	// Distortion coefficients
 	Data<helper::vector<double> > d_distCoefs;
+	// 3x3 rotation matrix
 	Data<Matrix3> d_R;
-	Data<Matrix3> d_rotation;
+	// Position in world coordinates of the camera's optical center
 	Data<Vector3> d_t;
+	// Dimensions in pixels of the image
 	Data<Vec2i> d_imageSize;
+	// 4x4 Opengl Projection matrix
 	Data<Matrix4> d_glProjection;
+	// 4x4 Opengl Modelview matrix
 	Data<Matrix4> d_glModelview;
+	// zNear, zFar
 	Data<Vector2> d_zClip;
+	// Quaternion and Vector3 (just like d_t)
 	Data<Rigid> d_camPos;
+	// Focale
 	Data<Vector2> d_f;
+	// Focal distance
 	Data<float> d_fz;
+	// Principal point
 	Data<Vector2> d_c;
+	// Axis skew (not used in practice...)
 	Data<float> d_s;
 
 	// Decomposes P
@@ -173,12 +179,10 @@ class CameraSettings : public common::ImplicitDataEngine
 	// Data callbacks for GUI
 	void ProjectionMatrixChanged(core::objectmodel::BaseObject*)
 	{
-		std::cout << "why P???" << std::endl;
 		setProjectionMatrix(d_P.getValue());
 	}
 	void IntrinsicCameraMatrixChanged(core::objectmodel::BaseObject*)
 	{
-		std::cout << "why K???" << std::endl;
 		setIntrinsicCameraMatrix(d_K.getValue());
 	}
 	void DistortionCoefficientsChanged(core::objectmodel::BaseObject*)
@@ -187,7 +191,6 @@ class CameraSettings : public common::ImplicitDataEngine
 	}
 	void RotationMatrixChanged(core::objectmodel::BaseObject*)
 	{
-		std::cout << "why R???" << std::endl;
 		setRotationMatrix(d_R.getValue());
 	}
 	void TranslationVectorChanged(core::objectmodel::BaseObject*)

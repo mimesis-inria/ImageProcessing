@@ -2,6 +2,12 @@
 #include <AcquisitOR/BaseFrameGrabber.h>
 #include <opencv2/highgui.hpp>
 
+#include <sofa/core/visual/DrawToolGL.h>
+
+#include <sofa/helper/gl/RAII.h>
+#include <sofa/helper/system/gl.h>
+#include <sofa/helper/system/glut.h>
+
 namespace sofa
 {
 namespace OR
@@ -187,7 +193,6 @@ void ImageFilter::reinitDebugWindow()
     return;
   }
 
-
 	// WITH QT:
 	//  cv::namedWindow(m_win_name,
 	//                  CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
@@ -245,6 +250,74 @@ void ImageFilter::registerData(Data<float>* data, float min, float max,
                                float step)
 {
   m_params.push_back(Holder(Holder::FLOAT, data, min, max, step));
+}
+
+void ImageFilter::drawImage()
+{
+	common::cvMat img;
+	if (d_img_out.getValue().empty())
+		img = d_img.getValue();
+	else
+		img = d_img_out.getValue();
+	std::stringstream imageString;
+	imageString.write((const char *)img.data,
+										img.total() * img.elemSize());
+
+	glEnable(GL_TEXTURE_2D);  // enable the texture
+	glDisable(GL_LIGHTING);   // disable the light
+
+	glBindTexture(GL_TEXTURE_2D, 0);  // texture bind
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.cols,
+							 img.rows, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE,
+							 imageString.str().c_str());
+	// glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE, m_imageWidth,
+	// m_imageHeight, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, m_imgData.c_str() );
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+									GL_LINEAR);  // Linear Filtering
+
+	//		float eps = 0.0;
+	//		float z0 = 0.0;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_FALSE);
+
+
+
+	glMatrixMode(GL_PROJECTION);  // init the projection matrix
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, 1, 0, 1, -1, 1);  // orthogonal view
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glBegin(GL_QUADS);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+	glTexCoord2f(0, 1);
+	glVertex2f(0, 0);
+	glTexCoord2f(1, 1);
+	glVertex2f(1, 0);
+	glTexCoord2f(1, 0);
+	glVertex2f(1, 1);
+	glTexCoord2f(0, 0);
+	glVertex2f(0, 1);
+	glEnd();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+
+	// glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);     // enable light
+	glDisable(GL_TEXTURE_2D);  // disable texture 2D
+														 // glDepthMask (GL_TRUE);		// enable zBuffer
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+
 }
 
 }  // namespace processor
