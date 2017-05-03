@@ -433,7 +433,9 @@ void CameraSettings::composeCV()
 void CameraSettings::composeP()
 {
 	std::cout << "composeP" << std::endl;
+	/// MIGHT SOMEHOW CAUSE PROBLEMS...
 	composeCV();
+	///
 	Vector3 t = d_t.getValue();
 	const Matrix3& R = d_R.getValue();
 	const Matrix3& K = d_K.getValue();

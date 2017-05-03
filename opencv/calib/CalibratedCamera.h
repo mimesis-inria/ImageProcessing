@@ -99,7 +99,6 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		if (d_drawGizmo.getValue())
 		{
 			Vector3 camPos = l_cam->getCamPos().getCenter();
-
 			Vector3 camera_X = l_cam->getRotationMatrix().line(0);
 			Vector3 camera_Y = l_cam->getRotationMatrix().line(1);
 			Vector3 camera_Z = l_cam->getRotationMatrix().line(2);
