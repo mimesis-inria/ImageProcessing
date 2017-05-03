@@ -46,8 +46,6 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 	Data<helper::OptionsGroup> d_mode;
 
  private:
-	helper::vector<defaulttype::Vec3f> m_vecCoord;
-
 	void perspectiveDraw();
 	void orthoDraw();
 };

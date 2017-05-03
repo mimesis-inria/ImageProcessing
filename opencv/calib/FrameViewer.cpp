@@ -51,7 +51,10 @@ void FrameViewer::init()
 	update();
 }
 
-void FrameViewer::update() { std::cout << "FrameViewer::update()" << std::endl;}
+void FrameViewer::update()
+{
+	std::cout << "FrameViewer::update()" << std::endl;
+}
 // Render from the viewpoint of the opengl's context
 void FrameViewer::perspectiveDraw()
 {
@@ -63,11 +66,56 @@ void FrameViewer::perspectiveDraw()
 	glDisable(GL_LIGHTING);   // disable the light
 
 	glBindTexture(GL_TEXTURE_2D, 0);  // texture bind
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, d_frame.getValue().cols,
-							 d_frame.getValue().rows, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE,
+
+	unsigned internalFormat = GL_RGB;
+	unsigned format = GL_BGR_EXT;
+	unsigned type = GL_UNSIGNED_BYTE;
+
+	switch (d_frame.getValue().channels())
+	{
+		case 1:  // grayscale
+			internalFormat = GL_LUMINANCE;
+			format = GL_RED;
+			break;
+		case 3:  // RGB / BGR
+			internalFormat = GL_RGB;
+
+			format = GL_BGR_EXT;
+			break;
+		case 4:  // RGBA / BGRA
+			internalFormat = GL_RGBA;
+			format = GL_BGRA_EXT;
+			break;
+	}
+	switch (d_frame.getValue().type())
+	{
+		case CV_8U:
+			type = GL_UNSIGNED_BYTE;
+			break;
+		case CV_8S:
+			type = GL_BYTE;
+			break;
+		case CV_16U:
+			type = GL_UNSIGNED_SHORT;
+		case CV_16S:
+			type = GL_SHORT;
+			break;
+		case CV_32S:
+			type = GL_INT;
+			break;
+		case CV_32F:
+			type = GL_FLOAT;
+			break;
+		default:
+			type = GL_UNSIGNED_BYTE;
+			break;
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, d_frame.getValue().cols,
+							 d_frame.getValue().rows, 0, format, type,
 							 imageString.str().c_str());
-	// glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE, m_imageWidth,
-	// m_imageHeight, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, m_imgData.c_str() );
+//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, d_frame.getValue().cols,
+//							 d_frame.getValue().rows, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE,
+//							 imageString.str().c_str());
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 									GL_LINEAR);  // Linear Filtering
@@ -115,8 +163,53 @@ void FrameViewer::orthoDraw()
 	glDisable(GL_LIGHTING);   // disable the light
 
 	glBindTexture(GL_TEXTURE_2D, 0);  // texture bind
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, d_frame.getValue().cols,
-							 d_frame.getValue().rows, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE,
+
+
+	unsigned internalFormat = GL_RGB;
+	unsigned format = GL_BGR_EXT;
+	unsigned type = GL_UNSIGNED_BYTE;
+
+	switch (d_frame.getValue().channels())
+	{
+		case 1:  // grayscale
+			internalFormat = GL_LUMINANCE;
+			format = GL_RED;
+			break;
+		case 3:  // RGB / BGR
+			internalFormat = GL_RGB;
+
+			format = GL_BGR_EXT;
+			break;
+		case 4:  // RGBA / BGRA
+			internalFormat = GL_RGBA;
+			format = GL_BGRA_EXT;
+			break;
+	}
+	switch (d_frame.getValue().type())
+	{
+		case CV_8U:
+			type = GL_UNSIGNED_BYTE;
+			break;
+		case CV_8S:
+			type = GL_BYTE;
+			break;
+		case CV_16U:
+			type = GL_UNSIGNED_SHORT;
+		case CV_16S:
+			type = GL_SHORT;
+			break;
+		case CV_32S:
+			type = GL_INT;
+			break;
+		case CV_32F:
+			type = GL_FLOAT;
+			break;
+		default:
+			type = GL_UNSIGNED_BYTE;
+			break;
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, d_frame.getValue().cols,
+							 d_frame.getValue().rows, 0, format, type,
 							 imageString.str().c_str());
 	// glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE, m_imageWidth,
 	// m_imageHeight, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, m_imgData.c_str() );
@@ -130,8 +223,6 @@ void FrameViewer::orthoDraw()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask(GL_FALSE);
-
-
 
 	glMatrixMode(GL_PROJECTION);  // init the projection matrix
 	glPushMatrix();
@@ -157,7 +248,6 @@ void FrameViewer::orthoDraw()
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-
 
 	// glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);     // enable light
