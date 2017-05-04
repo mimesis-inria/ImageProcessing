@@ -82,6 +82,10 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			glMultMatrixd(l_cam->getGLModelview().transposed().ptr());
 		}
 
+		defaulttype::Vec<4, int> v;
+		glGetIntegerv(GL_VIEWPORT, v.ptr());
+		l_cam->setGLViewport(v);
+
 		if (m_storeMatrices)
 		{
 			defaulttype::Matrix4 p, m;
@@ -98,10 +102,15 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		}
 		if (d_drawGizmo.getValue())
 		{
+			defaulttype::Matrix3 R;
+			l_cam->getCamPos().getOrientation().toMatrix(R);
 			Vector3 camPos = l_cam->getCamPos().getCenter();
-			Vector3 camera_X = l_cam->getRotationMatrix().line(0);
-			Vector3 camera_Y = l_cam->getRotationMatrix().line(1);
-			Vector3 camera_Z = l_cam->getRotationMatrix().line(2);
+			Vector3 camera_X(1, 0, 0);
+			Vector3 camera_Y(0, 1, 0);
+			Vector3 camera_Z(0, 0, 1);
+//			Vector3 camera_X = R.line(0);
+//			Vector3 camera_Y = R.line(1);
+//			Vector3 camera_Z = R.line(2);
 
 			glColor4f(1, 0, 0, 1);
 			glLineWidth(1);

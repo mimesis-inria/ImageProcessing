@@ -28,7 +28,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	typedef defaulttype::RigidTypes::Coord Rigid;
 	typedef defaulttype::Vector2 Vector2;
 	typedef defaulttype::Vector3 Vector3;
-	typedef defaulttype::Vec<4, double> Vec4d;
+	typedef defaulttype::Vec<4, int> Vector4;
 	typedef defaulttype::Vec<2, int> Vec2i;
 	typedef defaulttype::Vec<5, float> Vector5;
 	typedef defaulttype::Mat3x4d Mat3x4d;
@@ -47,16 +47,18 @@ class CameraSettings : public common::ImplicitDataEngine
 				d_distCoefs(initData(&d_distCoefs, "distCoefs",
 														 "The camera's distortion coefficients")),
 				d_R(initData(&d_R, "R", "3x3 rotation matrix")),
-				d_t(initData(&d_t, "t", "translation vector")),
+				d_t(initData(&d_t, "t", "optical center position")),
 				d_imageSize(
 						initData(&d_imageSize, "imageSize", "Image resolution in pixels")),
 				d_glProjection(initData(&d_glProjection, "glProjection",
 																"OpenGL's 4x4 Projection matrix")),
 				d_glModelview(initData(&d_glModelview, "glModelview",
 															 "OpenGL's 4x4 Modelview matrix")),
+				d_glViewport(initData(&d_glViewport, "glViewport",
+															 "OpenGL's Viewport")),
 				d_zClip(initData(&d_zClip, Vector2(0.001f, 1000.0f), "zClip",
 												 "OpenGL's z clipping values in scene unit")),
-				d_camPos(initData(&d_camPos, "camPos", "3D position of the camera")),
+				d_camPos(initData(&d_camPos, "camPos", "")),
 				d_f(initData(&d_f, "f", "focal length")),
 				d_fz(initData(&d_fz, "fz", "distance camera -> plane")),
 				d_c(initData(&d_c, "c",
@@ -108,6 +110,9 @@ class CameraSettings : public common::ImplicitDataEngine
 	const Matrix4& getGLModelview() const;
 	void setGLModelview(const Matrix4& glModelview);
 
+	const Vector4& getGLViewport() const;
+	void setGLViewport(const Vector4& glViewport);
+
 	const Vector2& getGLZClip() const;
 	void setGLZClip(const Vector2& zClip);
 
@@ -143,6 +148,8 @@ class CameraSettings : public common::ImplicitDataEngine
 	Data<Matrix4> d_glProjection;
 	// 4x4 Opengl Modelview matrix
 	Data<Matrix4> d_glModelview;
+	// Opengl Viewport
+	Data<Vector4> d_glViewport;
 	// zNear, zFar
 	Data<Vector2> d_zClip;
 	// Quaternion and Vector3 (just like d_t)
@@ -208,6 +215,10 @@ class CameraSettings : public common::ImplicitDataEngine
 	void GLModelviewChanged(core::objectmodel::BaseObject*)
 	{
 		setGLModelview(d_glModelview.getValue());
+	}
+	void GLViewportChanged(core::objectmodel::BaseObject*)
+	{
+		setGLViewport(d_glViewport.getValue());
 	}
 	void GLZClipChanged(core::objectmodel::BaseObject*)
 	{
