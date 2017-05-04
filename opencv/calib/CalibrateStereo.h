@@ -50,7 +50,7 @@ class CalibrateStereo : public common::ImplicitDataEngine
 										 "a vector of vectors of calibration pattern "
 										 "points in the calibration pattern's coordinate "
 										 "space")),
-				d_imgSize(initData(&d_imgSize, "imgSize",
+				d_imgSize(initData(&d_imgSize, "imageSize",
 													 "size in px of the image (used to initialize the "
 													 "intrinsic camera matrix")),
 				d_calibFlags(initData(

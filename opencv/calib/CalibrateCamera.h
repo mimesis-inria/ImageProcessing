@@ -62,14 +62,6 @@ class CalibrateCamera : public common::ImplicitDataEngine
 				d_distCoefs(initData(&d_distCoefs, "distCoefs",
 														 "[Optional] distortion coefficients initial guess "
 														 "(check calibFlags)")),
-//				d_rvecs(initData(&d_rvecs, "rvecs_out",
-//												 "rotation matrices for each 2D "
-//												 "projections provided by imagePoints (expressed in "
-//												 "the object's coordinate space")),
-//				d_tvecs(initData(&d_tvecs, "tvecs_out",
-//												 "translation vectors for each 2D "
-//												 "projections provided by imagePoints (expressed in "
-//												 "the object's coordinate space")),
 				d_preserveExtrinsics(
 						initData(&d_preserveExtrinsics, false, "keepExtrinsics",
 										 "if true, only intrinsics are updated. Otherwise, "
@@ -85,9 +77,6 @@ class CalibrateCamera : public common::ImplicitDataEngine
 		addInput(&d_imgSize);
 		addOutput(&d_K);
 		addOutput(&d_distCoefs);
-
-//		addOutput(&d_rvecs);
-//		addOutput(&d_tvecs);
 
 		if (!l_cam.get())
 			msg_error(getName() + "::init()") << "Error: No camera link set. "

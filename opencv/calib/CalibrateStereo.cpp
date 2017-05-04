@@ -73,10 +73,10 @@ void CalibrateStereo::calibrate()
 	common::matrix::sofaVector2cvMat(l_cam->getCamera1().getDistortionCoefficients(), distCoeffs1);
 	common::matrix::sofaVector2cvMat(l_cam->getCamera2().getDistortionCoefficients(), distCoeffs2);
 
-	cv::stereoCalibrate(
+	std::cout << "reprojectionError: " << cv::stereoCalibrate(
 			objectPoints, imagePoints1, imagePoints2, cam1, distCoeffs1, cam2,
-			distCoeffs2, cv::Size(1000, 1000), Rmat, Tvec, E, F,
-			cv::CALIB_FIX_INTRINSIC | cv::CALIB_USE_INTRINSIC_GUESS);
+			distCoeffs2, cv::Size(d_imgSize.getValue().x(), d_imgSize.getValue().y()), Rmat, Tvec, E, F,
+			cv::CALIB_FIX_INTRINSIC | cv::CALIB_USE_INTRINSIC_GUESS) << std::endl;
 
 	l_cam->setRotationMatrix(defaulttype::Matrix3((double*)Rmat.ptr()));
 	l_cam->setTranslationVector(defaulttype::Vector3((double*)Tvec.ptr()));

@@ -55,22 +55,16 @@ void CalibrateCamera::calibrate()
 																							d_imgSize.getValue().y()),
 										 camMatrix, dc, rvecs, tvecs, d_calibFlags.getValue())
 							<< std::endl;
-		//		std::cout << camMatrix << "    " << dc << std::endl;
 	}
 	catch (cv::Exception& e)
 	{
 		msg_error(getName() + "::calibrate()") << e.what();
 	}
 
-	for (auto m : tvecs) std::cout << m << std::endl;
-
 	common::matrix::cvMat2sofaVector(dc, m_distCoefs);
 
 	common::matrix::cvMat2sofaMat(camMatrix, m_K);
-	//	helper::vector<defaulttype::Matrix3>& rotations = *d_rvecs.beginEdit();
 	helper::vector<defaulttype::Mat3x4d>& RTs = *d_Rts.beginEdit();
-	//	helper::vector<defaulttype::Vector3>& translations =
-	//*d_tvecs.beginEdit();
 	for (unsigned i = 0; i < rvecs.size(); ++i)
 	{
 		// get 3d rot mat
@@ -87,7 +81,6 @@ void CalibrateCamera::calibrate()
 		defaulttype::Mat3x4d ProjMat;
 		common::matrix::cvMat2sofaMat(P, ProjMat);
 
-		std::cout << "rotation matrices retrieved in sofa" << std::endl;
 		RTs.push_back(ProjMat);
 	}
 
