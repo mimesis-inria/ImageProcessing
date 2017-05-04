@@ -18,25 +18,12 @@ int FeatureTriangulatorClass =
         .add<FeatureTriangulator>();
 
 FeatureTriangulator::FeatureTriangulator()
-    : d_rectify(initData(
+		: l_cam(initLink("cam",
+										 "link to CameraSettings component containing and "
+										 "maintaining the camera's parameters")),
+			d_rectify(initData(
           &d_rectify, false, "rectify",
           "if set to true, points will be rectified before triangulating")),
-      d_R(initData(&d_R, "R",
-                   "3x3 rotation matrix (extrinsic parameter of the camera)",
-                   true, true)),
-			d_T(initData(&d_T, "T",
-                   "translation vector (extrinsic parameter of the camera)",
-                   true, true)),
-      d_cmL(initData(&d_cmL, "projMat1",
-                     "projection matrix for the first camera", true, true)),
-      d_cmR(initData(&d_cmR, "projMat2",
-                     "projection matrix for the second camera", true, true)),
-      d_dvL(initData(&d_dvL, "distCoefs1",
-                     "distortion coefficients for the first camera", true,
-                     true)),
-      d_dvR(initData(&d_dvR, "distCoefs2",
-                     "distortion coefficients for the second camera", true,
-                     true)),
       d_keypointsL(initData(&d_keypointsL, "keypoints1",
                             "input vector of left keypoints", true, true)),
       d_keypointsR(initData(&d_keypointsR, "keypoints2",
@@ -61,13 +48,6 @@ FeatureTriangulator::FeatureTriangulator()
 FeatureTriangulator::~FeatureTriangulator() {}
 void FeatureTriangulator::init()
 {
-  addInput(&d_R);
-  addInput(&d_T);
-  addInput(&d_cmL);
-  addInput(&d_cmR);
-  addInput(&d_dvL);
-  addInput(&d_dvR);
-
   addInput(&d_matches);
   addInput(&d_keypointsL);
   addInput(&d_keypointsR);
@@ -76,19 +56,31 @@ void FeatureTriangulator::init()
 
   addOutput(&d_pointCloud);
   addOutput(&d_pointCloudColors);
+
+	if (!l_cam.get())
+		msg_error(getName() + "::init()") << "Error: No stereo camera link set. "
+																				 "Please use attribute 'cam' "
+																				 "to define one";
+
+	update();
 }
 
 void FeatureTriangulator::update()
 {
   std::cout << getName() << std::endl;
 
-  common::matrix::sofaMat2cvMat(d_R.getValue(), R);
-  common::matrix::sofaVector2cvMat(d_T.getValue(), T);
-  common::matrix::sofaMat2cvMat(d_cmL.getValue(), cmL);
-  common::matrix::sofaMat2cvMat(d_cmR.getValue(), cmR);
-  common::matrix::sofaVector2cvMat(d_dvL.getValue(), dvL);
-  common::matrix::sofaVector2cvMat(d_dvR.getValue(), dvR);
-  PL = cv::Matx34d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
+	common::matrix::sofaMat2cvMat(l_cam->getRotationMatrix(), R);
+	common::matrix::sofaVector2cvMat(l_cam->getTranslationVector(), T);
+	common::matrix::sofaMat2cvMat(l_cam->getCamera1().getIntrinsicCameraMatrix(),
+																cmL);
+	common::matrix::sofaMat2cvMat(l_cam->getCamera2().getIntrinsicCameraMatrix(),
+																cmR);
+	common::matrix::sofaVector2cvMat(
+			l_cam->getCamera1().getDistortionCoefficients(), dvL);
+	common::matrix::sofaVector2cvMat(
+			l_cam->getCamera2().getDistortionCoefficients(), dvR);
+
+	PL = cv::Matx34d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
   PR = cv::Matx34d(R[0][0], R[0][1], R[0][2], T[0][0], R[1][0], R[1][1],
                    R[1][2], T[0][1], R[2][0], R[2][1], R[2][2], T[0][2]);
 

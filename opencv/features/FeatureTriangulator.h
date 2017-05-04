@@ -1,6 +1,8 @@
 #ifndef SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
 #define SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
 
+#include "calib/StereoSettings.h"
+
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <SofaORCommon/cvDMatch.h>
 #include <SofaORCommon/cvKeypoint.h>
@@ -20,8 +22,13 @@ namespace processor
 {
 class FeatureTriangulator : public common::ImplicitDataEngine
 {
-    typedef defaulttype::Vec<3,uint8_t> Vec3b;
-    typedef defaulttype::Vec3d Vec3d;
+	typedef sofa::core::objectmodel::SingleLink<FeatureTriangulator, StereoSettings,
+																							BaseLink::FLAG_STOREPATH |
+																									BaseLink::FLAG_STRONGLINK>
+			StereoCamSettings;
+	typedef defaulttype::Vec<3, uint8_t> Vec3b;
+	typedef defaulttype::Vec3d Vec3d;
+
  public:
   SOFA_CLASS(FeatureTriangulator, common::ImplicitDataEngine);
 
@@ -37,12 +44,14 @@ class FeatureTriangulator : public common::ImplicitDataEngine
   // DATA
   Data<bool> d_rectify;
   // INPUTS
-  Data<defaulttype::Matrix3> d_R;
-  Data<defaulttype::Vector3> d_T;
-  Data<defaulttype::Matrix3> d_cmL;
-  Data<defaulttype::Matrix3> d_cmR;
-  Data<helper::vector<double> > d_dvL;
-  Data<helper::vector<double> > d_dvR;
+	StereoCamSettings l_cam;
+
+//	Data<defaulttype::Matrix3> d_R;
+//  Data<defaulttype::Vector3> d_T;
+//  Data<defaulttype::Matrix3> d_cmL;
+//  Data<defaulttype::Matrix3> d_cmR;
+//  Data<helper::vector<double> > d_dvL;
+//  Data<helper::vector<double> > d_dvR;
 
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR;

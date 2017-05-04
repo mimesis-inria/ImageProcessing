@@ -15,6 +15,7 @@ set(HEADER_FILES
   utils/PointVec2Keypoint.h
   utils/Vector2SSVector.h
   utils/Vector2SSVector.inl
+  utils/NegateVector.h
 #  utils/ConversionFunctor.h
 #  utils/ConversionFunctor.inl
 
@@ -64,6 +65,7 @@ set(SOURCE_FILES
   utils/PointVectorConverter.cpp
   utils/PointVec2Keypoint.cpp
   utils/Vector2SSVector.cpp
+  utils/NegateVector.cpp
 #  utils/ConversionFunctor.cpp
 
   features/Detectors.cpp
