@@ -103,14 +103,13 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		if (d_drawGizmo.getValue())
 		{
 			defaulttype::Matrix3 R;
-			l_cam->getCamPos().getOrientation().toMatrix(R);
+			defaulttype::Quat q = l_cam->getCamPos().getOrientation();
+			q.toMatrix(R);
+
 			Vector3 camPos = l_cam->getCamPos().getCenter();
-			Vector3 camera_X(1, 0, 0);
-			Vector3 camera_Y(0, 1, 0);
-			Vector3 camera_Z(0, 0, 1);
-//			Vector3 camera_X = R.line(0);
-//			Vector3 camera_Y = R.line(1);
-//			Vector3 camera_Z = R.line(2);
+			Vector3 camera_X = R.line(0).normalized();
+			Vector3 camera_Y = R.line(1).normalized();
+			Vector3 camera_Z = R.line(2).normalized();
 
 			glColor4f(1, 0, 0, 1);
 			glLineWidth(1);

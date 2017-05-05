@@ -152,7 +152,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	Data<Vector4> d_glViewport;
 	// zNear, zFar
 	Data<Vector2> d_zClip;
-	// Quaternion and Vector3 (just like d_t)
+	// Opengl's Camera position and orientation
 	Data<Rigid> d_camPos;
 	// Focale
 	Data<Vector2> d_f;

@@ -272,12 +272,12 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 	double h = d_imageSize.getValue().y();
 
 	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
-	double fx = 2.0 * K[0][0] / w;
-	//	double s = -2.0 * K[0][1] / w;
-	double cx = 1 - 2.0 * K[0][2] / w;
+	double fx = K[0][0];
+	//	double s = K[0][1];
+	double cx = K[0][2];
 
-	double fy = 2.0 * K[1][1] / h;
-	double cy = -1.0 + 2.0 * K[1][2] / h;
+	double fy = K[1][1];
+	double cy = K[1][2];
 
 	d_f.setValue(defaulttype::Vector2(fx, fy));
 	d_c.setValue(defaulttype::Vector2(cx, cy));
@@ -289,8 +289,11 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 
 	Rigid cpos;
 	cpos.getCenter() = t;
-	cpos.getOrientation() = Quat(Vector3(1, 0, 0), M_PI) * camera_ori;
+	cpos.getOrientation() = /*Quat(Vector3(1, 0, 0), M_PI) * */camera_ori;
 
+	Matrix3 lol;
+	cpos.getOrientation().toMatrix(lol);
+	std::cout << "R after quat conversion: " << lol << std::endl;
 	d_camPos.setValue(cpos);
 }
 
@@ -322,26 +325,33 @@ void CameraSettings::decomposeGL()
 	Matrix4 glP = d_glProjection.getValue();
 	Matrix4 glM = d_glModelview.getValue();
 
-	d_f.setValue(Vector2(glP[0][0], glP[1][1]));
+	double w = d_imageSize.getValue().x();
+	double h = d_imageSize.getValue().y();
+
+	double fx = 0.5 * w * glP[0][0];
+	double fy = 0.5 * h * (1.0 + glP[1][1]);
+	double cx = 0.5 * w * (1.0 - glP[0][3]);
+	double cy = 0.5 * h * (1.0 + glP[1][3]);
+
+	d_f.setValue(Vector2(fx, fy));
 	d_s.setValue(0);
-	d_c.setValue(Vector2(glP[0][3], glP[1][3]));
+	d_c.setValue(Vector2(cx, cy));
 	Matrix3 R;
 	for (unsigned j = 0; j < 3; j++)
-	{
 		for (unsigned i = 0; i < 3; i++)
-		{
 			R[j][i] = glM[j][i];
-		}
-	}
 
 	Quat camera_ori;
 	camera_ori.fromMatrix(R);
 	Vector3 camera_pos(glM[0][3], glM[1][3], glM[2][3]);
 
-
 	Rigid cpos;
 	cpos.getCenter() = camera_pos;
 	cpos.getOrientation() = camera_ori;
+
+	Matrix3 lol;
+	cpos.getOrientation().toMatrix(lol);
+	std::cout << "R after quat conversion: " << lol << std::endl;
 
 	d_camPos.setValue(cpos);
 }
@@ -371,19 +381,26 @@ void CameraSettings::composeGL()
 
 	float n = d_zClip.getValue().x();
 	float f = d_zClip.getValue().y();
+	double w = d_imageSize.getValue().x();
+	double h = d_imageSize.getValue().y();
+
+	double fx = d_f.getValue().x();
+	double fy = d_f.getValue().y();
+	double cx = d_c.getValue().x();
+	double cy = d_c.getValue().y();
 
 	Matrix4 glP;
 
-	glP[0][0] = d_f.getValue().x();
+	glP[0][0] = 2.0 * fx / w;
 	glP[0][1] = 0;
 	glP[0][2] = 0;
-	glP[0][3] = d_c.getValue().x();
+	glP[0][3] = 1.0 - 2.0 * cx / w;
 
-	//	glP[1][0] = d_s.getValue();
+	//	glP[1][0] = -2.0 * s / w;
 	glP[1][0] = 0;
-	glP[1][1] = d_f.getValue().y();
+	glP[1][1] = 2.0 * fy / h;
 	glP[1][2] = 0;
-	glP[1][3] = d_c.getValue().y();
+	glP[1][3] = -1.0 + 2.0 * cy / h;
 
 	glP[2][0] = 0;
 	glP[2][1] = 0;
@@ -392,7 +409,7 @@ void CameraSettings::composeGL()
 
 	glP[3][0] = 0;
 	glP[3][1] = 0;
-	glP[3][2] = -1;
+	glP[3][2] = -1.0;
 	glP[3][3] = 0;
 
 	d_glProjection.setValue(glP);
@@ -400,8 +417,7 @@ void CameraSettings::composeGL()
 	Matrix4 MM;
 
 	Matrix3 R;
-	Quat Orig =/*
-			Quat(Vector3(1, 0, 0), M_PI) * */d_camPos.getValue().getOrientation();
+	Quat Orig = d_camPos.getValue().getOrientation();
 	Orig.toMatrix(R);
 
 	Vector3 p = d_camPos.getValue().getCenter();
@@ -423,8 +439,7 @@ void CameraSettings::composeGL()
 void CameraSettings::composeCV()
 {
 	std::cout << "composeCV" << std::endl;
-	double w = d_imageSize.getValue().x();
-	double h = d_imageSize.getValue().y();
+
 	double fx = d_f.getValue().x();
 	double fy = d_f.getValue().y();
 	//	double s = d_s.getValue();
@@ -433,14 +448,14 @@ void CameraSettings::composeCV()
 
 	Matrix3 K;
 	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
-	K[0][0] = 0.5 * w * fx;
-	//	K[0][1] = -0.5 * w * s;
+	K[0][0] = fx;
+	//	K[0][1] = s;
 	K[0][1] = 0;
-	K[0][2] = 0.5 * w * (1 - cx);
+	K[0][2] = cx;
 
 	K[1][0] = 0;
-	K[1][1] = 0.5 * h * fy;
-	K[1][2] = 0.5 * h * (1 + cy);
+	K[1][1] = fy;
+	K[1][2] = cy;
 
 	K[2][0] = 0;
 	K[2][1] = 0;
@@ -448,7 +463,7 @@ void CameraSettings::composeCV()
 	d_K.setValue(K);
 
 	Matrix3 R;
-	Quat q = Quat(Vector3(1, 0, 0), M_PI) * d_camPos.getValue().getOrientation();
+	Quat q = /*Quat(Vector3(1, 0, 0), M_PI) * */d_camPos.getValue().getOrientation();
 	q.toMatrix(R);
 	d_R.setValue(R);
 	d_t.setValue(d_camPos.getValue().getCenter());
