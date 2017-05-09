@@ -315,6 +315,38 @@ struct AKAZEDetector : BaseDetector
   Data<int> sublevels;
   Data<sofa::helper::OptionsGroup> diffusivity;
 };
+
+struct BRIEFDetector : BaseDetector
+{
+  BRIEFDetector(core::objectmodel::BaseObject* c);
+  void toggleVisible(bool);
+  void init();
+  virtual void registerData(ImageFilter*)
+  {
+    // TODO: find optimal range of values
+  }
+
+  void detect(const common::cvMat&, const common::cvMat&,
+              std::vector<cv::KeyPoint>&)
+  {
+    msg_error("BRIEFDetector::detect()")
+        << "BRIEF is computeOnly. keypoints must be provided.";
+  }
+  virtual void detectAndCompute(const common::cvMat&, const common::cvMat&,
+                                std::vector<cv::KeyPoint>&, common::cvMat&)
+  {
+    msg_error("BRIEFDetector::detectAndCompute()")
+        << "BRIEF is computeOnly. Please provide keypoints and set "
+           "DetectMode to COMPUTE_ONLY";
+  }
+
+  Data<int> bytes;
+  Data<bool> use_orientation;
+};
+
+#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+
+
 struct SIFTDetector : BaseDetector
 {
   SIFTDetector(core::objectmodel::BaseObject* c);
@@ -347,34 +379,6 @@ struct SURFDetector : BaseDetector
   Data<int> nOctaveLayers;
   Data<bool> extended;
   Data<bool> upright;
-};
-
-struct BRIEFDetector : BaseDetector
-{
-  BRIEFDetector(core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
-  void init();
-  virtual void registerData(ImageFilter*)
-  {
-    // TODO: find optimal range of values
-  }
-
-  void detect(const common::cvMat&, const common::cvMat&,
-              std::vector<cv::KeyPoint>&)
-  {
-    msg_error("BRIEFDetector::detect()")
-        << "BRIEF is computeOnly. keypoints must be provided.";
-  }
-  virtual void detectAndCompute(const common::cvMat&, const common::cvMat&,
-                                std::vector<cv::KeyPoint>&, common::cvMat&)
-  {
-    msg_error("BRIEFDetector::detectAndCompute()")
-        << "BRIEF is computeOnly. Please provide keypoints and set "
-           "DetectMode to COMPUTE_ONLY";
-  }
-
-  Data<int> bytes;
-  Data<bool> use_orientation;
 };
 
 struct DAISYDetector : BaseDetector
@@ -410,6 +414,8 @@ struct DAISYDetector : BaseDetector
   Data<bool> interpolation;
   Data<bool> use_orientation;
 };
+
+#endif // SOFAOR_OPENCV_CONTRIB_ENABLED
 
 }  // namespace sofa
 }  // namespace OR

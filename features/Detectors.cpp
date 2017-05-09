@@ -334,6 +334,30 @@ void AKAZEDetector::toggleVisible(bool show)
   diffusivity.setDisplayed(show);
 }
 
+BRIEFDetector::BRIEFDetector(core::objectmodel::BaseObject* c)
+    : bytes(c->initData(&bytes, 32, "BRIEFBytes",
+                        "length of the descriptor in bytes, valid values are: "
+                        "16, 32 (default) or 64 ")),
+      use_orientation(c->initData(
+          &use_orientation, false, "BRIEFUseOrientation",
+          "sample patterns using keypoints orientation, disabled by default."))
+{
+}
+
+void BRIEFDetector::init()
+{
+  m_detector = cv::xfeatures2d::BriefDescriptorExtractor::create(
+      bytes.getValue(), use_orientation.getValue());
+}
+void BRIEFDetector::toggleVisible(bool show)
+{
+  bytes.setDisplayed(show);
+  use_orientation.setDisplayed(show);
+}
+
+
+#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+
 SIFTDetector::SIFTDetector(core::objectmodel::BaseObject* c)
     : nFeatures(c->initData(&nFeatures, 0, "SIFTNFeatures",
                             "The number of best features to retain. The "
@@ -427,26 +451,6 @@ void SURFDetector::toggleVisible(bool show)
   upright.setDisplayed(show);
 }
 
-BRIEFDetector::BRIEFDetector(core::objectmodel::BaseObject* c)
-    : bytes(c->initData(&bytes, 32, "BRIEFBytes",
-                        "length of the descriptor in bytes, valid values are: "
-                        "16, 32 (default) or 64 ")),
-      use_orientation(c->initData(
-          &use_orientation, false, "BRIEFUseOrientation",
-          "sample patterns using keypoints orientation, disabled by default."))
-{
-}
-
-void BRIEFDetector::init()
-{
-  m_detector = cv::xfeatures2d::BriefDescriptorExtractor::create(
-      bytes.getValue(), use_orientation.getValue());
-}
-void BRIEFDetector::toggleVisible(bool show)
-{
-  bytes.setDisplayed(show);
-  use_orientation.setDisplayed(show);
-}
 
 DAISYDetector::DAISYDetector(core::objectmodel::BaseObject* c)
     : radius(c->initData(&radius, 15.0f, "DAISYRadius",
@@ -501,6 +505,8 @@ void DAISYDetector::toggleVisible(bool show)
   interpolation.setDisplayed(show);
   use_orientation.setDisplayed(show);
 }
+
+#endif // SOFAOR_OPENCV_CONTRIB_ENABLED
 
 }  // namespace sofa
 }  // namespace OR

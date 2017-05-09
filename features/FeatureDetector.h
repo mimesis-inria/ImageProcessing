@@ -35,12 +35,14 @@ class FeatureDetector : public ImageFilter
     BRISK = 3,
     KAZE = 4,
     AKAZE = 5,
-    SIFT = 6,
-    SURF = 7,
-    BRIEF = 8,
-    DAISY = 9,
-		BLOB = 10,
-		DetectorType_COUNT
+    BRIEF = 6,
+    BLOB = 7,
+#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+    SIFT = 8,
+    SURF = 9,
+    DAISY = 10,
+#endif // SOFAOR_OPENCV_CONTRIB_ENABLED
+    DetectorType_COUNT
   };
 
  public:

@@ -28,7 +28,9 @@ FeatureDetector::FeatureDetector()
       d_detectorType(
           initData(&d_detectorType, "detectorType",
                    "Available feature detection algoritms: FAST, "
-                   "MSER, ORB, BRISK, KAZE, AKAZE, SIFT, SURF, BRIEF, DAISY")),
+                   "MSER, ORB, BRISK, KAZE, AKAZE, BRIEF, BLOB, SIFT, "
+                   "SURF, DAISY (the last 3 are only available in "
+                   "opencv_contrib)")),
       d_keypoints(initData(&d_keypoints, "keypoints",
                            "output array of cvKeypoints", false)),
       d_descriptors(initData(&d_descriptors, "descriptors",
@@ -46,8 +48,13 @@ FeatureDetector::FeatureDetector()
 
   t = d_detectorType.beginEdit();
   t->setNames(DetectorType_COUNT, "FAST", "MSER", "ORB", "BRISK", "KAZE",
-              "AKAZE", "SIFT", "SURF", "BRIEF", "DAISY", "BLOB");
-  t->setSelectedItem("SIFT");
+              "AKAZE", "BRIEF", "BLOB"
+#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+              ,
+              "SIFT", "SURF", "DAISY"
+#endif SOFAOR_OPENCV_CONTRIB_ENABLED
+              );
+  t->setSelectedItem("FAST");
   d_detectorType.endEdit();
 
   m_detectors[FAST] = new FASTDetector(this);
@@ -56,11 +63,13 @@ FeatureDetector::FeatureDetector()
   m_detectors[BRISK] = new BRISKDetector(this);
   m_detectors[KAZE] = new KAZEDetector(this);
   m_detectors[AKAZE] = new AKAZEDetector(this);
+  m_detectors[BRIEF] = new BRIEFDetector(this);
+  m_detectors[BLOB] = new SimpleBlobDetector(this);
+#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
   m_detectors[SIFT] = new SIFTDetector(this);
   m_detectors[SURF] = new SURFDetector(this);
-  m_detectors[BRIEF] = new BRIEFDetector(this);
   m_detectors[DAISY] = new DAISYDetector(this);
-  m_detectors[BLOB] = new SimpleBlobDetector(this);
+#endif SOFAOR_OPENCV_CONTRIB_ENABLED
 }
 
 FeatureDetector::~FeatureDetector() {}
