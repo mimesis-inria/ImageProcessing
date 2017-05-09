@@ -22,13 +22,9 @@ int FrameViewerClass = core::RegisterObject(
 													 .add<FrameViewer>();
 
 FrameViewer::FrameViewer()
-		: l_cam(initLink("cam",
-										 "link to CameraSettings component containing and "
-										 "maintaining the camera's parameters")),
-			d_frame(initData(&d_frame, "img", "frame to display in opencv window")),
-			d_depth(initData(&d_depth, -1.0f, "depth",
-											 "[Optional] distance to the camera at which to render "
-											 "the image (default is CamSettings' fz value")),
+		: d_frame(initData(&d_frame, "img", "frame to display in opencv window")),
+			d_corners(initData(&d_corners, "corners",
+												 "3D world coordinates of the image corners")),
 			d_mode(
 					initData(&d_mode, "mode", "viewer mode (PERSPECTIVE, ORTHO, HIDDEN)"))
 {
@@ -42,12 +38,8 @@ FrameViewer::~FrameViewer() {}
 void FrameViewer::init()
 {
 	addInput(&d_frame);
-	addInput(&d_depth);
+	addInput(&d_corners);
 
-	if (!l_cam.get())
-		msg_error(getName() + "::init()") << "Error: No camera link set. "
-																				 "Please use attribute 'cam' "
-																				 "to define one";
 	update();
 }
 
@@ -113,9 +105,10 @@ void FrameViewer::perspectiveDraw()
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, d_frame.getValue().cols,
 							 d_frame.getValue().rows, 0, format, type,
 							 imageString.str().c_str());
-//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, d_frame.getValue().cols,
-//							 d_frame.getValue().rows, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE,
-//							 imageString.str().c_str());
+	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, d_frame.getValue().cols,
+	//							 d_frame.getValue().rows, 0, GL_BGR_EXT,
+	//GL_UNSIGNED_BYTE,
+	//							 imageString.str().c_str());
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 									GL_LINEAR);  // Linear Filtering
@@ -127,22 +120,18 @@ void FrameViewer::perspectiveDraw()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask(GL_FALSE);
 
-	defaulttype::Vector3 p1;
-	defaulttype::Vector3 p2;
-	defaulttype::Vector3 p3;
-	defaulttype::Vector3 p4;
-	l_cam->getCornersPosition(p1, p2, p3, p4, d_depth.getValue());
+	helper::vector<defaulttype::Vector3> p = d_corners.getValue();
 
 	glBegin(GL_QUADS);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glTexCoord2f(1, 0);
-	glVertex3f(p4[0], p4[1], p4[2]);
+	glVertex3f(p[3][0], p[3][1], p[3][2]);
 	glTexCoord2f(0, 0);
-	glVertex3f(p1[0], p1[1], p1[2]);
+	glVertex3f(p[0][0], p[0][1], p[0][2]);
 	glTexCoord2f(0, 1);
-	glVertex3f(p2[0], p2[1], p2[2]);
+	glVertex3f(p[1][0], p[1][1], p[1][2]);
 	glTexCoord2f(1, 1);
-	glVertex3f(p3[0], p3[1], p3[2]);
+	glVertex3f(p[2][0], p[2][1], p[2][2]);
 	glEnd();
 
 	// glEnable(GL_DEPTH_TEST);
@@ -163,7 +152,6 @@ void FrameViewer::orthoDraw()
 	glDisable(GL_LIGHTING);   // disable the light
 
 	glBindTexture(GL_TEXTURE_2D, 0);  // texture bind
-
 
 	unsigned internalFormat = GL_RGB;
 	unsigned format = GL_BGR_EXT;
@@ -279,16 +267,13 @@ void FrameViewer::computeBBox(const core::ExecParams *params, bool)
 {
 	if (d_mode.getValue().getSelectedId() != 0) return;
 
-	helper::vector<defaulttype::Vec3f> x;
-	defaulttype::Vector3 p1;
-	defaulttype::Vector3 p2;
-	defaulttype::Vector3 p3;
-	defaulttype::Vector3 p4;
-	l_cam->getCornersPosition(p1, p2, p3, p4, d_depth.getValue());
-	x.push_back(p1);
-	x.push_back(p2);
-	x.push_back(p3);
-	x.push_back(p4);
+	helper::vector<defaulttype::Vector3> x;
+	helper::vector<defaulttype::Vector3> p = d_corners.getValue();
+
+	x.push_back(p[0]);
+	x.push_back(p[1]);
+	x.push_back(p[2]);
+	x.push_back(p[3]);
 
 	double minBBox[3] = {std::numeric_limits<double>::max(),
 											 std::numeric_limits<double>::max(),
@@ -299,7 +284,7 @@ void FrameViewer::computeBBox(const core::ExecParams *params, bool)
 
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
-		const defaulttype::Vec3f &p = x[i];
+		const defaulttype::Vector3& p = x[i];
 		for (int c = 0; c < 3; c++)
 		{
 			if (p[c] > maxBBox[c]) maxBBox[c] = p[c];

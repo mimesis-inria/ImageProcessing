@@ -5,12 +5,82 @@ set(PROCESSOR_MAJOR_VERSION 0)
 set(PROCESSOR_MINOR_VERSION 1)
 set(PROCESSOR_VERSION ${PROCESSOR_MAJOR_VERSION}.${PROCESSOR_MINOR_VERSION})
 
+set (SOFAOR_ENABLE_OPENCV_CONTRIB OFF CACHE BOOL "Enables OpenCV's non-free features hosted in opencv_contrib")
+
+if (SOFAOR_ENABLE_OPENCV_CONTRIB)
+    add_definitions("-DSOFAOR_OPENCV_CONTRIB_ENABLED")
+endif ()
+
 set(HEADER_FILES
   initPlugin.h
+
+  common/FrameViewer.h
+  common/PCViewer.h
+  common/ImageFilter.h
+  common/ImageExporter.h
+
+  camera/common/CameraSettings.h
+  camera/common/StereoSettings.h
+  camera/common/CalibratedCamera.h
+  camera/common/ImageRectifier.h
+  camera/common/ProjectPoints.h
+  camera/common/FeatureTriangulator.h
+
+  camera/calib/CalibrateCamera.h
+  camera/calib/SolvePnP.h
+  camera/calib/CalibrateStereo.h
+  camera/calib/CalibLoader.h
+
+  imgproc/CannyFilter.h
+  imgproc/SobelFilter.h
+  imgproc/AdaptiveThreshold.h
+  imgproc/SimpleThreshold.h
+  imgproc/MorphologyEx.h
+
+  features/Detectors.h
+  features/Matchers.h
+  features/FeatureDetector.h
+  features/DescriptorMatcher.h
+  features/MatchingConstraints.h
+  features/PointPicker2D.h
+  features/Segmenter2D.h
+  features/OpticalFlow.h
   )
 
 set(SOURCE_FILES
   initPlugin.cpp
+
+  common/FrameViewer.cpp
+  common/PCViewer.cpp
+  common/ImageFilter.cpp
+  common/ImageExporter.cpp
+
+  camera/common/CameraSettings.cpp
+  camera/common/StereoSettings.cpp
+  camera/common/CalibratedCamera.cpp
+  camera/common/ImageRectifier.cpp
+  camera/common/ProjectPoints.cpp
+  camera/common/FeatureTriangulator.cpp
+
+  camera/calib/CalibrateCamera.cpp
+  camera/calib/SolvePnP.cpp
+  camera/calib/CalibrateStereo.cpp
+  camera/calib/CalibLoader.cpp
+
+  imgproc/CannyFilter.cpp
+  imgproc/SobelFilter.cpp
+  imgproc/AdaptiveThreshold.cpp
+  imgproc/SimpleThreshold.cpp
+  imgproc/MorphologyEx.cpp
+
+  features/Detectors.cpp
+  features/Matchers.cpp
+  features/FeatureDetector.cpp
+  features/DescriptorMatcher.cpp
+  features/MatchingConstraints.cpp
+  features/PointPicker2D.cpp
+  features/Segmenter2D.cpp
+  features/OpticalFlow.cpp
   )
 
 set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})
@@ -34,4 +104,3 @@ sofa_create_package(${PROJECT_NAME} ${PROCESSOR_VERSION} ${PROJECT_NAME} ${PROJE
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" DESTINATION "include/processor"
   FILES_MATCHING PATTERN "*.h" PATTERN "*.inl")
 
-sofa_add_plugin(opencv SofaOROpenCV)

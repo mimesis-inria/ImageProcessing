@@ -39,9 +39,8 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 	void draw(const core::visual::VisualParams*);
 	void computeBBox(const core::ExecParams* params, bool);
 
-	CamSettings l_cam;
 	Data<common::cvMat> d_frame;
-	Data<float> d_depth;
+	Data<helper::vector<defaulttype::Vector3> > d_corners;
 
 	Data<helper::OptionsGroup> d_mode;
 
