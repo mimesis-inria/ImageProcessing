@@ -1,7 +1,7 @@
 #ifndef SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
 #define SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
 
-#include "calib/StereoSettings.h"
+#include "StereoSettings.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <SofaORCommon/cvDMatch.h>

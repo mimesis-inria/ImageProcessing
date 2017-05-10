@@ -1,7 +1,7 @@
 #ifndef SOFA_OR_PROCESSOR_SEGMENTER2D_H
 #define SOFA_OR_PROCESSOR_SEGMENTER2D_H
 
-#include "core/ImageFilter.h"
+#include "common/ImageFilter.h"
 
 #include <sofa/helper/SVector.h>
 

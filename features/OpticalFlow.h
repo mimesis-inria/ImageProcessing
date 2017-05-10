@@ -1,7 +1,7 @@
 #ifndef SOFA_OR_PROCESSOR_OPTICALFLOW_H
 #define SOFA_OR_PROCESSOR_OPTICALFLOW_H
 
-#include "core/ImageFilter.h"
+#include "common/ImageFilter.h"
 
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/helper/vector.h>

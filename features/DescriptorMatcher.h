@@ -2,7 +2,7 @@
 #define SOFA_OR_PROCESSOR_DESCRIPTORMATCHER_H
 
 #include "Matchers.h"
-#include "core/ImageFilter.h"
+#include "common/ImageFilter.h"
 
 #include <SofaORCommon/cvDMatch.h>
 #include <SofaORCommon/cvKeypoint.h>

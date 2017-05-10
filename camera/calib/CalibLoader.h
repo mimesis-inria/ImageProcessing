@@ -2,7 +2,7 @@
 #define SOFA_OR_PROCESSOR_CALIBLOADER_H
 
 #include "initPlugin.h"
-#include "CameraSettings.h"
+#include "camera/common/CameraSettings.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <SofaORCommon/cvMat.h>

@@ -4,7 +4,7 @@
 #include "initPlugin.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
-#include "CameraSettings.h"
+#include "camera/common/CameraSettings.h"
 
 #include <sofa/core/objectmodel/Link.h>
 #include <sofa/helper/OptionsGroup.h>

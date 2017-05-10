@@ -1,7 +1,7 @@
 #ifndef SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
 #define SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
 
-#include "core/ImageFilter.h"
+#include "ProcessOR/common/ImageFilter.h"
 #include "SofaORCommon/cvMatUtils.h"
 
 #include <opencv2/imgproc.hpp>

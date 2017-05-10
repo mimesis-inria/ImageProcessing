@@ -83,6 +83,8 @@ set(SOURCE_FILES
   features/OpticalFlow.cpp
   )
 
+include_directories(ProcessOR/)
+
 set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})
 
 add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES})

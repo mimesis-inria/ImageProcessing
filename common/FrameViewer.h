@@ -1,7 +1,6 @@
 #ifndef SOFA_OR_ACQUISITOR_FRAMEVIEWER_H
 #define SOFA_OR_ACQUISITOR_FRAMEVIEWER_H
 
-#include "CameraSettings.h"
 #include "initPlugin.h"
 
 #include <SofaORCommon/cvMat.h>
@@ -22,11 +21,6 @@ namespace processor
 {
 class FrameViewer : virtual public common::ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<FrameViewer, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
-			CamSettings;
-
  public:
 	SOFA_CLASS(FrameViewer, common::ImplicitDataEngine);
 

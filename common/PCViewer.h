@@ -2,7 +2,6 @@
 #define SOFA_OR_ACQUISITOR_PCVIEWER_H
 
 #include "initPlugin.h"
-#include "CameraSettings.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 
@@ -14,10 +13,6 @@ namespace processor
 {
 class PCViewer : public common::ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<PCViewer, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
-			CamSettings;
 	typedef defaulttype::Vec3f Vec3f;
   typedef defaulttype::Vec<3, uint8_t> Vec3b;
 
@@ -35,7 +30,6 @@ class PCViewer : public common::ImplicitDataEngine
   void reinit();
 
 	Data<float> d_size;
-	Data<defaulttype::Vector3> d_T;
 	// INPUTS
 	Data<helper::vector<Vec3f> > d_positions;
   Data<helper::vector<Vec3b> > d_colors;

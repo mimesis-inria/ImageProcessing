@@ -19,8 +19,6 @@ int PCViewerClass =
 
 PCViewer::PCViewer()
 		: d_size(initData(&d_size, 1.0f, "size", "point size")),
-			d_T(initData(&d_T, "T",
-									 "translation to reproject in world coord system")),
 			d_positions(initData(&d_positions, "points", "point cloud's positions")),
       d_colors(initData(&d_colors, "colors", "point cloud's point colors"))
 {
@@ -31,7 +29,6 @@ PCViewer::~PCViewer() {}
 void PCViewer::init()
 {
   addInput(&d_positions);
-	addInput(&d_T);
 	addInput(&d_colors);
 	update();
 }
@@ -81,10 +78,6 @@ void PCViewer::draw(const core::visual::VisualParams*)
 	for (size_t i = 0; i < m_positions.size(); ++i)
 	{
 		Vec3f pt = m_positions[i];
-		if (d_T.isSet())
-		{
-				pt -= t;
-		}
 		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		glVertex3f(pt.x(),
 							 pt.y(),

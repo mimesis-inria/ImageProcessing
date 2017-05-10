@@ -2,7 +2,7 @@
 #define SOFA_OR_PROCESSOR_SIMPLETHRESHOLD_H
 
 #include <opencv2/imgproc.hpp>
-#include "core/ImageFilter.h"
+#include "common/ImageFilter.h"
 
 namespace sofa
 {
