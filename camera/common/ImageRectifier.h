@@ -1,6 +1,7 @@
 #ifndef SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
 #define SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
 
+#include "CameraSettings.h"
 #include "ProcessOR/common/ImageFilter.h"
 #include "SofaORCommon/cvMatUtils.h"
 
@@ -14,6 +15,11 @@ namespace processor
 {
 class ImageRectifier : public ImageFilter
 {
+	typedef sofa::core::objectmodel::SingleLink<ImageRectifier, CameraSettings,
+																							BaseLink::FLAG_STOREPATH |
+																									BaseLink::FLAG_STRONGLINK>
+			CamSettings;
+
  public:
   SOFA_CLASS(ImageRectifier, ImageFilter);
 
@@ -21,31 +27,29 @@ class ImageRectifier : public ImageFilter
   Data<helper::vector<double> > d_distCoefs;
 
   ImageRectifier()
-      : d_projMat(initData(&d_projMat, "projMat",
-                           "3x3 projection matrix (from camera's "
-                           "intrinsic parameters)")),
-        d_distCoefs(initData(&d_distCoefs, "distCoefs",
-                             "distortion coefficients vector (from camera's "
-                             "intrinsic parameters)"))
+			: l_cam(initLink("cam",
+											 "link to CameraSettings component containing and "
+											 "maintaining the camera's parameters"))
   {
   }
 
   void init()
   {
-    std::cout << getName()<< "init" << std::endl;
-
-    addInput(&d_distCoefs);
+		if (!l_cam.get())
+			msg_error(getName() + "::init()") << "Error: No camera link set. "
+																					 "Please use attribute 'cam' "
+																					 "to define one";
     ImageFilter::init();
   }
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   {
-    std::cout << getName() << "applyFilter " << std::endl;;
-
-    if (in.empty() || d_distCoefs.getValue().empty()) return;
+		if (in.empty() || l_cam->getDistortionCoefficients().empty()) return;
     cv::Mat_<double> cam;
-    common::matrix::sofaMat2cvMat(d_projMat.getValue(), cam);
-    cv::undistort(in, out, cam, d_distCoefs.getValue());
+		common::matrix::sofaMat2cvMat(l_cam->getIntrinsicCameraMatrix(), cam);
+		cv::undistort(in, out, cam, l_cam->getDistortionCoefficients());
   }
+
+	CamSettings l_cam;
 };
 
 SOFA_DECL_CLASS(ImageRectifier)

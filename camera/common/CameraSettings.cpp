@@ -92,6 +92,8 @@ void CameraSettings::setProjectionMatrix(const Mat3x4d& P)
 	composeGL();
 
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 
 const defaulttype::Matrix3& CameraSettings::getIntrinsicCameraMatrix() const
@@ -108,6 +110,8 @@ void CameraSettings::setIntrinsicCameraMatrix(const Matrix3& K, bool update)
 		composeGL();
 	}
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 
 const helper::vector<double>& CameraSettings::getDistortionCoefficients() const
@@ -121,6 +125,8 @@ void CameraSettings::setDistortionCoefficients(
 	// OpenGL
 	d_distCoefs.setValue(distCoefs);
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 
 const defaulttype::Matrix3& CameraSettings::getRotationMatrix() const
@@ -137,6 +143,8 @@ void CameraSettings::setRotationMatrix(const Matrix3& R, bool update)
 		composeGL();
 	}
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 
 const defaulttype::Vector3& CameraSettings::getTranslationVector() const
@@ -153,6 +161,8 @@ void CameraSettings::setTranslationVector(const Vector3& t, bool update)
 		composeGL();
 	}
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 
 const defaulttype::Vec2i& CameraSettings::getImageSize() const
@@ -165,6 +175,9 @@ void CameraSettings::setImageSize(const Vec2i& imgSize)
 	composeP();
 	composeGL();
 	this->checkData(false);
+
+	recalculate2DCorners();
+	recalculate3DCorners();
 }
 const defaulttype::Matrix4& CameraSettings::getGLProjection() const
 {
@@ -176,6 +189,8 @@ void CameraSettings::setGLProjection(const Matrix4& glProjection)
 	decomposeGL();
 	composeP();
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 const defaulttype::Matrix4& CameraSettings::getGLModelview() const
 {
@@ -187,6 +202,8 @@ void CameraSettings::setGLModelview(const Matrix4& glModelview)
 	decomposeGL();
 	composeP();
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 
 const defaulttype::Vec<4, int>& CameraSettings::getGLViewport() const
@@ -197,6 +214,8 @@ void CameraSettings::setGLViewport(const Vector4& glViewport)
 {
 	d_glViewport.setValue(glViewport);
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 
 const defaulttype::Vector2& CameraSettings::getGLZClip() const
@@ -208,6 +227,8 @@ void CameraSettings::setGLZClip(const Vector2& zClip)
 	d_zClip.setValue(zClip);
 	composeGL();
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 const defaulttype::RigidTypes::Coord& CameraSettings::getCamPos() const
 {
@@ -219,6 +240,8 @@ void CameraSettings::setCamPos(const Rigid& camPos)
 	composeP();
 	composeGL();
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 
 const defaulttype::Vector2& CameraSettings::getFocalLength() const
@@ -231,6 +254,8 @@ void CameraSettings::setFocalLength(const Vector2& f)
 	composeP();
 	composeGL();
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 float CameraSettings::getFz() const { return d_fz.getValue(); }
 void CameraSettings::setFz(float fz)
@@ -238,6 +263,8 @@ void CameraSettings::setFz(float fz)
 	// No need to recompose, fz only used for projection operations
 	d_fz.setValue(fz);
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 const defaulttype::Vector2& CameraSettings::getPrincipalPointPosition() const
 {
@@ -249,6 +276,8 @@ void CameraSettings::setPrincipalPointPosition(const Vector2& c)
 	composeP();
 	composeGL();
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 float CameraSettings::getAxisSkew() const { return d_s.getValue(); }
 void CameraSettings::setAxisSkew(float s)
@@ -257,6 +286,8 @@ void CameraSettings::setAxisSkew(float s)
 	composeP();
 	composeGL();
 	this->checkData(false);
+
+	recalculate3DCorners();
 }
 void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 																	const Vector3& t)
@@ -289,7 +320,7 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 
 	Rigid cpos;
 	cpos.getCenter() = t;
-	cpos.getOrientation() = /*Quat(Vector3(1, 0, 0), M_PI) * */camera_ori;
+	cpos.getOrientation() = /*Quat(Vector3(1, 0, 0), M_PI) * */ camera_ori;
 
 	Matrix3 lol;
 	cpos.getOrientation().toMatrix(lol);
@@ -338,8 +369,7 @@ void CameraSettings::decomposeGL()
 	d_c.setValue(Vector2(cx, cy));
 	Matrix3 R;
 	for (unsigned j = 0; j < 3; j++)
-		for (unsigned i = 0; i < 3; i++)
-			R[j][i] = glM[j][i];
+		for (unsigned i = 0; i < 3; i++) R[j][i] = glM[j][i];
 
 	Quat camera_ori;
 	camera_ori.fromMatrix(R);
@@ -463,7 +493,8 @@ void CameraSettings::composeCV()
 	d_K.setValue(K);
 
 	Matrix3 R;
-	Quat q = /*Quat(Vector3(1, 0, 0), M_PI) * */d_camPos.getValue().getOrientation();
+	Quat q =
+			/*Quat(Vector3(1, 0, 0), M_PI) * */ d_camPos.getValue().getOrientation();
 	q.toMatrix(R);
 	d_R.setValue(R);
 	d_t.setValue(d_camPos.getValue().getCenter());
@@ -497,6 +528,30 @@ void CameraSettings::composeP()
 	d_P.setValue(M);
 }
 
+void CameraSettings::recalculate2DCorners()
+{
+	int w = d_imageSize.getValue().x();
+	int h = d_imageSize.getValue().y();
+	helper::vector<Vector2> &corners2D = *d_2DCorners.beginEdit();
+	corners2D.push_back(Vector2(0, 0));
+	corners2D.push_back(Vector2(0, h));
+	corners2D.push_back(Vector2(w, h));
+	corners2D.push_back(Vector2(w, 0));
+	d_2DCorners.endEdit();
+}
+
+void CameraSettings::recalculate3DCorners()
+{
+	Vector3 p1, p2, p3, p4;
+	this->getCornersPosition(p1, p2, p3, p4);
+	helper::vector<Vector3> &corners3D = *d_3DCorners.beginEdit();
+	corners3D.push_back(p1);
+	corners3D.push_back(p2);
+	corners3D.push_back(p3);
+	corners3D.push_back(p4);
+	d_3DCorners.endEdit();
+}
+
 void CameraSettings::init()
 {
 	typedef ImplicitDataEngine::DataCallback callback;
@@ -512,8 +567,7 @@ void CameraSettings::init()
 									(callback)&CameraSettings::GLProjectionChanged);
 	addDataCallback(&d_glModelview,
 									(callback)&CameraSettings::GLModelviewChanged);
-	addDataCallback(&d_glViewport,
-									(callback)&CameraSettings::GLViewportChanged);
+	addDataCallback(&d_glViewport, (callback)&CameraSettings::GLViewportChanged);
 	addDataCallback(&d_zClip, (callback)&CameraSettings::GLZClipChanged);
 	addDataCallback(&d_camPos, (callback)&CameraSettings::CamPosChanged);
 	addDataCallback(&d_f, (callback)&CameraSettings::FocalLengthChanged);
@@ -521,6 +575,9 @@ void CameraSettings::init()
 	addDataCallback(&d_c,
 									(callback)&CameraSettings::PrincipalPointPositionChanged);
 	addDataCallback(&d_s, (callback)&CameraSettings::AxisSkewChanged);
+
+	addOutput(&d_2DCorners);
+	addOutput(&d_3DCorners);
 
 	Matrix4 mv;
 
@@ -556,6 +613,10 @@ void CameraSettings::init()
 			composeP();
 		}
 	}
+	recalculate2DCorners();
+
+	recalculate3DCorners();
+
 	checkData(false);
 }
 

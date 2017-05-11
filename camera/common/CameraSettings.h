@@ -65,8 +65,9 @@ class CameraSettings : public common::ImplicitDataEngine
 										 "principal point position in the image (in pixel units)")),
 				d_s(initData(&d_s, "s",
 										 "Axis skew (usually set to 0. Used in some very specific "
-										 "digitalization processes)"))
-
+										 "digitalization processes)")),
+				d_2DCorners(initData(&d_2DCorners, "2DCorners", "image's corners in image's coordinates")),
+				d_3DCorners(initData(&d_3DCorners, "3DCorners", "image's corners in world coordinates"))
 	{
 	}
 
@@ -144,6 +145,8 @@ class CameraSettings : public common::ImplicitDataEngine
 	Data<Vector3> d_t;
 	// Dimensions in pixels of the image
 	Data<Vec2i> d_imageSize;
+	Data<helper::vector<defaulttype::Vector3> > d_3DCorners;
+	Data<helper::vector<defaulttype::Vector2> > d_2DCorners;
 	// 4x4 Opengl Projection matrix
 	Data<Matrix4> d_glProjection;
 	// 4x4 Opengl Modelview matrix
@@ -244,6 +247,8 @@ class CameraSettings : public common::ImplicitDataEngine
 	{
 		setAxisSkew(d_s.getValue());
 	}
+	void recalculate2DCorners();
+	void recalculate3DCorners();
 };
 
 }  // namespace processor
