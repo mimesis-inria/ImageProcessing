@@ -31,28 +31,17 @@ defaulttype::Vector2 CameraSettings::get2DFrom3DPosition(const Vector3& pt)
 defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x, double y,
 																												 float fz)
 {
-	Matrix3 C;
-	Vector3 T;
+	Matrix3 K = d_K.getValue();
+	Matrix3 R = d_R.getValue();
+	Vector3 t = -R * d_t.getValue();
 
-	const Mat3x4d& P = d_P.getValue();
-	for (unsigned j = 0; j < 3; j++)
-	{
-		for (unsigned i = 0; i < 3; i++)
-		{
-			C[j][i] = P[j][i];
-		}
-		T[j] = P[j][3];
-	}
 
-	if (defaulttype::oneNorm(C) == 0) return Vector3();
+	Matrix3 iK;
+	iK.invert(K);
 
-	Matrix3 iC;
-	iC.invert(C);
+	Vector3 point3D = iK * Vector3(x, y, 1) * ((fz == -1) ? (d_fz.getValue()) : (fz));
 
-	Vector3 camera_pos = -iC * T;
-
-	return iC * Vector3(x, y, 1) * ((fz == -1) ? (d_fz.getValue()) : (fz)) +
-				 camera_pos;
+	return R.transposed() * (point3D - t);
 }
 
 defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(const Vector2& p,
@@ -320,11 +309,8 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 
 	Rigid cpos;
 	cpos.getCenter() = t;
-	cpos.getOrientation() = /*Quat(Vector3(1, 0, 0), M_PI) * */ camera_ori;
+	cpos.getOrientation() = camera_ori;
 
-	Matrix3 lol;
-	cpos.getOrientation().toMatrix(lol);
-	std::cout << "R after quat conversion: " << lol << std::endl;
 	d_camPos.setValue(cpos);
 }
 
@@ -378,10 +364,6 @@ void CameraSettings::decomposeGL()
 	Rigid cpos;
 	cpos.getCenter() = camera_pos;
 	cpos.getOrientation() = camera_ori;
-
-	Matrix3 lol;
-	cpos.getOrientation().toMatrix(lol);
-	std::cout << "R after quat conversion: " << lol << std::endl;
 
 	d_camPos.setValue(cpos);
 }
@@ -459,7 +441,6 @@ void CameraSettings::composeGL()
 		MM[j][3] = p[j];
 		MM[3][j] = 0;
 	}
-	// negate to follow OpenGL's right hand rule
 	MM[3][3] = 1.0;
 
 	d_glModelview.setValue(MM);
@@ -493,8 +474,7 @@ void CameraSettings::composeCV()
 	d_K.setValue(K);
 
 	Matrix3 R;
-	Quat q =
-			/*Quat(Vector3(1, 0, 0), M_PI) * */ d_camPos.getValue().getOrientation();
+	Quat q = d_camPos.getValue().getOrientation();
 	q.toMatrix(R);
 	d_R.setValue(R);
 	d_t.setValue(d_camPos.getValue().getCenter());
@@ -513,17 +493,13 @@ void CameraSettings::composeP()
 	// in camera coordinates
 	t = -R * t;
 
-	double ptr[12] = {1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0};
-	Mat3x4d I(ptr);
-
-	double ptr2[16] = {R[0][0], R[0][1], R[0][2], t[0],    R[1][0], R[1][1],
-										 R[1][2], t[1],    R[2][0], R[2][1], R[2][2], t[2],
-										 0.0,     0.0,     0.0,     1.0};
-	Matrix4 Rt(ptr2);
+	double ptr2[12] = {R[0][0], R[0][1], R[0][2], t[0],    R[1][0], R[1][1],
+										 R[1][2], t[1],    R[2][0], R[2][1], R[2][2], t[2]};
+	Mat3x4d Rt(ptr2);
 
 	// http://perception.inrialpes.fr/~Horaud/livre-fichiersPS/VO-HoraudMonga.pdf
 	// p.146
-	Mat3x4d M = K * I * Rt;
+	Mat3x4d M = K * Rt;
 
 	d_P.setValue(M);
 }
@@ -545,10 +521,10 @@ void CameraSettings::recalculate3DCorners()
 	Vector3 p1, p2, p3, p4;
 	this->getCornersPosition(p1, p2, p3, p4);
 	helper::vector<Vector3> &corners3D = *d_3DCorners.beginEdit();
+	corners3D.push_back(p4);
 	corners3D.push_back(p1);
 	corners3D.push_back(p2);
 	corners3D.push_back(p3);
-	corners3D.push_back(p4);
 	d_3DCorners.endEdit();
 }
 

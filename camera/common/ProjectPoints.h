@@ -31,7 +31,7 @@ class ProjectPoints : public common::ImplicitDataEngine
 			: l_cam(initLink("cam",
 											 "link to CameraSettings component containing and "
 											 "maintaining the camera's parameters")),
-				d_2Dto3D(initData(&d_2Dto3D, true, "2Dto3D", "if false, 3D to 2D")),
+				d_2Dto3D(initData(&d_2Dto3D, true, "to3D", "if false, 3D to 2D")),
 				d_depth(initData(&d_depth, -1.0f, "depth", "default is -1 (retrieves depth from fz in camSettings)")),
 				d_Pts3D(initData(&d_Pts3D, "points3D", "3D points")),
 				d_Pts2D(initData(&d_Pts2D, "points2D", "2D points"))
