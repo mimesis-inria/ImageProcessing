@@ -35,11 +35,11 @@ defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x, double y,
 	Matrix3 R = d_R.getValue();
 	Vector3 t = -R * d_t.getValue();
 
-
 	Matrix3 iK;
 	iK.invert(K);
 
-	Vector3 point3D = iK * Vector3(x, y, 1) * ((fz == -1) ? (d_fz.getValue()) : (fz));
+	Vector3 point3D =
+			iK * Vector3(x, y, 1) * ((fz == -1) ? (d_fz.getValue()) : (fz));
 
 	return R.transposed() * (point3D - t);
 }
@@ -362,8 +362,9 @@ void CameraSettings::decomposeGL()
 	Vector3 camera_pos(glM[0][3], glM[1][3], glM[2][3]);
 
 	Rigid cpos;
-	cpos.getCenter() = camera_pos;
-	cpos.getOrientation() = camera_ori;
+	cpos.getOrientation() = Quat(Vector3(1, 0, 0), M_PI) * camera_ori;
+	cpos.getOrientation().toMatrix(R);
+	cpos.getCenter() = -R * camera_pos;
 
 	d_camPos.setValue(cpos);
 }
@@ -432,7 +433,10 @@ void CameraSettings::composeGL()
 	Quat Orig = d_camPos.getValue().getOrientation();
 	Orig.toMatrix(R);
 
-	Vector3 p = d_camPos.getValue().getCenter();
+	Vector3 p = R * d_camPos.getValue().getCenter();
+
+	Orig = Quat(Vector3(1, 0, 0), M_PI) * d_camPos.getValue().getOrientation();
+	Orig.toMatrix(R);
 
 	for (unsigned int j = 0; j < 3; j++)
 	{
@@ -508,7 +512,7 @@ void CameraSettings::recalculate2DCorners()
 {
 	int w = d_imageSize.getValue().x();
 	int h = d_imageSize.getValue().y();
-	helper::vector<Vector2> &corners2D = *d_2DCorners.beginEdit();
+	helper::vector<Vector2>& corners2D = *d_2DCorners.beginEdit();
 	corners2D.push_back(Vector2(0, 0));
 	corners2D.push_back(Vector2(0, h));
 	corners2D.push_back(Vector2(w, h));
@@ -520,7 +524,7 @@ void CameraSettings::recalculate3DCorners()
 {
 	Vector3 p1, p2, p3, p4;
 	this->getCornersPosition(p1, p2, p3, p4);
-	helper::vector<Vector3> &corners3D = *d_3DCorners.beginEdit();
+	helper::vector<Vector3>& corners3D = *d_3DCorners.beginEdit();
 	corners3D.push_back(p4);
 	corners3D.push_back(p1);
 	corners3D.push_back(p2);
