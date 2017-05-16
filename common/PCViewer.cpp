@@ -18,7 +18,7 @@ int PCViewerClass =
         .add<PCViewer>();
 
 PCViewer::PCViewer()
-		: d_size(initData(&d_size, 1.0f, "size", "point size")),
+		: d_size(initData(&d_size, 1.0, "size", "point size")),
 			d_positions(initData(&d_positions, "points", "point cloud's positions")),
       d_colors(initData(&d_colors, "colors", "point cloud's point colors"))
 {
@@ -57,7 +57,7 @@ void PCViewer::computeBBox(const core::ExecParams* params, bool)
   double maxBBox[3] = {-max_double, -max_double, -max_double};
   double minBBox[3] = {max_double, max_double, max_double};
   double r = d_size.getValue();
-	for (const Vec3f& p : m_positions)
+	for (const Vector3& p : m_positions)
     for (int i = 0; i < 3; ++i)
     {
       if (p[i] + r > maxBBox[i]) maxBBox[i] = p[i] + r;
@@ -77,7 +77,7 @@ void PCViewer::draw(const core::visual::VisualParams*)
 
 	for (size_t i = 0; i < m_positions.size(); ++i)
 	{
-		Vec3f pt = m_positions[i];
+		Vector3 pt = m_positions[i];
 		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		glVertex3f(pt.x(),
 							 pt.y(),

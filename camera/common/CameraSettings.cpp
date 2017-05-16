@@ -29,7 +29,7 @@ defaulttype::Vector2 CameraSettings::get2DFrom3DPosition(const Vector3& pt)
 }
 
 defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x, double y,
-																												 float fz)
+																												 double fz)
 {
 	Matrix3 K = d_K.getValue();
 	Matrix3 R = d_R.getValue();
@@ -45,13 +45,13 @@ defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x, double y,
 }
 
 defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(const Vector2& p,
-																												 float fz)
+																												 double fz)
 {
 	return get3DFrom2DPosition(p[0], p[1], fz);
 }
 
 void CameraSettings::getCornersPosition(Vector3& p1, Vector3& p2, Vector3& p3,
-																				Vector3& p4, float fz)
+																				Vector3& p4, double fz)
 {
 	if (d_imageSize.getValue().x() == 0 || d_imageSize.getValue().y() == 0)
 	{
@@ -246,8 +246,8 @@ void CameraSettings::setFocalLength(const Vector2& f)
 
 	recalculate3DCorners();
 }
-float CameraSettings::getFz() const { return d_fz.getValue(); }
-void CameraSettings::setFz(float fz)
+double CameraSettings::getFz() const { return d_fz.getValue(); }
+void CameraSettings::setFz(double fz)
 {
 	// No need to recompose, fz only used for projection operations
 	d_fz.setValue(fz);
@@ -268,8 +268,8 @@ void CameraSettings::setPrincipalPointPosition(const Vector2& c)
 
 	recalculate3DCorners();
 }
-float CameraSettings::getAxisSkew() const { return d_s.getValue(); }
-void CameraSettings::setAxisSkew(float s)
+double CameraSettings::getAxisSkew() const { return d_s.getValue(); }
+void CameraSettings::setAxisSkew(double s)
 {
 	d_s.setValue(s);
 	composeP();
@@ -317,7 +317,6 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 // Decomposes P (sets f, c, s, camPos)
 void CameraSettings::decomposeP()
 {
-	std::cout << "decomposeP:\nP = \n" << d_P.getValue();
 	cv::Mat_<double> P, K, R, t;
 	common::matrix::sofaMat2cvMat(d_P.getValue(), P);
 
@@ -336,9 +335,6 @@ void CameraSettings::decomposeP()
 // Decomposes OpenGL modelview and projection matrix
 void CameraSettings::decomposeGL()
 {
-	std::cout << "decomposeGL:\nModelview = \n"
-						<< d_glModelview.getValue() << "\nProjection = \n"
-						<< d_glProjection.getValue() << std::endl;
 	Matrix4 glP = d_glProjection.getValue();
 	Matrix4 glM = d_glModelview.getValue();
 
@@ -362,7 +358,7 @@ void CameraSettings::decomposeGL()
 	Vector3 camera_pos(glM[0][3], glM[1][3], glM[2][3]);
 
 	Rigid cpos;
-	cpos.getOrientation() = Quat(Vector3(1, 0, 0), M_PI) * camera_ori;
+	cpos.getOrientation() = Quat(Vector3(1.0, 0.0, 0.0), M_PI) * camera_ori;
 	cpos.getOrientation().toMatrix(R);
 	cpos.getCenter() = -R * camera_pos;
 
@@ -372,28 +368,14 @@ void CameraSettings::decomposeGL()
 // decomposes OpenCV's K, R and t
 void CameraSettings::decomposeCV()
 {
-	std::cout << "decomposeCV:\nK = \n"
-						<< d_K.getValue() << "\nR = \n"
-						<< d_R.getValue() << "\nt = \n"
-						<< d_t.getValue() << std::endl;
-
 	decomposeKRt(d_K.getValue(), d_R.getValue(), d_t.getValue());
 }
 
 // Composes OpenGL's Modelview and Projection matrices
 void CameraSettings::composeGL()
 {
-	std::cout << "composeGL" << std::endl;
-	std::cout << d_f.getName() << d_f.getValue() << std::endl;
-	std::cout << d_c.getName() << d_c.getValue() << std::endl;
-	std::cout << d_camPos.getName()
-						<< " center: " << d_camPos.getValue().getCenter() << std::endl;
-	std::cout << d_camPos.getName()
-						<< "orientation: " << d_camPos.getValue().getOrientation()
-						<< std::endl;
-
-	float n = d_zClip.getValue().x();
-	float f = d_zClip.getValue().y();
+	double n = d_zClip.getValue().x();
+	double f = d_zClip.getValue().y();
 	double w = d_imageSize.getValue().x();
 	double h = d_imageSize.getValue().y();
 
@@ -405,25 +387,25 @@ void CameraSettings::composeGL()
 	Matrix4 glP;
 
 	glP[0][0] = 2.0 * fx / w;
-	glP[0][1] = 0;
-	glP[0][2] = 0;
+	glP[0][1] = 0.0;
+	glP[0][2] = 0.0;
 	glP[0][3] = 1.0 - 2.0 * cx / w;
 
 	//	glP[1][0] = -2.0 * s / w;
-	glP[1][0] = 0;
+	glP[1][0] = 0.0;
 	glP[1][1] = 2.0 * fy / h;
-	glP[1][2] = 0;
+	glP[1][2] = 0.0;
 	glP[1][3] = -1.0 + 2.0 * cy / h;
 
-	glP[2][0] = 0;
-	glP[2][1] = 0;
+	glP[2][0] = 0.0;
+	glP[2][1] = 0.0;
 	glP[2][2] = (-(f + n)) / (f - n);
 	glP[2][3] = (-2.0 * f * n) / (f - n);
 
-	glP[3][0] = 0;
-	glP[3][1] = 0;
+	glP[3][0] = 0.0;
+	glP[3][1] = 0.0;
 	glP[3][2] = -1.0;
-	glP[3][3] = 0;
+	glP[3][3] = 0.0;
 
 	d_glProjection.setValue(glP);
 
@@ -435,7 +417,7 @@ void CameraSettings::composeGL()
 
 	Vector3 p = R * d_camPos.getValue().getCenter();
 
-	Orig = Quat(Vector3(1, 0, 0), M_PI) * d_camPos.getValue().getOrientation();
+	Orig = Quat(Vector3(1.0, 0.0, 0.0), M_PI) * d_camPos.getValue().getOrientation();
 	Orig.toMatrix(R);
 
 	for (unsigned int j = 0; j < 3; j++)
@@ -443,7 +425,7 @@ void CameraSettings::composeGL()
 		for (unsigned int i = 0; i < 3; i++) MM[j][i] = R[j][i];
 
 		MM[j][3] = p[j];
-		MM[3][j] = 0;
+		MM[3][j] = 0.0;
 	}
 	MM[3][3] = 1.0;
 
@@ -453,8 +435,6 @@ void CameraSettings::composeGL()
 // Composes K, R, t
 void CameraSettings::composeCV()
 {
-	std::cout << "composeCV" << std::endl;
-
 	double fx = d_f.getValue().x();
 	double fy = d_f.getValue().y();
 	//	double s = d_s.getValue();
@@ -465,15 +445,15 @@ void CameraSettings::composeCV()
 	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
 	K[0][0] = fx;
 	//	K[0][1] = s;
-	K[0][1] = 0;
+	K[0][1] = 0.0;
 	K[0][2] = cx;
 
-	K[1][0] = 0;
+	K[1][0] = 0.0;
 	K[1][1] = fy;
 	K[1][2] = cy;
 
-	K[2][0] = 0;
-	K[2][1] = 0;
+	K[2][0] = 0.0;
+	K[2][1] = 0.0;
 	K[2][2] = 1.0;
 	d_K.setValue(K);
 
@@ -487,7 +467,6 @@ void CameraSettings::composeCV()
 // Composes the Projection matrix P
 void CameraSettings::composeP()
 {
-	std::cout << "composeP" << std::endl;
 	composeCV();
 	Vector3 t = d_t.getValue();
 	const Matrix3& R = d_R.getValue();
@@ -501,8 +480,6 @@ void CameraSettings::composeP()
 										 R[1][2], t[1],    R[2][0], R[2][1], R[2][2], t[2]};
 	Mat3x4d Rt(ptr2);
 
-	// http://perception.inrialpes.fr/~Horaud/livre-fichiersPS/VO-HoraudMonga.pdf
-	// p.146
 	Mat3x4d M = K * Rt;
 
 	d_P.setValue(M);
@@ -513,6 +490,7 @@ void CameraSettings::recalculate2DCorners()
 	int w = d_imageSize.getValue().x();
 	int h = d_imageSize.getValue().y();
 	helper::vector<Vector2>& corners2D = *d_2DCorners.beginEdit();
+	corners2D.clear();
 	corners2D.push_back(Vector2(0, 0));
 	corners2D.push_back(Vector2(0, h));
 	corners2D.push_back(Vector2(w, h));
@@ -525,6 +503,7 @@ void CameraSettings::recalculate3DCorners()
 	Vector3 p1, p2, p3, p4;
 	this->getCornersPosition(p1, p2, p3, p4);
 	helper::vector<Vector3>& corners3D = *d_3DCorners.beginEdit();
+	corners3D.clear();
 	corners3D.push_back(p4);
 	corners3D.push_back(p1);
 	corners3D.push_back(p2);
@@ -577,7 +556,6 @@ void CameraSettings::init()
 		}
 		else if (d_glProjection.isSet() || d_glModelview.isSet())
 		{
-			std::cout << "CameraSettings: from GL" << std::endl;
 			decomposeGL();
 			composeP();
 		}

@@ -25,6 +25,9 @@ FrameViewer::FrameViewer()
 		: d_frame(initData(&d_frame, "img", "frame to display in opencv window")),
 			d_corners(initData(&d_corners, "corners",
 												 "3D world coordinates of the image corners")),
+			d_isXRay(initData(&d_isXRay, "isXRay",
+												"true if the image to displpay is an xray image, in "
+												"which case image is flipped before being displayed")),
 			d_mode(
 					initData(&d_mode, "mode", "viewer mode (PERSPECTIVE, ORTHO, HIDDEN)"))
 {
@@ -106,8 +109,10 @@ void FrameViewer::perspectiveDraw()
 							 d_frame.getValue().rows, 0, format, type,
 							 imageString.str().c_str());
 	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, d_frame.getValue().cols,
-	//							 d_frame.getValue().rows, 0, GL_BGR_EXT,
-	//GL_UNSIGNED_BYTE,
+	//							 d_frame.getValue().rows,
+	//0,
+	// GL_BGR_EXT,
+	// GL_UNSIGNED_BYTE,
 	//							 imageString.str().c_str());
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
@@ -123,15 +128,30 @@ void FrameViewer::perspectiveDraw()
 	helper::vector<defaulttype::Vector3> p = d_corners.getValue();
 
 	glBegin(GL_QUADS);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glTexCoord2f(0, 0);
-	glVertex3f(p[0][0], p[0][1], p[0][2]);
-	glTexCoord2f(1, 0);
-	glVertex3f(p[1][0], p[1][1], p[1][2]);
-	glTexCoord2f(1, 1);
-	glVertex3f(p[2][0], p[2][1], p[2][2]);
-	glTexCoord2f(0, 1);
-	glVertex3f(p[3][0], p[3][1], p[3][2]);
+	if (d_isXRay.getValue())
+	{
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glTexCoord2f(1, 0);
+		glVertex3f(p[0][0], p[0][1], p[0][2]);
+		glTexCoord2f(0, 0);
+		glVertex3f(p[1][0], p[1][1], p[1][2]);
+		glTexCoord2f(0, 1);
+		glVertex3f(p[2][0], p[2][1], p[2][2]);
+		glTexCoord2f(1, 1);
+		glVertex3f(p[3][0], p[3][1], p[3][2]);
+	}
+	else
+	{
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glTexCoord2f(0, 0);
+		glVertex3f(p[0][0], p[0][1], p[0][2]);
+		glTexCoord2f(1, 0);
+		glVertex3f(p[1][0], p[1][1], p[1][2]);
+		glTexCoord2f(1, 1);
+		glVertex3f(p[2][0], p[2][1], p[2][2]);
+		glTexCoord2f(0, 1);
+		glVertex3f(p[3][0], p[3][1], p[3][2]);
+	}
 	glEnd();
 
 	// glEnable(GL_DEPTH_TEST);
@@ -221,15 +241,30 @@ void FrameViewer::orthoDraw()
 	glLoadIdentity();
 
 	glBegin(GL_QUADS);
-	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-	glTexCoord2f(0, 1);
-	glVertex2f(0, 0);
-	glTexCoord2f(1, 1);
-	glVertex2f(1, 0);
-	glTexCoord2f(1, 0);
-	glVertex2f(1, 1);
-	glTexCoord2f(0, 0);
-	glVertex2f(0, 1);
+	if (d_isXRay.getValue())
+	{
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		glTexCoord2f(0, 1);
+		glVertex2f(1, 0);
+		glTexCoord2f(1, 1);
+		glVertex2f(0, 0);
+		glTexCoord2f(1, 0);
+		glVertex2f(0, 1);
+		glTexCoord2f(0, 0);
+		glVertex2f(1, 1);
+	}
+	else
+	{
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		glTexCoord2f(0, 1);
+		glVertex2f(0, 0);
+		glTexCoord2f(1, 1);
+		glVertex2f(1, 0);
+		glTexCoord2f(1, 0);
+		glVertex2f(1, 1);
+		glTexCoord2f(0, 0);
+		glVertex2f(0, 1);
+	}
 	glEnd();
 
 	glMatrixMode(GL_PROJECTION);
@@ -284,7 +319,7 @@ void FrameViewer::computeBBox(const core::ExecParams *params, bool)
 
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
-		const defaulttype::Vector3& p = x[i];
+		const defaulttype::Vector3 &p = x[i];
 		for (int c = 0; c < 3; c++)
 		{
 			if (p[c] > maxBBox[c]) maxBBox[c] = p[c];

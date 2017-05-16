@@ -37,6 +37,7 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 	Data<helper::vector<defaulttype::Vector3> > d_corners;
 
 	Data<helper::OptionsGroup> d_mode;
+	Data<bool> d_isXRay;
 
  private:
 	void perspectiveDraw();

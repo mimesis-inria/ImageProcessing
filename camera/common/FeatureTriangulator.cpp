@@ -224,7 +224,7 @@ void FeatureTriangulator::triangulate(const cv::Point2f& l,
   cv::Mat_<double> um = cmL.inv() * cv::Mat_<double>(u);
   cv::Mat_<double> um1 = cmR.inv() * cv::Mat_<double>(u1);
 
-  if (d_rectify.getValue())
+	if (d_rectify.getValue() && !dvL.empty() && !dvR.empty())
   {
     u.x = rectifyPoint(um(0), um(1), dvL).x;
     u.y = rectifyPoint(um(0), um(1), dvL).y;

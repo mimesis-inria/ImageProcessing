@@ -30,7 +30,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	typedef defaulttype::Vector3 Vector3;
 	typedef defaulttype::Vec<4, int> Vector4;
 	typedef defaulttype::Vec<2, int> Vec2i;
-	typedef defaulttype::Vec<5, float> Vector5;
+	typedef defaulttype::Vec<5, double> Vector5;
 	typedef defaulttype::Mat3x4d Mat3x4d;
 	typedef defaulttype::Matrix4 Matrix4;
 	typedef defaulttype::Matrix3 Matrix3;
@@ -56,7 +56,7 @@ class CameraSettings : public common::ImplicitDataEngine
 															 "OpenGL's 4x4 Modelview matrix")),
 				d_glViewport(initData(&d_glViewport, "glViewport",
 															 "OpenGL's Viewport")),
-				d_zClip(initData(&d_zClip, Vector2(0.001f, 1000.0f), "zClip",
+				d_zClip(initData(&d_zClip, Vector2(0.001, 1000.0), "zClip",
 												 "OpenGL's z clipping values in scene unit")),
 				d_camPos(initData(&d_camPos, "camPos", "")),
 				d_f(initData(&d_f, "f", "focal length")),
@@ -79,12 +79,12 @@ class CameraSettings : public common::ImplicitDataEngine
 	Vector2 get2DFrom3DPosition(const Vector3& p);
 
 	// returns the 3D position of a 2D point 'x, y'
-	Vector3 get3DFrom2DPosition(double x, double y, float fz = -1);
-	Vector3 get3DFrom2DPosition(const Vector2& p, float fz = -1);
+	Vector3 get3DFrom2DPosition(double x, double y, double fz = -1);
+	Vector3 get3DFrom2DPosition(const Vector2& p, double fz = -1);
 
 	// Returns the corners of the image plane
 	void getCornersPosition(Vector3& p1, Vector3& p2, Vector3& p3, Vector3& p4,
-													float fz = -1);
+													double fz = -1);
 
 	// Getters & setters for the private Data (also used as callbacks when
 	// modifying values in the GUI
@@ -123,14 +123,14 @@ class CameraSettings : public common::ImplicitDataEngine
 	const Vector2& getFocalLength() const;
 	void setFocalLength(const Vector2& f);
 
-	float getFz() const;
-	void setFz(float fz);
+	double getFz() const;
+	void setFz(double fz);
 
 	const Vector2& getPrincipalPointPosition() const;
 	void setPrincipalPointPosition(const Vector2& c);
 
-	float getAxisSkew() const;
-	void setAxisSkew(float s);
+	double getAxisSkew() const;
+	void setAxisSkew(double s);
 
  private:
 	// 3x4 global projection matrix
@@ -145,8 +145,6 @@ class CameraSettings : public common::ImplicitDataEngine
 	Data<Vector3> d_t;
 	// Dimensions in pixels of the image
 	Data<Vec2i> d_imageSize;
-	Data<helper::vector<defaulttype::Vector3> > d_3DCorners;
-	Data<helper::vector<defaulttype::Vector2> > d_2DCorners;
 	// 4x4 Opengl Projection matrix
 	Data<Matrix4> d_glProjection;
 	// 4x4 Opengl Modelview matrix
@@ -160,11 +158,14 @@ class CameraSettings : public common::ImplicitDataEngine
 	// Focale
 	Data<Vector2> d_f;
 	// Focal distance
-	Data<float> d_fz;
+	Data<double> d_fz;
 	// Principal point
 	Data<Vector2> d_c;
 	// Axis skew (not used in practice...)
-	Data<float> d_s;
+	Data<double> d_s;
+
+	Data<helper::vector<defaulttype::Vector3> > d_3DCorners;
+	Data<helper::vector<defaulttype::Vector2> > d_2DCorners;
 
 	// Decomposes P
 	void decomposeP();

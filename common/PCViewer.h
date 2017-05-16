@@ -13,7 +13,7 @@ namespace processor
 {
 class PCViewer : public common::ImplicitDataEngine
 {
-	typedef defaulttype::Vec3f Vec3f;
+	typedef defaulttype::Vector3 Vector3;
   typedef defaulttype::Vec<3, uint8_t> Vec3b;
 
  public:
@@ -29,14 +29,14 @@ class PCViewer : public common::ImplicitDataEngine
   void draw(const core::visual::VisualParams*);
   void reinit();
 
-	Data<float> d_size;
+	Data<double> d_size;
 	// INPUTS
-	Data<helper::vector<Vec3f> > d_positions;
+	Data<helper::vector<Vector3> > d_positions;
   Data<helper::vector<Vec3b> > d_colors;
 
  private:
   std::vector<defaulttype::Vec4f> m_colors;
-	std::vector<Vec3f> m_positions;
+	std::vector<Vector3> m_positions;
 };
 
 }  // namespace processor
