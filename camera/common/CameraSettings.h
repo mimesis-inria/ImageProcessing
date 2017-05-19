@@ -24,6 +24,32 @@ namespace processor
 {
 class CameraSettings : public common::ImplicitDataEngine
 {
+	/// This component holds the monoscopic camera parameters and maintain their
+	/// 4 different representations up-to-date at all time:
+	/// - OpenGL representation (4x4 modelview + projection matrix)
+	/// - "Vision" representation: (3x4 projection matrix M)
+	/// - "OpenCV" representation: (3x3 K, R, and vector t)
+	/// - "Decomposed" representation: 2D scale, skew and translation matrix,
+	///    camera position, orientation etc.
+	/// There is multiple ways of initializing this component, but the imageSize
+	/// and focal distance should always be provided. Their default value are
+	/// 1280x720 and 1.0 and can be left that way if satisfying.
+	/// - By simply creating the component with its default parameters,
+	///   CameraSettings will initialize itself according to OpenGL's current
+	///   modelview and projection matrix.
+	/// - One can also set the right parameters a-posteriori using another
+	///   component such as SolvePnP or CalibrateCamera
+	/// - A camera can be defined using only 5 points (technically 4 but here
+	///   5...): the position of the camera in world coordinates (C), and the
+	///   position of the 4 corners of the image plane in world coordinates
+	///   (corners3D)
+	/// - otherwise the camera settings will be extracted from either:
+	/// - M if provided
+	/// - K, R and t if provided
+	/// - glModelview, glProjection if provided
+	/// - The Opengl modelview / projection matrix currently set in OpenGL's
+	///   context
+
  public:
 	typedef defaulttype::RigidTypes::Coord Rigid;
 	typedef defaulttype::Vector2 Vector2;
@@ -39,39 +65,43 @@ class CameraSettings : public common::ImplicitDataEngine
  public:
 	SOFA_CLASS(CameraSettings, common::ImplicitDataEngine);
 
-	// CameraSettings ctor. All parameters are optional and can be set using
-	// calibration components, Opengl components, or file loaders
 	CameraSettings()
-			: d_P(initData(&d_P, "P", "3x4 Projection matrix")),
-				d_K(initData(&d_K, "K", "3x3 camera matrix from OpenCV")),
+			: d_imageSize(
+						initData(&d_imageSize, "imageSize", "Image resolution in pixels")),
+				d_f(initData(&d_f, "f", "distance camera -> plane")),
+				d_translate2D(
+						initData(&d_translate2D, "translate2D",
+										 "principal point position in the image (in pixel units)")),
+				d_scale2D(initData(&d_scale2D, "scale2D", "focal opening")),
 				d_distCoefs(initData(&d_distCoefs, "distCoefs",
 														 "The camera's distortion coefficients")),
+
+				d_M(initData(&d_M, "M", "3x4 Projection matrix as described in Computer Vision")),
+
+				d_K(initData(&d_K, "K", "3x3 camera matrix from OpenCV")),
 				d_R(initData(&d_R, "R", "3x3 rotation matrix")),
-				d_t(initData(&d_t, "t", "optical center position")),
-				d_imageSize(
-						initData(&d_imageSize, "imageSize", "Image resolution in pixels")),
+				d_t(initData(&d_t, "position",
+										 "optical center position in the world reference frame")),
 				d_glProjection(initData(&d_glProjection, "glProjection",
 																"OpenGL's 4x4 Projection matrix")),
 				d_glModelview(initData(&d_glModelview, "glModelview",
 															 "OpenGL's 4x4 Modelview matrix")),
-				d_glViewport(initData(&d_glViewport, "glViewport",
-															 "OpenGL's Viewport")),
+				d_orientation(initData(&d_orientation, "orientation",
+															 "OpenGL's camera orientation z-axis flipped")),
+				d_glViewport(
+						initData(&d_glViewport, "glViewport", "OpenGL's Viewport")),
 				d_zClip(initData(&d_zClip, Vector2(0.001, 1000.0), "zClip",
 												 "OpenGL's z clipping values in scene unit")),
-				d_camPos(initData(&d_camPos, "camPos", "")),
-				d_f(initData(&d_f, "f", "focal length")),
-				d_fz(initData(&d_fz, "fz", "distance camera -> plane")),
-				d_c(initData(&d_c, "c",
-										 "principal point position in the image (in pixel units)")),
-				d_s(initData(&d_s, "s",
-										 "Axis skew (usually set to 0. Used in some very specific "
-										 "digitalization processes)")),
-				d_2DCorners(initData(&d_2DCorners, "2DCorners", "image's corners in image's coordinates")),
-				d_3DCorners(initData(&d_3DCorners, "3DCorners", "image's corners in world coordinates"))
+				d_3DCorners(initData(&d_3DCorners, "3DCorners",
+														 "image's corners in world coordinates"))
 	{
+		addAlias(&d_t, "t");
 	}
 
 	~CameraSettings() {}
+
+	void buildFromCamPosAndImageCorners();
+
 	void init();
 	void update() { checkData(true); }
 
@@ -89,7 +119,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	// Getters & setters for the private Data (also used as callbacks when
 	// modifying values in the GUI
 	const Mat3x4d& getProjectionMatrix() const;
-	void setProjectionMatrix(const Mat3x4d& P);
+	void setProjectionMatrix(const Mat3x4d& M);
 
 	const Matrix3& getIntrinsicCameraMatrix() const;
 	void setIntrinsicCameraMatrix(const Matrix3& K, bool update = true);
@@ -100,8 +130,8 @@ class CameraSettings : public common::ImplicitDataEngine
 	const Matrix3& getRotationMatrix() const;
 	void setRotationMatrix(const Matrix3& R, bool update = true);
 
-	const Vector3& getTranslationVector() const;
-	void setTranslationVector(const Vector3& t, bool update = true);
+	const Vector3& getPosition() const;
+	void setPosition(const Vector3& t, bool update = true);
 
 	const Vec2i& getImageSize() const;
 	void setImageSize(const Vec2i& imgSize);
@@ -117,58 +147,59 @@ class CameraSettings : public common::ImplicitDataEngine
 	const Vector2& getGLZClip() const;
 	void setGLZClip(const Vector2& zClip);
 
-	const Rigid& getCamPos() const;
-	void setCamPos(const Rigid& camPos);
+	const Quat& getOrientation() const;
+	void setOrientation(const Quat& camPos);
 
-	const Vector2& getFocalLength() const;
-	void setFocalLength(const Vector2& f);
+	const Matrix3& get2DScaleMatrix() const;
+	void set2DScaleMatrix(const Matrix3& scale2DMat);
 
-	double getFz() const;
-	void setFz(double fz);
+	double getFocalDistance() const;
+	void setFocalDistance(double f);
 
-	const Vector2& getPrincipalPointPosition() const;
-	void setPrincipalPointPosition(const Vector2& c);
+	const Matrix3& get2DTranslationMatrix() const;
+	void set2DTranslationMatrix(const Matrix3& translation2DMat);
 
 	double getAxisSkew() const;
 	void setAxisSkew(double s);
 
  private:
-	// 3x4 global projection matrix
-	Data<Mat3x4d> d_P;
-	// Intrinsic camera matrix
-	Data<Matrix3> d_K;
+	// Dimensions in pixels of the image
+	Data<Vec2i> d_imageSize;
+	// Focal distance
+	Data<double> d_f;
+
+	// 2D translation matrix (u0 v0)
+	Data<Matrix3> d_translate2D;
+	// 2D scale matrix (focal opening)
+	Data<Matrix3> d_scale2D;
 	// Distortion coefficients
 	Data<helper::vector<double> > d_distCoefs;
+
+	// 3x4 global projection matrix
+	Data<Mat3x4d> d_M;
+
+	// Intrinsic camera matrix
+	Data<Matrix3> d_K;
 	// 3x3 rotation matrix
 	Data<Matrix3> d_R;
 	// Position in world coordinates of the camera's optical center
 	Data<Vector3> d_t;
-	// Dimensions in pixels of the image
-	Data<Vec2i> d_imageSize;
+
 	// 4x4 Opengl Projection matrix
 	Data<Matrix4> d_glProjection;
 	// 4x4 Opengl Modelview matrix
 	Data<Matrix4> d_glModelview;
+	// Quaternion representation of the Rotation Matrix
+	Data<Quat> d_orientation;
 	// Opengl Viewport
 	Data<Vector4> d_glViewport;
 	// zNear, zFar
 	Data<Vector2> d_zClip;
-	// Opengl's Camera position and orientation
-	Data<Rigid> d_camPos;
-	// Focale
-	Data<Vector2> d_f;
-	// Focal distance
-	Data<double> d_fz;
-	// Principal point
-	Data<Vector2> d_c;
-	// Axis skew (not used in practice...)
-	Data<double> d_s;
 
 	Data<helper::vector<defaulttype::Vector3> > d_3DCorners;
-	Data<helper::vector<defaulttype::Vector2> > d_2DCorners;
 
-	// Decomposes P
-	void decomposeP();
+	// Decomposes M
+	void decomposeM();
 
 	// Decomposes OpenGL modelview and projection matrix
 	void decomposeGL();
@@ -182,15 +213,15 @@ class CameraSettings : public common::ImplicitDataEngine
 	// Composes K, R, t and camPos
 	void composeCV();
 
-	// Composes the Projection matrix P
-	void composeP();
-	void decomposeKRt(const Matrix3& K, const Matrix3& R, const Vector3& t);
+	// Composes the Projection matrix M
+	void composeM();
+	void decomposeK(const Matrix3& K);
 
  public:
 	// Data callbacks for GUI
 	void ProjectionMatrixChanged(core::objectmodel::BaseObject*)
 	{
-		setProjectionMatrix(d_P.getValue());
+		setProjectionMatrix(d_M.getValue());
 	}
 	void IntrinsicCameraMatrixChanged(core::objectmodel::BaseObject*)
 	{
@@ -206,7 +237,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	}
 	void TranslationVectorChanged(core::objectmodel::BaseObject*)
 	{
-		setTranslationVector(d_t.getValue());
+		setPosition(d_t.getValue());
 	}
 	void ImageSizeChanged(core::objectmodel::BaseObject*)
 	{
@@ -228,25 +259,21 @@ class CameraSettings : public common::ImplicitDataEngine
 	{
 		setGLZClip(d_zClip.getValue());
 	}
-	void CamPosChanged(core::objectmodel::BaseObject*)
+	void OrientationChanged(core::objectmodel::BaseObject*)
 	{
-		setCamPos(d_camPos.getValue());
+		setOrientation(d_orientation.getValue());
 	}
-	void FocalLengthChanged(core::objectmodel::BaseObject*)
+	void Scale2DChanged(core::objectmodel::BaseObject*)
 	{
-		setFocalLength(d_f.getValue());
+		set2DScaleMatrix(d_scale2D.getValue());
 	}
-	void FzChanged(core::objectmodel::BaseObject*)
+	void FocalDistanceChanged(core::objectmodel::BaseObject*)
 	{
-		setFz(d_fz.getValue());
+		setFocalDistance(d_f.getValue());
 	}
-	void PrincipalPointPositionChanged(core::objectmodel::BaseObject*)
+	void Translation2DChanged(core::objectmodel::BaseObject*)
 	{
-		setPrincipalPointPosition(d_c.getValue());
-	}
-	void AxisSkewChanged(core::objectmodel::BaseObject*)
-	{
-		setAxisSkew(d_s.getValue());
+		set2DTranslationMatrix(d_translate2D.getValue());
 	}
 	void recalculate2DCorners();
 	void recalculate3DCorners();

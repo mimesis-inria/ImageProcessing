@@ -20,16 +20,16 @@ int CameraSettingsClass =
 
 defaulttype::Vector2 CameraSettings::get2DFrom3DPosition(const Vector3& pt)
 {
-	const Mat3x4d& P = d_P.getValue();
-	double rx = P[0][0] * pt[0] + P[0][1] * pt[1] + P[0][2] * pt[2] + P[0][3];
-	double ry = P[1][0] * pt[0] + P[1][1] * pt[1] + P[1][2] * pt[2] + P[1][3];
-	double rz = P[2][0] * pt[0] + P[2][1] * pt[1] + P[2][2] * pt[2] + P[2][3];
+	const Mat3x4d& M = d_M.getValue();
+	double rx = M[0][0] * pt[0] + M[0][1] * pt[1] + M[0][2] * pt[2] + M[0][3];
+	double ry = M[1][0] * pt[0] + M[1][1] * pt[1] + M[1][2] * pt[2] + M[1][3];
+	double rz = M[2][0] * pt[0] + M[2][1] * pt[1] + M[2][2] * pt[2] + M[2][3];
 
 	return Vector2(rx, ry) * 1.0 / rz;
 }
 
 defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x, double y,
-																												 double fz)
+																												 double f)
 {
 	Matrix3 K = d_K.getValue();
 	Matrix3 R = d_R.getValue();
@@ -39,19 +39,19 @@ defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x, double y,
 	iK.invert(K);
 
 	Vector3 point3D =
-			iK * Vector3(x, y, 1) * ((fz == -1) ? (d_fz.getValue()) : (fz));
+			iK * Vector3(x, y, 1) * ((f == -1) ? (d_f.getValue()) : (f));
 
 	return R.transposed() * (point3D - t);
 }
 
 defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(const Vector2& p,
-																												 double fz)
+																												 double f)
 {
-	return get3DFrom2DPosition(p[0], p[1], fz);
+	return get3DFrom2DPosition(p[0], p[1], f);
 }
 
 void CameraSettings::getCornersPosition(Vector3& p1, Vector3& p2, Vector3& p3,
-																				Vector3& p4, double fz)
+																				Vector3& p4, double f)
 {
 	if (d_imageSize.getValue().x() == 0 || d_imageSize.getValue().y() == 0)
 	{
@@ -63,20 +63,20 @@ void CameraSettings::getCornersPosition(Vector3& p1, Vector3& p2, Vector3& p3,
 
 	int w = d_imageSize.getValue().x();
 	int h = d_imageSize.getValue().y();
-	p1 = get3DFrom2DPosition(0, 0, fz);
-	p2 = get3DFrom2DPosition(0, h, fz);
-	p3 = get3DFrom2DPosition(w, h, fz);
-	p4 = get3DFrom2DPosition(w, 0, fz);
+	p1 = get3DFrom2DPosition(0, 0, f);
+	p2 = get3DFrom2DPosition(0, h, f);
+	p3 = get3DFrom2DPosition(w, h, f);
+	p4 = get3DFrom2DPosition(w, 0, f);
 }
 
 const defaulttype::Mat3x4d& CameraSettings::getProjectionMatrix() const
 {
-	return d_P.getValue();
+	return d_M.getValue();
 }
-void CameraSettings::setProjectionMatrix(const Mat3x4d& P)
+void CameraSettings::setProjectionMatrix(const Mat3x4d& M)
 {
-	d_P.setValue(P);
-	decomposeP();
+	d_M.setValue(M);
+	decomposeM();
 	composeCV();
 	composeGL();
 
@@ -95,7 +95,7 @@ void CameraSettings::setIntrinsicCameraMatrix(const Matrix3& K, bool update)
 	if (update)
 	{
 		decomposeCV();
-		composeP();
+		composeM();
 		composeGL();
 	}
 	this->checkData(false);
@@ -128,7 +128,7 @@ void CameraSettings::setRotationMatrix(const Matrix3& R, bool update)
 	if (update)
 	{
 		decomposeCV();
-		composeP();
+		composeM();
 		composeGL();
 	}
 	this->checkData(false);
@@ -136,17 +136,17 @@ void CameraSettings::setRotationMatrix(const Matrix3& R, bool update)
 	recalculate3DCorners();
 }
 
-const defaulttype::Vector3& CameraSettings::getTranslationVector() const
+const defaulttype::Vector3& CameraSettings::getPosition() const
 {
 	return d_t.getValue();
 }
-void CameraSettings::setTranslationVector(const Vector3& t, bool update)
+void CameraSettings::setPosition(const Vector3& t, bool update)
 {
 	d_t.setValue(t);
 	if (update)
 	{
 		decomposeCV();
-		composeP();
+		composeM();
 		composeGL();
 	}
 	this->checkData(false);
@@ -161,11 +161,10 @@ const defaulttype::Vec2i& CameraSettings::getImageSize() const
 void CameraSettings::setImageSize(const Vec2i& imgSize)
 {
 	d_imageSize.setValue(imgSize);
-	composeP();
+	composeM();
 	composeGL();
 	this->checkData(false);
 
-	recalculate2DCorners();
 	recalculate3DCorners();
 }
 const defaulttype::Matrix4& CameraSettings::getGLProjection() const
@@ -176,7 +175,7 @@ void CameraSettings::setGLProjection(const Matrix4& glProjection)
 {
 	d_glProjection.setValue(glProjection);
 	decomposeGL();
-	composeP();
+	composeM();
 	this->checkData(false);
 
 	recalculate3DCorners();
@@ -189,7 +188,7 @@ void CameraSettings::setGLModelview(const Matrix4& glModelview)
 {
 	d_glModelview.setValue(glModelview);
 	decomposeGL();
-	composeP();
+	composeM();
 	this->checkData(false);
 
 	recalculate3DCorners();
@@ -219,67 +218,61 @@ void CameraSettings::setGLZClip(const Vector2& zClip)
 
 	recalculate3DCorners();
 }
-const defaulttype::RigidTypes::Coord& CameraSettings::getCamPos() const
+const defaulttype::Quat& CameraSettings::getOrientation() const
 {
-	return d_camPos.getValue();
+	return d_orientation.getValue();
 }
-void CameraSettings::setCamPos(const Rigid& camPos)
+void CameraSettings::setOrientation(const Quat& orientation)
 {
-	d_camPos.setValue(camPos);
-	composeP();
+	d_orientation.setValue(orientation);
+	Matrix3 R;
+	orientation.toMatrix(R);
+	d_R.setValue(R);
+	composeM();
 	composeGL();
 	this->checkData(false);
 
 	recalculate3DCorners();
 }
 
-const defaulttype::Vector2& CameraSettings::getFocalLength() const
+const defaulttype::Matrix3& CameraSettings::get2DScaleMatrix() const
 {
-	return d_f.getValue();
+	return d_scale2D.getValue();
 }
-void CameraSettings::setFocalLength(const Vector2& f)
+void CameraSettings::set2DScaleMatrix(const Matrix3& scale2D)
 {
-	d_f.setValue(f);
-	composeP();
+	d_scale2D.setValue(scale2D);
+	composeM();
 	composeGL();
 	this->checkData(false);
 
 	recalculate3DCorners();
 }
-double CameraSettings::getFz() const { return d_fz.getValue(); }
-void CameraSettings::setFz(double fz)
+double CameraSettings::getFocalDistance() const { return d_f.getValue(); }
+void CameraSettings::setFocalDistance(double f)
 {
 	// No need to recompose, fz only used for projection operations
-	d_fz.setValue(fz);
+	d_f.setValue(f);
 	this->checkData(false);
 
 	recalculate3DCorners();
 }
-const defaulttype::Vector2& CameraSettings::getPrincipalPointPosition() const
+
+const defaulttype::Matrix3& CameraSettings::get2DTranslationMatrix() const
 {
-	return d_c.getValue();
+	return d_translate2D.getValue();
 }
-void CameraSettings::setPrincipalPointPosition(const Vector2& c)
+void CameraSettings::set2DTranslationMatrix(const Matrix3& translation2D)
 {
-	d_c.setValue(c);
-	composeP();
+	d_translate2D.setValue(translation2D);
+	composeM();
 	composeGL();
 	this->checkData(false);
 
 	recalculate3DCorners();
 }
-double CameraSettings::getAxisSkew() const { return d_s.getValue(); }
-void CameraSettings::setAxisSkew(double s)
-{
-	d_s.setValue(s);
-	composeP();
-	composeGL();
-	this->checkData(false);
 
-	recalculate3DCorners();
-}
-void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
-																	const Vector3& t)
+void CameraSettings::decomposeK(const Matrix3& K)
 {
 	if (d_imageSize.getValue().x() == 0 || d_imageSize.getValue().y() == 0)
 	{
@@ -288,39 +281,22 @@ void CameraSettings::decomposeKRt(const Matrix3& K, const Matrix3& R,
 		return;
 	}
 
-	double w = d_imageSize.getValue().x();
-	double h = d_imageSize.getValue().y();
+	Matrix3 translate2D(Vector3(1, 0, K[0][2]), Vector3(0, 1, K[1][2]),
+									Vector3(0, 0, 1));
+	Matrix3 scale2D(Vector3(K[0][0], 0, 0), Vector3(0, K[1][1], 0),
+									Vector3(0, 0, 1));
 
-	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
-	double fx = K[0][0];
-	//	double s = K[0][1];
-	double cx = K[0][2];
-
-	double fy = K[1][1];
-	double cy = K[1][2];
-
-	d_f.setValue(defaulttype::Vector2(fx, fy));
-	d_c.setValue(defaulttype::Vector2(cx, cy));
-	//	d_s.setValue(s);
-	d_s.setValue(0.0);
-
-	Quat camera_ori;
-	camera_ori.fromMatrix(R);
-
-	Rigid cpos;
-	cpos.getCenter() = t;
-	cpos.getOrientation() = camera_ori;
-
-	d_camPos.setValue(cpos);
+	d_scale2D.setValue(scale2D);
+	d_translate2D.setValue(translate2D);
 }
 
 // Decomposes P (sets f, c, s, camPos)
-void CameraSettings::decomposeP()
+void CameraSettings::decomposeM()
 {
-	cv::Mat_<double> P, K, R, t;
-	common::matrix::sofaMat2cvMat(d_P.getValue(), P);
+	cv::Mat_<double> M, K, R, t;
+	common::matrix::sofaMat2cvMat(d_M.getValue(), M);
 
-	cv::decomposeProjectionMatrix(P, K, R, t);
+	cv::decomposeProjectionMatrix(M, K, R, t);
 
 	Vector3 _t =
 			Vector3(t.at<double>(0, 0), t.at<double>(1, 0), t.at<double>(2, 0)) *
@@ -329,7 +305,9 @@ void CameraSettings::decomposeP()
 	Matrix3 _K, _R;
 	common::matrix::cvMat2sofaMat(K, _K);
 	common::matrix::cvMat2sofaMat(R, _R);
-	decomposeKRt(_K, _R, _t);
+	decomposeK(_K);
+	d_R.setValue(_R);
+	d_t.setValue(_t);
 }
 
 // Decomposes OpenGL modelview and projection matrix
@@ -346,9 +324,14 @@ void CameraSettings::decomposeGL()
 	double cx = 0.5 * w * (1.0 - glP[0][3]);
 	double cy = 0.5 * h * (1.0 + glP[1][3]);
 
-	d_f.setValue(Vector2(fx, fy));
-	d_s.setValue(0);
-	d_c.setValue(Vector2(cx, cy));
+	Matrix3 translate2D(Vector3(1, 0, cx), Vector3(0, 1, cy),
+									Vector3(0, 0, 1));
+	Matrix3 scale2D(Vector3(fx, 0, 0), Vector3(0, fy, 0),
+									Vector3(0, 0, 1));
+
+	d_translate2D.setValue(translate2D);
+	d_translate2D.setValue(scale2D);
+
 	Matrix3 R;
 	for (unsigned j = 0; j < 3; j++)
 		for (unsigned i = 0; i < 3; i++) R[j][i] = glM[j][i];
@@ -357,18 +340,18 @@ void CameraSettings::decomposeGL()
 	camera_ori.fromMatrix(R);
 	Vector3 camera_pos(glM[0][3], glM[1][3], glM[2][3]);
 
-	Rigid cpos;
-	cpos.getOrientation() = Quat(Vector3(1.0, 0.0, 0.0), M_PI) * camera_ori;
-	cpos.getOrientation().toMatrix(R);
-	cpos.getCenter() = -R * camera_pos;
+	camera_ori = Quat(Vector3(1.0, 0.0, 0.0), M_PI) * camera_ori;
+	camera_pos = -R * camera_pos;
 
-	d_camPos.setValue(cpos);
+	d_orientation.setValue(camera_ori);
+	d_R.setValue(R);
+	d_t.setValue(camera_pos);
 }
 
 // decomposes OpenCV's K, R and t
 void CameraSettings::decomposeCV()
 {
-	decomposeKRt(d_K.getValue(), d_R.getValue(), d_t.getValue());
+	decomposeK(d_K.getValue());
 }
 
 // Composes OpenGL's Modelview and Projection matrices
@@ -379,23 +362,21 @@ void CameraSettings::composeGL()
 	double w = d_imageSize.getValue().x();
 	double h = d_imageSize.getValue().y();
 
-	double fx = d_f.getValue().x();
-	double fy = d_f.getValue().y();
-	double cx = d_c.getValue().x();
-	double cy = d_c.getValue().y();
+	Matrix3 T = d_translate2D.getValue();
+	Matrix3 S = d_scale2D.getValue();
 
 	Matrix4 glP;
 
-	glP[0][0] = 2.0 * fx / w;
+	glP[0][0] = 2.0 * S[0][0] / w;
 	glP[0][1] = 0.0;
 	glP[0][2] = 0.0;
-	glP[0][3] = 1.0 - 2.0 * cx / w;
+	glP[0][3] = 1.0 - 2.0 * T[0][2] / w;
 
 	//	glP[1][0] = -2.0 * s / w;
 	glP[1][0] = 0.0;
-	glP[1][1] = 2.0 * fy / h;
+	glP[1][1] = 2.0 * S[1][1] / h;
 	glP[1][2] = 0.0;
-	glP[1][3] = -1.0 + 2.0 * cy / h;
+	glP[1][3] = -1.0 + 2.0 * T[1][2] / h;
 
 	glP[2][0] = 0.0;
 	glP[2][1] = 0.0;
@@ -411,14 +392,15 @@ void CameraSettings::composeGL()
 
 	Matrix4 MM;
 
+	Quat q;
+	q.fromMatrix(d_R.getValue());
+	q = Quat(Vector3(1.0, 0.0, 0.0), M_PI) * q;
+	d_orientation.setValue(q);
+
 	Matrix3 R;
-	Quat Orig = d_camPos.getValue().getOrientation();
-	Orig.toMatrix(R);
+	d_orientation.getValue().toMatrix(R);
 
-	Vector3 p = R * d_camPos.getValue().getCenter();
-
-	Orig = Quat(Vector3(1.0, 0.0, 0.0), M_PI) * d_camPos.getValue().getOrientation();
-	Orig.toMatrix(R);
+	Vector3 p = -R * d_t.getValue();
 
 	for (unsigned int j = 0; j < 3; j++)
 	{
@@ -435,37 +417,15 @@ void CameraSettings::composeGL()
 // Composes K, R, t
 void CameraSettings::composeCV()
 {
-	double fx = d_f.getValue().x();
-	double fy = d_f.getValue().y();
-	//	double s = d_s.getValue();
-	double cx = d_c.getValue().x();
-	double cy = d_c.getValue().y();
+	Matrix3 T = d_translate2D.getValue();
+	Matrix3 S = d_scale2D.getValue();
 
-	Matrix3 K;
-	// see https://strawlab.org/2011/11/05/augmented-reality-with-OpenGL
-	K[0][0] = fx;
-	//	K[0][1] = s;
-	K[0][1] = 0.0;
-	K[0][2] = cx;
-
-	K[1][0] = 0.0;
-	K[1][1] = fy;
-	K[1][2] = cy;
-
-	K[2][0] = 0.0;
-	K[2][1] = 0.0;
-	K[2][2] = 1.0;
+	Matrix3 K = T * S;
 	d_K.setValue(K);
-
-	Matrix3 R;
-	Quat q = d_camPos.getValue().getOrientation();
-	q.toMatrix(R);
-	d_R.setValue(R);
-	d_t.setValue(d_camPos.getValue().getCenter());
 }
 
 // Composes the Projection matrix P
-void CameraSettings::composeP()
+void CameraSettings::composeM()
 {
 	composeCV();
 	Vector3 t = d_t.getValue();
@@ -482,20 +442,7 @@ void CameraSettings::composeP()
 
 	Mat3x4d M = K * Rt;
 
-	d_P.setValue(M);
-}
-
-void CameraSettings::recalculate2DCorners()
-{
-	int w = d_imageSize.getValue().x();
-	int h = d_imageSize.getValue().y();
-	helper::vector<Vector2>& corners2D = *d_2DCorners.beginEdit();
-	corners2D.clear();
-	corners2D.push_back(Vector2(0, 0));
-	corners2D.push_back(Vector2(0, h));
-	corners2D.push_back(Vector2(w, h));
-	corners2D.push_back(Vector2(w, 0));
-	d_2DCorners.endEdit();
+	d_M.setValue(M);
 }
 
 void CameraSettings::recalculate3DCorners()
@@ -511,10 +458,86 @@ void CameraSettings::recalculate3DCorners()
 	d_3DCorners.endEdit();
 }
 
+/// Projects a point p on a plane defined by a Point A and a normal n
+defaulttype::Vector3 orthoProj(const defaulttype::Vector3& p,
+															 const defaulttype::Vector3& A,
+															 const defaulttype::Vector3& n)
+{
+	double lambda = ((A * n) - (p * n)) / (n * n);
+	return p + lambda * n;
+}
+
+double length(const defaulttype::Vector3& a, const defaulttype::Vector3& b)
+{
+	return sqrt((a.x() - b.x()) * (a.x() - b.x()) +
+							(a.y() - b.y()) * (a.y() - b.y()) +
+							(a.z() - b.z()) * (a.z() - b.z()));
+}
+
+void CameraSettings::buildFromCamPosAndImageCorners()
+{
+	double w = d_imageSize.getValue().x();
+	double h = d_imageSize.getValue().x();
+
+	Vector3 A = d_3DCorners.getValue()[0];
+	Vector3 B = d_3DCorners.getValue()[1];
+	Vector3 D = d_3DCorners.getValue()[3];
+
+	Vector3 c = d_t.getValue();
+
+	double u0, v0, fu, fv, f, Xmm, Ymm;
+	Vector3 O, n, AB, AD, x, y;
+
+	AB = B - A;
+	AD = D - A;
+	n = AB.normalized().cross(AD.normalized());
+
+	// Optical center projection
+	O = orthoProj(c, A, n);
+
+	// focal distance
+	f = length(c, O);
+
+	x = orthoProj(O, A, AD.normalized());
+	y = orthoProj(O, A, AB.normalized());
+
+	double xdist = length(x, A);
+	double ydist = length(y, A);
+
+	// image dimensions in world units
+	Xmm = length(B, A);
+	Ymm = length(D, A);
+
+	// pixel size
+	double Su = Xmm / w;
+	double Sv = Ymm / h;
+
+	// 2D scaling
+	fu = f / Su;
+	fv = f / Sv;
+
+	u0 = xdist / Su;
+	v0 = ydist / Sv;
+
+	Matrix3 R(Vector3(AB.normalized()), Vector3(AD.normalized()), Vector3(n));
+
+	Rigid cam;
+	cam.getOrientation().fromMatrix(R);
+	cam.getCenter() = c;
+
+	std::cout << "camPos:" << c << std::endl;
+	std::cout << "camOri:" << R << std::endl;
+	std::cout << "u0:" << u0 << std::endl;
+	std::cout << "v0:" << v0 << std::endl;
+	std::cout << "fu:" << fu << std::endl;
+	std::cout << "fv:" << fv << std::endl;
+	std::cout << "f:" << f << std::endl;
+}
+
 void CameraSettings::init()
 {
 	typedef ImplicitDataEngine::DataCallback callback;
-	addDataCallback(&d_P, (callback)&CameraSettings::ProjectionMatrixChanged);
+	addDataCallback(&d_M, (callback)&CameraSettings::ProjectionMatrixChanged);
 	addDataCallback(&d_K,
 									(callback)&CameraSettings::IntrinsicCameraMatrixChanged);
 	addDataCallback(&d_distCoefs,
@@ -528,36 +551,39 @@ void CameraSettings::init()
 									(callback)&CameraSettings::GLModelviewChanged);
 	addDataCallback(&d_glViewport, (callback)&CameraSettings::GLViewportChanged);
 	addDataCallback(&d_zClip, (callback)&CameraSettings::GLZClipChanged);
-	addDataCallback(&d_camPos, (callback)&CameraSettings::CamPosChanged);
-	addDataCallback(&d_f, (callback)&CameraSettings::FocalLengthChanged);
-	addDataCallback(&d_fz, (callback)&CameraSettings::FzChanged);
-	addDataCallback(&d_c,
-									(callback)&CameraSettings::PrincipalPointPositionChanged);
-	addDataCallback(&d_s, (callback)&CameraSettings::AxisSkewChanged);
+	addDataCallback(&d_orientation, (callback)&CameraSettings::OrientationChanged);
+	addDataCallback(&d_scale2D, (callback)&CameraSettings::Scale2DChanged);
+	addDataCallback(&d_f, (callback)&CameraSettings::FocalDistanceChanged);
+	addDataCallback(&d_translate2D,
+									(callback)&CameraSettings::Translation2DChanged);
 
-	addOutput(&d_2DCorners);
 	addOutput(&d_3DCorners);
-
-	Matrix4 mv;
 
 	if (d_imageSize.getValue().x() && d_imageSize.getValue().y())
 	{
-		if (d_P.isSet())
+		if (d_3DCorners.isSet() && d_t.isSet())
 		{
-			decomposeP();
+			this->buildFromCamPosAndImageCorners();
+			composeCV();
+			composeM();
+			composeGL();
+		}
+		if (d_M.isSet())
+		{
+			decomposeM();
 			composeCV();
 			composeGL();
 		}
 		else if (d_K.isSet() || d_R.isSet() || d_t.isSet())
 		{
 			decomposeCV();
-			composeP();
+			composeM();
 			composeGL();
 		}
 		else if (d_glProjection.isSet() || d_glModelview.isSet())
 		{
 			decomposeGL();
-			composeP();
+			composeM();
 		}
 		else
 		{
@@ -568,11 +594,9 @@ void CameraSettings::init()
 			d_glProjection.setValue(p);
 			d_glModelview.setValue(m);
 			decomposeGL();
-			composeP();
+			composeM();
 		}
 	}
-	recalculate2DCorners();
-
 	recalculate3DCorners();
 
 	checkData(false);

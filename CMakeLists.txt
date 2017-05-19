@@ -45,6 +45,15 @@ set(HEADER_FILES
   features/PointPicker2D.h
   features/Segmenter2D.h
   features/OpticalFlow.h
+
+  utils/PointVectorConverter.h
+  utils/PointVectorConverter.inl
+  utils/PointVec2Keypoint.h
+  utils/Vector2SSVector.h
+  utils/Vector2SSVector.inl
+  utils/NegateVector.h
+#  utils/ConversionFunctor.h
+#  utils/ConversionFunctor.inl
   )
 
 set(SOURCE_FILES
@@ -81,6 +90,12 @@ set(SOURCE_FILES
   features/PointPicker2D.cpp
   features/Segmenter2D.cpp
   features/OpticalFlow.cpp
+
+  utils/PointVectorConverter.cpp
+  utils/PointVec2Keypoint.cpp
+  utils/Vector2SSVector.cpp
+  utils/NegateVector.cpp
+#  utils/ConversionFunctor.cpp
   )
 
 include_directories(ProcessOR/)

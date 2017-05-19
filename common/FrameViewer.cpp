@@ -123,7 +123,7 @@ void FrameViewer::perspectiveDraw()
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthMask(GL_FALSE);
+//	glDepthMask(GL_FALSE);
 
 	helper::vector<defaulttype::Vector3> p = d_corners.getValue();
 
@@ -159,7 +159,7 @@ void FrameViewer::perspectiveDraw()
 	glDisable(GL_TEXTURE_2D);  // disable texture 2D
 														 // glDepthMask (GL_TRUE);		// enable zBuffer
 	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+//	glDepthMask(GL_TRUE);
 }
 
 void FrameViewer::orthoDraw()
@@ -272,12 +272,12 @@ void FrameViewer::orthoDraw()
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 
-	// glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);     // enable light
 	glDisable(GL_TEXTURE_2D);  // disable texture 2D
 														 // glDepthMask (GL_TRUE);		// enable zBuffer
 	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+//	glDepthMask(GL_TRUE);
 }
 
 void FrameViewer::draw(const core::visual::VisualParams *)
