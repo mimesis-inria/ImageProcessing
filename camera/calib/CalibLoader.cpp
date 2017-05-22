@@ -24,7 +24,10 @@ int CalibLoaderClass =
         .add<CalibLoader>();
 
 CalibLoader::CalibLoader()
-		: l_cam1(initLink("cam",
+		: l_sCam(initLink("stereoCam",
+											"Link to the StereoSettings component holding the stereo "
+											"settings (fundamental matrix etc)")),
+			l_cam1(initLink("cam",
 											"link to CameraSettings component containing and "
 											"maintaining the camera's parameters")),
 			l_cam2(initLink("cam2",
@@ -106,8 +109,8 @@ bool CalibLoader::canLoad(const std::string& calibfile) const
 
   if (!sofa::helper::system::DataRepository.findFile(sfilename))
   {
-    msg_error("CalibLoader::canLoad()") << "Error: File '" << calibfile
-                                        << "' not found. ";
+		msg_error("CalibLoader::canLoad()")
+				<< "Error: File '" << calibfile << "' not found. ";
     return false;
   }
 
@@ -116,8 +119,8 @@ bool CalibLoader::canLoad(const std::string& calibfile) const
   // -- Check if file is readable:
   if (!f.good())
   {
-    msg_error("CalibLoader::canLoad()") << "Error: Cannot read file '"
-                                        << calibfile << "'.";
+		msg_error("CalibLoader::canLoad()")
+				<< "Error: Cannot read file '" << calibfile << "'.";
     return false;
   }
   f.close();
@@ -142,7 +145,12 @@ void CalibLoader::setCurrentCalib(CalibData& d)
 	else
 	{
 		l_cam2->setDistortionCoefficients(d.distCoefs2);
-		l_cam2->setIntrinsicCameraMatrix(d.projMat2);
+		l_cam2->setIntrinsicCameraMatrix(d.projMat2, false);
+		l_sCam->setFundamentalMatrix(d.F);
+		l_sCam->setRotationMatrix(d.R);
+		l_sCam->setTranslationVector(d.T);
+		l_cam2->setPosition(d.T, false);
+		l_cam2->setRotationMatrix(d.R, true);
 	}
 	l_cam1->setDistortionCoefficients(d.distCoefs1);
 	l_cam1->setIntrinsicCameraMatrix(d.projMat1);
@@ -150,7 +158,6 @@ void CalibLoader::setCurrentCalib(CalibData& d)
 
 void CalibLoader::setCurrentCalib(const std::string& calibName)
 {
-  d_isStereo.setValue(false);
   auto it = m_calibs.find(calibName);
   if (it != m_calibs.end())
   {
@@ -177,21 +184,21 @@ void CalibLoader::load(const std::string& filename)
   }
 
   std::string calibName;
-  cv::Mat_<double> cameraMatrix1;
-  cv::Mat_<double> cameraMatrix2;
-  cv::Mat_<double> distVec1;
-  cv::Mat_<double> distVec2;
+	cv::Mat cameraMatrix1;
+	cv::Mat cameraMatrix2;
+	cv::Mat distVec1;
+	cv::Mat distVec2;
   double error1;
   double error2;
-  cv::Mat_<double> R;
-  cv::Mat_<double> T;
-  cv::Mat_<double> F;
+	cv::Mat R;
+	cv::Mat T;
+	cv::Mat F;
   double totalError;
 
   calibName = helper::system::SetDirectory::GetFileNameWithoutExtension(
       filename.c_str());
 
-  cv::read((*fs)["cam_mats_left"], cameraMatrix1, cv::Mat());
+	cv::read((*fs)["cam_mats_left"], cameraMatrix1, cv::Mat());
   cv::read((*fs)["cam_mats_right"], cameraMatrix2, cv::Mat());
   cv::read((*fs)["error_left"], error1, -1.0);
   cv::read((*fs)["error_right"], error2, -1.0);
@@ -204,18 +211,18 @@ void CalibLoader::load(const std::string& filename)
 
   CalibData c;
 
-  common::matrix::cvMat2sofaMat<3, 3, double>(cameraMatrix1, c.projMat1);
-  common::matrix::cvMat2sofaVector(distVec1, c.distCoefs1);
+	common::matrix::cvMat2sofaMat(cameraMatrix1, c.projMat1);
+	common::matrix::cvMat2sofaVector(distVec1, c.distCoefs1);
   c.error1 = error1;
-  common::matrix::cvMat2sofaMat<3, 3, double>(cameraMatrix2, c.projMat2);
+	common::matrix::cvMat2sofaMat(cameraMatrix2, c.projMat2);
   common::matrix::cvMat2sofaVector(distVec2, c.distCoefs2);
   c.error2 = error2;
   common::matrix::cvMat2sofaMat(R, c.R);
-  common::matrix::cvMat2sofaVector(T, c.T);
+	common::matrix::cvMat2sofaVector(T, c.T);
   common::matrix::cvMat2sofaMat(F, c.F);
   c.totalError = totalError;
 
-  m_calibs[calibName] = c;
+	m_calibs[calibName] = c;
 
   if (calibName == d_calibNames.getValue().getSelectedItem())
     setCurrentCalib(calibName);
