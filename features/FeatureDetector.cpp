@@ -52,7 +52,7 @@ FeatureDetector::FeatureDetector()
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
               ,
               "SIFT", "SURF", "DAISY"
-#endif SOFAOR_OPENCV_CONTRIB_ENABLED
+#endif // SOFAOR_OPENCV_CONTRIB_ENABLED
               );
   t->setSelectedItem("FAST");
   d_detectorType.endEdit();
@@ -69,7 +69,7 @@ FeatureDetector::FeatureDetector()
   m_detectors[SIFT] = new SIFTDetector(this);
   m_detectors[SURF] = new SURFDetector(this);
   m_detectors[DAISY] = new DAISYDetector(this);
-#endif SOFAOR_OPENCV_CONTRIB_ENABLED
+#endif // SOFAOR_OPENCV_CONTRIB_ENABLED
 }
 
 FeatureDetector::~FeatureDetector() {}

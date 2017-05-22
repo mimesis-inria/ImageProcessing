@@ -3,9 +3,10 @@
 
 #include "Detectors.h"
 #include "common/ImageFilter.h"
+#include "camera/common/StereoSettings.h"
 
-#include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvDMatch.h>
+#include <SofaORCommon/cvKeypoint.h>
 #include <SofaORCommon/cvMat.h>
 #include <SofaORCommon/cvMatUtils.h>
 
@@ -22,6 +23,11 @@ namespace processor
 {
 class MatchingConstraints : public ImageFilter
 {
+	typedef sofa::core::objectmodel::SingleLink<MatchingConstraints, StereoSettings,
+																							BaseLink::FLAG_STOREPATH |
+																									BaseLink::FLAG_STRONGLINK>
+			CamSettings;
+
  public:
   SOFA_CLASS(MatchingConstraints, ImageFilter);
 
@@ -34,9 +40,9 @@ class MatchingConstraints : public ImageFilter
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
 
   // INPUTS
+	CamSettings l_cam;
   Data<bool> d_useEpipolarFilter;
   Data<int> d_epipolarThreshold;
-  Data<defaulttype::Matrix3> d_F;
   Data<bool> d_useMDFilter;
   Data<float> d_mdfRadius;
   Data<bool> d_useKNNFilter;
@@ -68,7 +74,7 @@ class MatchingConstraints : public ImageFilter
   // knn-specific outputs
   Data<sofa::helper::vector<float> > d_knnLambdas;
 
-private:
+ private:
   bool computeEpipolarLines();
   void computeEpipolarDistances();
 

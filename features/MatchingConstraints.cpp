@@ -19,15 +19,15 @@ int MatchingConstraintsClass =
 
 MatchingConstraints::MatchingConstraints()
     : ImageFilter(false),
+			l_cam(initLink("cam",
+										 "StereoSettings holding the fundamental matrix needed for "
+										 "the epipolar constraint filtering")),
       d_useEpipolarFilter(
           initData(&d_useEpipolarFilter, false, "epipolarFilter",
                    "set to true to enable epipolar contrstraint filtering")),
       d_epipolarThreshold(
           initData(&d_epipolarThreshold, 5, "epipolarThreshold",
                    "in px, maximum distance to the epipolar line")),
-      d_F(initData(&d_F, "F",
-                   "camera's Fundamental matrix to use to compute the epipolar "
-                   "lines.")),
       d_useMDFilter(initData(
           &d_useMDFilter, true, "MDFilter",
           "set to true to enable minimal distance filtering constraint")),
@@ -40,7 +40,7 @@ MatchingConstraints::MatchingConstraints()
                            "lambda value for KNNFilter (d2 / d1 < lambda)")),
       d_keypointsL_in(initData(
           &d_keypointsL_in, "keypoints1",
-          "input keypoints left (usually from FeatureDetector)", false, true)),
+					"input keypoints left (usually from FeatureDetector)", true, true)),
       d_keypointsR_in(initData(
           &d_keypointsR_in, "keypoints2",
           "input keypoints right (usually from FeatureDetector)", false, true)),
@@ -63,7 +63,7 @@ MatchingConstraints::MatchingConstraints()
       d_outliers_out(initData(&d_outliers_out, "outliers",
                               "output vector of outliers", false)),
       d_keypointsL_out(initData(&d_keypointsL_out, "keypoints1_out",
-                                "left keypoints", false, true)),
+																"left keypoints", true, true)),
       d_keypointsR_out(initData(&d_keypointsR_out, "keypoints2_out",
                                 "right keypoints", false, true)),
       d_descriptorsL_out(initData(&d_descriptorsL_out, "descriptors1_out",
@@ -112,8 +112,6 @@ void MatchingConstraints::init()
   addInput(&d_descriptorsR_in);
   addInput(&d_matches_in);
 
-  addInput(&d_F);
-
   addOutput(&d_matches_out);
   addOutput(&d_outliers_out);
   addOutput(&d_keypointsL_out);
@@ -134,7 +132,6 @@ void MatchingConstraints::init()
   if (!d_useEpipolarFilter.getValue())
   {
     d_epipolarThreshold.setDisplayed(false);
-    d_F.setDisplayed(false);
   }
   if (!d_useMDFilter.getValue())
   {
@@ -150,6 +147,12 @@ void MatchingConstraints::init()
   registerData(&d_knnLambda, 0.0f, 4.0f, 0.01f);
   registerData(&d_useMDFilter);
   registerData(&d_mdfRadius, 0.0f, 1.0f, 0.001f);
+
+	if (!l_cam.get())
+		msg_warning(getName() + "::init()")
+				<< "No Stereo camera settings link set. "
+					 "Please use attribute 'cam' if you plan on using the epipolar "
+					 "constraint filtering";
 
   ImageFilter::init();
 }
@@ -173,10 +176,10 @@ bool MatchingConstraints::computeEpipolarLines()
     ptsR.push_back(m_kptsR[i].pt);
   }
 
-  if (!d_F.getValue().empty())
+	if (!l_cam.get() || !l_cam->getFundamentalMatrix().empty())
   {
     cv::Mat_<double> f;
-    common::matrix::sofaMat2cvMat(d_F.getValue(), f);
+		common::matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), f);
     cv::computeCorrespondEpilines(ptsL, 1, f, m_epilinesL);
     cv::computeCorrespondEpilines(ptsR, 2, f, m_epilinesR);
   }
@@ -347,7 +350,8 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     std::cout << "-- WTF???? ##KPTS != MATCHES##" << std::endl;
     return;
   }
-  size_t inliersIdx = 0;
+
+	size_t inliersIdx = 0;
   helper::SVector<common::cvDMatch> dm(1, common::cvDMatch());
   for (size_t i = 0; i < m_kptsL.size(); ++i)
   {

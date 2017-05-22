@@ -3,6 +3,8 @@
 
 #include "common/ImageFilter.h"
 
+#include "camera/common/StereoSettings.h"
+
 #include <sofa/helper/SVector.h>
 
 #include <opencv2/imgproc.hpp>
@@ -15,11 +17,16 @@ namespace processor
 {
 class PointPicker2D : public ImageFilter
 {
+	typedef sofa::core::objectmodel::SingleLink<PointPicker2D, StereoSettings,
+																							BaseLink::FLAG_STOREPATH |
+																									BaseLink::FLAG_STRONGLINK>
+			Settings;
+
  public:
   SOFA_CLASS(PointPicker2D, ImageFilter);
 
 	// INPUTS
-	Data<defaulttype::Matrix3> d_F;
+	Settings l_cam;
 	Data<int> d_whichImage;
 	Data<std::string> d_getEpilinesFrom;
 	// OUTPUTS
@@ -28,9 +35,10 @@ class PointPicker2D : public ImageFilter
 
   PointPicker2D()
       : ImageFilter(false),
-				d_F(initData(
-						&d_F, "F",
-						"optional input fundamental matrix to compute epipolar lines")),
+				l_cam(initLink("cam",
+											 "optional input StereoSettings component to get the "
+											 "fundamental matrix from (used to compute epipolar "
+											 "lines")),
 				d_whichImage(initData(&d_whichImage, "whichImage",
 															"optional input integer to define if it's Left "
 															"(1) or Right(2) image, to compute epipolar "
@@ -47,7 +55,6 @@ class PointPicker2D : public ImageFilter
 
   void init()
   {
-		addInput(&d_F);
 		addInput(&d_whichImage);
 		addOutput(&d_points);
 		ImageFilter::activateMouseCallback();
@@ -58,6 +65,11 @@ class PointPicker2D : public ImageFilter
 		if (!d_points.getValue().empty())
 			for (auto pt : d_points.getValue())
 				m_pointList.push_back(cv::Point2f(pt.x(), pt.y()));
+
+		if (m_picker && !l_cam.get())
+			msg_advice(getName() + "::init()")
+					<< "No Stereo camera settings link set. "
+						 "If you want to visualize the epipolar lines, this is necessary";
   }
 
   void update()
