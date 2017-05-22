@@ -20,9 +20,9 @@ class NegateVector : public common::ImplicitDataEngine
 			: d_src(initData(&d_src, "input_position", "input vector to negate")),
 				d_srcRot(
 						initData(&d_srcRot, "input_rotation", "input rotation to negate")),
-				d_dst(initData(&d_dst, "output_position", "negated output vector"))/*,*/
-//				d_dstRot(
-//						initData(&d_dstRot, "output_rotation", "negated output vector"))
+				d_dst(initData(&d_dst, "output_position", "negated output vector")),
+				d_dstRot(
+						initData(&d_dstRot, "output_rotation", "negated output vector"))
 	{
 	}
 
@@ -38,9 +38,8 @@ class NegateVector : public common::ImplicitDataEngine
 	{
 		d_dst.setValue(-d_src.getValue());
 		defaulttype::Matrix3 rev;
-		rev.invert(d_srcRot.getValue());
-//		d_dstRot.setValue(rev);
-		d_dst.setValue(-rev.transposed() * d_dst.getValue());
+		d_dstRot.setValue(-d_srcRot.getValue().transposed());
+		d_dst.setValue(d_dstRot.getValue() * d_dst.getValue());
 	}
 
 	// INPUTS
@@ -48,7 +47,7 @@ class NegateVector : public common::ImplicitDataEngine
 	Data<defaulttype::Matrix3> d_srcRot;
 	// OUTPUTS
 	Data<defaulttype::Vector3> d_dst;
-//	Data<defaulttype::Matrix3> d_dstRot;
+	Data<defaulttype::Matrix3> d_dstRot;
 };
 
 SOFA_DECL_CLASS(NegateVector)
