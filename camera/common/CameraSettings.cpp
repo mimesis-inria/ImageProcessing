@@ -63,6 +63,7 @@ void CameraSettings::getCornersPosition(Vector3& p1, Vector3& p2, Vector3& p3,
 
 	int w = d_imageSize.getValue().x();
 	int h = d_imageSize.getValue().y();
+
 	p1 = get3DFrom2DPosition(0, 0, f);
 	p2 = get3DFrom2DPosition(0, h, f);
 	p3 = get3DFrom2DPosition(w, h, f);
@@ -282,7 +283,7 @@ void CameraSettings::decomposeK(const Matrix3& K)
 	}
 
 	Matrix3 translate2D(Vector3(1, 0, K[0][2]), Vector3(0, 1, K[1][2]),
-									Vector3(0, 0, 1));
+											Vector3(0, 0, 1));
 	Matrix3 scale2D(Vector3(K[0][0], 0, 0), Vector3(0, K[1][1], 0),
 									Vector3(0, 0, 1));
 
@@ -324,10 +325,8 @@ void CameraSettings::decomposeGL()
 	double cx = 0.5 * w * (1.0 - glP[0][3]);
 	double cy = 0.5 * h * (1.0 + glP[1][3]);
 
-	Matrix3 translate2D(Vector3(1, 0, cx), Vector3(0, 1, cy),
-									Vector3(0, 0, 1));
-	Matrix3 scale2D(Vector3(fx, 0, 0), Vector3(0, fy, 0),
-									Vector3(0, 0, 1));
+	Matrix3 translate2D(Vector3(1, 0, cx), Vector3(0, 1, cy), Vector3(0, 0, 1));
+	Matrix3 scale2D(Vector3(fx, 0, 0), Vector3(0, fy, 0), Vector3(0, 0, 1));
 
 	d_translate2D.setValue(translate2D);
 	d_translate2D.setValue(scale2D);
@@ -349,10 +348,7 @@ void CameraSettings::decomposeGL()
 }
 
 // decomposes OpenCV's K, R and t
-void CameraSettings::decomposeCV()
-{
-	decomposeK(d_K.getValue());
-}
+void CameraSettings::decomposeCV() { decomposeK(d_K.getValue()); }
 
 // Composes OpenGL's Modelview and Projection matrices
 void CameraSettings::composeGL()
@@ -447,8 +443,11 @@ void CameraSettings::composeM()
 
 void CameraSettings::recalculate3DCorners()
 {
+	if (d_K.getValue() == Matrix3())
+		return;
 	Vector3 p1, p2, p3, p4;
-	this->getCornersPosition(p1, p2, p3, p4);
+	this->getCornersPosition(p1, p2, p3, p4,
+													 (d_f.getValue() != -1) ? (d_f.getValue()) : (1.0f));
 	helper::vector<Vector3>& corners3D = *d_3DCorners.beginEdit();
 	corners3D.clear();
 	corners3D.push_back(p4);
@@ -551,7 +550,8 @@ void CameraSettings::init()
 									(callback)&CameraSettings::GLModelviewChanged);
 	addDataCallback(&d_glViewport, (callback)&CameraSettings::GLViewportChanged);
 	addDataCallback(&d_zClip, (callback)&CameraSettings::GLZClipChanged);
-	addDataCallback(&d_orientation, (callback)&CameraSettings::OrientationChanged);
+	addDataCallback(&d_orientation,
+									(callback)&CameraSettings::OrientationChanged);
 	addDataCallback(&d_scale2D, (callback)&CameraSettings::Scale2DChanged);
 	addDataCallback(&d_f, (callback)&CameraSettings::FocalDistanceChanged);
 	addDataCallback(&d_translate2D,

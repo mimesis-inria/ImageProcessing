@@ -238,12 +238,12 @@ void FeatureTriangulator::triangulate(const cv::Point2f& l,
     u1.x = um1(0);
     u1.y = um1(1);
   }
-  u.z = um(2);
-  u1.z = um1(2);
+	u.z = um(2);
+	u1.z = um1(2);
 
   cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
 
-  p = defaulttype::Vec3d(X(0), X(1), X(2));
+	p = defaulttype::Vec3d(X(0), X(1), X(2));
 }
 
 }  // namespace processor
