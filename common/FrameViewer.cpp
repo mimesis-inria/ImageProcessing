@@ -29,7 +29,8 @@ FrameViewer::FrameViewer()
 												"true if the image to displpay is an xray image, in "
 												"which case image is flipped before being displayed")),
 			d_mode(
-					initData(&d_mode, "mode", "viewer mode (PERSPECTIVE, ORTHO, HIDDEN)"))
+					initData(&d_mode, "mode", "viewer mode (PERSPECTIVE, ORTHO, HIDDEN)")),
+			d_alpha(initData(&d_alpha, "alpha", "alpha value for the texture"))
 {
 	sofa::helper::OptionsGroup *t = d_mode.beginEdit();
 	t->setNames(3, "PERSPECTIVE", "ORTHO", "HIDDEN");
@@ -130,7 +131,7 @@ void FrameViewer::perspectiveDraw()
 	glBegin(GL_QUADS);
 	if (d_isXRay.getValue())
 	{
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
 		glTexCoord2f(1, 0);
 		glVertex3f(p[0][0], p[0][1], p[0][2]);
 		glTexCoord2f(0, 0);
@@ -142,7 +143,7 @@ void FrameViewer::perspectiveDraw()
 	}
 	else
 	{
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
 		glTexCoord2f(0, 0);
 		glVertex3f(p[0][0], p[0][1], p[0][2]);
 		glTexCoord2f(1, 0);
@@ -243,7 +244,7 @@ void FrameViewer::orthoDraw()
 	glBegin(GL_QUADS);
 	if (d_isXRay.getValue())
 	{
-		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
 		glTexCoord2f(0, 1);
 		glVertex2f(1, 0);
 		glTexCoord2f(1, 1);
@@ -255,7 +256,7 @@ void FrameViewer::orthoDraw()
 	}
 	else
 	{
-		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
 		glTexCoord2f(0, 1);
 		glVertex2f(0, 0);
 		glTexCoord2f(1, 1);
