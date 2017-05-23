@@ -159,11 +159,14 @@ const defaulttype::Vec2i& CameraSettings::getImageSize() const
 {
 	return d_imageSize.getValue();
 }
-void CameraSettings::setImageSize(const Vec2i& imgSize)
+void CameraSettings::setImageSize(const Vec2i& imgSize, bool update)
 {
 	d_imageSize.setValue(imgSize);
-	composeM();
-	composeGL();
+	if (update)
+	{
+		composeM();
+		composeGL();
+	}
 	this->checkData(false);
 
 	recalculate3DCorners();

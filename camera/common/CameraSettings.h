@@ -67,7 +67,7 @@ class CameraSettings : public common::ImplicitDataEngine
 
 	CameraSettings()
 			: d_imageSize(
-						initData(&d_imageSize, "imageSize", "Image resolution in pixels")),
+						initData(&d_imageSize, Vec2i(1280, 720), "imageSize", "Image resolution in pixels")),
 				d_f(initData(&d_f, "f", "distance camera -> plane")),
 				d_translate2D(
 						initData(&d_translate2D, "translate2D",
@@ -134,7 +134,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	void setPosition(const Vector3& t, bool update = true);
 
 	const Vec2i& getImageSize() const;
-	void setImageSize(const Vec2i& imgSize);
+	void setImageSize(const Vec2i& imgSize, bool update = true);
 	const Matrix4& getGLProjection() const;
 	void setGLProjection(const Matrix4& glProjection);
 
