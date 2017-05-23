@@ -46,13 +46,6 @@ class FeatureTriangulator : public common::ImplicitDataEngine
   // INPUTS
 	StereoCamSettings l_cam;
 
-//	Data<defaulttype::Matrix3> d_R;
-//  Data<defaulttype::Vector3> d_T;
-//  Data<defaulttype::Matrix3> d_cmL;
-//  Data<defaulttype::Matrix3> d_cmR;
-//  Data<helper::vector<double> > d_dvL;
-//  Data<helper::vector<double> > d_dvR;
-
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR;
   Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;

@@ -154,6 +154,8 @@ void CalibLoader::setCurrentCalib(CalibData& d)
 	}
 	l_cam1->setDistortionCoefficients(d.distCoefs1);
 	l_cam1->setIntrinsicCameraMatrix(d.projMat1);
+	l_cam1->setRotationMatrix(d.R);
+	l_cam1->setPosition(d.T);
 }
 
 void CalibLoader::setCurrentCalib(const std::string& calibName)
