@@ -30,6 +30,7 @@ set(HEADER_FILES
   camera/calib/SolvePnP.h
   camera/calib/CalibrateStereo.h
   camera/calib/CalibLoader.h
+  camera/calib/CalibExporter.h
 
   imgproc/CannyFilter.h
   imgproc/SobelFilter.h
@@ -45,6 +46,7 @@ set(HEADER_FILES
   features/PointPicker2D.h
   features/Segmenter2D.h
   features/OpticalFlow.h
+  features/FeatureColorExtractor.cpp
 
   utils/PointVectorConverter.h
   utils/PointVectorConverter.inl
@@ -75,6 +77,7 @@ set(SOURCE_FILES
   camera/calib/SolvePnP.cpp
   camera/calib/CalibrateStereo.cpp
   camera/calib/CalibLoader.cpp
+  camera/calib/CalibExporter.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
@@ -90,6 +93,7 @@ set(SOURCE_FILES
   features/PointPicker2D.cpp
   features/Segmenter2D.cpp
   features/OpticalFlow.cpp
+  features/FeatureColorExtractor.cpp
 
   utils/PointVectorConverter.cpp
   utils/PointVec2Keypoint.cpp
