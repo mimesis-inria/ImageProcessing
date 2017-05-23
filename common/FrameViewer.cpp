@@ -30,7 +30,7 @@ FrameViewer::FrameViewer()
 												"which case image is flipped before being displayed")),
 			d_mode(
 					initData(&d_mode, "mode", "viewer mode (PERSPECTIVE, ORTHO, HIDDEN)")),
-			d_alpha(initData(&d_alpha, "alpha", "alpha value for the texture"))
+			d_alpha(initData(&d_alpha, 1.0f, "alpha", "alpha value for the texture"))
 {
 	sofa::helper::OptionsGroup *t = d_mode.beginEdit();
 	t->setNames(3, "PERSPECTIVE", "ORTHO", "HIDDEN");
