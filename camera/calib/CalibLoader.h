@@ -103,7 +103,7 @@ class CalibLoader : public common::ImplicitDataEngine
 	CamSettings l_cam2;
 	sofa::core::objectmodel::DataFileName d_calibFolder;
   Data<helper::OptionsGroup> d_calibNames;
-  Data<bool> d_isStereo;
+	bool m_isStereo;
 
 	Data<defaulttype::Vec2i> d_imSize1;
 	Data<defaulttype::Matrix3> d_K1;

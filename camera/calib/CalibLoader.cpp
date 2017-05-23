@@ -37,9 +37,7 @@ CalibLoader::CalibLoader()
                              "directory in which calibrations are stored")),
       d_calibNames(initData(&d_calibNames, "calibName",
                             "name of the calib settings currently used")),
-      d_isStereo(initData(&d_isStereo, "isStereo",
-                          "set to true if the given calib file has stereo data",
-													true, true))
+			m_isStereo(true)
 {
   f_listening.setValue(true);
 }
@@ -98,9 +96,7 @@ void CalibLoader::setCurrentCalib(CalibData& d)
 	d_F.setValue(d.E);
 	d_totalError.setValue(d.totalError);
 
-	if (d_K2.getValue().empty() || !d_isStereo.getValue())
-		d_isStereo.setValue(false);
-	else
+	if (m_isStereo)
 	{
 		l_sCam->setFundamentalMatrix(d.F);
 		l_sCam->setEssentialMatrix(d.E);
@@ -170,24 +166,24 @@ void CalibLoader::load(const std::string& filename)
   calibName = helper::system::SetDirectory::GetFileNameWithoutExtension(
       filename.c_str());
 
-	cv::read((*fs)["imsize"], imsize1, cv::Mat());
-	cv::read((*fs)["K"], K1, cv::Mat());
+	cv::read((*fs)["imsize"], imsize1, cv::Mat(1, 2, CV_32S));
+	cv::read((*fs)["K"], K1, cv::Mat(3, 3, CV_64F));
 	cv::read((*fs)["R"], R1, cv::Mat::eye(3, 3, CV_64F));
-	cv::read((*fs)["t"], T1, cv::Mat());
+	cv::read((*fs)["t"], T1, cv::Mat(1, 3, CV_64F));
 	cv::read((*fs)["delta"], delta1, cv::Mat());
 	cv::read((*fs)["error"], error1, -1.0);
 
-	cv::read((*fs)["imsize2"], imsize2, cv::Mat());
-	cv::read((*fs)["K2"], K2, cv::Mat());
+	cv::read((*fs)["imsize2"], imsize2, cv::Mat(1, 2, CV_32S));
+	cv::read((*fs)["K2"], K2, cv::Mat(3, 3, CV_64F));
 	cv::read((*fs)["R2"], R2, cv::Mat::eye(3, 3, CV_64F));
-	cv::read((*fs)["t2"], T2, cv::Mat());
+	cv::read((*fs)["t2"], T2, cv::Mat(1, 3, CV_64F));
 	cv::read((*fs)["delta2"], delta2, cv::Mat());
 	cv::read((*fs)["error2"], error2, -1.0);
 
-	cv::read((*fs)["Rs"], Rs, cv::Mat());
-	cv::read((*fs)["ts"], Ts, cv::Mat());
-	cv::read((*fs)["E"], E, cv::Mat());
-	cv::read((*fs)["F"], F, cv::Mat());
+	cv::read((*fs)["Rs"], Rs, cv::Mat(3, 3, CV_64F));
+	cv::read((*fs)["ts"], Ts, cv::Mat(1, 3, CV_64F));
+	cv::read((*fs)["E"], E, cv::Mat(3, 3, CV_64F));
+	cv::read((*fs)["F"], F, cv::Mat(3, 3, CV_64F));
 	cv::read((*fs)["stereo_error"], totalError, -1.0);
 
   CalibData c;
@@ -248,7 +244,6 @@ void CalibLoader::init()
 			&d_calibFolder,
 			(ImplicitDataEngine::DataCallback)&CalibLoader::calibFolderChanged);
 
-  addOutput(&d_isStereo);
 	addOutput(&d_delta1);
 	addOutput(&d_delta2);
 	addOutput(&d_K1);
@@ -265,10 +260,12 @@ void CalibLoader::init()
   addOutput(&d_F);
 	addOutput(&d_E);
 
-	if (!l_cam1.get())
+	if (!l_sCam.get() && !l_cam1.get())
 		msg_error(getName() + "::init()") << "Error: No camera link set. "
 																				 "Please use attribute 'cam' "
 																				 "to define one";
+	if (!l_sCam.get()) m_isStereo = false;
+
 
   calibFolderChanged(NULL);
 	d_calibNames.beginEdit()->setSelectedItemToDefault();
@@ -295,7 +292,6 @@ void CalibLoader::calibFolderChanged(core::objectmodel::BaseObject*)
 
   if (calibFiles.empty())
   {
-		msg_error("");
     helper::OptionsGroup* t = d_calibNames.beginEdit();
     t->setNames(1, "NO_CALIB");
     m_calibs["NO_CALIB"];

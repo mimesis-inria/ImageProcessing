@@ -51,13 +51,11 @@ void FrameViewer::update()
 {
 	std::cout << "FrameViewer::update()" << std::endl;
 }
-// Render from the viewpoint of the opengl's context
-void FrameViewer::perspectiveDraw()
-{
-	std::stringstream imageString;
-	imageString.write((const char *)d_frame.getValue().data,
-										d_frame.getValue().total() * d_frame.getValue().elemSize());
 
+
+
+void FrameViewer::bindGlTexture(const std::string& imageString)
+{
 	glEnable(GL_TEXTURE_2D);  // enable the texture
 	glDisable(GL_LIGHTING);   // disable the light
 
@@ -108,19 +106,22 @@ void FrameViewer::perspectiveDraw()
 	}
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, d_frame.getValue().cols,
 							 d_frame.getValue().rows, 0, format, type,
-							 imageString.str().c_str());
-	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, d_frame.getValue().cols,
-	//							 d_frame.getValue().rows,
-	//0,
-	// GL_BGR_EXT,
-	// GL_UNSIGNED_BYTE,
-	//							 imageString.str().c_str());
-
+							 imageString.c_str());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-									GL_LINEAR);  // Linear Filtering
+									GL_LINEAR);
+}
 
-	//		float eps = 0.0;
-	//		float z0 = 0.0;
+
+
+
+// Render from the viewpoint of the opengl's context
+void FrameViewer::perspectiveDraw()
+{
+	std::stringstream imageString;
+	imageString.write((const char *)d_frame.getValue().data,
+										d_frame.getValue().total() * d_frame.getValue().elemSize());
+
+	bindGlTexture(imageString.str());
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -163,71 +164,15 @@ void FrameViewer::perspectiveDraw()
 //	glDepthMask(GL_TRUE);
 }
 
+
 void FrameViewer::orthoDraw()
 {
 	std::stringstream imageString;
 	imageString.write((const char *)d_frame.getValue().data,
 										d_frame.getValue().total() * d_frame.getValue().elemSize());
 
-	glEnable(GL_TEXTURE_2D);  // enable the texture
-	glDisable(GL_LIGHTING);   // disable the light
+	bindGlTexture(imageString.str());
 
-	glBindTexture(GL_TEXTURE_2D, 0);  // texture bind
-
-	unsigned internalFormat = GL_RGB;
-	unsigned format = GL_BGR_EXT;
-	unsigned type = GL_UNSIGNED_BYTE;
-
-	switch (d_frame.getValue().channels())
-	{
-		case 1:  // grayscale
-			internalFormat = GL_LUMINANCE;
-			format = GL_RED;
-			break;
-		case 3:  // RGB / BGR
-			internalFormat = GL_RGB;
-
-			format = GL_BGR_EXT;
-			break;
-		case 4:  // RGBA / BGRA
-			internalFormat = GL_RGBA;
-			format = GL_BGRA_EXT;
-			break;
-	}
-	switch (d_frame.getValue().type())
-	{
-		case CV_8U:
-			type = GL_UNSIGNED_BYTE;
-			break;
-		case CV_8S:
-			type = GL_BYTE;
-			break;
-		case CV_16U:
-			type = GL_UNSIGNED_SHORT;
-		case CV_16S:
-			type = GL_SHORT;
-			break;
-		case CV_32S:
-			type = GL_INT;
-			break;
-		case CV_32F:
-			type = GL_FLOAT;
-			break;
-		default:
-			type = GL_UNSIGNED_BYTE;
-			break;
-	}
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, d_frame.getValue().cols,
-							 d_frame.getValue().rows, 0, format, type,
-							 imageString.str().c_str());
-	// glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE, m_imageWidth,
-	// m_imageHeight, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, m_imgData.c_str() );
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-									GL_LINEAR);  // Linear Filtering
-
-	//		float eps = 0.0;
-	//		float z0 = 0.0;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -303,13 +248,9 @@ void FrameViewer::computeBBox(const core::ExecParams *params, bool)
 {
 	if (d_mode.getValue().getSelectedId() != 0) return;
 
-	helper::vector<defaulttype::Vector3> x;
-	helper::vector<defaulttype::Vector3> p = d_corners.getValue();
-
-	x.push_back(p[0]);
-	x.push_back(p[1]);
-	x.push_back(p[2]);
-	x.push_back(p[3]);
+	const helper::vector<defaulttype::Vector3>& x = d_corners.getValue();
+	if (x.empty())
+		return;
 
 	double minBBox[3] = {std::numeric_limits<double>::max(),
 											 std::numeric_limits<double>::max(),

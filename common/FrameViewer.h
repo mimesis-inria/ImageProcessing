@@ -35,14 +35,14 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 
 	Data<common::cvMat> d_frame;
 	Data<helper::vector<defaulttype::Vector3> > d_corners;
-	Data<float> d_alpha;
-
-	Data<helper::OptionsGroup> d_mode;
 	Data<bool> d_isXRay;
+	Data<helper::OptionsGroup> d_mode;
+	Data<float> d_alpha;
 
  private:
 	void perspectiveDraw();
 	void orthoDraw();
+	void bindGlTexture(const std::string& imageString);
 };
 
 }  // namespace processor

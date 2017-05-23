@@ -65,9 +65,9 @@ void CameraSettings::getCornersPosition(Vector3& p1, Vector3& p2, Vector3& p3,
 	int h = d_imageSize.getValue().y();
 
 	p1 = get3DFrom2DPosition(0, 0, f);
-	p2 = get3DFrom2DPosition(0, h, f);
+	p2 = get3DFrom2DPosition(w, 0, f);
 	p3 = get3DFrom2DPosition(w, h, f);
-	p4 = get3DFrom2DPosition(w, 0, f);
+	p4 = get3DFrom2DPosition(0, h, f);
 }
 
 const defaulttype::Mat3x4d& CameraSettings::getProjectionMatrix() const
@@ -453,10 +453,10 @@ void CameraSettings::recalculate3DCorners()
 													 (d_f.getValue() != -1) ? (d_f.getValue()) : (1.0f));
 	helper::vector<Vector3>& corners3D = *d_3DCorners.beginEdit();
 	corners3D.clear();
-	corners3D.push_back(p4);
 	corners3D.push_back(p1);
 	corners3D.push_back(p2);
 	corners3D.push_back(p3);
+	corners3D.push_back(p4);
 	d_3DCorners.endEdit();
 }
 

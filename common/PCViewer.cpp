@@ -73,15 +73,28 @@ void PCViewer::draw(const core::visual::VisualParams*)
 	glDisable(GL_LIGHTING);
 	glBegin(GL_POINTS);
 
-	defaulttype::Vector3 t(-1.2115, -1.2353, 3.5539);
-
-	for (size_t i = 0; i < m_positions.size(); ++i)
+	if (d_colors.isSet())
 	{
-		Vector3 pt = m_positions[i];
-		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-		glVertex3f(pt.x(),
-							 pt.y(),
-							 pt.z());
+		const helper::vector<Vec3b>& colors = d_colors.getValue();
+		for (size_t i = 0; i < m_positions.size(); ++i)
+		{
+			Vector3 pt = m_positions[i];
+			glColor4f(colors[i][2] / 256.0f, colors[i][1] / 256.0f, colors[i][0] / 256.0f, 1.0f);
+			glVertex3f(pt.x(),
+								 pt.y(),
+								 pt.z());
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < m_positions.size(); ++i)
+		{
+			Vector3 pt = m_positions[i];
+			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			glVertex3f(pt.x(),
+								 pt.y(),
+								 pt.z());
+		}
 	}
 	glEnd();
 	glPointSize(1);
