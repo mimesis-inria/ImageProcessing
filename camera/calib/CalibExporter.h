@@ -1,9 +1,9 @@
 #ifndef SOFA_OR_PROCESSOR_CALIBEXPORTER_H
 #define SOFA_OR_PROCESSOR_CALIBEXPORTER_H
 
-#include "initPlugin.h"
 #include "camera/common/CameraSettings.h"
 #include "camera/common/StereoSettings.h"
+#include "initPlugin.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <SofaORCommon/cvMat.h>
@@ -58,9 +58,11 @@ class CalibExporter : public common::ImplicitDataEngine
 	unsigned m_stepCounter;
 	bool m_isStereo;
 
-private:
+ private:
 	void exportCalib(const std::string& calibFile);
-	bool canExport(const std::string& calibDir, const std::string& calibFile) const;
+	bool canExport(const std::string& calibDir,
+								 const std::string& calibFile) const;
+	void export_cam1(cv::Mat KL, cv::Mat TL, cv::Mat RL, cv::FileStorage fs, double e1, cv::Mat dvL, cv::Mat resL);
 };
 
 }  // namespace processor

@@ -99,57 +99,91 @@ void CalibExporter::cleanup()
 		exportCalib(d_calibName.getValue());
 }
 
+void CalibExporter::export_cam1(cv::Mat KL, cv::Mat TL, cv::Mat RL, cv::FileStorage fs, double e1, cv::Mat dvL, cv::Mat resL)
+{
+	fs.writeComment("\nimage size in pixels (w, h)");
+	fs << "imsize" << resL;
+	fs.writeComment("\nIntrinsic matrix");
+	fs << "K" << KL;
+	fs.writeComment("\ncamera's orientation in world coordinates");
+	fs << "R" << RL;
+	fs.writeComment("\ncamera's optical center position in world coordinates");
+	fs << "t" << TL;
+	fs.writeComment("\nif a non-linear model is used, distortion coefficients");
+	fs << "delta" << dvL;
+	fs.writeComment("\nreprojection error");
+	fs << "error" << e1;
+}
+
 void CalibExporter::exportCalib(const std::string& calibFile)
 {
 	if (!canExport(d_calibFolder.getValue(), calibFile)) return;
 
-	cv::FileStorage fs(d_calibFolder.getValue() + "/" + calibFile, cv::FileStorage::WRITE);
+	cv::FileStorage fs(d_calibFolder.getValue() + "/" + calibFile,
+										 cv::FileStorage::WRITE);
 	if (m_isStereo)
 	{
-		cv::Mat E, F, R, t, dvL, dvR, KR, KL;
+		cv::Mat E, F, Rs, ts, RL, TL, RR, TR, dvL, dvR, KR, KL, resL, resR;
+		double e1, e2, es;
 
-		common::matrix::sofaMat2cvMat(l_sCam->getCamera1().getIntrinsicCameraMatrix(), KL);
-		common::matrix::sofaVector2cvMat(l_sCam->getCamera1().getDistortionCoefficients(), dvL);
+		common::matrix::sofaMat2cvMat(
+				l_sCam->getCamera1().getIntrinsicCameraMatrix(), KL);
+		common::matrix::sofaMat2cvMat(l_sCam->getCamera1().getRotationMatrix(), RL);
+		common::matrix::sofaVector2cvMat(l_sCam->getCamera1().getPosition(), TL);
+		common::matrix::sofaVector2cvMat(
+				l_sCam->getCamera1().getDistortionCoefficients(), dvL);
+		common::matrix::sofaVector2cvMat(l_sCam->getCamera1().getImageSize(), resL);
 
-		common::matrix::sofaMat2cvMat(l_sCam->getCamera2().getIntrinsicCameraMatrix(), KR);
-		common::matrix::sofaVector2cvMat(l_sCam->getCamera2().getDistortionCoefficients(), dvR);
+		common::matrix::sofaMat2cvMat(
+				l_sCam->getCamera2().getIntrinsicCameraMatrix(), KR);
+		common::matrix::sofaMat2cvMat(l_sCam->getCamera2().getRotationMatrix(), RR);
+		common::matrix::sofaVector2cvMat(l_sCam->getCamera2().getPosition(), TR);
+		common::matrix::sofaVector2cvMat(
+				l_sCam->getCamera2().getDistortionCoefficients(), dvR);
+		common::matrix::sofaVector2cvMat(l_sCam->getCamera2().getImageSize(), resR);
 
 		common::matrix::sofaMat2cvMat(l_sCam->getEssentialMatrix(), E);
 		common::matrix::sofaMat2cvMat(l_sCam->getFundamentalMatrix(), F);
-		common::matrix::sofaMat2cvMat(l_sCam->getRotationMatrix(), R);
-		common::matrix::sofaVector2cvMat(l_sCam->getTranslationVector(), t);
+		common::matrix::sofaMat2cvMat(l_sCam->getRotationMatrix(), Rs);
+		common::matrix::sofaVector2cvMat(l_sCam->getTranslationVector(), ts);
 
+		export_cam1(KL, TL, RL, fs, e1, dvL, resL);
 
-		fs << "avgError" << 0.0;
-		fs << "error_left" << 0.0;
-		fs << "cam_mats_left" << KL;
-		fs << "dist_coefs_left" << dvL;
+		fs.writeComment("\nSame for second camera if any");
+		fs << "imsize2" << resR;
+		fs << "K2" << KR;
+		fs << "R2" << RR;
+		fs << "t2" << TR;
+		fs << "delta2" << dvR;
+		fs << "error2" << e2;
 
-		fs << "error_right" << 0.0;
-		fs << "cam_mats_right" << KR;
-		fs << "dist_coefs_right" << dvR;
-
-		fs << "e_mat" << E;
-		fs << "f_mat" << F;
-		fs << "rot_mat" << R;
-		fs << "trans_vec" << t;
+		fs.writeComment("\ntriangulated reprojection error");
+		fs << "stereo_error" << es;
+		fs.writeComment("\nEssential matrix");
+		fs << "E" << E;
+		fs.writeComment("\nFundamental matrix");
+		fs << "F" << F;
+		fs.writeComment(
+				"\nSecond Camera's orientation in the 1st camera's coordinates");
+		fs << "Rs" << Rs;
+		fs.writeComment(
+				"\nSecond Camera's optical center position in the 1st camera's "
+				"coordinates");
+		fs << "ts" << ts;
 	}
 	else
 	{
-		cv::Mat R, t, dvL, KL;
+		cv::Mat R, t, dvL, KL, res;
+		double e;
 
 		common::matrix::sofaMat2cvMat(l_cam1->getRotationMatrix(), R);
 		common::matrix::sofaVector2cvMat(l_cam1->getPosition(), t);
 
 		common::matrix::sofaMat2cvMat(l_cam1->getIntrinsicCameraMatrix(), KL);
 		common::matrix::sofaVector2cvMat(l_cam1->getDistortionCoefficients(), dvL);
+		common::matrix::sofaVector2cvMat(l_cam1->getImageSize(), res);
 
-		fs << "error_left" << 0.0;
-		fs << "cam_mats_left" << KL;
-		fs << "dist_coefs_left" << dvL;
-
-		fs << "rot_mat" << R;
-		fs << "trans_vec" << t;
+		export_cam1(KL, t, R, fs, e, dvL, res);
 	}
 
 	fs.release();

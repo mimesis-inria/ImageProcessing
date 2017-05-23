@@ -1,9 +1,9 @@
 #ifndef SOFA_OR_PROCESSOR_CALIBLOADER_H
 #define SOFA_OR_PROCESSOR_CALIBLOADER_H
 
-#include "initPlugin.h"
 #include "camera/common/CameraSettings.h"
 #include "camera/common/StereoSettings.h"
+#include "initPlugin.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <SofaORCommon/cvMat.h>
@@ -34,41 +34,59 @@ class CalibLoader : public common::ImplicitDataEngine
 																									BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
-
   struct CalibData
   {
     CalibData() {}
-    CalibData(const defaulttype::Matrix3& _projMat1,
-              const helper::vector<double>& _distCoefs1, double _error1,
-              const defaulttype::Matrix3& _projMat2,
-              const helper::vector<double>& _distCoefs2, double _error2,
-              const defaulttype::Matrix3& _R, const defaulttype::Vector3& _T,
-              const defaulttype::Matrix3& _F, double _totalError)
-        : projMat1(_projMat1),
-          distCoefs1(_distCoefs1),
+		CalibData(const defaulttype::Matrix3& _K1, const defaulttype::Matrix3& _R1,
+							const defaulttype::Vector3& _T1,
+							const helper::vector<double>& _delta1,
+							const defaulttype::Vec2i _imSize1, double _error1,
+							const defaulttype::Matrix3& _K2, const defaulttype::Matrix3& _R2,
+							const defaulttype::Vector3& _T2,
+							const helper::vector<double>& _delta2,
+							const defaulttype::Vec2i _imSize2, double _error2,
+							const defaulttype::Matrix3& _Rs, const defaulttype::Vector3& _Ts,
+							const defaulttype::Matrix3& _F, const defaulttype::Matrix3& _E,
+							double _totalError)
+				: imSize1(_imSize1),
+					K1(_K1),
+					R1(_R1),
+					T1(_T1),
+					delta1(_delta1),
           error1(_error1),
-          projMat2(_projMat2),
-          distCoefs2(_distCoefs2),
-          error2(_error2),
-          R(_R),
-          T(_T),
+					imSize2(_imSize2),
+					K2(_K2),
+					R2(_R2),
+					T2(_T2),
+					delta2(_delta2),
+					error2(_error2),
+					Rs(_Rs),
+					Ts(_Ts),
           F(_F),
-          totalError(_totalError)
+					E(_E),
+					totalError(_totalError)
     {
     }
 
-		defaulttype::Matrix3 projMat1;
-    helper::vector<double> distCoefs1;
-    double error1;
+		defaulttype::Vec2i imSize1;
+		defaulttype::Matrix3 K1;
+		defaulttype::Matrix3 R1;
+		defaulttype::Vector3 T1;
+		helper::vector<double> delta1;
+		double error1;
 
-		defaulttype::Matrix3 projMat2;
-    helper::vector<double> distCoefs2;
-    double error2;
+		defaulttype::Vec2i imSize2;
+		defaulttype::Matrix3 K2;
+		defaulttype::Matrix3 R2;
+		defaulttype::Vector3 T2;
+		helper::vector<double> delta2;
+		double error2;
 
-    defaulttype::Matrix3 R;
-    defaulttype::Vector3 T;
+		defaulttype::Matrix3 Rs;
+		defaulttype::Vector3 Ts;
     defaulttype::Matrix3 F;
-    double totalError;
+		defaulttype::Matrix3 E;
+		double totalError;
   };
 
  public:
@@ -87,18 +105,25 @@ class CalibLoader : public common::ImplicitDataEngine
   Data<helper::OptionsGroup> d_calibNames;
   Data<bool> d_isStereo;
 
-  Data<defaulttype::Matrix3> d_projMat1;
-  Data<helper::vector<double> > d_distCoefs1;
-  Data<double> d_error1;
+	Data<defaulttype::Vec2i> d_imSize1;
+	Data<defaulttype::Matrix3> d_K1;
+	Data<defaulttype::Matrix3> d_R1;
+	Data<defaulttype::Vector3> d_T1;
+	Data<helper::vector<double> > d_delta1;
+	Data<double> d_error1;
 
-  Data<defaulttype::Matrix3> d_projMat2;
-  Data<helper::vector<double> > d_distCoefs2;
-  Data<double> d_error2;
+	Data<defaulttype::Vec2i> d_imSize2;
+	Data<defaulttype::Matrix3> d_K2;
+	Data<defaulttype::Matrix3> d_R2;
+	Data<defaulttype::Vector3> d_T2;
+	Data<helper::vector<double> > d_delta2;
+	Data<double> d_error2;
 
-  Data<defaulttype::Matrix3> d_R;
-  Data<defaulttype::Vector3> d_T;
+	Data<defaulttype::Matrix3> d_Rs;
+	Data<defaulttype::Vector3> d_Ts;
   Data<defaulttype::Matrix3> d_F;
-  Data<double> d_totalError;
+	Data<defaulttype::Matrix3> d_E;
+	Data<double> d_totalError;
 
  protected:
   std::map<std::string, CalibData> m_calibs;

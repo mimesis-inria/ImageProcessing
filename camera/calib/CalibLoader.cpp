@@ -39,58 +39,9 @@ CalibLoader::CalibLoader()
                             "name of the calib settings currently used")),
       d_isStereo(initData(&d_isStereo, "isStereo",
                           "set to true if the given calib file has stereo data",
-                          true, true)),
-      d_projMat1(initData(
-          &d_projMat1, "projMat1",
-          "projection matrix for the first camera (or default if mono)", true,
-          true)),
-      d_distCoefs1(initData(
-          &d_distCoefs1, "distCoefs1",
-          "distortion coefficients for the first camera (or default if mono)",
-          true, true)),
-      d_error1(initData(&d_error1, "error1",
-                        "first camera's reprojection error", true, true)),
-      d_projMat2(initData(&d_projMat2, "projMat2",
-                          "projection matrix for the second camera (if any)",
-                          true, true)),
-      d_distCoefs2(
-          initData(&d_distCoefs2, "distCoefs2",
-                   "distortion coefficients for the second camera (if any)",
-                   true, true)),
-      d_error2(initData(&d_error2, "error2",
-                        "second camera's reprojection error (if any)", true,
-                        true)),
-      d_R(initData(&d_R, "R", "rotation matrix (extrinsic parameter)", true,
-                   true)),
-      d_T(initData(&d_T, "T", "translation vector (extrinsic parameter)", true,
-                   true)),
-      d_F(initData(&d_F, "F", "fundamental matrix (extrinsic parameter)", true,
-                   true)),
-      d_totalError(initData(&d_totalError, "totalError",
-                            "total stereo reprojection error", true, true))
+													true, true))
 {
   f_listening.setValue(true);
-
-  // Set of aliases to allow implicit initialization of data
-  addAlias(&d_projMat1, "projMat1_out");
-  addAlias(&d_projMat1, "projMat");
-
-  addAlias(&d_projMat2, "projMat2_out");
-
-  addAlias(&d_projMat1, "distCoefs1_out");
-  addAlias(&d_projMat1, "distCoefs");
-
-  addAlias(&d_projMat2, "distCoefs2_out");
-
-  addAlias(&d_error1, "error");
-  addAlias(&d_error1, "error1_out");
-
-  addAlias(&d_error2, "error2_out");
-
-  addAlias(&d_R, "R_out");
-  addAlias(&d_T, "T_out");
-  addAlias(&d_F, "F_out");
-  addAlias(&d_totalError, "totalError_out");
 }
 
 CalibLoader::~CalibLoader() {}
@@ -129,33 +80,44 @@ bool CalibLoader::canLoad(const std::string& calibfile) const
 
 void CalibLoader::setCurrentCalib(CalibData& d)
 {
-	d_projMat1.setValue(d.projMat1);
-  d_projMat2.setValue(d.projMat2);
-  d_distCoefs1.setValue(d.distCoefs1);
-  d_distCoefs2.setValue(d.distCoefs2);
-  d_error1.setValue(d.error1);
+	d_K1.setValue(d.K1);
+	d_K2.setValue(d.K2);
+	d_R1.setValue(d.R1);
+	d_R2.setValue(d.R2);
+	d_T1.setValue(d.T1);
+	d_T2.setValue(d.T2);
+	d_delta1.setValue(d.delta1);
+	d_delta2.setValue(d.delta2);
+	d_imSize1.setValue(d.imSize1);
+	d_imSize2.setValue(d.imSize2);
+	d_error1.setValue(d.error1);
   d_error2.setValue(d.error2);
-  d_R.setValue(d.R);
-  d_T.setValue(d.T);
+	d_Rs.setValue(d.Rs);
+	d_Ts.setValue(d.Ts);
   d_F.setValue(d.F);
-  d_totalError.setValue(d.totalError);
+	d_F.setValue(d.E);
+	d_totalError.setValue(d.totalError);
 
-	if (d_projMat2.getValue().empty() || !d_isStereo.getValue())
+	if (d_K2.getValue().empty() || !d_isStereo.getValue())
 		d_isStereo.setValue(false);
 	else
 	{
-		l_cam2->setDistortionCoefficients(d.distCoefs2);
-		l_cam2->setIntrinsicCameraMatrix(d.projMat2, false);
 		l_sCam->setFundamentalMatrix(d.F);
-		l_sCam->setRotationMatrix(d.R);
-		l_sCam->setTranslationVector(d.T);
-		l_cam2->setPosition(d.T, false);
-		l_cam2->setRotationMatrix(d.R, true);
+		l_sCam->setEssentialMatrix(d.E);
+		l_sCam->setRotationMatrix(d.Rs);
+		l_sCam->setTranslationVector(d.Ts);
+
+		l_cam2->setImageSize(d.imSize2, false);
+		l_cam2->setIntrinsicCameraMatrix(d.K2, false);
+		l_cam2->setRotationMatrix(d.R2, false);
+		l_cam2->setPosition(d.T2, true);
+		l_cam2->setDistortionCoefficients(d.delta2);
 	}
-	l_cam1->setDistortionCoefficients(d.distCoefs1);
-	l_cam1->setIntrinsicCameraMatrix(d.projMat1);
-	l_cam1->setRotationMatrix(d.R);
-	l_cam1->setPosition(d.T);
+	l_cam1->setImageSize(d.imSize1, false);
+	l_cam1->setIntrinsicCameraMatrix(d.K1, false);
+	l_cam1->setRotationMatrix(d.R1, false);
+	l_cam1->setPosition(d.T1, true);
+	l_cam1->setDistortionCoefficients(d.delta1);
 }
 
 void CalibLoader::setCurrentCalib(const std::string& calibName)
@@ -166,6 +128,7 @@ void CalibLoader::setCurrentCalib(const std::string& calibName)
     helper::OptionsGroup* t = d_calibNames.beginWriteOnly();
     t->setSelectedItem(it->first);
     d_calibNames.endEdit();
+
     setCurrentCalib(it->second);
   }
 }
@@ -186,43 +149,67 @@ void CalibLoader::load(const std::string& filename)
   }
 
   std::string calibName;
-	cv::Mat cameraMatrix1;
-	cv::Mat cameraMatrix2;
-	cv::Mat distVec1;
-	cv::Mat distVec2;
-  double error1;
+	cv::Mat K1;
+	cv::Mat K2;
+	cv::Mat delta1;
+	cv::Mat delta2;
+	cv::Mat imsize1;
+	cv::Mat imsize2;
+	double error1;
   double error2;
-	cv::Mat R;
-	cv::Mat T;
+	cv::Mat Rs;
+	cv::Mat Ts;
 	cv::Mat F;
-  double totalError;
+	cv::Mat E;
+	cv::Mat R1;
+	cv::Mat T1;
+	cv::Mat R2;
+	cv::Mat T2;
+	double totalError;
 
   calibName = helper::system::SetDirectory::GetFileNameWithoutExtension(
       filename.c_str());
 
-	cv::read((*fs)["cam_mats_left"], cameraMatrix1, cv::Mat());
-  cv::read((*fs)["cam_mats_right"], cameraMatrix2, cv::Mat());
-  cv::read((*fs)["error_left"], error1, -1.0);
-  cv::read((*fs)["error_right"], error2, -1.0);
-  cv::read((*fs)["dist_coefs_left"], distVec1, cv::Mat());
-  cv::read((*fs)["dist_coefs_right"], distVec2, cv::Mat());
-  cv::read((*fs)["rot_mat"], R, cv::Mat());
-  cv::read((*fs)["trans_vec"], T, cv::Mat());
-  cv::read((*fs)["f_mat"], F, cv::Mat());
-  cv::read((*fs)["avg_error"], totalError, -1.0);
+	cv::read((*fs)["imsize"], imsize1, cv::Mat());
+	cv::read((*fs)["K"], K1, cv::Mat());
+	cv::read((*fs)["R"], R1, cv::Mat::eye(3, 3, CV_64F));
+	cv::read((*fs)["t"], T1, cv::Mat());
+	cv::read((*fs)["delta"], delta1, cv::Mat());
+	cv::read((*fs)["error"], error1, -1.0);
+
+	cv::read((*fs)["imsize2"], imsize2, cv::Mat());
+	cv::read((*fs)["K2"], K2, cv::Mat());
+	cv::read((*fs)["R2"], R2, cv::Mat::eye(3, 3, CV_64F));
+	cv::read((*fs)["t2"], T2, cv::Mat());
+	cv::read((*fs)["delta2"], delta2, cv::Mat());
+	cv::read((*fs)["error2"], error2, -1.0);
+
+	cv::read((*fs)["Rs"], Rs, cv::Mat());
+	cv::read((*fs)["ts"], Ts, cv::Mat());
+	cv::read((*fs)["E"], E, cv::Mat());
+	cv::read((*fs)["F"], F, cv::Mat());
+	cv::read((*fs)["stereo_error"], totalError, -1.0);
 
   CalibData c;
 
-	common::matrix::cvMat2sofaMat(cameraMatrix1, c.projMat1);
-	common::matrix::cvMat2sofaVector(distVec1, c.distCoefs1);
-  c.error1 = error1;
-	common::matrix::cvMat2sofaMat(cameraMatrix2, c.projMat2);
-  common::matrix::cvMat2sofaVector(distVec2, c.distCoefs2);
-  c.error2 = error2;
-  common::matrix::cvMat2sofaMat(R, c.R);
-	common::matrix::cvMat2sofaVector(T, c.T);
-  common::matrix::cvMat2sofaMat(F, c.F);
-  c.totalError = totalError;
+	common::matrix::cvMat2sofaVector(imsize1, c.imSize1);
+	common::matrix::cvMat2sofaMat(K1, c.K1);
+	common::matrix::cvMat2sofaMat(R1, c.R1);
+	common::matrix::cvMat2sofaVector(T1, c.T1);
+	common::matrix::cvMat2sofaVector(delta1, c.delta1);
+	c.error1 = error1;
+
+	common::matrix::cvMat2sofaVector(imsize2, c.imSize2);
+	common::matrix::cvMat2sofaMat(K2, c.K2);
+	common::matrix::cvMat2sofaMat(R2, c.R2);
+	common::matrix::cvMat2sofaVector(T2, c.T2);
+	common::matrix::cvMat2sofaVector(delta2, c.delta2);
+	c.error2 = error2;
+	common::matrix::cvMat2sofaMat(Rs, c.Rs);
+	common::matrix::cvMat2sofaVector(Ts, c.Ts);
+	common::matrix::cvMat2sofaMat(F, c.F);
+	common::matrix::cvMat2sofaMat(E, c.E);
+	c.totalError = totalError;
 
 	m_calibs[calibName] = c;
 
@@ -255,9 +242,6 @@ void CalibLoader::getAllCalibFiles(std::vector<std::string>& calibFiles)
 
 void CalibLoader::init()
 {
-  d_calibNames.beginWriteOnly()->setSelectedItemToDefault();
-  d_calibNames.endEdit();
-
   addDataCallback(&d_calibNames,
 									(ImplicitDataEngine::DataCallback)&CalibLoader::calibChanged);
 	addDataCallback(
@@ -265,16 +249,21 @@ void CalibLoader::init()
 			(ImplicitDataEngine::DataCallback)&CalibLoader::calibFolderChanged);
 
   addOutput(&d_isStereo);
-  addOutput(&d_distCoefs1);
-  addOutput(&d_distCoefs2);
-  addOutput(&d_projMat1);
-  addOutput(&d_projMat2);
-  addOutput(&d_error1);
+	addOutput(&d_delta1);
+	addOutput(&d_delta2);
+	addOutput(&d_K1);
+	addOutput(&d_K2);
+	addOutput(&d_R1);
+	addOutput(&d_T1);
+	addOutput(&d_R2);
+	addOutput(&d_T2);
+	addOutput(&d_error1);
   addOutput(&d_error2);
   addOutput(&d_totalError);
-  addOutput(&d_R);
-  addOutput(&d_T);
+	addOutput(&d_Rs);
+	addOutput(&d_Ts);
   addOutput(&d_F);
+	addOutput(&d_E);
 
 	if (!l_cam1.get())
 		msg_error(getName() + "::init()") << "Error: No camera link set. "
@@ -282,6 +271,9 @@ void CalibLoader::init()
 																				 "to define one";
 
   calibFolderChanged(NULL);
+	d_calibNames.beginEdit()->setSelectedItemToDefault();
+	d_calibNames.endEdit();
+	setCurrentCalib(d_calibNames.getValue().getSelectedItem());
 }
 
 void CalibLoader::calibChanged(core::objectmodel::BaseObject*)
@@ -292,7 +284,6 @@ void CalibLoader::calibChanged(core::objectmodel::BaseObject*)
 void CalibLoader::calibFolderChanged(core::objectmodel::BaseObject*)
 {
   std::string calibname = d_calibNames.getValue().getSelectedItem();
-
   m_calibs.clear();
   helper::OptionsGroup* t = d_calibNames.beginEdit();
   t->setNames(0);
@@ -304,6 +295,7 @@ void CalibLoader::calibFolderChanged(core::objectmodel::BaseObject*)
 
   if (calibFiles.empty())
   {
+		msg_error("");
     helper::OptionsGroup* t = d_calibNames.beginEdit();
     t->setNames(1, "NO_CALIB");
     m_calibs["NO_CALIB"];
@@ -323,11 +315,17 @@ void CalibLoader::calibFolderChanged(core::objectmodel::BaseObject*)
     }
     (calibname != "") ? (t->setSelectedItem(calibname))
                       : t->setSelectedItemToDefault();
+		if (t->getSelectedItem() != calibname)
+		{
+			t->setSelectedItem(0);
+			calibname = t->getSelectedItem();
+		}
     d_calibNames.endEdit();
 
     // Load calibration files
     for (std::string& f : calibFiles)
       if (canLoad(currentDir + "/" + f)) load(currentDir + "/" + f);
+		this->setCurrentCalib(calibname);
   }
 }
 
