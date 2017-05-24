@@ -25,8 +25,10 @@ void CalibrateStereo::calibrate()
 
 	if (d_imagePoints1.getValue().size() != d_imagePoints2.getValue().size() ||
 			d_imagePoints1.getValue().size() < 1 ||
-			d_imagePoints1.getValue()[0].size() != d_imagePoints2.getValue()[0].size() ||
-			d_imagePoints1.getValue()[0].size() != d_objectPoints.getValue()[0].size())
+			d_imagePoints1.getValue()[0].size() !=
+					d_imagePoints2.getValue()[0].size() ||
+			d_imagePoints1.getValue()[0].size() !=
+					d_objectPoints.getValue()[0].size())
 		msg_error(getName() + "::calibrate()") << "Error: Vector size should be "
 																							"the same for imagePoints1, "
 																							"imagePoint2 and objectPoints";
@@ -67,16 +69,24 @@ void CalibrateStereo::calibrate()
 	cv::Mat F;
 
 	cv::Mat_<double> cam1, cam2;
-	common::matrix::sofaMat2cvMat(l_cam->getCamera1().getIntrinsicCameraMatrix(), cam1);
-	common::matrix::sofaMat2cvMat(l_cam->getCamera2().getIntrinsicCameraMatrix(), cam2);
+	common::matrix::sofaMat2cvMat(l_cam->getCamera1().getIntrinsicCameraMatrix(),
+																cam1);
+	common::matrix::sofaMat2cvMat(l_cam->getCamera2().getIntrinsicCameraMatrix(),
+																cam2);
 
-	common::matrix::sofaVector2cvMat(l_cam->getCamera1().getDistortionCoefficients(), distCoeffs1);
-	common::matrix::sofaVector2cvMat(l_cam->getCamera2().getDistortionCoefficients(), distCoeffs2);
+	common::matrix::sofaVector2cvMat(
+			l_cam->getCamera1().getDistortionCoefficients(), distCoeffs1);
+	common::matrix::sofaVector2cvMat(
+			l_cam->getCamera2().getDistortionCoefficients(), distCoeffs2);
 
-	std::cout << "reprojectionError: " << cv::stereoCalibrate(
-			objectPoints, imagePoints1, imagePoints2, cam1, distCoeffs1, cam2,
-			distCoeffs2, cv::Size(d_imgSize.getValue().x(), d_imgSize.getValue().y()), Rmat, Tvec, E, F,
-			cv::CALIB_FIX_INTRINSIC | cv::CALIB_USE_INTRINSIC_GUESS) << std::endl;
+	std::cout << "reprojectionError: "
+						<< cv::stereoCalibrate(
+									 objectPoints, imagePoints1, imagePoints2, cam1, distCoeffs1,
+									 cam2, distCoeffs2,
+									 cv::Size(d_imgSize.getValue().x(), d_imgSize.getValue().y()),
+									 Rmat, Tvec, E, F,
+									 cv::CALIB_FIX_INTRINSIC | cv::CALIB_USE_INTRINSIC_GUESS)
+						<< std::endl;
 
 	l_cam->setRotationMatrix(defaulttype::Matrix3((double*)Rmat.ptr()));
 	l_cam->setTranslationVector(defaulttype::Vector3((double*)Tvec.ptr()));
@@ -84,7 +94,17 @@ void CalibrateStereo::calibrate()
 	l_cam->setFundamentalMatrix(defaulttype::Matrix3((double*)F.ptr()));
 }
 
-void CalibrateStereo::update() { calibrate(); }
+void CalibrateStereo::update()
+{
+	if (d_imagePoints1.isSet() && d_imagePoints2.isSet() &&
+			d_objectPoints.isSet())
+		calibrate();
+	else
+	{
+		std::cout << "computing stereo params from cameras" << std::endl;
+		l_cam->recomputeFromCameras();
+	}
+}
 
 }  // namespace processor
 }  // namespace OR

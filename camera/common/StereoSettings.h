@@ -67,6 +67,7 @@ class StereoSettings : public common::ImplicitDataEngine
 	const CameraSettings& getCamera1() { return *l_cam1.get(); }
 	const CameraSettings& getCamera2() { return *l_cam2.get(); }
 
+	void recomputeFromCameras();
  private:
 	CamSettings l_cam1;
 	CamSettings l_cam2;

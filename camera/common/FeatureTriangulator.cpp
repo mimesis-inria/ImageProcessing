@@ -71,18 +71,17 @@ void FeatureTriangulator::update()
 
 	common::matrix::sofaMat2cvMat(l_cam->getRotationMatrix(), R);
 	common::matrix::sofaVector2cvMat(l_cam->getTranslationVector(), T);
-	common::matrix::sofaMat2cvMat(l_cam->getCamera1().getIntrinsicCameraMatrix(),
+	common::matrix::sofaMat2cvMat(l_cam->getCamera1().getProjectionMatrix(),
 																cmL);
-	common::matrix::sofaMat2cvMat(l_cam->getCamera2().getIntrinsicCameraMatrix(),
+	common::matrix::sofaMat2cvMat(l_cam->getCamera2().getProjectionMatrix(),
 																cmR);
 	common::matrix::sofaVector2cvMat(
 			l_cam->getCamera1().getDistortionCoefficients(), dvL);
 	common::matrix::sofaVector2cvMat(
 			l_cam->getCamera2().getDistortionCoefficients(), dvR);
 
-	PL = cv::Matx34d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
-  PR = cv::Matx34d(R[0][0], R[0][1], R[0][2], T[0][0], R[1][0], R[1][1],
-                   R[1][2], T[0][1], R[2][0], R[2][1], R[2][2], T[0][2]);
+	PL = cmL;
+	PR = cmR;
 
   helper::vector<Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
   helper::vector<Vec3b>& colors = *(d_pointCloudColors.beginWriteOnly());
@@ -220,26 +219,26 @@ void FeatureTriangulator::triangulate(const cv::Point2f& l,
   cv::Point3d u(l.x, l.y, 1.0);
   cv::Point3d u1(r.x, r.y, 1.0);
 
-  // multiply the point by the inverse of the K matrix
-  cv::Mat_<double> um = cmL.inv() * cv::Mat_<double>(u);
-  cv::Mat_<double> um1 = cmR.inv() * cv::Mat_<double>(u1);
+//  // multiply the point by the inverse of the K matrix
+//  cv::Mat_<double> um = cmL.inv() * cv::Mat_<double>(u);
+//  cv::Mat_<double> um1 = cmR.inv() * cv::Mat_<double>(u1);
 
-	if (d_rectify.getValue() && !dvL.empty() && !dvR.empty())
-  {
-    u.x = rectifyPoint(um(0), um(1), dvL).x;
-    u.y = rectifyPoint(um(0), um(1), dvL).y;
-    u1.x = rectifyPoint(um1(0), um1(1), dvR).x;
-    u1.y = rectifyPoint(um1(0), um1(1), dvR).y;
-  }
-  else
-  {
-    u.x = um(0);
-    u.y = um(1);
-    u1.x = um1(0);
-    u1.y = um1(1);
-  }
-	u.z = um(2);
-	u1.z = um1(2);
+//	if (d_rectify.getValue() && !dvL.empty() && !dvR.empty())
+//  {
+//    u.x = rectifyPoint(um(0), um(1), dvL).x;
+//    u.y = rectifyPoint(um(0), um(1), dvL).y;
+//    u1.x = rectifyPoint(um1(0), um1(1), dvR).x;
+//    u1.y = rectifyPoint(um1(0), um1(1), dvR).y;
+//  }
+//  else
+//  {
+//    u.x = um(0);
+//    u.y = um(1);
+//    u1.x = um1(0);
+//    u1.y = um1(1);
+//  }
+//	u.z = um(2);
+//	u1.z = um1(2);
 
   cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
 

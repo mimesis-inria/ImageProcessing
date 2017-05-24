@@ -87,6 +87,7 @@ cv::Mat_<double> StereoSettings::linearLSTriangulation(cv::Point3d u,
 }
 
 void StereoSettings::init() {}
+
 // returns the 3D position of a pair of 2D matches 'X, Y'
 defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
 																								 const Vector2& x2)
@@ -161,6 +162,43 @@ void StereoSettings::setTranslationVector(const Vector3& t)
 {
 	d_t.setValue(t);
 	updateRt();
+}
+
+void StereoSettings::recomputeFromCameras()
+{
+	if (!l_cam1.get() || !l_cam2.get())
+		return;
+
+	Matrix3 K1 = l_cam1->getIntrinsicCameraMatrix();
+	Matrix3 K2 = l_cam2->getIntrinsicCameraMatrix();
+	Matrix3 R1 = l_cam1->getRotationMatrix();
+	Matrix3 R2 = l_cam2->getRotationMatrix();
+	Vector3 T1 = l_cam1->getPosition();
+	Vector3 T2 = l_cam2->getPosition();
+	
+	Vector3 Ts = T2 - T1;
+	
+	// Rotation matrix from R1 to R2
+	Matrix3 Rs = R1.transposed() * R2;
+
+	// Skew symetric matrix of Ts
+	Matrix3 T(Vector3(0, -Ts[2], Ts[1]),
+			Vector3(Ts[2], 0, -Ts[0]),
+			Vector3(-Ts[1], Ts[0], 0));
+
+	K2.invert(K2.transposed());
+	K1.invert(K1);
+
+	/// F = inv(K2') * R * [T]x * inv(K1)
+	Matrix3 F = K2 * Rs * T * K1;
+
+	/// E = R * [T]x
+	Matrix3 E = Rs * T;
+
+	this->setFundamentalMatrix(F);
+	this->setEssentialMatrix(E);
+	this->setRotationMatrix(Rs);
+	this->setTranslationVector(Ts);
 }
 
 }  // namespace processor

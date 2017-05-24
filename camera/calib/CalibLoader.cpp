@@ -96,6 +96,7 @@ void CalibLoader::setCurrentCalib(CalibData& d)
 	d_F.setValue(d.E);
 	d_totalError.setValue(d.totalError);
 
+	std::cout << "loading camera data from file" << std::endl;
 	if (m_isStereo)
 	{
 		l_sCam->setFundamentalMatrix(d.F);
