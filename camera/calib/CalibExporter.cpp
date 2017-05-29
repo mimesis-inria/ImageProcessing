@@ -144,8 +144,8 @@ void CalibExporter::exportCalib(const std::string& calibFile)
 
 		common::matrix::sofaMat2cvMat(l_sCam->getEssentialMatrix(), E);
 		common::matrix::sofaMat2cvMat(l_sCam->getFundamentalMatrix(), F);
-		common::matrix::sofaMat2cvMat(l_sCam->getRotationMatrix(), Rs);
-		common::matrix::sofaVector2cvMat(l_sCam->getTranslationVector(), ts);
+//		common::matrix::sofaMat2cvMat(l_sCam->getRotationMatrix(), Rs);
+//		common::matrix::sofaVector2cvMat(l_sCam->getTranslationVector(), ts);
 
 		export_cam1(KL, TL, RL, fs, e1, dvL, resL);
 

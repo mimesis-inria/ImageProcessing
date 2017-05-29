@@ -69,8 +69,8 @@ void FeatureTriangulator::update()
 {
   std::cout << getName() << std::endl;
 
-	common::matrix::sofaMat2cvMat(l_cam->getRotationMatrix(), R);
-	common::matrix::sofaVector2cvMat(l_cam->getTranslationVector(), T);
+//	common::matrix::sofaMat2cvMat(l_cam->getRotationMatrix(), R);
+//	common::matrix::sofaVector2cvMat(l_cam->getTranslationVector(), T);
 	common::matrix::sofaMat2cvMat(l_cam->getCamera1().getProjectionMatrix(),
 																cmL);
 	common::matrix::sofaMat2cvMat(l_cam->getCamera2().getProjectionMatrix(),

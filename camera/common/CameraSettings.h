@@ -66,8 +66,8 @@ class CameraSettings : public common::ImplicitDataEngine
 	SOFA_CLASS(CameraSettings, common::ImplicitDataEngine);
 
 	CameraSettings()
-			: d_imageSize(
-						initData(&d_imageSize, Vec2i(1280, 720), "imageSize", "Image resolution in pixels")),
+			: d_imageSize(initData(&d_imageSize, Vec2i(1280, 720), "imageSize",
+														 "Image resolution in pixels")),
 				d_f(initData(&d_f, "f", "distance camera -> plane")),
 				d_translate2D(
 						initData(&d_translate2D, "translate2D",
@@ -76,7 +76,8 @@ class CameraSettings : public common::ImplicitDataEngine
 				d_distCoefs(initData(&d_distCoefs, "distCoefs",
 														 "The camera's distortion coefficients")),
 
-				d_M(initData(&d_M, "M", "3x4 Projection matrix as described in Computer Vision")),
+				d_M(initData(&d_M, "M",
+										 "3x4 Projection matrix as described in Computer Vision")),
 
 				d_K(initData(&d_K, "K", "3x3 camera matrix from OpenCV")),
 				d_R(initData(&d_R, "R", "3x3 rotation matrix")),
@@ -93,7 +94,10 @@ class CameraSettings : public common::ImplicitDataEngine
 				d_zClip(initData(&d_zClip, Vector2(0.001, 1000.0), "zClip",
 												 "OpenGL's z clipping values in scene unit")),
 				d_3DCorners(initData(&d_3DCorners, "3DCorners",
-														 "image's corners in world coordinates"))
+														 "image's corners in world coordinates")),
+				d_upVector(initData(&d_upVector, "up", "Camera's Up vector")),
+				d_fwdVector(initData(&d_fwdVector, "fwd", "Camera's lookat direction")),
+				d_lookAt(initData(&d_lookAt, "lookAt", "Camera's lookat point"))
 	{
 		addAlias(&d_t, "t");
 	}
@@ -197,6 +201,14 @@ class CameraSettings : public common::ImplicitDataEngine
 	Data<Vector2> d_zClip;
 
 	Data<helper::vector<defaulttype::Vector3> > d_3DCorners;
+
+	// Camera can be constructed with K, t, upVector and fwdVector
+	Data<Vector3> d_upVector;
+
+	// Camera can be constructed with K, t, upVector and lookAt
+	Data<Vector3> d_fwdVector;  // direction cam -> lookat
+	Data<Vector3> d_lookAt;  // target position (a point on the direction camPos
+													 // -> fwdVector)
 
 	// Decomposes M
 	void decomposeM();

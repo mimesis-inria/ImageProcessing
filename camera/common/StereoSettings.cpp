@@ -92,23 +92,22 @@ void StereoSettings::init() {}
 defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
 																								 const Vector2& x2)
 {
-	cv::Mat_<double> cm1, cm2;
-	common::matrix::sofaMat2cvMat(l_cam1->getIntrinsicCameraMatrix(), cm1);
-	common::matrix::sofaMat2cvMat(l_cam2->getIntrinsicCameraMatrix(), cm2);
+	common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
+	common::matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
 
 	cv::Point3d u(x1.x(), x2.y(), 1.0);
 	cv::Point3d u1(x2.x(), x2.y(), 1.0);
 
-	// multiply the point by the inverse of the K matrix
-	cv::Mat_<double> um = cm1.inv() * cv::Mat_<double>(u);
-	cv::Mat_<double> um1 = cm2.inv() * cv::Mat_<double>(u1);
+//	// multiply the point by the inverse of the K matrix
+//	cv::Mat_<double> um = cm1.inv() * cv::Mat_<double>(u);
+//	cv::Mat_<double> um1 = cm2.inv() * cv::Mat_<double>(u1);
 
-	u.x = um(0);
-	u.y = um(1);
-	u1.x = um1(0);
-	u1.y = um1(1);
-	u.z = um(2);
-	u1.z = um1(2);
+//	u.x = um(0);
+//	u.y = um(1);
+//	u1.x = um1(0);
+//	u1.y = um1(1);
+//	u.z = um(2);
+//	u1.z = um1(2);
 
 	cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
 
@@ -135,34 +134,34 @@ const defaulttype::Matrix3& StereoSettings::getEssentialMatrix()
 	return d_E.getValue();
 }
 void StereoSettings::setEssentialMatrix(const Matrix3& E) { d_E.setValue(E); }
-void StereoSettings::updateRt()
-{
-	const Vector3& t = d_t.getValue();
-	const Matrix3& R = d_R.getValue();
-	P1 = cv::Matx34d::eye();
-	P2 = cv::Matx34d(R[0][0], R[0][1], R[0][2], t[0], R[1][0], R[1][1], R[1][2],
-									 t[1], R[2][0], R[2][1], R[2][2], t[2]);
-}
+//void StereoSettings::updateRt()
+//{
+//	const Vector3& t = d_t.getValue();
+//	const Matrix3& R = d_R.getValue();
+//	P1 = cv::Matx34d::eye();
+//	P2 = cv::Matx34d(R[0][0], R[0][1], R[0][2], t[0], R[1][0], R[1][1], R[1][2],
+//									 t[1], R[2][0], R[2][1], R[2][2], t[2]);
+//}
 
-const defaulttype::Matrix3& StereoSettings::getRotationMatrix()
-{
-	return d_R.getValue();
-}
-void StereoSettings::setRotationMatrix(const Matrix3& R)
-{
-	d_R.setValue(R);
-	updateRt();
-}
-const defaulttype::Vector3& StereoSettings::getTranslationVector()
-{
-	return d_t.getValue();
-}
+//const defaulttype::Matrix3& StereoSettings::getRotationMatrix()
+//{
+//	return d_R.getValue();
+//}
+//void StereoSettings::setRotationMatrix(const Matrix3& R)
+//{
+//	d_R.setValue(R);
+//	updateRt();
+//}
+//const defaulttype::Vector3& StereoSettings::getTranslationVector()
+//{
+//	return d_t.getValue();
+//}
 
-void StereoSettings::setTranslationVector(const Vector3& t)
-{
-	d_t.setValue(t);
-	updateRt();
-}
+//void StereoSettings::setTranslationVector(const Vector3& t)
+//{
+//	d_t.setValue(t);
+//	updateRt();
+//}
 
 void StereoSettings::recomputeFromCameras()
 {
@@ -197,8 +196,8 @@ void StereoSettings::recomputeFromCameras()
 
 	this->setFundamentalMatrix(F);
 	this->setEssentialMatrix(E);
-	this->setRotationMatrix(Rs);
-	this->setTranslationVector(Ts);
+//	this->setRotationMatrix(Rs);
+//	this->setTranslationVector(Ts);
 }
 
 }  // namespace processor

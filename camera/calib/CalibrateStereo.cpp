@@ -88,8 +88,8 @@ void CalibrateStereo::calibrate()
 									 cv::CALIB_FIX_INTRINSIC | cv::CALIB_USE_INTRINSIC_GUESS)
 						<< std::endl;
 
-	l_cam->setRotationMatrix(defaulttype::Matrix3((double*)Rmat.ptr()));
-	l_cam->setTranslationVector(defaulttype::Vector3((double*)Tvec.ptr()));
+//	l_cam->setRotationMatrix(defaulttype::Matrix3((double*)Rmat.ptr()));
+//	l_cam->setTranslationVector(defaulttype::Vector3((double*)Tvec.ptr()));
 	l_cam->setEssentialMatrix(defaulttype::Matrix3((double*)E.ptr()));
 	l_cam->setFundamentalMatrix(defaulttype::Matrix3((double*)F.ptr()));
 }

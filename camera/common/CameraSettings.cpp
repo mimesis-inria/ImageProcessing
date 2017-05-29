@@ -446,8 +446,7 @@ void CameraSettings::composeM()
 
 void CameraSettings::recalculate3DCorners()
 {
-	if (d_K.getValue() == Matrix3())
-		return;
+	if (d_K.getValue() == Matrix3()) return;
 	Vector3 p1, p2, p3, p4;
 	this->getCornersPosition(p1, p2, p3, p4,
 													 (d_f.getValue() != -1) ? (d_f.getValue()) : (1.0f));
@@ -564,14 +563,59 @@ void CameraSettings::init()
 
 	if (d_imageSize.getValue().x() && d_imageSize.getValue().y())
 	{
-		if (d_3DCorners.isSet() && d_t.isSet())
+		if (d_t.isSet() && d_K.isSet() && d_upVector.isSet() && d_lookAt.isSet())
+		{
+			Vector3 up, fwd, right;
+			fwd = d_t.getValue() - d_lookAt.getValue().normalized();
+			up = d_upVector.getValue().normalized();
+			right = fwd.cross(up).normalized();
+			Matrix3 R(right, fwd, up);
+			R.transpose();
+			d_R.setValue(R);
+
+			Matrix3 debug(Vector3(0.89443, -0.44721, 0), Vector3(0, 0, -1),
+										Vector3(0.44721, 0.89443, 0));
+			std::cout << debug.line(0) << std::endl
+								<< debug.line(1) << std::endl
+								<< debug.line(2) << std::endl
+								<< std::endl;
+
+			std::cout << R.line(0) << std::endl;
+			std::cout << R.line(1) << std::endl;
+			std::cout << R.line(2) << std::endl << std::endl;
+
+			std::cout << "x: " << right << std::endl;
+			std::cout << "y: " << fwd << std::endl;
+			std::cout << "z: " << up<< std::endl << std::endl;
+
+
+			decomposeCV();
+			composeM();
+			composeGL();
+		}
+		else if (d_t.isSet() && d_K.isSet() && d_upVector.isSet() &&
+						 d_fwdVector.isSet())
+		{
+			std::cout << "setting calibration from K, t, up and lookAt" << std::endl;
+			Vector3 right(d_upVector.getValue().normalized().cross(
+					d_fwdVector.getValue().normalized()));
+			Matrix3 R(right.normalized(), d_fwdVector.getValue().normalized(),
+								d_upVector.getValue().normalized());
+			R.transpose();
+			d_R.setValue(R);
+
+			decomposeCV();
+			composeM();
+			composeGL();
+		}
+		else if (d_3DCorners.isSet() && d_t.isSet())
 		{
 			this->buildFromCamPosAndImageCorners();
 			composeCV();
 			composeM();
 			composeGL();
 		}
-		if (d_M.isSet())
+		else if (d_M.isSet())
 		{
 			decomposeM();
 			composeCV();

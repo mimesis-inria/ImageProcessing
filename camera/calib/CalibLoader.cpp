@@ -101,8 +101,8 @@ void CalibLoader::setCurrentCalib(CalibData& d)
 	{
 		l_sCam->setFundamentalMatrix(d.F);
 		l_sCam->setEssentialMatrix(d.E);
-		l_sCam->setRotationMatrix(d.Rs);
-		l_sCam->setTranslationVector(d.Ts);
+//		l_sCam->setRotationMatrix(d.Rs);
+//		l_sCam->setTranslationVector(d.Ts);
 
 		l_cam2->setImageSize(d.imSize2, false);
 		l_cam2->setIntrinsicCameraMatrix(d.K2, false);
