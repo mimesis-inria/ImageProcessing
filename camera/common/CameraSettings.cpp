@@ -2,6 +2,7 @@
 #include <SofaORCommon/cvMatUtils.h>
 
 #include <SofaBaseVisual/BaseCamera.h>
+#include <iomanip>
 
 namespace sofa
 {
@@ -566,28 +567,15 @@ void CameraSettings::init()
 		if (d_t.isSet() && d_K.isSet() && d_upVector.isSet() && d_lookAt.isSet())
 		{
 			Vector3 up, fwd, right;
-			fwd = d_t.getValue() - d_lookAt.getValue().normalized();
+			fwd = d_lookAt.getValue().normalized() - d_t.getValue();
+			fwd.normalize();
+
 			up = d_upVector.getValue().normalized();
-			right = fwd.cross(up).normalized();
-			Matrix3 R(right, fwd, up);
-			R.transpose();
+			right = up.cross(fwd).normalized();
+
+			Matrix3 R(right.normalized(), up.normalized(), fwd.normalized());
+			//			R.transpose();
 			d_R.setValue(R);
-
-			Matrix3 debug(Vector3(0.89443, -0.44721, 0), Vector3(0, 0, -1),
-										Vector3(0.44721, 0.89443, 0));
-			std::cout << debug.line(0) << std::endl
-								<< debug.line(1) << std::endl
-								<< debug.line(2) << std::endl
-								<< std::endl;
-
-			std::cout << R.line(0) << std::endl;
-			std::cout << R.line(1) << std::endl;
-			std::cout << R.line(2) << std::endl << std::endl;
-
-			std::cout << "x: " << right << std::endl;
-			std::cout << "y: " << fwd << std::endl;
-			std::cout << "z: " << up<< std::endl << std::endl;
-
 
 			decomposeCV();
 			composeM();
@@ -601,7 +589,7 @@ void CameraSettings::init()
 					d_fwdVector.getValue().normalized()));
 			Matrix3 R(right.normalized(), d_fwdVector.getValue().normalized(),
 								d_upVector.getValue().normalized());
-			R.transpose();
+//			R.transpose();
 			d_R.setValue(R);
 
 			decomposeCV();

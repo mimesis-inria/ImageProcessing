@@ -26,7 +26,8 @@ namespace processor
 
 void PointPicker2D::computeEpipolarLines()
 {
-	if (!m_picker && !l_cam.get()) return;
+	if (!m_picker || !l_cam.get() || l_cam->getFundamentalMatrix().empty())
+		return;
 	std::vector<cv::Vec3f> lines;
 	epilines.clear();
 	if (!m_pointList.empty())

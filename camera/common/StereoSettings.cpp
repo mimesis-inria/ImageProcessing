@@ -86,7 +86,11 @@ cv::Mat_<double> StereoSettings::linearLSTriangulation(cv::Point3d u,
 	return X;
 }
 
-void StereoSettings::init() {}
+void StereoSettings::init()
+{
+	if (l_cam1.get() && l_cam2.get() && !d_F.isSet() && !d_E.isSet())
+		recomputeFromCameras();
+}
 
 // returns the 3D position of a pair of 2D matches 'X, Y'
 defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
@@ -174,25 +178,53 @@ void StereoSettings::recomputeFromCameras()
 	Matrix3 R2 = l_cam2->getRotationMatrix();
 	Vector3 T1 = l_cam1->getPosition();
 	Vector3 T2 = l_cam2->getPosition();
-	
+
+	// Camera 2 in Cam1 coord system
+//	Vector3 Ts = R1 * (T2 - T1);
 	Vector3 Ts = T2 - T1;
-	
+
 	// Rotation matrix from R1 to R2
-	Matrix3 Rs = R1.transposed() * R2;
+	Matrix3 K2R2 = K2 * R2;
+	K2R2.invert(K2R2.transposed());
+
+	std::cout << std::setprecision(16) << std::fixed << "K2R2:\n" << K2R2 << std::endl << std::endl;
 
 	// Skew symetric matrix of Ts
-	Matrix3 T(Vector3(0, -Ts[2], Ts[1]),
+	Matrix3 T(
+				Vector3(0, -Ts[2], Ts[1]),
 			Vector3(Ts[2], 0, -Ts[0]),
 			Vector3(-Ts[1], Ts[0], 0));
 
-	K2.invert(K2.transposed());
-	K1.invert(K1);
+	/// E = R * [T]x
+	Matrix3 E;
 
 	/// F = inv(K2') * R * [T]x * inv(K1)
-	Matrix3 F = K2 * Rs * T * K1;
+	std::cout << std::setprecision(16) << std::fixed << "K1:\n" << K1 << std::endl << std::endl;
+	Matrix3 KTmp = K1;
+	K1.invert(KTmp);
+	std::cout << std::setprecision(16) << std::fixed << "inv(K1):\n" << K1 << std::endl << std::endl;
 
-	/// E = R * [T]x
-	Matrix3 E = Rs * T;
+	Matrix3 K1R1 = R1.transposed() * K1;
+
+	std::cout << std::setprecision(16) << std::fixed << "K1R1:\n" << K1R1 << std::endl << std::endl;
+
+	Matrix3 F = K2R2 * T * K1R1;
+
+	std::cout << std::setprecision(16) << std::fixed << "F:\n" <<F << std::endl;
+
+	for (int i = 0 ; i < 3 ; ++i)
+	{
+		for (int j = 0 ; j < 3 ; ++j)
+		{
+			F[i][j] /= F[2][2];
+		}
+	}
+//	double norm = F.line(2).norm();
+//	F[0].normalizeWithNorm(norm);
+//	F[1].normalizeWithNorm(norm);
+//	F[2].normalizeWithNorm(norm);
+
+	std::cout << std::setprecision(16) << std::fixed << F << std::endl;
 
 	this->setFundamentalMatrix(F);
 	this->setEssentialMatrix(E);
