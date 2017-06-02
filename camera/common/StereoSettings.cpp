@@ -187,8 +187,6 @@ void StereoSettings::recomputeFromCameras()
 	Matrix3 K2R2 = K2 * R2;
 	K2R2.invert(K2R2.transposed());
 
-	std::cout << std::setprecision(16) << std::fixed << "K2R2:\n" << K2R2 << std::endl << std::endl;
-
 	// Skew symetric matrix of Ts
 	Matrix3 T(
 				Vector3(0, -Ts[2], Ts[1]),
@@ -199,19 +197,14 @@ void StereoSettings::recomputeFromCameras()
 	Matrix3 E;
 
 	/// F = inv(K2') * R * [T]x * inv(K1)
-	std::cout << std::setprecision(16) << std::fixed << "K1:\n" << K1 << std::endl << std::endl;
 	Matrix3 KTmp = K1;
 	K1.invert(KTmp);
-	std::cout << std::setprecision(16) << std::fixed << "inv(K1):\n" << K1 << std::endl << std::endl;
 
 	Matrix3 K1R1 = R1.transposed() * K1;
 
-	std::cout << std::setprecision(16) << std::fixed << "K1R1:\n" << K1R1 << std::endl << std::endl;
-
 	Matrix3 F = K2R2 * T * K1R1;
 
-	std::cout << std::setprecision(16) << std::fixed << "F:\n" <<F << std::endl;
-
+	// "Normalize matrix
 	for (int i = 0 ; i < 3 ; ++i)
 	{
 		for (int j = 0 ; j < 3 ; ++j)
@@ -219,17 +212,9 @@ void StereoSettings::recomputeFromCameras()
 			F[i][j] /= F[2][2];
 		}
 	}
-//	double norm = F.line(2).norm();
-//	F[0].normalizeWithNorm(norm);
-//	F[1].normalizeWithNorm(norm);
-//	F[2].normalizeWithNorm(norm);
-
-	std::cout << std::setprecision(16) << std::fixed << F << std::endl;
 
 	this->setFundamentalMatrix(F);
 	this->setEssentialMatrix(E);
-//	this->setRotationMatrix(Rs);
-//	this->setTranslationVector(Ts);
 }
 
 }  // namespace processor

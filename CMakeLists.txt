@@ -31,6 +31,7 @@ set(HEADER_FILES
   camera/calib/CalibrateStereo.h
   camera/calib/CalibLoader.h
   camera/calib/CalibExporter.h
+  camera/calib/FindChessboardCorners.h
 
   imgproc/CannyFilter.h
   imgproc/SobelFilter.h
@@ -78,6 +79,7 @@ set(SOURCE_FILES
   camera/calib/CalibrateStereo.cpp
   camera/calib/CalibLoader.cpp
   camera/calib/CalibExporter.cpp
+  camera/calib/FindChessboardCorners.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
