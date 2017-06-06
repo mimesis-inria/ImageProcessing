@@ -41,11 +41,11 @@ class FeatureTriangulator : public common::ImplicitDataEngine
   void triangulate(const cv::Point2f& l, const cv::Point2f& r,
                    defaulttype::Vec3d& p);
 
-  // DATA
-  Data<bool> d_rectify;
-  // INPUTS
-	StereoCamSettings l_cam;
+	// DATA
+	Data<bool> d_rectify;
 
+	// INPUTS
+	StereoCamSettings l_cam;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR;
   Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;

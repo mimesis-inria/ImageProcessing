@@ -66,7 +66,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	SOFA_CLASS(CameraSettings, common::ImplicitDataEngine);
 
 	CameraSettings()
-			: d_imageSize(initData(&d_imageSize, Vec2i(1280, 720), "imageSize",
+			: d_imageSize(initData(&d_imageSize, "imageSize",
 														 "Image resolution in pixels")),
 				d_f(initData(&d_f, "f", "distance camera -> plane")),
 				d_translate2D(
@@ -100,6 +100,7 @@ class CameraSettings : public common::ImplicitDataEngine
 				d_lookAt(initData(&d_lookAt, "lookAt", "Camera's lookat point"))
 	{
 		addAlias(&d_t, "t");
+		addAlias(&d_3DCorners, "corners");
 	}
 
 	~CameraSettings() {}

@@ -18,14 +18,14 @@ int FeatureTriangulatorClass =
         .add<FeatureTriangulator>();
 
 FeatureTriangulator::FeatureTriangulator()
-		: l_cam(initLink("cam",
-										 "link to CameraSettings component containing and "
-										 "maintaining the camera's parameters")),
-			d_rectify(initData(
+		: d_rectify(initData(
           &d_rectify, false, "rectify",
           "if set to true, points will be rectified before triangulating")),
-      d_keypointsL(initData(&d_keypointsL, "keypoints1",
-                            "input vector of left keypoints", true, true)),
+			l_cam(initLink("cam",
+										 "link to CameraSettings component containing and "
+										 "maintaining the camera's parameters")),
+			d_keypointsL(initData(&d_keypointsL, "keypoints1",
+														"input vector of left keypoints", true, true)),
       d_keypointsR(initData(&d_keypointsR, "keypoints2",
                             "input vector of right keypoints", true, true)),
       d_matches(initData(&d_matches, "matches",
@@ -69,12 +69,10 @@ void FeatureTriangulator::update()
 {
   std::cout << getName() << std::endl;
 
-//	common::matrix::sofaMat2cvMat(l_cam->getRotationMatrix(), R);
-//	common::matrix::sofaVector2cvMat(l_cam->getTranslationVector(), T);
-	common::matrix::sofaMat2cvMat(l_cam->getCamera1().getProjectionMatrix(),
-																cmL);
-	common::matrix::sofaMat2cvMat(l_cam->getCamera2().getProjectionMatrix(),
-																cmR);
+	//	common::matrix::sofaMat2cvMat(l_cam->getRotationMatrix(), R);
+	//	common::matrix::sofaVector2cvMat(l_cam->getTranslationVector(), T);
+	common::matrix::sofaMat2cvMat(l_cam->getCamera1().getProjectionMatrix(), cmL);
+	common::matrix::sofaMat2cvMat(l_cam->getCamera2().getProjectionMatrix(), cmR);
 	common::matrix::sofaVector2cvMat(
 			l_cam->getCamera1().getDistortionCoefficients(), dvL);
 	common::matrix::sofaVector2cvMat(
@@ -219,26 +217,26 @@ void FeatureTriangulator::triangulate(const cv::Point2f& l,
   cv::Point3d u(l.x, l.y, 1.0);
   cv::Point3d u1(r.x, r.y, 1.0);
 
-//  // multiply the point by the inverse of the K matrix
-//  cv::Mat_<double> um = cmL.inv() * cv::Mat_<double>(u);
-//  cv::Mat_<double> um1 = cmR.inv() * cv::Mat_<double>(u1);
+	//  // multiply the point by the inverse of the K matrix
+	//  cv::Mat_<double> um = cmL.inv() * cv::Mat_<double>(u);
+	//  cv::Mat_<double> um1 = cmR.inv() * cv::Mat_<double>(u1);
 
-//	if (d_rectify.getValue() && !dvL.empty() && !dvR.empty())
-//  {
-//    u.x = rectifyPoint(um(0), um(1), dvL).x;
-//    u.y = rectifyPoint(um(0), um(1), dvL).y;
-//    u1.x = rectifyPoint(um1(0), um1(1), dvR).x;
-//    u1.y = rectifyPoint(um1(0), um1(1), dvR).y;
-//  }
-//  else
-//  {
-//    u.x = um(0);
-//    u.y = um(1);
-//    u1.x = um1(0);
-//    u1.y = um1(1);
-//  }
-//	u.z = um(2);
-//	u1.z = um1(2);
+	//	if (d_rectify.getValue() && !dvL.empty() && !dvR.empty())
+	//  {
+	//    u.x = rectifyPoint(um(0), um(1), dvL).x;
+	//    u.y = rectifyPoint(um(0), um(1), dvL).y;
+	//    u1.x = rectifyPoint(um1(0), um1(1), dvR).x;
+	//    u1.y = rectifyPoint(um1(0), um1(1), dvR).y;
+	//  }
+	//  else
+	//  {
+	//    u.x = um(0);
+	//    u.y = um(1);
+	//    u1.x = um1(0);
+	//    u1.y = um1(1);
+	//  }
+	//	u.z = um(2);
+	//	u1.z = um1(2);
 
   cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
 

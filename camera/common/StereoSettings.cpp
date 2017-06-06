@@ -179,6 +179,9 @@ void StereoSettings::recomputeFromCameras()
 	Vector3 T1 = l_cam1->getPosition();
 	Vector3 T2 = l_cam2->getPosition();
 
+	if (K1 == Matrix3() || K2 == Matrix3())
+		return;
+
 	// Camera 2 in Cam1 coord system
 //	Vector3 Ts = R1 * (T2 - T1);
 	Vector3 Ts = T2 - T1;
@@ -215,6 +218,7 @@ void StereoSettings::recomputeFromCameras()
 
 	this->setFundamentalMatrix(F);
 	this->setEssentialMatrix(E);
+
 }
 
 }  // namespace processor

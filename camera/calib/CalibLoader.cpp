@@ -101,20 +101,25 @@ void CalibLoader::setCurrentCalib(CalibData& d)
 	{
 		l_sCam->setFundamentalMatrix(d.F);
 		l_sCam->setEssentialMatrix(d.E);
-//		l_sCam->setRotationMatrix(d.Rs);
-//		l_sCam->setTranslationVector(d.Ts);
+		//		l_sCam->setRotationMatrix(d.Rs);
+		//		l_sCam->setTranslationVector(d.Ts);
 
-		l_cam2->setImageSize(d.imSize2, false);
-		l_cam2->setIntrinsicCameraMatrix(d.K2, false);
-		l_cam2->setRotationMatrix(d.R2, false);
-		l_cam2->setPosition(d.T2, true);
-		l_cam2->setDistortionCoefficients(d.delta2);
+		l_sCam->getCamera2().setImageSize(d.imSize2, false);
+		l_sCam->getCamera2().setIntrinsicCameraMatrix(d.K2, false);
+		l_sCam->getCamera2().setRotationMatrix(d.R2, false);
+		l_sCam->getCamera2().setPosition(d.T2, true);
+		l_sCam->getCamera2().setDistortionCoefficients(d.delta2);
 	}
-	l_cam1->setImageSize(d.imSize1, false);
-	l_cam1->setIntrinsicCameraMatrix(d.K1, false);
-	l_cam1->setRotationMatrix(d.R1, false);
-	l_cam1->setPosition(d.T1, true);
-	l_cam1->setDistortionCoefficients(d.delta1);
+	CameraSettings* cam1;
+	if (l_cam1.get())
+		cam1 = l_cam1.get();
+	else
+		cam1 = &l_sCam->getCamera1();
+	cam1->setImageSize(d.imSize1, false);
+	cam1->setIntrinsicCameraMatrix(d.K1, false);
+	cam1->setRotationMatrix(d.R1, false);
+	cam1->setPosition(d.T1, true);
+	cam1->setDistortionCoefficients(d.delta1);
 }
 
 void CalibLoader::setCurrentCalib(const std::string& calibName)
@@ -145,7 +150,7 @@ void CalibLoader::load(const std::string& filename)
     return;
   }
 
-  std::string calibName;
+	std::string calibName;
 	cv::Mat K1;
 	cv::Mat K2;
 	cv::Mat delta1;
@@ -266,7 +271,6 @@ void CalibLoader::init()
 																				 "Please use attribute 'cam' "
 																				 "to define one";
 	if (!l_sCam.get()) m_isStereo = false;
-
 
   calibFolderChanged(NULL);
 	d_calibNames.beginEdit()->setSelectedItemToDefault();

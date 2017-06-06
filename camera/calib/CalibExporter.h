@@ -62,7 +62,7 @@ class CalibExporter : public common::ImplicitDataEngine
 	void exportCalib(const std::string& calibFile);
 	bool canExport(const std::string& calibDir,
 								 const std::string& calibFile) const;
-	void export_cam1(cv::Mat KL, cv::Mat TL, cv::Mat RL, cv::FileStorage fs, double e1, cv::Mat dvL, cv::Mat resL);
+	void export_cam(cv::Mat K, cv::Mat T, cv::Mat R, cv::FileStorage fs, double e, cv::Mat dv, cv::Mat res);
 };
 
 }  // namespace processor

@@ -99,7 +99,7 @@ void CalibExporter::cleanup()
 		exportCalib(d_calibName.getValue());
 }
 
-void CalibExporter::export_cam1(cv::Mat KL, cv::Mat TL, cv::Mat RL, cv::FileStorage fs, double e1, cv::Mat dvL, cv::Mat resL)
+void CalibExporter::export_cam(cv::Mat KL, cv::Mat TL, cv::Mat RL, cv::FileStorage fs, double e1, cv::Mat dvL, cv::Mat resL)
 {
 	fs.writeComment("\nimage size in pixels (w, h)");
 	fs << "imsize" << resL;
@@ -125,6 +125,7 @@ void CalibExporter::exportCalib(const std::string& calibFile)
 	{
 		cv::Mat E, F, Rs, ts, RL, TL, RR, TR, dvL, dvR, KR, KL, resL, resR;
 		double e1, e2, es;
+		e1 = e2 = es = 0.0;
 
 		common::matrix::sofaMat2cvMat(
 				l_sCam->getCamera1().getIntrinsicCameraMatrix(), KL);
@@ -147,7 +148,7 @@ void CalibExporter::exportCalib(const std::string& calibFile)
 //		common::matrix::sofaMat2cvMat(l_sCam->getRotationMatrix(), Rs);
 //		common::matrix::sofaVector2cvMat(l_sCam->getTranslationVector(), ts);
 
-		export_cam1(KL, TL, RL, fs, e1, dvL, resL);
+		export_cam(KL, TL, RL, fs, e1, dvL, resL);
 
 		fs.writeComment("\nSame for second camera if any");
 		fs << "imsize2" << resR;
@@ -174,7 +175,7 @@ void CalibExporter::exportCalib(const std::string& calibFile)
 	else
 	{
 		cv::Mat R, t, dvL, KL, res;
-		double e;
+		double e = 0.0;
 
 		common::matrix::sofaMat2cvMat(l_cam1->getRotationMatrix(), R);
 		common::matrix::sofaVector2cvMat(l_cam1->getPosition(), t);
@@ -183,7 +184,7 @@ void CalibExporter::exportCalib(const std::string& calibFile)
 		common::matrix::sofaVector2cvMat(l_cam1->getDistortionCoefficients(), dvL);
 		common::matrix::sofaVector2cvMat(l_cam1->getImageSize(), res);
 
-		export_cam1(KL, t, R, fs, e, dvL, res);
+		export_cam(KL, t, R, fs, e, dvL, res);
 	}
 
 	fs.release();

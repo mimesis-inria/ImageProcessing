@@ -23,9 +23,6 @@ class ImageRectifier : public ImageFilter
  public:
   SOFA_CLASS(ImageRectifier, ImageFilter);
 
-  Data<defaulttype::Matrix3> d_projMat;
-  Data<helper::vector<double> > d_distCoefs;
-
   ImageRectifier()
 			: l_cam(initLink("cam",
 											 "link to CameraSettings component containing and "
