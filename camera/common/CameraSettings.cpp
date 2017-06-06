@@ -527,13 +527,6 @@ void CameraSettings::buildFromCamPosAndImageCorners()
 	cam.getOrientation().fromMatrix(R);
 	cam.getCenter() = c;
 
-	std::cout << "camPos:" << c << std::endl;
-	std::cout << "camOri:" << R << std::endl;
-	std::cout << "u0:" << u0 << std::endl;
-	std::cout << "v0:" << v0 << std::endl;
-	std::cout << "fu:" << fu << std::endl;
-	std::cout << "fv:" << fv << std::endl;
-	std::cout << "f:" << f << std::endl;
 }
 
 void CameraSettings::init()
@@ -567,7 +560,7 @@ void CameraSettings::init()
 		if (d_t.isSet() && d_K.isSet() && d_upVector.isSet() && d_lookAt.isSet())
 		{
 			Vector3 up, fwd, right;
-			fwd = d_lookAt.getValue().normalized() - d_t.getValue();
+			fwd = d_lookAt.getValue() - d_t.getValue();
 			fwd.normalize();
 
 			up = d_upVector.getValue().normalized();

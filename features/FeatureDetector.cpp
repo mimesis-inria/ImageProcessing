@@ -143,6 +143,8 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->detect(
         in, d_mask.getValue(), _v);
+		msg_warning_when(_v.empty(), "FeatureDetector::update()") << "No Features detected";
+
   }
   else if (detect == COMPUTE_ONLY)
   {
@@ -154,10 +156,12 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 
       _v.assign(arr, arr + d_keypoints.getValue().size());
     }
-    _d = cv::Mat();
+		msg_warning_when(_v.empty(), "FeatureDetector::update()") << "No Features to describe";
+		_d = cv::Mat();
     m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->compute(in, _v, _d);
-  }
+		msg_warning_when(!_d.rows, "FeatureDetector::update()") << "Couldn't describe features...";
+	}
   else
   {
     if (in.empty()) return;
@@ -173,7 +177,9 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->detectAndCompute(
         in, d_mask.getValue(), _v, _d);
-  }
+		msg_warning_when(_v.empty(), "FeatureDetector::update()") << "Didn't detect any feature...";
+		msg_warning_when(!_d.rows, "FeatureDetector::update()") << "Couldn't describe features...";
+	}
   if (d_displayDebugWindow.getValue())
   {
     in.copyTo(out);

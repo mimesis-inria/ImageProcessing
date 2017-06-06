@@ -85,12 +85,13 @@ void DescriptorMatcher::init()
 
   addOutput(&d_img_out);
   addOutput(&d_matches);
-  ImageFilter::init();
+	ImageFilter::init();
 }
 void DescriptorMatcher::update()
 {
   std::cout << getName() << std::endl;
-  ImageFilter::update();
+	msg_warning_when(!d_queryDescriptors.getValue().rows || !d_trainDescriptors.getValue().rows, "DescriptorMatcher::update()") << "Error: Empty descriptor matrix!";
+	ImageFilter::update();
 
   sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> >* vec =
       d_matches.beginWriteOnly();
