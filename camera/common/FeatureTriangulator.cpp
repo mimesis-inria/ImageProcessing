@@ -33,16 +33,10 @@ FeatureTriangulator::FeatureTriangulator()
                          "(optional if keypoints are already sorted).",
                          true, true)),
       d_pointCloud(
-          initData(&d_pointCloud, "positions", "output vector of 3D points")),
-      d_pointCloudColors(initData(&d_pointCloudColors, "colors",
-                                  "output vector of rgb point color")),
-      d_img(initData(
-          &d_img, "img",
-          "image from which to extract point color (based on left keypoints"))
+					initData(&d_pointCloud, "positions", "output vector of 3D points"))
 {
   f_listening.setValue(true);
   addAlias(&d_pointCloud, "positions_out");
-  addAlias(&d_pointCloudColors, "colors_out");
 }
 
 FeatureTriangulator::~FeatureTriangulator() {}
@@ -52,10 +46,7 @@ void FeatureTriangulator::init()
   addInput(&d_keypointsL);
   addInput(&d_keypointsR);
 
-  addInput(&d_img, true);
-
   addOutput(&d_pointCloud);
-  addOutput(&d_pointCloudColors);
 
 	if (!l_cam.get())
 		msg_error(getName() + "::init()") << "Error: No stereo camera link set. "
@@ -82,49 +73,22 @@ void FeatureTriangulator::update()
 	PR = cmR;
 
   helper::vector<Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
-  helper::vector<Vec3b>& colors = *(d_pointCloudColors.beginWriteOnly());
 
   const helper::vector<common::cvKeypoint>& kL = d_keypointsL.getValue();
   const helper::vector<common::cvKeypoint>& kR = d_keypointsR.getValue();
   const helper::SVector<helper::SVector<common::cvDMatch> >& m =
       d_matches.getValue();
   pts.resize(kL.size());
-  colors.resize(kL.size());
 	unsigned sizePts = 0;
   (kL.size() > kR.size()) ? (sizePts = kR.size()) : (sizePts = kL.size());
 
-  if (d_img.isSet() && !d_img.getValue().empty())
-  {
-    if (d_matches.isSet())
-      for (size_t i = 0; i < m.size(); ++i)
-      {
-        cv::Point2f ptL = kL[m[i][0].queryIdx].pt;
-        triangulate(ptL, kR[m[i][0].trainIdx].pt, pts[i]);
-        cv::Vec3b c = d_img.getValue().at<cv::Vec3b>(ptL.y, ptL.x);
-        colors[i] = Vec3b(c[0], c[1], c[2]);
-      }
-    else
-    {
-      for (size_t i = 0; i < sizePts; ++i)
-      {
-        triangulate(kL[i].pt, kR[i].pt, pts[i]);
-        cv::Vec3b c = d_img.getValue().at<cv::Vec3b>(kL[i].pt.y, kL[i].pt.x);
-        colors[i] = Vec3b(c[0], c[1], c[2]);
-      }
-    }
-    d_pointCloud.endEdit();
-    d_pointCloudColors.endEdit();
-  }
-  else
-  {
-    if (d_matches.isSet())
-      for (size_t i = 0; i < m.size(); ++i)
-        triangulate(kL[m[i][0].queryIdx].pt, kR[m[i][0].trainIdx].pt, pts[i]);
-    else
-      for (size_t i = 0; i < sizePts; ++i)
-        triangulate(kL[i].pt, kR[i].pt, pts[i]);
-    d_pointCloud.endEdit();
-  }
+	if (d_matches.isSet())
+		for (size_t i = 0; i < m.size(); ++i)
+			triangulate(kL[m[i][0].queryIdx].pt, kR[m[i][0].trainIdx].pt, pts[i]);
+	else
+		for (size_t i = 0; i < sizePts; ++i)
+			triangulate(kL[i].pt, kR[i].pt, pts[i]);
+	d_pointCloud.endEdit();
 }
 
 cv::Point3d FeatureTriangulator::rectifyPoint(double x, double y,

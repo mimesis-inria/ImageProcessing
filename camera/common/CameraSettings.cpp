@@ -559,7 +559,7 @@ void CameraSettings::init()
 	addOutput(&d_3DCorners);
 
 
-	if (d_imageSize.isSet() && d_imageSize.isSet())
+	if (!d_imageSize.isSet())
 		d_imageSize.setValue(Vec2i(1280, 720));
 
 	if (d_t.isSet() && d_K.isSet() && d_upVector.isSet() && d_lookAt.isSet())
@@ -629,8 +629,7 @@ void CameraSettings::init()
 		decomposeGL();
 		composeM();
 	}
-	if (d_M.isSet())
-		recalculate3DCorners();
+	recalculate3DCorners();
 
 	checkData(false);
 }

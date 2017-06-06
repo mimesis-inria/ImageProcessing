@@ -75,6 +75,7 @@ void PCViewer::draw(const core::visual::VisualParams*)
 
 	if (d_colors.isSet())
 	{
+		std::cout << m_positions.size() << std::endl;
 		const helper::vector<Vec3b>& colors = d_colors.getValue();
 		for (size_t i = 0; i < m_positions.size(); ++i)
 		{

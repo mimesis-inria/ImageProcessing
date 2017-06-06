@@ -68,7 +68,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	CameraSettings()
 			: d_imageSize(initData(&d_imageSize, "imageSize",
 														 "Image resolution in pixels")),
-				d_f(initData(&d_f, "f", "distance camera -> plane")),
+				d_f(initData(&d_f, 1.0, "f", "distance camera -> plane")),
 				d_translate2D(
 						initData(&d_translate2D, "translate2D",
 										 "principal point position in the image (in pixel units)")),

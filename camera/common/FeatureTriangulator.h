@@ -52,10 +52,6 @@ class FeatureTriangulator : public common::ImplicitDataEngine
 
   // OUTPUTS
   Data<sofa::helper::vector<Vec3d> > d_pointCloud;
-  Data<sofa::helper::vector<Vec3b> > d_pointCloudColors;
-
-	// INPUT (OPTIONAL)
-	Data<common::cvMat> d_img;
 
  private:
   cv::Mat_<double> R;

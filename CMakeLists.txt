@@ -38,6 +38,7 @@ set(HEADER_FILES
   imgproc/AdaptiveThreshold.h
   imgproc/SimpleThreshold.h
   imgproc/MorphologyEx.h
+  imgproc/ImageConverter.h
 
   features/Detectors.h
   features/Matchers.h
@@ -86,6 +87,7 @@ set(SOURCE_FILES
   imgproc/AdaptiveThreshold.cpp
   imgproc/SimpleThreshold.cpp
   imgproc/MorphologyEx.cpp
+  imgproc/ImageConverter.cpp
 
   features/Detectors.cpp
   features/Matchers.cpp
