@@ -344,7 +344,20 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   const helper::SVector<helper::SVector<common::cvDMatch> >& in_matches =
       d_matches_in.getValue();
 
-  if (d_displayDebugWindow.getValue()) in.copyTo(out);
+	if (d_displayDebugWindow.getValue())
+	{
+		in.copyTo(out);
+		if (in.depth() == CV_32F)
+		{
+			std::cout << "converting to 8bit" << std::endl;
+			out.convertTo(out, 0, 255.0);
+		}
+		if (out.channels() == 1)
+		{
+			std::cout << "converting from grayscale to BGR" << std::endl;
+			cv::cvtColor(out, out, CV_GRAY2BGR);
+		}
+	}
   if (m_kptsL.size() != in_matches.size())
   {
     std::cout << "-- WTF???? ##KPTS != MATCHES##" << std::endl;
