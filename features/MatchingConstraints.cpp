@@ -69,36 +69,9 @@ MatchingConstraints::MatchingConstraints()
       d_descriptorsL_out(initData(&d_descriptorsL_out, "descriptors1_out",
                                   "left descriptors", false, true)),
       d_descriptorsR_out(initData(&d_descriptorsR_out, "descriptors2_out",
-                                  "right descriptors", false, true)),
-      d_epilinesL(initData(&d_epilinesL, "epilines1",
-                           "left epipolar lines for inliers", false, true)),
-      d_epilinesR(initData(&d_epilinesR, "epilines2",
-                           "right epipolar lines for inliers", false, true)),
-      d_epidistL(initData(&d_epidistL, "epidist1",
-                          "left epipolar distances for inlier features", false,
-                          true)),
-      d_epidistR(initData(&d_epidistR, "epidist2",
-                          "right epipolar distances for inlier features", false,
-                          true)),
-      d_mdfDistances(initData(&d_mdfDistances, "mdfScores",
-                              "mdf score for each inlier", false, true)),
-      d_mdfMaxDist(
-          initData(&d_mdfMaxDist, "mdfMaxDist",
-                   "maximum distance for all features (including outliers)",
-                   true, true)),
-      d_knnLambdas(initData(&d_knnLambdas, "knnScores",
-                            "KNN score for each inlier", false, true))
-
+																	"right descriptors", false, true))
 {
   addAlias(&d_outliers_out, "outliers_out");
-  addAlias(&d_epilinesL, "epilines1_out");
-  addAlias(&d_epilinesR, "epilines2_out");
-  addAlias(&d_epidistL, "epidist1_out");
-  addAlias(&d_epidistR, "epidist2_out");
-
-  addAlias(&d_mdfDistances, "mdfScores_out");
-  addAlias(&d_mdfMaxDist, "mdfMaxDist_out");
-  addAlias(&d_knnLambdas, "knnScores_out");
 
   f_listening.setValue(true);
 }
@@ -118,16 +91,6 @@ void MatchingConstraints::init()
   addOutput(&d_keypointsR_out);
   addOutput(&d_descriptorsL_out);
   addOutput(&d_descriptorsR_out);
-
-  addOutput(&d_epidistL);
-  addOutput(&d_epidistR);
-  addOutput(&d_epilinesL);
-  addOutput(&d_epilinesR);
-
-  addOutput(&d_mdfDistances);
-  addOutput(&d_mdfMaxDist);
-
-  addOutput(&d_knnLambdas);
 
   if (!d_useEpipolarFilter.getValue())
   {
@@ -159,30 +122,27 @@ void MatchingConstraints::init()
 
 bool MatchingConstraints::computeEpipolarLines()
 {
-  m_epilinesL.clear();
-  m_epilinesR.clear();
-  m_epidistanceL.clear();
-  m_epidistanceR.clear();
+	m_epilines.clear();
 
-  if (m_kptsL.empty() || m_kptsR.empty()) return false;
+	if (d_keypointsL_in.getValue().empty())
+	{
+		std::cout << "No Keypoints to compute epipolar lines for!" << std::endl;
+		return false;
+	}
+	std::vector<cv::Point2f> ptsL;
+	ptsL.reserve(d_keypointsL_in.getValue().size());
 
-  std::vector<cv::Point2f> ptsL, ptsR;
-  ptsL.reserve(m_kptsL.size());
-  ptsR.reserve(m_kptsR.size());
-
-  for (size_t i = 0; i < m_kptsL.size(); ++i)
+	for (auto kp : d_keypointsL_in.getValue())
   {
-    ptsL.push_back(m_kptsL[i].pt);
-    ptsR.push_back(m_kptsR[i].pt);
+		ptsL.push_back(kp.pt);
   }
 
 	if (!l_cam.get() || !l_cam->getFundamentalMatrix().empty())
   {
-    cv::Mat_<double> f;
-		common::matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), f);
-    cv::computeCorrespondEpilines(ptsL, 1, f, m_epilinesL);
-    cv::computeCorrespondEpilines(ptsR, 2, f, m_epilinesR);
-  }
+		cv::Mat F;
+		common::matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), F);
+		cv::computeCorrespondEpilines(ptsL, 1, F, m_epilines);
+	}
   else
   {
     msg_error("MatchingConstraints::computeEpipolarLines()")
@@ -199,77 +159,184 @@ float distancePointLine(const cv::Point2f point, const cv::Vec3f& line)
          std::sqrt(line(0) * line(0) + line(1) * line(1));
 }
 
-void MatchingConstraints::computeEpipolarDistances()
-{
-  for (size_t i = 0; i < m_kptsL.size(); ++i)
-  {
-    m_epidistanceL.push_back(distancePointLine(m_kptsL[i].pt, m_epilinesR[i]));
-    m_epidistanceR.push_back(distancePointLine(m_kptsR[i].pt, m_epilinesL[i]));
-  }
-}
-
 void MatchingConstraints::update()
 {
   std::cout << getName() << std::endl;
   // All precomputations for the filters, only done once per new batch of
   // inputs
-  if (d_keypointsR_in.getValue().size() !=
+
+	// Making sure we have keypoints, and that we have an even number of keypoints and descriptors
+	if (d_matches_in.getValue().empty())
+	{
+		msg_error(getName() + "::update()")
+				<< "Error: No match to filter!";
+		return;
+	}
+	if (d_keypointsR_in.getValue().size() !=
       size_t(d_descriptorsR_in.getValue().rows))
   {
-    std::cout << "-- WTF???? ##KPTS != DESC##" << std::endl;
+		msg_error(getName() + "::update()")
+				<< "Error: number of Right keypoints and descriptors differ!";
     return;
-  }
-  m_maxDist = .0;
+	}
+	if (d_keypointsL_in.getValue().size() !=
+			size_t(d_descriptorsL_in.getValue().rows))
+	{
+		msg_error(getName() + "::update()")
+				<< "Error: number of Left keypoints and descriptors differ!";
+		return;
+	}
 
-  const helper::SVector<helper::SVector<common::cvDMatch> >& matches =
-      d_matches_in.getValue();
-  m_matches_out.clear();
-  m_kptsL.clear();
-  m_kptsR.clear();
-  m_kptsL.reserve(matches.size());
-  m_kptsR.reserve(matches.size());
-  m_matches_out.resize(matches.size(), std::vector<cv::DMatch>(2));
+	m_maxDist = .0;
 
-  for (size_t i = 0; i < matches.size(); ++i)
-    for (size_t j = 0; j < 2; ++j) m_matches_out[i][j] = matches[i][j];
-  m_descL = cv::Mat(int(matches.size()), d_descriptorsL_in.getValue().cols,
-                    d_descriptorsL_in.getValue().type());
-  m_descR = cv::Mat(int(matches.size()), d_descriptorsL_in.getValue().cols,
-                    d_descriptorsL_in.getValue().type());
-  const helper::vector<common::cvKeypoint>& PointsL =
-      d_keypointsL_in.getValue();
-  const helper::vector<common::cvKeypoint>& PointsR =
-      d_keypointsR_in.getValue();
-  const cv::Mat& DescriptorsLeft = d_descriptorsL_in.getValue();
-  const cv::Mat& DescriptorsRight = d_descriptorsR_in.getValue();
+	// copy inputs into Opencv data structures:
+	std::vector<std::vector<cv::DMatch> > matches;
+	for (auto matchVector : d_matches_in.getValue())
+	{
+		std::vector<cv::DMatch> mvec;
+		for (auto match : matchVector) mvec.push_back(match);
+		matches.push_back(mvec);
+	}
+	const helper::vector<common::cvKeypoint>& PointsR =
+			d_keypointsR_in.getValue();
 
-  std::vector<cv::DMatch>* ptr = m_matches_out.data();
-  int l_index, r_index;
-  for (size_t i = 0; i < matches.size(); ++i)
-  {
-    float d = (*ptr)[0].distance;
-    if (d > m_maxDist) m_maxDist = d;
-    l_index = (*ptr)[0].queryIdx;
-    r_index = (*ptr)[0].trainIdx;
+	/// Fill matchVector with all the necessary info:
+	m_matchVector.clear();
 
-    (*ptr)[0].queryIdx = i;
-    (*ptr)[0].trainIdx = i;
-    m_kptsL.push_back(PointsL[unsigned(l_index)]);
-    m_kptsR.push_back(PointsR[unsigned(r_index)]);
-    DescriptorsLeft.row(l_index).copyTo(m_descL.row(int(i)));
-    DescriptorsRight.row(r_index).copyTo(m_descR.row(int(i)));
-    m_mdfDistances.push_back(d);
-    ptr++;
-  }
+	/// Precompute all epipolar lines for left keypoints
+	cv::Mat F;
+	common::matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), F);
+	if (d_useEpipolarFilter.getValue()) computeEpipolarLines();
 
-  if (d_useEpipolarFilter.getValue())
-    if (computeEpipolarLines()) computeEpipolarDistances();
+	for (auto matchVector : matches)
+	{
+		/// retrieve maximum value for MDF
+		if (matchVector[0].distance > m_maxDist)
+			m_maxDist = matchVector[0].distance;
 
-  ImageFilter::update();
-  std::cout << d_matches_out.getValue().size() << std::endl;
-  std::cout << d_keypointsL_out.getValue().size() << std::endl;
-  std::cout << "end" << getName() << std::endl;
+		MatchVector mv;
+		mv.idxL = matchVector[0].queryIdx;
+		for (const cv::DMatch& match : matchVector)
+		{
+			/// IF you want to filter distance according to EVERY match, including 2nd
+			/// degree matches & more, uncomment the following line:
+			//      if (match.distance > m_maxDist) m_maxDist = match.distance;
+
+			/// Storing, for each right match of a left point, its distance, index,
+			/// and
+			/// distance to the epipolar line
+			MatchStruct ms;
+			ms.distance = match.distance;
+			ms.idxR = match.trainIdx;
+			ms.distanceToEpiline =
+					distancePointLine(PointsR[ms.idxR].pt, m_epilines[mv.idxL]);
+
+			mv.matches.push_back(ms);
+		}
+		m_matchVector.push_back(mv);
+	}
+
+	ImageFilter::update();
+
+	d_outliers_out.setValue(m_outliers_out);
+	d_matches_out.setValue(m_matches);
+	d_keypointsL_out.setValue(m_kpL);
+	d_keypointsR_out.setValue(m_kpR);
+	d_descriptorsL_out.setValue(m_descL);
+	d_descriptorsR_out.setValue(m_descR);
+	std::cout << "final number of kpL: " << d_keypointsL_out.getValue().size() << std::endl;
 }
+bool MatchingConstraints::EpipolarConstraintFilter(unsigned& filteredByEpipolar,
+																									 unsigned i, MatchVector& ms,
+																									 double epiDist)
+{
+	std::vector<MatchStruct> filteredMatches;
+	for (const MatchStruct& match : ms.matches)
+	{
+		if (epiDist >= match.distanceToEpiline) filteredMatches.push_back(match);
+	}
+	if (filteredMatches.empty())
+	{
+		m_outliers_out.push_back(i);
+		filteredByEpipolar++;
+		return false;
+	}
+	ms.matches = filteredMatches;
+	return true;
+}
+
+bool MatchingConstraints::KNearestNeighborFilter(unsigned i, double lambda,
+																								 MatchVector& ms,
+																								 unsigned& filteredByKNN)
+{
+	if (ms.matches[1].distance / ms.matches[0].distance < lambda)
+	{
+		m_outliers_out.push_back(i);
+		filteredByKNN++;
+		return false;
+	}
+	return true;
+}
+
+bool MatchingConstraints::MinimalDistanceFilter(MatchVector& ms,
+																								unsigned& filteredByMDF,
+																								unsigned i, float mdfDist)
+{
+	std::vector<MatchStruct> filteredMatches;
+	for (const MatchStruct& match : ms.matches)
+	{
+		float mdfVal = match.distance / m_maxDist;
+		if (mdfDist > mdfVal) filteredMatches.push_back(match);
+	}
+	if (filteredMatches.empty())
+	{
+		m_outliers_out.push_back(i);
+		filteredByMDF++;
+		return false;
+	}
+	ms.matches = filteredMatches;
+	return true;
+}
+
+void MatchingConstraints::PushInlier(
+		const common::cvMat& descL, unsigned i,
+		const helper::vector<common::cvKeypoint>& PointsL,
+		const common::cvMat& descR, MatchVector& ms,
+		const helper::vector<common::cvKeypoint>& PointsR)
+{
+	unsigned inliersIdx = i - m_outliers_out.size();
+	m_matches.push_back(
+			common::cvDMatch(ms.idxL, ms.matches[0].idxR, ms.matches[0].distance));
+	m_kpL.push_back(PointsL[ms.idxL]);
+	m_kpR.push_back(PointsR[ms.matches[0].idxR]);
+
+	descL.row(ms.idxL).copyTo(m_descL.row(int(inliersIdx)));
+	descR.row(ms.matches[0].idxR).copyTo(m_descR.row(int(inliersIdx)));
+}
+
+void MatchingConstraints::ClearOutputVectors()
+{
+	m_matches.clear();
+	m_kpL.clear();
+	m_kpR.clear();
+	m_outliers_out.clear();
+	m_descL = common::cvMat();
+	m_descR = common::cvMat();
+
+	// preallocating space for structures based on the number of keypoints on the
+	// reference image (Left)
+	m_matches.reserve(d_keypointsL_in.getValue().size());
+	m_kpL.reserve(d_keypointsL_in.getValue().size());
+	m_kpR.reserve(d_keypointsL_in.getValue().size());
+	m_outliers_out.reserve(d_keypointsL_in.getValue().size());
+	m_descL = common::cvMat(d_keypointsL_in.getValue().size(),
+													d_descriptorsL_in.getValue().cols,
+													d_descriptorsL_in.getValue().type());
+	m_descR = common::cvMat(d_keypointsL_in.getValue().size(),
+													d_descriptorsL_in.getValue().cols,
+													d_descriptorsL_in.getValue().type());
+}
+
 void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   // Actual application of filters, filling outputs
@@ -282,68 +349,10 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   bool knn = d_useKNNFilter.getValue();
   double lambda = d_knnLambda.getValue();
 
-  helper::vector<size_t>& outliers = *d_outliers_out.beginWriteOnly();
-  helper::SVector<helper::SVector<common::cvDMatch> >& out_matches =
-      *d_matches_out.beginWriteOnly();
-  sofa::helper::vector<common::cvKeypoint>& kptsL =
-      *d_keypointsL_out.beginWriteOnly();
-  sofa::helper::vector<common::cvKeypoint>& kptsR =
-      *d_keypointsR_out.beginWriteOnly();
-  common::cvMat& descL = *d_descriptorsL_out.beginWriteOnly();
-  common::cvMat& descR = *d_descriptorsR_out.beginWriteOnly();
+	// ensuring that initial output matches, keypoints and descriptors are empty
+	ClearOutputVectors();
 
-  helper::vector<float>& epidistL = *d_epidistL.beginWriteOnly();
-  helper::vector<float>& epidistR = *d_epidistR.beginWriteOnly();
-  helper::vector<defaulttype::Vec3f>& epilinesL = *d_epilinesL.beginWriteOnly();
-  helper::vector<defaulttype::Vec3f>& epilinesR = *d_epilinesR.beginWriteOnly();
-
-  helper::vector<float>& mdfDistances = *d_mdfDistances.beginWriteOnly();
-
-  helper::vector<float>& knnLambdas = *d_knnLambdas.beginWriteOnly();
-
-  // outputs initialization
-  outliers.clear();
-  outliers.reserve(d_matches_in.getValue().size());
-  out_matches.resize(d_matches_in.getValue().size());
-  kptsL.resize(d_matches_in.getValue().size());
-  kptsR.resize(d_matches_in.getValue().size());
-
-  descL = cv::Mat(int(d_matches_in.getValue().size()),
-                  d_descriptorsL_in.getValue().cols,
-                  d_descriptorsL_in.getValue().type());
-  descR = cv::Mat(int(d_matches_in.getValue().size()),
-                  d_descriptorsL_in.getValue().cols,
-                  d_descriptorsL_in.getValue().type());
-
-  if (epipolar)
-  {
-    epidistL.resize(d_matches_in.getValue().size());
-    epidistR.resize(d_matches_in.getValue().size());
-    epilinesL.resize(d_matches_in.getValue().size());
-    epilinesR.resize(d_matches_in.getValue().size());
-  }
-  else
-  {
-    epidistL.clear();
-    epidistR.clear();
-    epilinesL.clear();
-    epilinesR.clear();
-  }
-  if (mdf)
-  {
-    d_mdfMaxDist.setValue(m_maxDist);
-    mdfDistances.resize(d_matches_in.getValue().size());
-  }
-  else
-    mdfDistances.clear();
-  if (knn)
-    knnLambdas.resize(d_matches_in.getValue().size());
-  else
-    knnLambdas.clear();
-
-  const helper::SVector<helper::SVector<common::cvDMatch> >& in_matches =
-      d_matches_in.getValue();
-
+	/// Prepare the output matrix to display the colored points
 	if (d_displayDebugWindow.getValue())
 	{
 		in.copyTo(out);
@@ -358,97 +367,56 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 			cv::cvtColor(out, out, CV_GRAY2BGR);
 		}
 	}
-  if (m_kptsL.size() != in_matches.size())
-  {
-    std::cout << "-- WTF???? ##KPTS != MATCHES##" << std::endl;
-    return;
-  }
 
-	size_t inliersIdx = 0;
-  helper::SVector<common::cvDMatch> dm(1, common::cvDMatch());
-  for (size_t i = 0; i < m_kptsL.size(); ++i)
-  {
-    // Epipolar constraint filtering
-    if (epipolar &&
-        (epiDist < m_epidistanceL[i] || epiDist < m_epidistanceR[i]))
-    {
-      outliers.push_back(i);
-      continue;
-    }
+	const helper::vector<common::cvKeypoint>& PointsL =
+			d_keypointsL_in.getValue();
+	const helper::vector<common::cvKeypoint>& PointsR =
+			d_keypointsR_in.getValue();
 
-    // KNN constraint filtering
-    float knnVal = -1;
-    if (knn && in_matches[i].size() > 1)
-    {
-      knnVal = (in_matches[i][1].distance / in_matches[i][0].distance);
-      if (knnVal < lambda)
-      {
-        outliers.push_back(i);
-        continue;
-      }
-    }
+	const common::cvMat& descL = d_descriptorsL_in.getValue();
+	const common::cvMat& descR = d_descriptorsR_in.getValue();
 
-    // Minimal distance filtering
-    float mdfVal = (m_mdfDistances[i] / m_maxDist);
-    if (mdf && (mdfDist < mdfVal))
-    {
-      outliers.push_back(i);
-      continue;
-    }
+	unsigned filteredByEpipolar = 0;
+	unsigned filteredByKNN = 0;
+	unsigned filteredByMDF = 0;
 
-    // inliers
-    // /!\ No push_back here, as vectors & matrices are not cleaned /!\ //
-    inliersIdx = i - outliers.size();
+	std::cout << m_matchVector.size() << std::endl;
+	std::cout << m_kpL.size() << std::endl;
+	/// Start filtering points out
+	for (unsigned i = 0; i < m_matchVector.size(); ++i)
+	{
+		MatchVector& ms = m_matchVector[i];
 
-    dm[0] = in_matches[i][0];
-    dm[0].trainIdx = inliersIdx;
-    dm[0].queryIdx = inliersIdx;
-    out_matches[inliersIdx] = dm;
-    kptsL[inliersIdx] = m_kptsL[i];
-    kptsR[inliersIdx] = m_kptsR[i];
-    m_descL.row(int(inliersIdx)).copyTo(descL.row(int(i)));
-    m_descR.row(int(inliersIdx)).copyTo(descR.row(int(i)));
+		// Epipolar constraint filtering
+		if (epipolar &&
+				!EpipolarConstraintFilter(filteredByEpipolar, i, ms, epiDist))
+			continue;
 
-    if (d_displayDebugWindow.getValue())
-      cv::circle(out, kptsL[inliersIdx].pt, 3, cv::Scalar(0, 255, 0));
+		// KNN constraint filtering (k2 / k1 < lambda)
+		if (knn && ms.matches.size() > 1 &&
+				!KNearestNeighborFilter(i, lambda, ms, filteredByKNN))
+			continue;
 
-    if (epipolar)
-    {
-      epidistL[inliersIdx] = m_epidistanceL[i];
-      epidistR[inliersIdx] = m_epidistanceR[i];
-      epilinesL[inliersIdx] = defaulttype::Vec3f(m_epilinesL[i].val);
-      epilinesR[inliersIdx] = defaulttype::Vec3f(m_epilinesR[i].val);
-    }
-    if (mdf) mdfDistances[inliersIdx] = mdfVal;
-    if (knn && in_matches[0].size() > 1) knnLambdas[inliersIdx] = knnVal;
-  }
+		// Minimal distance filtering
+		if (mdf && !MinimalDistanceFilter(ms, filteredByMDF, i, mdfDist)) continue;
 
-  d_outliers_out.endEdit();
-  out_matches.resize(inliersIdx);
-  d_matches_out.endEdit();
-  kptsL.resize(inliersIdx);
-  d_keypointsL_out.endEdit();
-  kptsR.resize(inliersIdx);
-  d_keypointsR_out.endEdit();
-  descL.resize(inliersIdx);
-  d_descriptorsL_out.endEdit();
-  descR.resize(inliersIdx);
-  d_descriptorsR_out.endEdit();
+		/// store Inliers into output vectors
+		PushInlier(descL, i, PointsL, descR, ms, PointsR);
 
-  epidistL.resize(inliersIdx);
-  d_epidistL.endEdit();
-  epidistR.resize(inliersIdx);
-  d_epidistR.endEdit();
-  epilinesL.resize(inliersIdx);
-  d_epilinesL.endEdit();
-  epilinesR.resize(inliersIdx);
-  d_epilinesR.endEdit();
+		// Draw inlier on output image
+		if (d_displayDebugWindow.getValue())
+			cv::circle(out, m_kpL.back().pt, 3, cv::Scalar(0, 255, 0));
+	}
 
-  mdfDistances.resize(inliersIdx);
-  d_mdfDistances.endEdit();
+	std::cout << "inliers: " << m_kpL.size() << std::endl;
 
-  knnLambdas.resize(inliersIdx);
-  d_knnLambdas.endEdit();
+	std::cout << filteredByEpipolar << " points filtered by Epipolar Constraint"
+						<< std::endl;
+	std::cout << filteredByKNN << " points filtered by K-Nearest-Neighbor"
+						<< std::endl;
+	std::cout << filteredByMDF << " points filtered by Minimal Distance"
+						<< std::endl;
+	std::cout << m_outliers_out.size() << " outliers in total" << std::endl;
 }
 
 }  // namespace processor

@@ -28,7 +28,7 @@ class MatchingConstraints : public ImageFilter
 																									BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
- public:
+public:
   SOFA_CLASS(MatchingConstraints, ImageFilter);
 
  public:
@@ -37,7 +37,7 @@ class MatchingConstraints : public ImageFilter
 
   void init();
   void update();
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
+	void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
 
   // INPUTS
 	CamSettings l_cam;
@@ -54,38 +54,43 @@ class MatchingConstraints : public ImageFilter
   Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_in;
 
   // OUTPUTS
-  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_out;
+	Data<helper::vector<common::cvDMatch> > d_matches_out;
   Data<sofa::helper::vector<size_t> > d_outliers_out;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_out;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_out;
   Data<common::cvMat> d_descriptorsL_out;
   Data<common::cvMat> d_descriptorsR_out;
 
-  // epipolar-specific outputs
-  Data<sofa::helper::vector<defaulttype::Vec3f> > d_epilinesL;
-  Data<sofa::helper::vector<defaulttype::Vec3f> > d_epilinesR;
-  Data<sofa::helper::vector<float> > d_epidistL;
-  Data<sofa::helper::vector<float> > d_epidistR;
-
-  // mdf-specific outputs
-  Data<sofa::helper::vector<float> > d_mdfDistances;
-  Data<float> d_mdfMaxDist;
-
-  // knn-specific outputs
-  Data<sofa::helper::vector<float> > d_knnLambdas;
-
  private:
-  bool computeEpipolarLines();
-  void computeEpipolarDistances();
+	helper::vector<common::cvDMatch> m_matches;
+	helper::vector<common::cvKeypoint> m_kpL, m_kpR;
+	common::cvMat m_descL, m_descR;
+	helper::vector<size_t> m_outliers_out;
 
-  std::vector<std::vector<cv::DMatch> > m_matches_out;
-  std::vector<cv::KeyPoint> m_kptsL, m_kptsR;
-  cv::Mat m_descL, m_descR;
+	std::vector<cv::Vec3f> m_epilines;
+	float m_maxDist;
 
-  std::vector<cv::Vec3f> m_epilinesL, m_epilinesR;
-  std::vector<float> m_epidistanceL, m_epidistanceR;
-  float m_maxDist;
-  std::vector<float> m_mdfDistances;
+	struct MatchStruct
+	{
+		unsigned idxR;
+		unsigned distance;
+		unsigned distanceToEpiline;
+	};
+
+	struct MatchVector
+	{
+		unsigned idxL;
+		std::vector<MatchStruct> matches;
+	};
+	std::vector<MatchVector> m_matchVector;
+
+	bool computeEpipolarLines();
+
+	bool EpipolarConstraintFilter(unsigned& filteredByEpipolar, unsigned i, MatchVector& ms, double epiDist);
+	bool KNearestNeighborFilter(unsigned i, double lambda, MatchVector& ms, unsigned& filteredByKNN);
+	bool MinimalDistanceFilter(MatchVector& ms, unsigned& filteredByMDF, unsigned i, float mdfDist);
+	void PushInlier(const common::cvMat& descL, unsigned i, const helper::vector<common::cvKeypoint>& PointsL, const common::cvMat& descR, MatchVector& ms, const helper::vector<common::cvKeypoint>& PointsR);
+	void ClearOutputVectors();
 };
 
 }  // namespace processor

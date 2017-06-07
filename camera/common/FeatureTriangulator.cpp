@@ -28,10 +28,10 @@ FeatureTriangulator::FeatureTriangulator()
 														"input vector of left keypoints", true, true)),
       d_keypointsR(initData(&d_keypointsR, "keypoints2",
                             "input vector of right keypoints", true, true)),
-      d_matches(initData(&d_matches, "matches",
-                         "input array of matches between the 2 vectors "
-                         "(optional if keypoints are already sorted).",
-                         true, true)),
+			d_matches(initData(
+					&d_matches, "matches",
+					"input array of matches (optional if keypoints are already sorted).",
+					true, true)),
       d_pointCloud(
 					initData(&d_pointCloud, "positions", "output vector of 3D points"))
 {
@@ -76,15 +76,16 @@ void FeatureTriangulator::update()
 
   const helper::vector<common::cvKeypoint>& kL = d_keypointsL.getValue();
   const helper::vector<common::cvKeypoint>& kR = d_keypointsR.getValue();
-  const helper::SVector<helper::SVector<common::cvDMatch> >& m =
-      d_matches.getValue();
   pts.resize(kL.size());
 	unsigned sizePts = 0;
   (kL.size() > kR.size()) ? (sizePts = kR.size()) : (sizePts = kL.size());
 
 	if (d_matches.isSet())
+	{
+		const helper::vector<common::cvDMatch>& m = d_matches.getValue();
 		for (size_t i = 0; i < m.size(); ++i)
-			triangulate(kL[m[i][0].queryIdx].pt, kR[m[i][0].trainIdx].pt, pts[i]);
+			triangulate(kL[m[i].queryIdx].pt, kR[m[i].trainIdx].pt, pts[i]);
+	}
 	else
 		for (size_t i = 0; i < sizePts; ++i)
 			triangulate(kL[i].pt, kR[i].pt, pts[i]);

@@ -48,7 +48,7 @@ class FeatureTriangulator : public common::ImplicitDataEngine
 	StereoCamSettings l_cam;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL;
   Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR;
-  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
+	Data<helper::vector<common::cvDMatch> > d_matches;
 
   // OUTPUTS
   Data<sofa::helper::vector<Vec3d> > d_pointCloud;
