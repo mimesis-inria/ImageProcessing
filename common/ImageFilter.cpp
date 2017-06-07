@@ -132,7 +132,6 @@ ImageFilter::ImageFilter(bool outputImage)
 ImageFilter::~ImageFilter() {}
 void ImageFilter::init()
 {
-  std::cout << getName() << "init" << std::endl;
   m_displayDebugDataTracker.trackData(d_displayDebugWindow);
   addInput(&d_img);
   addOutput(&d_img_out);
@@ -215,7 +214,6 @@ void ImageFilter::refreshDebugWindow()
   applyFilter(d_img.getValue(), m_debugImage, true);
   if (m_debugImage.empty()) return;
 
-  std::cout << "refreshDebugWindow" << std::endl;
   cv::imshow(m_win_name, m_debugImage);
   cv::waitKey(1);
 }

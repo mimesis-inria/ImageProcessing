@@ -21,14 +21,14 @@ class Segmenter2D : public ImageFilter
 	Data<std::string> d_regionLabel;
 
   // INPUTS
-	Data<helper::vector<defaulttype::Vec2f> > d_points;
+	Data<helper::vector<defaulttype::Vec2i> > d_points;
 
   // OUTPUTS
 	Data<helper::vector<defaulttype::Vec2i> > d_regionPoly;
-	Data<helper::vector<defaulttype::Vec2f> > d_regionPoints;
+	Data<helper::vector<defaulttype::Vec2i> > d_regionPoints;
 
   Segmenter2D()
-			: ImageFilter(0),
+			: ImageFilter(false),
 				d_regionLabel(initData(&d_regionLabel, "label",
 															 "label for the segmented region")),
 				d_points(initData(&d_points, "points", "input vector keypoints")),
@@ -65,11 +65,11 @@ class Segmenter2D : public ImageFilter
     {
 			polygon.push_back(cv::Point2i(pt.x(), pt.y()));
     }
-		helper::vector<defaulttype::Vec2f>& points =
+		helper::vector<defaulttype::Vec2i>& points =
         *d_regionPoints.beginWriteOnly();
 		points.clear();
 
-		const helper::vector<defaulttype::Vec2f>& pts = d_points.getValue();
+		const helper::vector<defaulttype::Vec2i>& pts = d_points.getValue();
 
 		for (auto point : pts)
 		{
