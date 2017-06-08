@@ -183,6 +183,17 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
   if (d_displayDebugWindow.getValue())
   {
     in.copyTo(out);
+		if (in.depth() == CV_32F)
+		{
+			std::cout << "converting to 8bit" << std::endl;
+			out.convertTo(out, 0, 255.0);
+		}
+		if (out.channels() == 1)
+		{
+			std::cout << "converting from grayscale to BGR" << std::endl;
+			cv::cvtColor(out, out, CV_GRAY2BGR);
+		}
+
     cv::drawKeypoints(in, _v, out, cv::Scalar(0, 255, 0), 1);
   }
 }
