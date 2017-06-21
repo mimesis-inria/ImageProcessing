@@ -76,11 +76,29 @@ class ImageFilter : public common::ImplicitDataEngine
   void activateMouseCallback();
   // Pass data to this methods to bind them to the OpenCV UI
   void registerData(Data<bool>* data);
-  void registerData(Data<int>* data, int min, int max, int step);
-  void registerData(Data<double>* data, double min, double max, double step);
+	void registerData(Data<uchar>* data, uchar min, uchar max, uchar step);
+	void registerData(Data<int>* data, int min, int max, int step);
+	void registerData(Data<double>* data, double min, double max, double step);
   void registerData(Data<float>* data, float min, float max, float step);
   void registerData(Data<helper::OptionsGroup>* data);
-  void unregisterAllData();
+
+	void registerData(Data<defaulttype::Vec2u>* data, uchar min, uchar max, uchar step);
+	void registerData(Data<defaulttype::Vec3u>* data, uchar min, uchar max, uchar step);
+	void registerData(Data<defaulttype::Vec4u>* data, uchar min, uchar max, uchar step);
+
+	void registerData(Data<defaulttype::Vec2i>* data, int min, int max, int step);
+	void registerData(Data<defaulttype::Vec3i>* data, int min, int max, int step);
+	void registerData(Data<defaulttype::Vec4i>* data, int min, int max, int step);
+
+	void registerData(Data<defaulttype::Vec2f>* data, float min, float max, float step);
+	void registerData(Data<defaulttype::Vec3f>* data, float min, float max, float step);
+	void registerData(Data<defaulttype::Vec4f>* data, float min, float max, float step);
+
+	void registerData(Data<defaulttype::Vec2d>* data, double min, double max, double step);
+	void registerData(Data<defaulttype::Vec3d>* data, double min, double max, double step);
+	void registerData(Data<defaulttype::Vec4d>* data, double min, double max, double step);
+
+	void unregisterAllData();
 
 	void drawImage();
  protected:
@@ -101,18 +119,55 @@ private:
     enum Type
     {
       BOOL,
-      INT,
+			BYTE,
+			INT,
       DOUBLE,
       FLOAT,
-      OPTIONSGROUP,
+
+			VEC2U,
+			VEC3U,
+			VEC4U,
+
+			VEC2I,
+			VEC3I,
+			VEC4I,
+
+			VEC2F,
+			VEC3F,
+			VEC4F,
+
+			VEC2D,
+			VEC3D,
+			VEC4D,
+
+			OPTIONSGROUP
     } type;
 
     union Impl {
       bool _bool;
       int _int;
-      double _double;
+			uchar _byte;
+			double _double;
       float _float;
-    };
+
+			defaulttype::Vec2u _vec2u;
+			defaulttype::Vec3u _vec3u;
+			defaulttype::Vec4u _vec4u;
+
+			defaulttype::Vec2i _vec2i;
+			defaulttype::Vec3i _vec3i;
+			defaulttype::Vec4i _vec4i;
+
+			defaulttype::Vec2f _vec2f;
+			defaulttype::Vec3f _vec3f;
+			defaulttype::Vec4f _vec4f;
+
+			defaulttype::Vec2d _vec2d;
+			defaulttype::Vec3d _vec3d;
+			defaulttype::Vec4d _vec4d;
+
+
+		};
 
     core::objectmodel::BaseData* data;
 
@@ -135,13 +190,27 @@ private:
           value_max._int = max;
           step._int = _step;
           break;
-        case DOUBLE:
-          value_min._double = min;
+				case BYTE:
+				case VEC2U:
+				case VEC3U:
+				case VEC4U:
+					value_min._byte = min;
+					value_max._byte = max;
+					step._byte = _step;
+					break;
+				case DOUBLE:
+				case VEC2D:
+				case VEC3D:
+				case VEC4D:
+					value_min._double = min;
           value_max._double = max;
           step._double = _step;
           break;
         case FLOAT:
-          value_min._float = min;
+				case VEC2F:
+				case VEC3F:
+				case VEC4F:
+					value_min._float = min;
           value_max._float = max;
           step._float = _step;
           break;

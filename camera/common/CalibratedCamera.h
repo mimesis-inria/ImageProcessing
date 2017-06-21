@@ -117,7 +117,9 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			defaulttype::Vector3 p1, p2, p3, p4;
 			l_cam->getCornersPosition(p1, p2, p3, p4);
 
+			glDisable(GL_LIGHTING);
 			glBegin(GL_LINES);
+			glColor4f(0, 0, 1, 1);
 			helper::gl::glVertexT(camPos);
 			helper::gl::glVertexT(p1);
 			helper::gl::glVertexT(camPos);
@@ -131,6 +133,7 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			glLineWidth(3);
 
 			glBegin(GL_LINES);
+			glColor4f(0, 0, 1, 1);
 			helper::gl::glVertexT(p1);
 			helper::gl::glVertexT(p2);
 			helper::gl::glVertexT(p2);
@@ -140,6 +143,7 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			helper::gl::glVertexT(p4);
 			helper::gl::glVertexT(p1);
 			glEnd();
+			glEnable(GL_LIGHTING);
 
 			vparams->drawTool()->drawArrow(
 					camPos, camPos + camera_X * 0.01, 0.001,

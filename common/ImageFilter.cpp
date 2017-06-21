@@ -26,7 +26,12 @@ int ImageFilter::Holder::getTrackbarRangedValue()
                      ->getValue()
                      .getSelectedId());
     }
-    case INT:
+		case BYTE:
+		{
+			return (reinterpret_cast<Data<uchar>*>(data)->getValue() - value_min._byte) /
+						 step._byte;
+		}
+		case INT:
     {
       return (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._int) /
              step._int;
@@ -54,7 +59,9 @@ int ImageFilter::Holder::getTrackbarMaxValue()
     case BOOL:
       return 1;
     case OPTIONSGROUP:
-    case INT:
+		case BYTE:
+			return (value_max._byte - value_min._byte) / step._byte;
+		case INT:
       return (value_max._int - value_min._int) / step._int;
     case DOUBLE:
       return int((value_max._double - value_min._double) / step._double);
@@ -72,14 +79,12 @@ void ImageFilter::Holder::setDataValue(int val)
       reinterpret_cast<Data<bool>*>(data)->setValue((val == 1) ? (true)
                                                                : (false));
       break;
-    case INT:
+		case BYTE:
+			reinterpret_cast<Data<uchar>*>(data)->setValue(val * step._byte +
+																									 value_min._byte);
+		case INT:
       reinterpret_cast<Data<int>*>(data)->setValue(val * step._int +
                                                    value_min._int);
-      break;
-    case OPTIONSGROUP:
-      reinterpret_cast<Data<helper::OptionsGroup>*>(data)
-          ->beginEdit()
-          ->setSelectedItem(unsigned(val));
       break;
     case DOUBLE:
       reinterpret_cast<Data<double>*>(data)->setValue(val * step._double +
@@ -89,7 +94,12 @@ void ImageFilter::Holder::setDataValue(int val)
       reinterpret_cast<Data<double>*>(data)->setValue(val * step._float +
                                                       value_min._float);
       break;
-  }
+		case OPTIONSGROUP:
+			reinterpret_cast<Data<helper::OptionsGroup>*>(data)
+					->beginEdit()
+					->setSelectedItem(unsigned(val));
+			break;
+	}
 }
 
 void ImageFilter::Holder::refresh()
@@ -239,6 +249,12 @@ void ImageFilter::registerData(Data<int>* data, int min, int max, int step)
 {
   m_params.push_back(Holder(Holder::INT, data, min, max, step));
 }
+
+void ImageFilter::registerData(Data<uchar>* data, uchar min, uchar max, uchar step)
+{
+	m_params.push_back(Holder(Holder::BYTE, data, min, max, step));
+}
+
 void ImageFilter::registerData(Data<double>* data, double min, double max,
                                double step)
 {
@@ -250,6 +266,77 @@ void ImageFilter::registerData(Data<float>* data, float min, float max,
   m_params.push_back(Holder(Holder::FLOAT, data, min, max, step));
 }
 
+
+
+void ImageFilter::registerData(Data<defaulttype::Vec2u>* data, uchar min,
+															 uchar max, uchar step)
+{
+	m_params.push_back(Holder(Holder::VEC2U, data, min, max, step));
+}
+void ImageFilter::registerData(Data<defaulttype::Vec3u>* data, uchar min,
+															 uchar max, uchar step)
+{
+	m_params.push_back(Holder(Holder::VEC3U, data, min, max, step));
+}
+void ImageFilter::registerData(Data<defaulttype::Vec4u>* data, uchar min,
+															 uchar max, uchar step)
+{
+	m_params.push_back(Holder(Holder::VEC4U, data, min, max, step));
+}
+
+
+
+void ImageFilter::registerData(Data<defaulttype::Vec2i>* data, int min,
+															 int max, int step)
+{
+	m_params.push_back(Holder(Holder::VEC2I, data, min, max, step));
+}
+void ImageFilter::registerData(Data<defaulttype::Vec3i>* data, int min,
+															 int max, int step)
+{
+	m_params.push_back(Holder(Holder::VEC3I, data, min, max, step));
+}
+void ImageFilter::registerData(Data<defaulttype::Vec4i>* data, int min,
+															 int max, int step)
+{
+	m_params.push_back(Holder(Holder::VEC4I, data, min, max, step));
+}
+
+
+void ImageFilter::registerData(Data<defaulttype::Vec2f>* data, float min,
+															 float max, float step)
+{
+	m_params.push_back(Holder(Holder::VEC2F, data, min, max, step));
+}
+void ImageFilter::registerData(Data<defaulttype::Vec3f>* data, float min,
+															 float max, float step)
+{
+	m_params.push_back(Holder(Holder::VEC3F, data, min, max, step));
+}
+void ImageFilter::registerData(Data<defaulttype::Vec4f>* data, float min,
+															 float max, float step)
+{
+	m_params.push_back(Holder(Holder::VEC4F, data, min, max, step));
+}
+
+
+
+void ImageFilter::registerData(Data<defaulttype::Vec2d>* data, double min,
+															 double max, double step)
+{
+	m_params.push_back(Holder(Holder::VEC2D, data, min, max, step));
+}
+void ImageFilter::registerData(Data<defaulttype::Vec3d>* data, double min,
+															 double max, double step)
+{
+	m_params.push_back(Holder(Holder::VEC3D, data, min, max, step));
+}
+void ImageFilter::registerData(Data<defaulttype::Vec4d>* data, double min,
+															 double max, double step)
+{
+	m_params.push_back(Holder(Holder::VEC4D, data, min, max, step, ));
+}
+
 void ImageFilter::drawImage()
 {
 	common::cvMat img;
@@ -258,16 +345,14 @@ void ImageFilter::drawImage()
 	else
 		img = d_img_out.getValue();
 	std::stringstream imageString;
-	imageString.write((const char *)img.data,
-										img.total() * img.elemSize());
+	imageString.write((const char*)img.data, img.total() * img.elemSize());
 
 	glEnable(GL_TEXTURE_2D);  // enable the texture
 	glDisable(GL_LIGHTING);   // disable the light
 
 	glBindTexture(GL_TEXTURE_2D, 0);  // texture bind
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.cols,
-							 img.rows, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE,
-							 imageString.str().c_str());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.cols, img.rows, 0, GL_BGR_EXT,
+							 GL_UNSIGNED_BYTE, imageString.str().c_str());
 	// glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE, m_imageWidth,
 	// m_imageHeight, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, m_imgData.c_str() );
 
@@ -280,8 +365,6 @@ void ImageFilter::drawImage()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask(GL_FALSE);
-
-
 
 	glMatrixMode(GL_PROJECTION);  // init the projection matrix
 	glPushMatrix();
@@ -308,14 +391,12 @@ void ImageFilter::drawImage()
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 
-
 	// glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);     // enable light
 	glDisable(GL_TEXTURE_2D);  // disable texture 2D
 														 // glDepthMask (GL_TRUE);		// enable zBuffer
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
-
 }
 
 }  // namespace processor

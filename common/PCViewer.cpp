@@ -98,6 +98,7 @@ void PCViewer::draw(const core::visual::VisualParams*)
 	}
 	glEnd();
 	glPointSize(1);
+	glEnable(GL_LIGHTING);
 
 	//  core::visual::DrawToolGL dt;
 	//  if (m_positions.size() != m_colors.size())
