@@ -151,6 +151,13 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 					camPos, camPos + camera_Z * 0.01, 0.001,
 					defaulttype::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
 		}
+		if (!d_freeCam.getValue() && !d_freeProj.getValue())
+		{
+			if (l_cam->isXRay())
+				glDepthRange(1,0);
+			else
+				glDepthRange(0,1);
+		}
 	}
 
 	void postDrawScene(core::visual::VisualParams* /*vp*/)

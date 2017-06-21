@@ -223,7 +223,7 @@ void FrameViewer::orthoDraw()
 	glDisable(GL_TEXTURE_2D);  // disable texture 2D
 														 // glDepthMask (GL_TRUE);		// enable zBuffer
 	glDisable(GL_BLEND);
-//	glDepthMask(GL_TRUE);
+	glDepthMask(GL_TRUE);
 }
 
 void FrameViewer::draw(const core::visual::VisualParams *)

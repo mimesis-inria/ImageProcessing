@@ -277,6 +277,17 @@ void CameraSettings::set2DTranslationMatrix(const Matrix3& translation2D)
 	recalculate3DCorners();
 }
 
+bool CameraSettings::isXRay() const
+{
+	return d_isXRay.getValue();
+}
+void CameraSettings::setXRay(bool isXray)
+{
+	d_isXRay.setValue(isXray);
+}
+
+
+
 void CameraSettings::decomposeK(const Matrix3& K)
 {
 	if (d_imageSize.getValue().x() == 0 || d_imageSize.getValue().y() == 0)

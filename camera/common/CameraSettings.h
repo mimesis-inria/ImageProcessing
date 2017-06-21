@@ -66,8 +66,8 @@ class CameraSettings : public common::ImplicitDataEngine
 	SOFA_CLASS(CameraSettings, common::ImplicitDataEngine);
 
 	CameraSettings()
-			: d_imageSize(initData(&d_imageSize, "imageSize",
-														 "Image resolution in pixels")),
+			: d_imageSize(
+						initData(&d_imageSize, "imageSize", "Image resolution in pixels")),
 				d_f(initData(&d_f, 1.0, "f", "distance camera -> plane")),
 				d_translate2D(
 						initData(&d_translate2D, "translate2D",
@@ -97,7 +97,10 @@ class CameraSettings : public common::ImplicitDataEngine
 														 "image's corners in world coordinates")),
 				d_upVector(initData(&d_upVector, "up", "Camera's Up vector")),
 				d_fwdVector(initData(&d_fwdVector, "fwd", "Camera's lookat direction")),
-				d_lookAt(initData(&d_lookAt, "lookAt", "Camera's lookat point"))
+				d_lookAt(initData(&d_lookAt, "lookAt", "Camera's lookat point")),
+				d_isXRay(initData(&d_isXRay, "isXRay",
+													"whether or not the camera model is an XRay model as "
+													"opposite to the standard pinhole model"))
 	{
 		addAlias(&d_t, "t");
 		addAlias(&d_3DCorners, "corners");
@@ -167,6 +170,9 @@ class CameraSettings : public common::ImplicitDataEngine
 	double getAxisSkew() const;
 	void setAxisSkew(double s);
 
+	bool isXRay() const;
+	void setXRay(bool isXray);
+
  private:
 	// Dimensions in pixels of the image
 	Data<Vec2i> d_imageSize;
@@ -210,6 +216,12 @@ class CameraSettings : public common::ImplicitDataEngine
 	Data<Vector3> d_fwdVector;  // direction cam -> lookat
 	Data<Vector3> d_lookAt;  // target position (a point on the direction camPos
 													 // -> fwdVector)
+
+	// Whether or not this camera is an XRay source-detector model (in which case,
+	// in CalibratedCamera, it is necessary to reverse depth when rasterizing
+	// models, to ensure that the view comes from behind the detector towards the
+	// source, opposite to the standard pinhole camera model
+	Data<bool> d_isXRay;
 
 	// Decomposes M
 	void decomposeM();
@@ -288,6 +300,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	{
 		set2DTranslationMatrix(d_translate2D.getValue());
 	}
+
 	void recalculate2DCorners();
 	void recalculate3DCorners();
 };
