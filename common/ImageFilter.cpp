@@ -26,12 +26,7 @@ int ImageFilter::Holder::getTrackbarRangedValue()
                      ->getValue()
                      .getSelectedId());
     }
-		case BYTE:
-		{
-			return (reinterpret_cast<Data<uchar>*>(data)->getValue() - value_min._byte) /
-						 step._byte;
-		}
-		case INT:
+    case INT:
     {
       return (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._int) /
              step._int;
@@ -52,52 +47,376 @@ int ImageFilter::Holder::getTrackbarRangedValue()
   return 0;
 }
 
+int ImageFilter::Holder::getTrackbarRangedValueX()
+{
+	switch (type)
+	{
+		case VEC2U:
+		case VEC3U:
+		case VEC4U:
+			return reinterpret_cast<Data<defaulttype::Vec2u>*>(data)->getValue().x();
+			break;
+
+		case VEC2I:
+		case VEC3I:
+		case VEC4I:
+			return reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->getValue().x();
+			break;
+
+		case VEC2F:
+		case VEC3F:
+		case VEC4F:
+			return reinterpret_cast<Data<defaulttype::Vec2f>*>(data)->getValue().x();
+			break;
+		case VEC2D:
+		case VEC3D:
+		case VEC4D:
+			return reinterpret_cast<Data<defaulttype::Vec2d>*>(data)->getValue().x();
+			break;
+		default:
+			break;
+	}
+	return 0;
+}
+int ImageFilter::Holder::getTrackbarRangedValueY()
+{
+	switch (type)
+	{
+		case VEC2U:
+		case VEC3U:
+		case VEC4U:
+			return reinterpret_cast<Data<defaulttype::Vec2u>*>(data)->getValue().y();
+			break;
+
+		case VEC2I:
+		case VEC3I:
+		case VEC4I:
+			return reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->getValue().y();
+			break;
+
+		case VEC2F:
+		case VEC3F:
+		case VEC4F:
+			return reinterpret_cast<Data<defaulttype::Vec2f>*>(data)->getValue().y();
+			break;
+		case VEC2D:
+		case VEC3D:
+		case VEC4D:
+			return reinterpret_cast<Data<defaulttype::Vec2d>*>(data)->getValue().y();
+			break;
+		default:
+			break;
+	}
+	return 0;
+}
+int ImageFilter::Holder::getTrackbarRangedValueZ()
+{
+	switch (type)
+	{
+		case VEC3U:
+		case VEC4U:
+			return reinterpret_cast<Data<defaulttype::Vec3u>*>(data)->getValue().z();
+			break;
+
+		case VEC3I:
+		case VEC4I:
+			return reinterpret_cast<Data<defaulttype::Vec3i>*>(data)->getValue().z();
+			break;
+
+		case VEC3F:
+		case VEC4F:
+			return reinterpret_cast<Data<defaulttype::Vec3f>*>(data)->getValue().z();
+			break;
+		case VEC3D:
+		case VEC4D:
+			return reinterpret_cast<Data<defaulttype::Vec3d>*>(data)->getValue().z();
+			break;
+		default:
+			break;
+	}
+	return 0;
+}
+int ImageFilter::Holder::getTrackbarRangedValueW()
+{
+	switch (type)
+	{
+		case VEC4U:
+			return reinterpret_cast<Data<defaulttype::Vec4u>*>(data)->getValue().w();
+			break;
+
+		case VEC4I:
+			return reinterpret_cast<Data<defaulttype::Vec4i>*>(data)->getValue().w();
+			break;
+
+		case VEC4F:
+			return reinterpret_cast<Data<defaulttype::Vec4f>*>(data)->getValue().w();
+			break;
+		case VEC4D:
+			return reinterpret_cast<Data<defaulttype::Vec4d>*>(data)->getValue().w();
+			break;
+		default:
+			break;
+	}
+	return 0;
+}
+
 int ImageFilter::Holder::getTrackbarMaxValue()
 {
   switch (type)
   {
     case BOOL:
-      return 1;
+		case VEC2U:
+		case VEC3U:
+		case VEC4U:
+			return 1;
     case OPTIONSGROUP:
-		case BYTE:
-			return (value_max._byte - value_min._byte) / step._byte;
-		case INT:
-      return (value_max._int - value_min._int) / step._int;
-    case DOUBLE:
-      return int((value_max._double - value_min._double) / step._double);
+    case INT:
+		case VEC2I:
+		case VEC3I:
+		case VEC4I:
+			return (value_max._int - value_min._int) / step._int;
     case FLOAT:
-      return int((value_max._float - value_min._float) / step._float);
-  }
+		case VEC2F:
+		case VEC3F:
+		case VEC4F:
+			return int((value_max._float - value_min._float) / step._float);
+		case DOUBLE:
+		case VEC2D:
+		case VEC3D:
+		case VEC4D:
+			return int((value_max._double - value_min._double) / step._double);
+	}
   return 0;
 }
 
 void ImageFilter::Holder::setDataValue(int val)
 {
-  switch (type)
-  {
-    case BOOL:
-      reinterpret_cast<Data<bool>*>(data)->setValue((val == 1) ? (true)
-                                                               : (false));
-      break;
-		case BYTE:
-			reinterpret_cast<Data<uchar>*>(data)->setValue(val * step._byte +
-																									 value_min._byte);
+	switch (type)
+	{
+		case BOOL:
+			reinterpret_cast<Data<bool>*>(data)->setValue((val == 1) ? (true)
+																															 : (false));
+			break;
 		case INT:
-      reinterpret_cast<Data<int>*>(data)->setValue(val * step._int +
-                                                   value_min._int);
-      break;
-    case DOUBLE:
-      reinterpret_cast<Data<double>*>(data)->setValue(val * step._double +
-                                                      value_min._double);
-      break;
-    case FLOAT:
-      reinterpret_cast<Data<double>*>(data)->setValue(val * step._float +
-                                                      value_min._float);
-      break;
+			reinterpret_cast<Data<int>*>(data)->setValue(val * step._int +
+																									 value_min._int);
+			break;
 		case OPTIONSGROUP:
 			reinterpret_cast<Data<helper::OptionsGroup>*>(data)
 					->beginEdit()
 					->setSelectedItem(unsigned(val));
+			break;
+		case DOUBLE:
+			reinterpret_cast<Data<double>*>(data)->setValue(val * step._double +
+																											value_min._double);
+			break;
+		case FLOAT:
+			reinterpret_cast<Data<double>*>(data)->setValue(val * step._float +
+																											value_min._float);
+			break;
+	}
+}
+
+void ImageFilter::Holder::setDataValue_x(int val)
+{
+	switch (type)
+	{
+		case VEC2U:
+		case VEC3U:
+		case VEC4U:
+		{
+			defaulttype::Vec2u& v =
+					*reinterpret_cast<Data<defaulttype::Vec2u>*>(data)->beginEdit();
+			v.x() = (val == 1) ? (true) : (false);
+			reinterpret_cast<Data<defaulttype::Vec2u>*>(data)->endEdit();
+			break;
+		}
+		case VEC2I:
+		case VEC3I:
+		case VEC4I:
+		{
+			defaulttype::Vec2i& v =
+					*reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->beginEdit();
+			v.x() = val * step._float + value_min._float;
+			reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->endEdit();
+			break;
+		}
+		case VEC2F:
+		case VEC3F:
+		case VEC4F:
+		{
+			defaulttype::Vec2f& v =
+					*reinterpret_cast<Data<defaulttype::Vec2f>*>(data)->beginEdit();
+			v.x() = val * step._float + value_min._float;
+			reinterpret_cast<Data<defaulttype::Vec2f>*>(data)->endEdit();
+			break;
+		}
+		case VEC2D:
+		case VEC3D:
+		case VEC4D:
+		{
+			defaulttype::Vec2d& v =
+					*reinterpret_cast<Data<defaulttype::Vec2d>*>(data)->beginEdit();
+			v.x() = val * step._double + value_min._double;
+			reinterpret_cast<Data<defaulttype::Vec2d>*>(data)->endEdit();
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+void ImageFilter::Holder::setDataValue_y(int val)
+{
+	switch (type)
+	{
+		case VEC2U:
+		case VEC3U:
+		case VEC4U:
+		{
+			defaulttype::Vec2u& v =
+					*reinterpret_cast<Data<defaulttype::Vec2u>*>(data)->beginEdit();
+			v.y() = (val == 1) ? (true) : (false);
+			reinterpret_cast<Data<defaulttype::Vec2u>*>(data)->endEdit();
+			break;
+		}
+		case VEC2I:
+		case VEC3I:
+		case VEC4I:
+		{
+			defaulttype::Vec2i& v =
+					*reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->beginEdit();
+			v.y() = val * step._float + value_min._float;
+			reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->endEdit();
+			break;
+		}
+		case VEC2F:
+		case VEC3F:
+		case VEC4F:
+		{
+			defaulttype::Vec2f& v =
+					*reinterpret_cast<Data<defaulttype::Vec2f>*>(data)->beginEdit();
+			v.y() = val * step._float + value_min._float;
+			reinterpret_cast<Data<defaulttype::Vec2f>*>(data)->endEdit();
+			break;
+		}
+		case VEC2D:
+		case VEC3D:
+		case VEC4D:
+		{
+			defaulttype::Vec2d& v =
+					*reinterpret_cast<Data<defaulttype::Vec2d>*>(data)->beginEdit();
+			v.y() = val * step._double + value_min._double;
+			reinterpret_cast<Data<defaulttype::Vec2d>*>(data)->endEdit();
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+void ImageFilter::Holder::setDataValue_z(int val)
+{
+	switch (type)
+	{
+		case VEC2U:
+			break;
+		case VEC3U:
+		case VEC4U:
+		{
+			defaulttype::Vec3u& v =
+					*reinterpret_cast<Data<defaulttype::Vec3u>*>(data)->beginEdit();
+			v.z() = (val == 1) ? (true) : (false);
+			reinterpret_cast<Data<defaulttype::Vec3u>*>(data)->endEdit();
+			break;
+		}
+		case VEC2I:
+			break;
+		case VEC3I:
+		case VEC4I:
+		{
+			defaulttype::Vec3i& v =
+					*reinterpret_cast<Data<defaulttype::Vec3i>*>(data)->beginEdit();
+			v.z() = val * step._float + value_min._float;
+			reinterpret_cast<Data<defaulttype::Vec3i>*>(data)->endEdit();
+			break;
+		}
+		case VEC2F:
+			break;
+		case VEC3F:
+		case VEC4F:
+		{
+			defaulttype::Vec3f& v =
+					*reinterpret_cast<Data<defaulttype::Vec3f>*>(data)->beginEdit();
+			v.z() = val * step._float + value_min._float;
+			reinterpret_cast<Data<defaulttype::Vec3f>*>(data)->endEdit();
+			break;
+		}
+		case VEC2D:
+			break;
+		case VEC3D:
+		case VEC4D:
+		{
+			defaulttype::Vec3d& v =
+					*reinterpret_cast<Data<defaulttype::Vec3d>*>(data)->beginEdit();
+			v.z() = val * step._double + value_min._double;
+			reinterpret_cast<Data<defaulttype::Vec3d>*>(data)->endEdit();
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+void ImageFilter::Holder::setDataValue_w(int val)
+{
+	switch (type)
+	{
+		case VEC2U:
+		case VEC3U:
+			break;
+		case VEC4U:
+		{
+			defaulttype::Vec4u& v =
+					*reinterpret_cast<Data<defaulttype::Vec4u>*>(data)->beginEdit();
+			v.w() = (val == 1) ? (true) : (false);
+			reinterpret_cast<Data<defaulttype::Vec4u>*>(data)->endEdit();
+			break;
+		}
+		case VEC2I:
+		case VEC3I:
+			break;
+		case VEC4I:
+		{
+			defaulttype::Vec4i& v =
+					*reinterpret_cast<Data<defaulttype::Vec4i>*>(data)->beginEdit();
+			v.w() = val * step._float + value_min._float;
+			reinterpret_cast<Data<defaulttype::Vec4i>*>(data)->endEdit();
+			break;
+		}
+		case VEC2F:
+		case VEC3F:
+			break;
+		case VEC4F:
+		{
+			defaulttype::Vec4f& v =
+					*reinterpret_cast<Data<defaulttype::Vec4f>*>(data)->beginEdit();
+			v.w() = val * step._float + value_min._float;
+			reinterpret_cast<Data<defaulttype::Vec4f>*>(data)->endEdit();
+			break;
+		}
+		case VEC2D:
+		case VEC3D:
+			break;
+		case VEC4D:
+		{
+			defaulttype::Vec4d& v =
+					*reinterpret_cast<Data<defaulttype::Vec4d>*>(data)->beginEdit();
+			v.w() = val * step._double + value_min._double;
+			reinterpret_cast<Data<defaulttype::Vec4d>*>(data)->endEdit();
+			break;
+		}
+		default:
 			break;
 	}
 }
@@ -109,13 +428,53 @@ void ImageFilter::Holder::refresh()
       ->refreshDebugWindow();
 }
 
-void ImageFilter::callback(int val, void* holder)
+void ImageFilter::default_callback(int val, void* holder)
 {
-  if (reinterpret_cast<Holder*>(holder)->getTrackbarRangedValue() != val)
+	Holder* h = reinterpret_cast<Holder*>(holder);
+	if (h->getTrackbarRangedValue() != val)
   {
-    reinterpret_cast<Holder*>(holder)->setDataValue(val);
-    reinterpret_cast<Holder*>(holder)->refresh();
+		h->setDataValue(val);
+		h->refresh();
   }
+}
+
+void ImageFilter::x_callback(int val, void* holder)
+{
+	Holder* h = reinterpret_cast<Holder*>(holder);
+	if (h->getTrackbarRangedValueX() != val)
+	{
+		h->setDataValue_x(val);
+		h->refresh();
+	}
+}
+void ImageFilter::y_callback(int val, void* holder)
+{
+	Holder* h = reinterpret_cast<Holder*>(holder);
+	if (h->getTrackbarRangedValueY() != val)
+	{
+		h->setDataValue_y(val);
+		h->refresh();
+	}
+}
+
+void ImageFilter::z_callback(int val, void* holder)
+{
+	Holder* h = reinterpret_cast<Holder*>(holder);
+	if (h->getTrackbarRangedValueZ() != val)
+	{
+		h->setDataValue_z(val);
+		h->refresh();
+	}
+}
+
+void ImageFilter::w_callback(int val, void* holder)
+{
+	Holder* h = reinterpret_cast<Holder*>(holder);
+	if (h->getTrackbarRangedValueW() != val)
+	{
+		h->setDataValue_w(val);
+		h->refresh();
+	}
 }
 
 unsigned ImageFilter::m_window_uid = 0;
@@ -208,12 +567,47 @@ void ImageFilter::reinitDebugWindow()
 	cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
 	for (Holder& h : m_params)
   {
-    int value = h.getTrackbarRangedValue();
-    cv::createTrackbar(h.data->getName(), m_win_name, &value,
-                       h.getTrackbarMaxValue(), &ImageFilter::callback, &h);
-    cv::setTrackbarPos(h.data->getName(), m_win_name,
-                       h.getTrackbarRangedValue());
-  }
+		int value;
+		if (h.type < 10)
+		{
+			value = h.getTrackbarRangedValue();
+			cv::createTrackbar(h.data->getName(), m_win_name, &value,
+												 h.getTrackbarMaxValue(),
+												 &ImageFilter::default_callback, &h);
+			cv::setTrackbarPos(h.data->getName(), m_win_name,
+												 h.getTrackbarRangedValue());
+		}
+		if (h.type >= 10)
+		{
+			value = h.getTrackbarRangedValueX();
+			cv::createTrackbar(h.data->getName(), m_win_name, &value,
+												 h.getTrackbarMaxValue(), &ImageFilter::x_callback, &h);
+			cv::setTrackbarPos(h.data->getName(), m_win_name,
+												 h.getTrackbarRangedValueX());
+
+			value = h.getTrackbarRangedValueY();
+			cv::createTrackbar(h.data->getName(), m_win_name, &value,
+												 h.getTrackbarMaxValue(), &ImageFilter::y_callback, &h);
+			cv::setTrackbarPos(h.data->getName(), m_win_name,
+												 h.getTrackbarRangedValueY());
+		}
+		else if (h.type >= 20)
+		{
+			value = h.getTrackbarRangedValueZ();
+			cv::createTrackbar(h.data->getName(), m_win_name, &value,
+												 h.getTrackbarMaxValue(), &ImageFilter::z_callback, &h);
+			cv::setTrackbarPos(h.data->getName(), m_win_name,
+												 h.getTrackbarRangedValueZ());
+		}
+		else if (h.type <= 40)
+		{
+			value = h.getTrackbarRangedValueW();
+			cv::createTrackbar(h.data->getName(), m_win_name, &value,
+												 h.getTrackbarMaxValue(), &ImageFilter::w_callback, &h);
+			cv::setTrackbarPos(h.data->getName(), m_win_name,
+												 h.getTrackbarRangedValueW());
+		}
+	}
   if (m_isMouseCallbackActive)
     cv::setMouseCallback(m_win_name, &ImageFilter::_mouseCallback, this);
 }
@@ -249,12 +643,6 @@ void ImageFilter::registerData(Data<int>* data, int min, int max, int step)
 {
   m_params.push_back(Holder(Holder::INT, data, min, max, step));
 }
-
-void ImageFilter::registerData(Data<uchar>* data, uchar min, uchar max, uchar step)
-{
-	m_params.push_back(Holder(Holder::BYTE, data, min, max, step));
-}
-
 void ImageFilter::registerData(Data<double>* data, double min, double max,
                                double step)
 {
@@ -267,75 +655,72 @@ void ImageFilter::registerData(Data<float>* data, float min, float max,
 }
 
 
-
-void ImageFilter::registerData(Data<defaulttype::Vec2u>* data, uchar min,
-															 uchar max, uchar step)
+void ImageFilter::registerData(Data<defaulttype::Vec2u>* data, uchar min, uchar max)
 {
-	m_params.push_back(Holder(Holder::VEC2U, data, min, max, step));
+	m_params.push_back(Holder(Holder::VEC2U, data, min, max, (uchar)1));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec3u>* data, uchar min,
-															 uchar max, uchar step)
+void ImageFilter::registerData(Data<defaulttype::Vec3u>* data, uchar min, uchar max)
 {
-	m_params.push_back(Holder(Holder::VEC3U, data, min, max, step));
+	m_params.push_back(Holder(Holder::VEC3U, data, min, max, (uchar)1));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec4u>* data, uchar min,
-															 uchar max, uchar step)
+void ImageFilter::registerData(Data<defaulttype::Vec4u>* data, uchar min, uchar max)
 {
-	m_params.push_back(Holder(Holder::VEC4U, data, min, max, step));
+	m_params.push_back(Holder(Holder::VEC4U, data, min, max, (uchar)1));
 }
 
 
 
-void ImageFilter::registerData(Data<defaulttype::Vec2i>* data, int min,
-															 int max, int step)
+void ImageFilter::registerData(Data<defaulttype::Vec2i>* data, int min, int max, int step)
 {
 	m_params.push_back(Holder(Holder::VEC2I, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec3i>* data, int min,
-															 int max, int step)
+
+void ImageFilter::registerData(Data<defaulttype::Vec3i>* data, int min, int max, int step)
 {
 	m_params.push_back(Holder(Holder::VEC3I, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec4i>* data, int min,
-															 int max, int step)
+
+void ImageFilter::registerData(Data<defaulttype::Vec4i>* data, int min, int max, int step)
 {
 	m_params.push_back(Holder(Holder::VEC4I, data, min, max, step));
 }
 
 
-void ImageFilter::registerData(Data<defaulttype::Vec2f>* data, float min,
-															 float max, float step)
+
+void ImageFilter::registerData(Data<defaulttype::Vec2f>* data, float min, float max,
+															 float step)
 {
 	m_params.push_back(Holder(Holder::VEC2F, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec3f>* data, float min,
-															 float max, float step)
+void ImageFilter::registerData(Data<defaulttype::Vec3f>* data, float min, float max,
+															 float step)
 {
 	m_params.push_back(Holder(Holder::VEC3F, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec4f>* data, float min,
-															 float max, float step)
+void ImageFilter::registerData(Data<defaulttype::Vec4f>* data, float min, float max,
+															 float step)
 {
 	m_params.push_back(Holder(Holder::VEC4F, data, min, max, step));
 }
 
 
 
-void ImageFilter::registerData(Data<defaulttype::Vec2d>* data, double min,
-															 double max, double step)
+void ImageFilter::registerData(Data<defaulttype::Vec2d>* data, double min, double max,
+															 double step)
 {
 	m_params.push_back(Holder(Holder::VEC2D, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec3d>* data, double min,
-															 double max, double step)
+void ImageFilter::registerData(Data<defaulttype::Vec3d>* data, double min, double max,
+															 double step)
 {
 	m_params.push_back(Holder(Holder::VEC3D, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec4d>* data, double min,
-															 double max, double step)
+void ImageFilter::registerData(Data<defaulttype::Vec4d>* data, double min, double max,
+															 double step)
 {
-	m_params.push_back(Holder(Holder::VEC4D, data, min, max, step, ));
+	m_params.push_back(Holder(Holder::VEC4D, data, min, max, step));
 }
+
 
 void ImageFilter::drawImage()
 {

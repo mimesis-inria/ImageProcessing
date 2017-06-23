@@ -43,7 +43,12 @@ namespace processor
  */
 class ImageFilter : public common::ImplicitDataEngine
 {
-  static void callback(int val, void* holder);
+	// Registered data callbacks for their OpenCV sliders (not the best UI design...)
+	static void default_callback(int val, void* holder);
+	static void x_callback(int val, void* holder);
+	static void y_callback(int val, void* holder);
+	static void z_callback(int val, void* holder);
+	static void w_callback(int val, void* holder);
 
   static void _mouseCallback(int e, int x, int y, int f, void* d)
   {
@@ -82,9 +87,9 @@ class ImageFilter : public common::ImplicitDataEngine
   void registerData(Data<float>* data, float min, float max, float step);
   void registerData(Data<helper::OptionsGroup>* data);
 
-	void registerData(Data<defaulttype::Vec2u>* data, uchar min, uchar max, uchar step);
-	void registerData(Data<defaulttype::Vec3u>* data, uchar min, uchar max, uchar step);
-	void registerData(Data<defaulttype::Vec4u>* data, uchar min, uchar max, uchar step);
+	void registerData(Data<defaulttype::Vec2u>* data, uchar min, uchar max);
+	void registerData(Data<defaulttype::Vec3u>* data, uchar min, uchar max);
+	void registerData(Data<defaulttype::Vec4u>* data, uchar min, uchar max);
 
 	void registerData(Data<defaulttype::Vec2i>* data, int min, int max, int step);
 	void registerData(Data<defaulttype::Vec3i>* data, int min, int max, int step);
@@ -118,29 +123,32 @@ private:
   {
     enum Type
     {
-      BOOL,
+			// Scalar Types
+			BOOL = 0,
 			BYTE,
 			INT,
       DOUBLE,
       FLOAT,
+			OPTIONSGROUP,
 
-			VEC2U,
-			VEC3U,
-			VEC4U,
-
+			// Double slider types
+			VEC2U = 10,
 			VEC2I,
-			VEC3I,
-			VEC4I,
-
 			VEC2F,
-			VEC3F,
-			VEC4F,
-
 			VEC2D,
-			VEC3D,
-			VEC4D,
 
-			OPTIONSGROUP
+			// triple slider types
+			VEC3U = 20,
+			VEC3I,
+			VEC3F,
+			VEC3D,
+
+			// 4 sliders types
+			VEC4U = 30,
+			VEC4I,
+			VEC4F,
+			VEC4D
+
     } type;
 
     union Impl {
@@ -150,22 +158,21 @@ private:
 			double _double;
       float _float;
 
-			defaulttype::Vec2u _vec2u;
-			defaulttype::Vec3u _vec3u;
-			defaulttype::Vec4u _vec4u;
+			struct { uchar x, y; } _vec2u;
+			struct { uchar x, y, z; } _vec3u;
+			struct { uchar x, y, z, w; } _vec4u;
 
-			defaulttype::Vec2i _vec2i;
-			defaulttype::Vec3i _vec3i;
-			defaulttype::Vec4i _vec4i;
+			struct { int x, y; } _vec2i;
+			struct { int x, y, z; } _vec3i;
+			struct { int x, y, z, w; } _vec4i;
 
-			defaulttype::Vec2f _vec2f;
-			defaulttype::Vec3f _vec3f;
-			defaulttype::Vec4f _vec4f;
+			struct { float x, y; } _vec2f;
+			struct { float x, y, z; } _vec3f;
+			struct { float x, y, z, w; } _vec4f;
 
-			defaulttype::Vec2d _vec2d;
-			defaulttype::Vec3d _vec3d;
-			defaulttype::Vec4d _vec4d;
-
+			struct { double x, y; } _vec2d;
+			struct { double x, y, z; } _vec3d;
+			struct { double x, y, z, w; } _vec4d;
 
 		};
 
@@ -217,9 +224,17 @@ private:
       }
     }
     int getTrackbarRangedValue();
-    int getTrackbarMaxValue();
+		int getTrackbarRangedValueX();
+		int getTrackbarRangedValueY();
+		int getTrackbarRangedValueZ();
+		int getTrackbarRangedValueW();
+		int getTrackbarMaxValue();
     void setDataValue(int val);
-    void refresh();
+		void setDataValue_x(int val);
+		void setDataValue_y(int val);
+		void setDataValue_z(int val);
+		void setDataValue_w(int val);
+		void refresh();
   };
 
   std::vector<Holder> m_params;
