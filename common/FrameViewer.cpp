@@ -25,9 +25,6 @@ FrameViewer::FrameViewer()
 		: d_frame(initData(&d_frame, "img", "frame to display in opencv window")),
 			d_corners(initData(&d_corners, "corners",
 												 "3D world coordinates of the image corners")),
-			d_isXRay(initData(&d_isXRay, "isXRay",
-												"true if the image to displpay is an xray image, in "
-												"which case image is flipped before being displayed")),
 			d_mode(
 					initData(&d_mode, "mode", "viewer mode (PERSPECTIVE, ORTHO, HIDDEN)")),
 			d_alpha(initData(&d_alpha, 1.0f, "alpha", "alpha value for the texture"))
@@ -130,30 +127,15 @@ void FrameViewer::perspectiveDraw()
 	helper::vector<defaulttype::Vector3> p = d_corners.getValue();
 
 	glBegin(GL_QUADS);
-	if (d_isXRay.getValue())
-	{
-		glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
-		glTexCoord2f(1, 0);
-		glVertex3f(p[0][0], p[0][1], p[0][2]);
-		glTexCoord2f(0, 0);
-		glVertex3f(p[1][0], p[1][1], p[1][2]);
-		glTexCoord2f(0, 1);
-		glVertex3f(p[2][0], p[2][1], p[2][2]);
-		glTexCoord2f(1, 1);
-		glVertex3f(p[3][0], p[3][1], p[3][2]);
-	}
-	else
-	{
-		glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
-		glTexCoord2f(0, 0);
-		glVertex3f(p[0][0], p[0][1], p[0][2]);
-		glTexCoord2f(1, 0);
-		glVertex3f(p[1][0], p[1][1], p[1][2]);
-		glTexCoord2f(1, 1);
-		glVertex3f(p[2][0], p[2][1], p[2][2]);
-		glTexCoord2f(0, 1);
-		glVertex3f(p[3][0], p[3][1], p[3][2]);
-	}
+	glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
+	glTexCoord2f(0, 0);
+	glVertex3f(p[0][0], p[0][1], p[0][2]);
+	glTexCoord2f(1, 0);
+	glVertex3f(p[1][0], p[1][1], p[1][2]);
+	glTexCoord2f(1, 1);
+	glVertex3f(p[2][0], p[2][1], p[2][2]);
+	glTexCoord2f(0, 1);
+	glVertex3f(p[3][0], p[3][1], p[3][2]);
 	glEnd();
 
 	// glEnable(GL_DEPTH_TEST);
@@ -187,30 +169,15 @@ void FrameViewer::orthoDraw()
 	glLoadIdentity();
 
 	glBegin(GL_QUADS);
-	if (d_isXRay.getValue())
-	{
-		glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
-		glTexCoord2f(0, 1);
-		glVertex2f(1, 0);
-		glTexCoord2f(1, 1);
-		glVertex2f(0, 0);
-		glTexCoord2f(1, 0);
-		glVertex2f(0, 1);
-		glTexCoord2f(0, 0);
-		glVertex2f(1, 1);
-	}
-	else
-	{
-		glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
-		glTexCoord2f(0, 1);
-		glVertex2f(0, 0);
-		glTexCoord2f(1, 1);
-		glVertex2f(1, 0);
-		glTexCoord2f(1, 0);
-		glVertex2f(1, 1);
-		glTexCoord2f(0, 0);
-		glVertex2f(0, 1);
-	}
+	glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
+	glTexCoord2f(0, 1);
+	glVertex2f(0, 0);
+	glTexCoord2f(1, 1);
+	glVertex2f(1, 0);
+	glTexCoord2f(1, 0);
+	glVertex2f(1, 1);
+	glTexCoord2f(0, 0);
+	glVertex2f(0, 1);
 	glEnd();
 
 	glMatrixMode(GL_PROJECTION);

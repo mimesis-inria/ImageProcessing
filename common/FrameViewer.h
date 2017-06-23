@@ -35,7 +35,6 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 
 	Data<common::cvMat> d_frame;
 	Data<helper::vector<defaulttype::Vector3> > d_corners;
-	Data<bool> d_isXRay;
 	Data<helper::OptionsGroup> d_mode;
 	Data<float> d_alpha;
 
