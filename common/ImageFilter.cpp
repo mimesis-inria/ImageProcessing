@@ -43,6 +43,11 @@ int ImageFilter::Holder::getTrackbarRangedValue()
           (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._float) /
           step._float);
     }
+		default:
+		{
+			return 0;
+		}
+		break;
   }
   return 0;
 }
@@ -185,6 +190,8 @@ int ImageFilter::Holder::getTrackbarMaxValue()
 		case VEC3D:
 		case VEC4D:
 			return int((value_max._double - value_min._double) / step._double);
+		default:
+			break;
 	}
   return 0;
 }
@@ -213,6 +220,8 @@ void ImageFilter::Holder::setDataValue(int val)
 		case FLOAT:
 			reinterpret_cast<Data<double>*>(data)->setValue(val * step._float +
 																											value_min._float);
+			break;
+		default:
 			break;
 	}
 }
@@ -654,73 +663,71 @@ void ImageFilter::registerData(Data<float>* data, float min, float max,
   m_params.push_back(Holder(Holder::FLOAT, data, min, max, step));
 }
 
-
-void ImageFilter::registerData(Data<defaulttype::Vec2u>* data, uchar min, uchar max)
+void ImageFilter::registerData(Data<defaulttype::Vec2u>* data, uchar min,
+															 uchar max)
 {
 	m_params.push_back(Holder(Holder::VEC2U, data, min, max, (uchar)1));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec3u>* data, uchar min, uchar max)
+void ImageFilter::registerData(Data<defaulttype::Vec3u>* data, uchar min,
+															 uchar max)
 {
 	m_params.push_back(Holder(Holder::VEC3U, data, min, max, (uchar)1));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec4u>* data, uchar min, uchar max)
+void ImageFilter::registerData(Data<defaulttype::Vec4u>* data, uchar min,
+															 uchar max)
 {
 	m_params.push_back(Holder(Holder::VEC4U, data, min, max, (uchar)1));
 }
 
-
-
-void ImageFilter::registerData(Data<defaulttype::Vec2i>* data, int min, int max, int step)
+void ImageFilter::registerData(Data<defaulttype::Vec2i>* data, int min, int max,
+															 int step)
 {
 	m_params.push_back(Holder(Holder::VEC2I, data, min, max, step));
 }
 
-void ImageFilter::registerData(Data<defaulttype::Vec3i>* data, int min, int max, int step)
+void ImageFilter::registerData(Data<defaulttype::Vec3i>* data, int min, int max,
+															 int step)
 {
 	m_params.push_back(Holder(Holder::VEC3I, data, min, max, step));
 }
 
-void ImageFilter::registerData(Data<defaulttype::Vec4i>* data, int min, int max, int step)
+void ImageFilter::registerData(Data<defaulttype::Vec4i>* data, int min, int max,
+															 int step)
 {
 	m_params.push_back(Holder(Holder::VEC4I, data, min, max, step));
 }
 
-
-
-void ImageFilter::registerData(Data<defaulttype::Vec2f>* data, float min, float max,
-															 float step)
+void ImageFilter::registerData(Data<defaulttype::Vec2f>* data, float min,
+															 float max, float step)
 {
 	m_params.push_back(Holder(Holder::VEC2F, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec3f>* data, float min, float max,
-															 float step)
+void ImageFilter::registerData(Data<defaulttype::Vec3f>* data, float min,
+															 float max, float step)
 {
 	m_params.push_back(Holder(Holder::VEC3F, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec4f>* data, float min, float max,
-															 float step)
+void ImageFilter::registerData(Data<defaulttype::Vec4f>* data, float min,
+															 float max, float step)
 {
 	m_params.push_back(Holder(Holder::VEC4F, data, min, max, step));
 }
 
-
-
-void ImageFilter::registerData(Data<defaulttype::Vec2d>* data, double min, double max,
-															 double step)
+void ImageFilter::registerData(Data<defaulttype::Vec2d>* data, double min,
+															 double max, double step)
 {
 	m_params.push_back(Holder(Holder::VEC2D, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec3d>* data, double min, double max,
-															 double step)
+void ImageFilter::registerData(Data<defaulttype::Vec3d>* data, double min,
+															 double max, double step)
 {
 	m_params.push_back(Holder(Holder::VEC3D, data, min, max, step));
 }
-void ImageFilter::registerData(Data<defaulttype::Vec4d>* data, double min, double max,
-															 double step)
+void ImageFilter::registerData(Data<defaulttype::Vec4d>* data, double min,
+															 double max, double step)
 {
 	m_params.push_back(Holder(Holder::VEC4D, data, min, max, step));
 }
-
 
 void ImageFilter::drawImage()
 {

@@ -192,7 +192,10 @@ private:
           value_max._int = 1;
           step._int = 1;
         case INT:
-        case OPTIONSGROUP:
+				case VEC2I:
+				case VEC3I:
+				case VEC4I:
+				case OPTIONSGROUP:
           value_min._int = min;
           value_max._int = max;
           step._int = _step;
