@@ -380,8 +380,6 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 	unsigned filteredByKNN = 0;
 	unsigned filteredByMDF = 0;
 
-	std::cout << m_matchVector.size() << std::endl;
-	std::cout << m_kpL.size() << std::endl;
 	/// Start filtering points out
 	for (unsigned i = 0; i < m_matchVector.size(); ++i)
 	{

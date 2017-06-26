@@ -38,9 +38,6 @@ class FeatureTriangulator : public common::ImplicitDataEngine
 
   void init();
   void update();
-  void triangulate(const cv::Point2f& l, const cv::Point2f& r,
-                   defaulttype::Vec3d& p);
-
 	// DATA
 	Data<bool> d_rectify;
 
@@ -62,12 +59,6 @@ class FeatureTriangulator : public common::ImplicitDataEngine
   cv::Mat_<double> dvR;
   cv::Matx34d PL;
   cv::Matx34d PR;
-
-  cv::Point3d rectifyPoint(double x, double y, cv::Mat_<double> distortion_vec);
-
-  cv::Mat_<double> iterativeLinearLSTriangulation(cv::Point3d u,
-                                                  cv::Point3d u1);
-  cv::Mat_<double> linearLSTriangulation(cv::Point3d u, cv::Point3d u1);
 };
 
 }  // namespace processor

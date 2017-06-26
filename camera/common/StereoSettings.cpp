@@ -102,24 +102,40 @@ defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
 	cv::Point3d u(x1.x(), x2.y(), 1.0);
 	cv::Point3d u1(x2.x(), x2.y(), 1.0);
 
-//	// multiply the point by the inverse of the K matrix
-//	cv::Mat_<double> um = cm1.inv() * cv::Mat_<double>(u);
-//	cv::Mat_<double> um1 = cm2.inv() * cv::Mat_<double>(u1);
+	//	// multiply the point by the inverse of the K matrix
+	//	cv::Mat_<double> um = cm1.inv() * cv::Mat_<double>(u);
+	//	cv::Mat_<double> um1 = cm2.inv() * cv::Mat_<double>(u1);
 
-//	u.x = um(0);
-//	u.y = um(1);
-//	u1.x = um1(0);
-//	u1.y = um1(1);
-//	u.z = um(2);
-//	u1.z = um1(2);
+	//	u.x = um(0);
+	//	u.y = um(1);
+	//	u1.x = um1(0);
+	//	u1.y = um1(1);
+	//	u.z = um(2);
+	//	u1.z = um1(2);
 
 	cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
 
 	return Vector3(X(0), X(1), X(2));
 }
 
+defaulttype::Vector3 StereoSettings::triangulate(const cv::Point2d& x1,
+																				const cv::Point2d& x2)
+{
+	common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
+	common::matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
+	cv::Point3d u(x1.x, x2.y, 1.0);
+	cv::Point3d u1(x2.x, x2.y, 1.0);
+	cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
+	return Vector3(X(0), X(1), X(2));
+}
+
 // returns the 3D position of a pair of 2D matches 'X, Y'
 void StereoSettings::triangulate(const Vector2& x1, const Vector2& x2,
+																 Vector3& w)
+{
+	w = triangulate(x1, x2);
+}
+void StereoSettings::triangulate(const cv::Point2d& x1, const cv::Point2d& x2,
 																 Vector3& w)
 {
 	w = triangulate(x1, x2);
@@ -138,30 +154,32 @@ const defaulttype::Matrix3& StereoSettings::getEssentialMatrix()
 	return d_E.getValue();
 }
 void StereoSettings::setEssentialMatrix(const Matrix3& E) { d_E.setValue(E); }
-//void StereoSettings::updateRt()
+// void StereoSettings::updateRt()
 //{
 //	const Vector3& t = d_t.getValue();
 //	const Matrix3& R = d_R.getValue();
 //	P1 = cv::Matx34d::eye();
-//	P2 = cv::Matx34d(R[0][0], R[0][1], R[0][2], t[0], R[1][0], R[1][1], R[1][2],
-//									 t[1], R[2][0], R[2][1], R[2][2], t[2]);
+//	P2 = cv::Matx34d(R[0][0], R[0][1], R[0][2], t[0], R[1][0], R[1][1],
+//R[1][2],
+//									 t[1], R[2][0], R[2][1],
+//R[2][2], t[2]);
 //}
 
-//const defaulttype::Matrix3& StereoSettings::getRotationMatrix()
+// const defaulttype::Matrix3& StereoSettings::getRotationMatrix()
 //{
 //	return d_R.getValue();
 //}
-//void StereoSettings::setRotationMatrix(const Matrix3& R)
+// void StereoSettings::setRotationMatrix(const Matrix3& R)
 //{
 //	d_R.setValue(R);
 //	updateRt();
 //}
-//const defaulttype::Vector3& StereoSettings::getTranslationVector()
+// const defaulttype::Vector3& StereoSettings::getTranslationVector()
 //{
 //	return d_t.getValue();
 //}
 
-//void StereoSettings::setTranslationVector(const Vector3& t)
+// void StereoSettings::setTranslationVector(const Vector3& t)
 //{
 //	d_t.setValue(t);
 //	updateRt();
@@ -169,8 +187,7 @@ void StereoSettings::setEssentialMatrix(const Matrix3& E) { d_E.setValue(E); }
 
 void StereoSettings::recomputeFromCameras()
 {
-	if (!l_cam1.get() || !l_cam2.get())
-		return;
+	if (!l_cam1.get() || !l_cam2.get()) return;
 
 	Matrix3 K1 = l_cam1->getIntrinsicCameraMatrix();
 	Matrix3 K2 = l_cam2->getIntrinsicCameraMatrix();
@@ -179,11 +196,10 @@ void StereoSettings::recomputeFromCameras()
 	Vector3 T1 = l_cam1->getPosition();
 	Vector3 T2 = l_cam2->getPosition();
 
-	if (K1 == Matrix3() || K2 == Matrix3())
-		return;
+	if (K1 == Matrix3() || K2 == Matrix3()) return;
 
 	// Camera 2 in Cam1 coord system
-//	Vector3 Ts = R1 * (T2 - T1);
+	//	Vector3 Ts = R1 * (T2 - T1);
 	Vector3 Ts = T2 - T1;
 
 	// Rotation matrix from R1 to R2
@@ -191,10 +207,8 @@ void StereoSettings::recomputeFromCameras()
 	K2R2.invert(K2R2.transposed());
 
 	// Skew symetric matrix of Ts
-	Matrix3 T(
-				Vector3(0, -Ts[2], Ts[1]),
-			Vector3(Ts[2], 0, -Ts[0]),
-			Vector3(-Ts[1], Ts[0], 0));
+	Matrix3 T(Vector3(0, -Ts[2], Ts[1]), Vector3(Ts[2], 0, -Ts[0]),
+						Vector3(-Ts[1], Ts[0], 0));
 
 	/// E = R * [T]x
 	Matrix3 E;
@@ -208,9 +222,9 @@ void StereoSettings::recomputeFromCameras()
 	Matrix3 F = K2R2 * T * K1R1;
 
 	// "Normalize matrix
-	for (int i = 0 ; i < 3 ; ++i)
+	for (int i = 0; i < 3; ++i)
 	{
-		for (int j = 0 ; j < 3 ; ++j)
+		for (int j = 0; j < 3; ++j)
 		{
 			F[i][j] /= F[2][2];
 		}
@@ -218,7 +232,6 @@ void StereoSettings::recomputeFromCameras()
 
 	this->setFundamentalMatrix(F);
 	this->setEssentialMatrix(E);
-
 }
 
 }  // namespace processor
