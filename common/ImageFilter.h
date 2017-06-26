@@ -43,8 +43,9 @@ namespace processor
  */
 class ImageFilter : public common::ImplicitDataEngine
 {
-	// Registered data callbacks for their OpenCV sliders (not the best UI design...)
-	static void default_callback(int val, void* holder);
+	// Registered data callbacks for their OpenCV sliders (not the best UI
+	// design...)
+	static void callback(int val, void* holder);
 	static void x_callback(int val, void* holder);
 	static void y_callback(int val, void* holder);
 	static void z_callback(int val, void* holder);
@@ -95,17 +96,24 @@ class ImageFilter : public common::ImplicitDataEngine
 	void registerData(Data<defaulttype::Vec3i>* data, int min, int max, int step);
 	void registerData(Data<defaulttype::Vec4i>* data, int min, int max, int step);
 
-	void registerData(Data<defaulttype::Vec2f>* data, float min, float max, float step);
-	void registerData(Data<defaulttype::Vec3f>* data, float min, float max, float step);
-	void registerData(Data<defaulttype::Vec4f>* data, float min, float max, float step);
+	void registerData(Data<defaulttype::Vec2f>* data, float min, float max,
+										float step);
+	void registerData(Data<defaulttype::Vec3f>* data, float min, float max,
+										float step);
+	void registerData(Data<defaulttype::Vec4f>* data, float min, float max,
+										float step);
 
-	void registerData(Data<defaulttype::Vec2d>* data, double min, double max, double step);
-	void registerData(Data<defaulttype::Vec3d>* data, double min, double max, double step);
-	void registerData(Data<defaulttype::Vec4d>* data, double min, double max, double step);
+	void registerData(Data<defaulttype::Vec2d>* data, double min, double max,
+										double step);
+	void registerData(Data<defaulttype::Vec3d>* data, double min, double max,
+										double step);
+	void registerData(Data<defaulttype::Vec4d>* data, double min, double max,
+										double step);
 
 	void unregisterAllData();
 
 	void drawImage();
+
  protected:
   virtual void mouseCallback(int, int, int, int) {}
   static unsigned m_window_uid;
@@ -117,7 +125,7 @@ class ImageFilter : public common::ImplicitDataEngine
   bool m_outputImage;
   bool m_isMouseCallbackActive;
 
-private:
+ private:
 	core::DataTracker m_displayDebugDataTracker;
   struct Holder
   {
@@ -158,22 +166,57 @@ private:
 			double _double;
       float _float;
 
-			struct { uchar x, y; } _vec2u;
-			struct { uchar x, y, z; } _vec3u;
-			struct { uchar x, y, z, w; } _vec4u;
+			struct
+			{
+				uchar x, y;
+			} _vec2u;
+			struct
+			{
+				uchar x, y, z;
+			} _vec3u;
+			struct
+			{
+				uchar x, y, z, w;
+			} _vec4u;
 
-			struct { int x, y; } _vec2i;
-			struct { int x, y, z; } _vec3i;
-			struct { int x, y, z, w; } _vec4i;
+			struct
+			{
+				int x, y;
+			} _vec2i;
+			struct
+			{
+				int x, y, z;
+			} _vec3i;
+			struct
+			{
+				int x, y, z, w;
+			} _vec4i;
 
-			struct { float x, y; } _vec2f;
-			struct { float x, y, z; } _vec3f;
-			struct { float x, y, z, w; } _vec4f;
+			struct
+			{
+				float x, y;
+			} _vec2f;
+			struct
+			{
+				float x, y, z;
+			} _vec3f;
+			struct
+			{
+				float x, y, z, w;
+			} _vec4f;
 
-			struct { double x, y; } _vec2d;
-			struct { double x, y, z; } _vec3d;
-			struct { double x, y, z, w; } _vec4d;
-
+			struct
+			{
+				double x, y;
+			} _vec2d;
+			struct
+			{
+				double x, y, z;
+			} _vec3d;
+			struct
+			{
+				double x, y, z, w;
+			} _vec4d;
 		};
 
     core::objectmodel::BaseData* data;

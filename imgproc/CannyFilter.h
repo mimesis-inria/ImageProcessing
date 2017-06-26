@@ -38,7 +38,7 @@ class CannyFilter : public ImageFilter
   {
     registerData(&d_minThreshold, 0.0, 255.0, 1.0);
     registerData(&d_maxThreshold, 0.0, 255.0, 1.0);
-    registerData(&d_apertureSize, 3, 7, 1);
+		registerData(&d_apertureSize, 3, 7, 2);
     registerData(&d_l2gradient);
     ImageFilter::init();
   }

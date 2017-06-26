@@ -26,22 +26,22 @@ int ImageFilter::Holder::getTrackbarRangedValue()
                      ->getValue()
                      .getSelectedId());
     }
-    case INT:
-    {
-      return (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._int) /
-             step._int;
+		case INT:
+		{
+			return (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._int) /
+						 step._int;
     }
     case DOUBLE:
     {
-      return int(
-          (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._double) /
-          step._double);
+			return int((reinterpret_cast<Data<double>*>(data)->getValue() -
+									value_min._double) /
+								 step._double);
     }
     case FLOAT:
     {
-      return int(
-          (reinterpret_cast<Data<int>*>(data)->getValue() - value_min._float) /
-          step._float);
+			return int((reinterpret_cast<Data<float>*>(data)->getValue() -
+									value_min._float) /
+								 step._float);
     }
 		default:
 		{
@@ -214,11 +214,11 @@ void ImageFilter::Holder::setDataValue(int val)
 					->setSelectedItem(unsigned(val));
 			break;
 		case DOUBLE:
-			reinterpret_cast<Data<double>*>(data)->setValue(val * step._double +
-																											value_min._double);
+			reinterpret_cast<Data<double>*>(data)->setValue(
+					double(val) * step._double + value_min._double);
 			break;
 		case FLOAT:
-			reinterpret_cast<Data<double>*>(data)->setValue(val * step._float +
+			reinterpret_cast<Data<double>*>(data)->setValue(float(val) * step._float +
 																											value_min._float);
 			break;
 		default:
@@ -246,7 +246,7 @@ void ImageFilter::Holder::setDataValue_x(int val)
 		{
 			defaulttype::Vec2i& v =
 					*reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->beginEdit();
-			v.x() = val * step._float + value_min._float;
+			v.x() = val * step._int + value_min._int;
 			reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->endEdit();
 			break;
 		}
@@ -295,7 +295,7 @@ void ImageFilter::Holder::setDataValue_y(int val)
 		{
 			defaulttype::Vec2i& v =
 					*reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->beginEdit();
-			v.y() = val * step._float + value_min._float;
+			v.y() = val * step._int + value_min._int;
 			reinterpret_cast<Data<defaulttype::Vec2i>*>(data)->endEdit();
 			break;
 		}
@@ -346,7 +346,7 @@ void ImageFilter::Holder::setDataValue_z(int val)
 		{
 			defaulttype::Vec3i& v =
 					*reinterpret_cast<Data<defaulttype::Vec3i>*>(data)->beginEdit();
-			v.z() = val * step._float + value_min._float;
+			v.z() = val * step._int + value_min._int;
 			reinterpret_cast<Data<defaulttype::Vec3i>*>(data)->endEdit();
 			break;
 		}
@@ -399,7 +399,7 @@ void ImageFilter::Holder::setDataValue_w(int val)
 		{
 			defaulttype::Vec4i& v =
 					*reinterpret_cast<Data<defaulttype::Vec4i>*>(data)->beginEdit();
-			v.w() = val * step._float + value_min._float;
+			v.w() = val * step._int + value_min._int;
 			reinterpret_cast<Data<defaulttype::Vec4i>*>(data)->endEdit();
 			break;
 		}
@@ -437,7 +437,7 @@ void ImageFilter::Holder::refresh()
       ->refreshDebugWindow();
 }
 
-void ImageFilter::default_callback(int val, void* holder)
+void ImageFilter::callback(int val, void* holder)
 {
 	Holder* h = reinterpret_cast<Holder*>(holder);
 	if (h->getTrackbarRangedValue() != val)
@@ -581,40 +581,34 @@ void ImageFilter::reinitDebugWindow()
 		{
 			value = h.getTrackbarRangedValue();
 			cv::createTrackbar(h.data->getName(), m_win_name, &value,
-												 h.getTrackbarMaxValue(),
-												 &ImageFilter::default_callback, &h);
-			cv::setTrackbarPos(h.data->getName(), m_win_name,
-												 h.getTrackbarRangedValue());
+												 h.getTrackbarMaxValue(), &ImageFilter::callback, &h);
+			cv::setTrackbarPos(h.data->getName(), m_win_name, value);
 		}
-		if (h.type >= 10)
+		else if (h.type >= 10)
 		{
 			value = h.getTrackbarRangedValueX();
 			cv::createTrackbar(h.data->getName(), m_win_name, &value,
 												 h.getTrackbarMaxValue(), &ImageFilter::x_callback, &h);
-			cv::setTrackbarPos(h.data->getName(), m_win_name,
-												 h.getTrackbarRangedValueX());
+			cv::setTrackbarPos(h.data->getName(), m_win_name, value);
 
 			value = h.getTrackbarRangedValueY();
 			cv::createTrackbar(h.data->getName(), m_win_name, &value,
 												 h.getTrackbarMaxValue(), &ImageFilter::y_callback, &h);
-			cv::setTrackbarPos(h.data->getName(), m_win_name,
-												 h.getTrackbarRangedValueY());
+			cv::setTrackbarPos(h.data->getName(), m_win_name, value);
 		}
 		else if (h.type >= 20)
 		{
 			value = h.getTrackbarRangedValueZ();
 			cv::createTrackbar(h.data->getName(), m_win_name, &value,
 												 h.getTrackbarMaxValue(), &ImageFilter::z_callback, &h);
-			cv::setTrackbarPos(h.data->getName(), m_win_name,
-												 h.getTrackbarRangedValueZ());
+			cv::setTrackbarPos(h.data->getName(), m_win_name, value);
 		}
 		else if (h.type <= 40)
 		{
 			value = h.getTrackbarRangedValueW();
 			cv::createTrackbar(h.data->getName(), m_win_name, &value,
 												 h.getTrackbarMaxValue(), &ImageFilter::w_callback, &h);
-			cv::setTrackbarPos(h.data->getName(), m_win_name,
-												 h.getTrackbarRangedValueW());
+			cv::setTrackbarPos(h.data->getName(), m_win_name, value);
 		}
 	}
   if (m_isMouseCallbackActive)
