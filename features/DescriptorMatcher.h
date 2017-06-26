@@ -49,7 +49,7 @@ class DescriptorMatcher : public ImageFilter
   Data<sofa::helper::OptionsGroup> d_matcherType;
   Data<sofa::helper::OptionsGroup> d_matchingAlgo;
   Data<int> d_k;
-  Data<float> d_maxDistance;
+	Data<float> d_maxDistance;
   Data<common::cvMat> d_mask;
 
   Data<common::cvMat> d_queryDescriptors;
