@@ -90,7 +90,10 @@ void DescriptorMatcher::init()
 void DescriptorMatcher::update()
 {
   std::cout << getName() << std::endl;
-	msg_warning_when(!d_queryDescriptors.getValue().rows || !d_trainDescriptors.getValue().rows, "DescriptorMatcher::update()") << "Error: Empty descriptor matrix!";
+	msg_warning_when(!d_queryDescriptors.getValue().rows ||
+											 !d_trainDescriptors.getValue().rows,
+									 "DescriptorMatcher::update()")
+			<< "Error: Empty descriptor matrix!";
 	ImageFilter::update();
 
   sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> >* vec =
@@ -111,9 +114,6 @@ void DescriptorMatcher::update()
 
 void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
-	std::cout << d_queryDescriptors.getValue().size() << std::endl;
-	std::cout << d_trainDescriptors.getValue().size() << std::endl<< std::endl;
-
   if (d_queryDescriptors.getValue().empty() ||
       d_trainDescriptors.getValue().empty())
     return;
@@ -142,9 +142,15 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
                             d_trainDescriptors.getValue(), m_matches, 1,
                             d_mask.getValue());
   else if (d_matchingAlgo.getValue().getSelectedId() == KNN_MATCH)
-    m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
-                            d_trainDescriptors.getValue(), m_matches,
-                            d_k.getValue(), d_mask.getValue());
+	{
+		int k = d_k.getValue();
+		if (d_k.getValue() > d_queryDescriptors.getValue().size[0])
+			k = d_queryDescriptors.getValue().size[0];
+
+		m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
+														d_trainDescriptors.getValue(), m_matches, k,
+														d_mask.getValue());
+	}
   else if (d_matchingAlgo.getValue().getSelectedId() == RADIUS_MATCH)
     m_matchers[m]->radiusMatch(d_queryDescriptors.getValue(),
                                d_trainDescriptors.getValue(), m_matches,
