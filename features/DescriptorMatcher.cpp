@@ -26,7 +26,8 @@ DescriptorMatcher::DescriptorMatcher()
       d_k(initData(&d_k, 2, "k",
                    "k Count of best matches found per each query descriptor or "
                    "less if a query descriptor has less than k possible "
-									 "matches in total. If K == -1, all descriptors will be matched together")),
+									 "matches in total. If K == -1, all descriptors will be "
+									 "matched together")),
 			d_maxDistance(initData(
           &d_maxDistance, .0f, "maxDistance",
           "maxDistance Threshold for the distance between matched descriptors. "
@@ -144,8 +145,10 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   else if (d_matchingAlgo.getValue().getSelectedId() == KNN_MATCH)
 	{
 		int k = d_k.getValue();
-		if (k > d_queryDescriptors.getValue().size[0] || k == -1)
-			k = d_queryDescriptors.getValue().size[0];
+		int n = std::min(d_queryDescriptors.getValue().size[0],
+										 d_trainDescriptors.getValue().size[0]);
+		if (k > n || k == -1) k = n;
+
 		m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
 														d_trainDescriptors.getValue(), m_matches, k,
 														d_mask.getValue());
