@@ -17,6 +17,8 @@ set(HEADER_FILES
   common/FrameViewer.h
   common/PCViewer.h
   common/ImageFilter.h
+  common/DataSliderMgr.h
+  common/DataSliderMgr.inl
   common/ImageExporter.h
 
   camera/common/CameraSettings.h
