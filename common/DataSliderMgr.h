@@ -1,5 +1,5 @@
-#ifndef SOFA_OR_PROCESSOR_DATASLIDERMANAGER_H
-#define SOFA_OR_PROCESSOR_DATASLIDERMANAGER_H
+#ifndef SOFA_OR_PROCESSOR_ScalarSliderManager_H
+#define SOFA_OR_PROCESSOR_ScalarSliderManager_H
 
 #include <SofaORCommon/cvMat.h>
 #include <sofa/core/ObjectFactory.h>
@@ -12,23 +12,22 @@ namespace OR
 {
 namespace processor
 {
-
 struct DSM
 {
 	virtual void createSlider(const std::string& winName) = 0;
 };
 
 template <class T, class U>
-struct DataSliderManager : DSM
+struct ScalarSliderManager : DSM
 {
-	DataSliderManager(sofa::Data<T>* d, U min, U max, U step)
+	ScalarSliderManager(sofa::Data<T>* d, U min, U max, U step)
 	{
 		this->m_data = d;
 		this->m_min = min;
 		this->m_max = max;
 		this->m_step = step;
 	}
-	~DataSliderManager() {}
+	~ScalarSliderManager() {}
 
 	sofa::Data<T>* m_data;
 	U m_min, m_max, m_step;
@@ -40,16 +39,16 @@ struct DataSliderManager : DSM
 };
 
 template <>
-struct DataSliderManager<helper::OptionsGroup, int> : DSM
+struct ScalarSliderManager<helper::OptionsGroup, int> : DSM
 {
-	DataSliderManager(sofa::Data<helper::OptionsGroup>* d)
+	ScalarSliderManager(sofa::Data<helper::OptionsGroup>* d)
 	{
 		this->m_data = d;
 		this->m_min = 0;
 		this->m_max = d->getValue().size() - 1;
 		this->m_step = 1;
 	}
-	~DataSliderManager() {}
+	~ScalarSliderManager() {}
 
 	void createSlider(const std::string& winName);
 	int getTrackbarMaxValue();
@@ -61,9 +60,9 @@ struct DataSliderManager<helper::OptionsGroup, int> : DSM
 };
 
 template <>
-struct DataSliderManager<bool, bool> : DSM
+struct ScalarSliderManager<bool, bool> : DSM
 {
-	DataSliderManager(sofa::Data<bool>* d)
+	ScalarSliderManager(sofa::Data<bool>* d)
 	{
 		this->m_data = d;
 		this->m_min = 0;
@@ -71,7 +70,7 @@ struct DataSliderManager<bool, bool> : DSM
 		this->m_step = 1;
 	}
 
-	~DataSliderManager() {}
+	~ScalarSliderManager() {}
 
 	void createSlider(const std::string& winName);
 	int getTrackbarMaxValue();
@@ -83,17 +82,16 @@ struct DataSliderManager<bool, bool> : DSM
 };
 
 template <unsigned int N, class U>
-struct NDataSliderManager : DSM
+struct VecSliderManager : DSM
 {
-	NDataSliderManager(sofa::Data<defaulttype::Vec<N, U> >* d, U min, U max,
-										U step)
+	VecSliderManager(sofa::Data<defaulttype::Vec<N, U> >* d, U min, U max, U step)
 	{
 		this->m_data = d;
 		this->m_min = min;
 		this->m_max = max;
 		this->m_step = step;
 	}
-	~NDataSliderManager() {}
+	~VecSliderManager() {}
 
 	void createSlider(const std::string& winName);
 
@@ -116,4 +114,4 @@ struct NDataSliderManager : DSM
 }  // namespace OR
 }  // namespace sofa
 
-#endif  // SOFA_OR_PROCESSOR_DATASLIDERMANAGER_H
+#endif  // SOFA_OR_PROCESSOR_ScalarSliderManager_H

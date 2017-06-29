@@ -1,7 +1,7 @@
 #include "ImageFilter.h"
-#include "DataSliderMgr.inl"
 #include <AcquisitOR/BaseFrameGrabber.h>
 #include <opencv2/highgui.hpp>
+#include "DataSliderMgr.inl"
 
 #include <sofa/core/visual/DrawToolGL.h>
 
@@ -9,14 +9,12 @@
 #include <sofa/helper/system/gl.h>
 #include <sofa/helper/system/glut.h>
 
-
 namespace sofa
 {
 namespace OR
 {
 namespace processor
 {
-
 unsigned ImageFilter::m_window_uid = 0;
 
 ImageFilter::ImageFilter(bool outputImage)
@@ -129,112 +127,101 @@ void ImageFilter::unregisterAllData() { m_params.clear(); }
 
 void ImageFilter::registerData(Data<bool>* data)
 {
-	m_params.push_back(new DataSliderManager<bool, bool>(data));
+	m_params.push_back(new ScalarSliderManager<bool, bool>(data));
 }
 
 void ImageFilter::registerData(Data<helper::OptionsGroup>* data)
 {
-	m_params.push_back(new DataSliderManager<helper::OptionsGroup, int>(data));
+	m_params.push_back(new ScalarSliderManager<helper::OptionsGroup, int>(data));
 }
 
 void ImageFilter::registerData(Data<int>* data, int min, int max, int step)
 {
-	m_params.push_back(new DataSliderManager<int, int>(data, min, max, step));
+	m_params.push_back(new ScalarSliderManager<int, int>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<unsigned>* data, unsigned min, unsigned max,
 															 unsigned step)
 {
 	m_params.push_back(
-			new DataSliderManager<unsigned, unsigned>(data, min, max, step));
+			new ScalarSliderManager<unsigned, unsigned>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<double>* data, double min, double max,
                                double step)
 {
 	m_params.push_back(
-			new DataSliderManager<double, double>(data, min, max, step));
+			new ScalarSliderManager<double, double>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<float>* data, float min, float max,
                                float step)
 {
-	m_params.push_back(new DataSliderManager<float, float>(data, min, max, step));
+	m_params.push_back(
+			new ScalarSliderManager<float, float>(data, min, max, step));
 }
 
 void ImageFilter::registerData(Data<defaulttype::Vec2u>* data, unsigned min,
 															 unsigned max, unsigned step)
 {
-	m_params.push_back(new NDataSliderManager<2, unsigned>(
-			data, min, max, step));
+	m_params.push_back(new VecSliderManager<2, unsigned>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<defaulttype::Vec3u>* data, unsigned min,
 															 unsigned max, unsigned step)
 {
-	m_params.push_back(new NDataSliderManager<3, unsigned>(
-			data, min, max, step));
+	m_params.push_back(new VecSliderManager<3, unsigned>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<defaulttype::Vec4u>* data, unsigned min,
 															 unsigned max, unsigned step)
 {
-	m_params.push_back(new NDataSliderManager<4, unsigned>(
-			data, min, max, step));
+	m_params.push_back(new VecSliderManager<4, unsigned>(data, min, max, step));
 }
 
 void ImageFilter::registerData(Data<defaulttype::Vec2i>* data, int min, int max,
 															 int step)
 {
-	m_params.push_back(
-			new NDataSliderManager<2, int>(data, min, max, step));
+	m_params.push_back(new VecSliderManager<2, int>(data, min, max, step));
 }
 
 void ImageFilter::registerData(Data<defaulttype::Vec3i>* data, int min, int max,
 															 int step)
 {
-	m_params.push_back(
-			new NDataSliderManager<3, int>(data, min, max, step));
+	m_params.push_back(new VecSliderManager<3, int>(data, min, max, step));
 }
 
 void ImageFilter::registerData(Data<defaulttype::Vec4i>* data, int min, int max,
 															 int step)
 {
-	m_params.push_back(
-			new NDataSliderManager<4, int>(data, min, max, step));
+	m_params.push_back(new VecSliderManager<4, int>(data, min, max, step));
 }
 
 void ImageFilter::registerData(Data<defaulttype::Vec2f>* data, float min,
 															 float max, float step)
 {
-	m_params.push_back(
-			new NDataSliderManager<2, float>(data, min, max, step));
+	m_params.push_back(new VecSliderManager<2, float>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<defaulttype::Vec3f>* data, float min,
 															 float max, float step)
 {
-	m_params.push_back(
-			new NDataSliderManager<3, float>(data, min, max, step));
+	m_params.push_back(new VecSliderManager<3, float>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<defaulttype::Vec4f>* data, float min,
 															 float max, float step)
 {
-	m_params.push_back(
-			new NDataSliderManager<4, float>(data, min, max, step));
+	m_params.push_back(new VecSliderManager<4, float>(data, min, max, step));
 }
 
 void ImageFilter::registerData(Data<defaulttype::Vec2d>* data, double min,
 															 double max, double step)
 {
-	m_params.push_back(
-			new NDataSliderManager<2, double>(data, min, max, step));
+	m_params.push_back(new VecSliderManager<2, double>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<defaulttype::Vec3d>* data, double min,
 															 double max, double step)
 {
-	m_params.push_back(
-			new NDataSliderManager<3, double>(data, min, max, step));
+	m_params.push_back(new VecSliderManager<3, double>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<defaulttype::Vec4d>* data, double min,
 															 double max, double step)
 {
-	m_params.push_back(
-			new NDataSliderManager<4, double>(data, min, max, step));
+	m_params.push_back(new VecSliderManager<4, double>(data, min, max, step));
 }
 
 void ImageFilter::drawImage()

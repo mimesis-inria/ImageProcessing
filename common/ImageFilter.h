@@ -14,10 +14,10 @@ namespace OR
 namespace processor
 {
 template <class T, class U>
-class DataSliderManager;
+class ScalarSliderManager;
 
 template <unsigned int N, class T>
-class NDataSliderManager;
+class VecSliderManager;
 
 class DSM;
 
