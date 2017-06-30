@@ -127,35 +127,35 @@ void ImageFilter::unregisterAllData() { m_params.clear(); }
 
 void ImageFilter::registerData(Data<bool>* data)
 {
-	m_params.push_back(new ScalarSliderManager<bool, bool>(data));
+	m_params.push_back(new ScalarSliderManager<bool>(data));
 }
 
 void ImageFilter::registerData(Data<helper::OptionsGroup>* data)
 {
-	m_params.push_back(new ScalarSliderManager<helper::OptionsGroup, int>(data));
+	m_params.push_back(new CustomSliderManager<helper::OptionsGroup, int>(data));
 }
 
 void ImageFilter::registerData(Data<int>* data, int min, int max, int step)
 {
-	m_params.push_back(new ScalarSliderManager<int, int>(data, min, max, step));
+	m_params.push_back(new ScalarSliderManager<int>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<unsigned>* data, unsigned min, unsigned max,
 															 unsigned step)
 {
 	m_params.push_back(
-			new ScalarSliderManager<unsigned, unsigned>(data, min, max, step));
+			new ScalarSliderManager<unsigned>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<double>* data, double min, double max,
                                double step)
 {
 	m_params.push_back(
-			new ScalarSliderManager<double, double>(data, min, max, step));
+			new ScalarSliderManager<double>(data, min, max, step));
 }
 void ImageFilter::registerData(Data<float>* data, float min, float max,
                                float step)
 {
 	m_params.push_back(
-			new ScalarSliderManager<float, float>(data, min, max, step));
+			new ScalarSliderManager<float>(data, min, max, step));
 }
 
 void ImageFilter::registerData(Data<defaulttype::Vec2u>* data, unsigned min,

@@ -13,35 +13,89 @@ namespace OR
 {
 namespace processor
 {
-// Default template methods for scalar data types and template specializations
-// for Vec<N, U>
+// CONSTRUCTORS
+
+template <class T>
+ScalarSliderManager<T>::ScalarSliderManager(sofa::Data<T>* d, T min, T max,
+																						T step)
+{
+	this->m_data = d;
+	this->m_min = min;
+	this->m_max = max;
+	this->m_step = step;
+}
 
 template <class T, class U>
-void ScalarSliderManager<T, U>::createSlider(const std::string& winName)
+CustomSliderManager<T, U>::CustomSliderManager(sofa::Data<T>* d, U min, U max,
+																							 U step)
+{
+	this->m_data = d;
+	this->m_min = min;
+	this->m_max = max;
+	this->m_step = step;
+}
+
+template <>
+CustomSliderManager<helper::OptionsGroup, int>::CustomSliderManager(
+		sofa::Data<helper::OptionsGroup>* d, int /*min*/, int /*max*/, int /*step*/)
+{
+	this->m_data = d;
+	this->m_min = 0;
+	this->m_max = d->getValue().size() - 1;
+	this->m_step = 1;
+}
+
+template <unsigned int N, class U>
+VecSliderManager<N, U>::VecSliderManager(sofa::Data<defaulttype::Vec<N, U> >* d,
+																				 U min, U max, U step)
+{
+	this->m_data = d;
+	this->m_min = min;
+	this->m_max = max;
+	this->m_step = step;
+}
+
+// CREATE_SLIDER
+
+template <class T>
+void ScalarSliderManager<T>::createSlider(const std::string& winName)
 {
 	int value = getTrackbarRangedValue();
 	cv::createTrackbar(m_data->getName(), winName, &value, getTrackbarMaxValue(),
-										 &ScalarSliderManager<T, U>::callback, this);
+										 &ScalarSliderManager<T>::callback, this);
 	cv::setTrackbarPos(m_data->getName(), winName, value);
 }
 
-void ScalarSliderManager<helper::OptionsGroup, int>::createSlider(
-		const std::string& winName)
+// void ScalarSliderManager<bool>::createSlider(const std::string& winName)
+//{
+//	int value = getTrackbarRangedValue();
+//	cv::createTrackbar(m_data->getName(), winName, &value,
+// getTrackbarMaxValue(),
+//										 &ScalarSliderManager<bool>::callback,
+// this);
+//	cv::setTrackbarPos(m_data->getName(), winName, value);
+//}
+
+template <class T, class U>
+void CustomSliderManager<T, U>::createSlider(const std::string& winName)
 {
 	int value = getTrackbarRangedValue();
 	cv::createTrackbar(m_data->getName(), winName, &value, getTrackbarMaxValue(),
-										 &ScalarSliderManager<helper::OptionsGroup, int>::callback,
-										 this);
+										 &CustomSliderManager<T, U>::callback, this);
 	cv::setTrackbarPos(m_data->getName(), winName, value);
 }
 
-void ScalarSliderManager<bool, bool>::createSlider(const std::string& winName)
-{
-	int value = getTrackbarRangedValue();
-	cv::createTrackbar(m_data->getName(), winName, &value, getTrackbarMaxValue(),
-										 &ScalarSliderManager<bool, bool>::callback, this);
-	cv::setTrackbarPos(m_data->getName(), winName, value);
-}
+// void CustomSliderManager<helper::OptionsGroup, int>::createSlider(
+//		const std::string& winName)
+//{
+//	int value = getTrackbarRangedValue();
+//	cv::createTrackbar(m_data->getName(), winName, &value,
+// getTrackbarMaxValue(),
+//										 &CustomSliderManager<helper::OptionsGroup,
+// int>::callback,
+//										 this);
+//	cv::setTrackbarPos(m_data->getName(), winName, value);
+//}
 
 template <unsigned int N, class U>
 void VecSliderManager<N, U>::createSlider(const std::string& winName)
@@ -73,18 +127,25 @@ void VecSliderManager<N, U>::createSlider(const std::string& winName)
 	}
 }
 
+template <class T>
+int ScalarSliderManager<T>::getTrackbarMaxValue()
+{
+	return int((m_max - m_min) / m_step);
+}
+
+// template <>
+// int ScalarSliderManager<bool>::getTrackbarMaxValue() { return 1; }
+
 template <class T, class U>
-int ScalarSliderManager<T, U>::getTrackbarMaxValue()
+int CustomSliderManager<T, U>::getTrackbarMaxValue()
 {
 	return int((m_max - m_min) / m_step);
 }
 
-int ScalarSliderManager<helper::OptionsGroup, int>::getTrackbarMaxValue()
-{
-	return int((m_max - m_min) / m_step);
-}
-
-int ScalarSliderManager<bool, bool>::getTrackbarMaxValue() { return 1; }
+// int ScalarSliderManager<helper::OptionsGroup, int>::getTrackbarMaxValue()
+//{
+//	return int((m_max - m_min) / m_step);
+//}
 
 template <unsigned int N, class U>
 int VecSliderManager<N, U>::getTrackbarMaxValue()
@@ -92,21 +153,28 @@ int VecSliderManager<N, U>::getTrackbarMaxValue()
 	return int((m_max - m_min) / m_step);
 }
 
-template <class T, class U>
-int ScalarSliderManager<T, U>::getTrackbarRangedValue()
+template <class T>
+int ScalarSliderManager<T>::getTrackbarRangedValue()
 {
 	return int((m_data->getValue() - m_min) / m_step);
 }
 
-int ScalarSliderManager<helper::OptionsGroup, int>::getTrackbarRangedValue()
+template <class T, class U>
+int CustomSliderManager<T, U>::getTrackbarRangedValue()
+{
+	return int((m_data->getValue() - m_min) / m_step);
+}
+
+template <>
+int CustomSliderManager<helper::OptionsGroup, int>::getTrackbarRangedValue()
 {
 	return int(m_data->getValue().getSelectedId());
 }
 
-int ScalarSliderManager<bool, bool>::getTrackbarRangedValue()
-{
-	return int(m_data->getValue());
-}
+// int ScalarSliderManager<bool, bool>::getTrackbarRangedValue()
+//{
+//	return int(m_data->getValue());
+//}
 
 template <unsigned int N, class U>
 int VecSliderManager<N, U>::getTrackbarRangedValueX()
@@ -142,11 +210,22 @@ int VecSliderManager<N, U>::getTrackbarRangedValueW()
 			m_step);
 }
 
-template <class T, class U>
-void ScalarSliderManager<T, U>::callback(int val, void* mgr)
+template <class T>
+void ScalarSliderManager<T>::callback(int val, void* mgr)
 {
-	ScalarSliderManager<T, U>* m =
-			reinterpret_cast<ScalarSliderManager<T, U>*>(mgr);
+	ScalarSliderManager<T>* m = reinterpret_cast<ScalarSliderManager<T>*>(mgr);
+	if (m->getTrackbarRangedValue() != val)
+	{
+		m->m_data->setValue(T(val) * m->m_step + m->m_min);
+		dynamic_cast<ImageFilter*>(m->m_data->getOwner())->refreshDebugWindow();
+	}
+}
+
+template <class T, class U>
+void CustomSliderManager<T, U>::callback(int val, void* mgr)
+{
+	CustomSliderManager<T, U>* m =
+			reinterpret_cast<CustomSliderManager<T, U>*>(mgr);
 	if (m->getTrackbarRangedValue() != val)
 	{
 		m->m_data->setValue(U(val) * m->m_step + m->m_min);
@@ -154,11 +233,12 @@ void ScalarSliderManager<T, U>::callback(int val, void* mgr)
 	}
 }
 
-void ScalarSliderManager<helper::OptionsGroup, int>::callback(int val,
+template <>
+void CustomSliderManager<helper::OptionsGroup, int>::callback(int val,
 																															void* mgr)
 {
-	ScalarSliderManager<helper::OptionsGroup, int>* m =
-			reinterpret_cast<ScalarSliderManager<helper::OptionsGroup, int>*>(mgr);
+	CustomSliderManager<helper::OptionsGroup, int>* m =
+			reinterpret_cast<CustomSliderManager<helper::OptionsGroup, int>*>(mgr);
 	if (m->getTrackbarRangedValue() != val)
 	{
 		m->m_data->beginEdit()->setSelectedItem(unsigned(val));
@@ -167,16 +247,16 @@ void ScalarSliderManager<helper::OptionsGroup, int>::callback(int val,
 	}
 }
 
-void ScalarSliderManager<bool, bool>::callback(int val, void* mgr)
-{
-	ScalarSliderManager<bool, bool>* m =
-			reinterpret_cast<ScalarSliderManager<bool, bool>*>(mgr);
-	if (m->getTrackbarRangedValue() != val)
-	{
-		m->m_data->setValue(bool(val));
-		dynamic_cast<ImageFilter*>(m->m_data->getOwner())->refreshDebugWindow();
-	}
-}
+// void ScalarSliderManager<bool, bool>::callback(int val, void* mgr)
+//{
+//	ScalarSliderManager<bool, bool>* m =
+//			reinterpret_cast<ScalarSliderManager<bool, bool>*>(mgr);
+//	if (m->getTrackbarRangedValue() != val)
+//	{
+//		m->m_data->setValue(bool(val));
+//		dynamic_cast<ImageFilter*>(m->m_data->getOwner())->refreshDebugWindow();
+//	}
+//}
 
 template <unsigned int N, class U>
 void VecSliderManager<N, U>::callback_x(int val, void* mgr)

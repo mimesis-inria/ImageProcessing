@@ -17,17 +17,28 @@ struct DSM
 	virtual void createSlider(const std::string& winName) = 0;
 };
 
-template <class T, class U>
+template <class T>
 struct ScalarSliderManager : DSM
 {
-	ScalarSliderManager(sofa::Data<T>* d, U min, U max, U step)
-	{
-		this->m_data = d;
-		this->m_min = min;
-		this->m_max = max;
-		this->m_step = step;
-	}
+	ScalarSliderManager(sofa::Data<T>* d, T min = T(0), T max = T(255), T step = T(1));
 	~ScalarSliderManager() {}
+
+	sofa::Data<T>* m_data;
+	T m_min, m_max, m_step;
+
+	void createSlider(const std::string& winName);
+	int getTrackbarMaxValue();
+	int getTrackbarRangedValue();
+	static void callback(int, void*);
+};
+
+
+
+template <class T, class U>
+struct CustomSliderManager : DSM
+{
+	CustomSliderManager(sofa::Data<T>* d, U min = U(0), U max = U(255), U step = U(1));
+	~CustomSliderManager() {}
 
 	sofa::Data<T>* m_data;
 	U m_min, m_max, m_step;
@@ -38,59 +49,54 @@ struct ScalarSliderManager : DSM
 	static void callback(int, void*);
 };
 
-template <>
-struct ScalarSliderManager<helper::OptionsGroup, int> : DSM
-{
-	ScalarSliderManager(sofa::Data<helper::OptionsGroup>* d)
-	{
-		this->m_data = d;
-		this->m_min = 0;
-		this->m_max = d->getValue().size() - 1;
-		this->m_step = 1;
-	}
-	~ScalarSliderManager() {}
+// template <>
+// struct CustomSliderManager<helper::OptionsGroup, int> : DSM
+//{
+//	CustomSliderManager(sofa::Data<helper::OptionsGroup>* d)
+//	{
+//		this->m_data = d;
+//		this->m_min = 0;
+//		this->m_max = d->getValue().size() - 1;
+//		this->m_step = 1;
+//	}
+//	~CustomSliderManager() {}
 
-	void createSlider(const std::string& winName);
-	int getTrackbarMaxValue();
-	int getTrackbarRangedValue();
-	static void callback(int, void*);
+//	void createSlider(const std::string& winName);
+//	int getTrackbarMaxValue();
+//	int getTrackbarRangedValue();
+//	static void callback(int, void*);
 
-	sofa::Data<helper::OptionsGroup>* m_data;
-	int m_min, m_max, m_step;
-};
+//	sofa::Data<helper::OptionsGroup>* m_data;
+//	int m_min, m_max, m_step;
+//};
 
-template <>
-struct ScalarSliderManager<bool, bool> : DSM
-{
-	ScalarSliderManager(sofa::Data<bool>* d)
-	{
-		this->m_data = d;
-		this->m_min = 0;
-		this->m_max = 1;
-		this->m_step = 1;
-	}
+// template <>
+// struct ScalarSliderManager<bool> : DSM
+//{
+//	ScalarSliderManager(sofa::Data<bool>* d)
+//	{
+//		this->m_data = d;
+//		this->m_min = 0;
+//		this->m_max = 1;
+//		this->m_step = 1;
+//	}
 
-	~ScalarSliderManager() {}
+//	~ScalarSliderManager() {}
 
-	void createSlider(const std::string& winName);
-	int getTrackbarMaxValue();
-	int getTrackbarRangedValue();
-	static void callback(int, void*);
+//	void createSlider(const std::string& winName);
+//	int getTrackbarMaxValue();
+//	int getTrackbarRangedValue();
+//	static void callback(int, void*);
 
-	sofa::Data<bool>* m_data;
-	bool m_min, m_max, m_step;
-};
+//	sofa::Data<bool>* m_data;
+//	bool m_min, m_max, m_step;
+//};
 
 template <unsigned int N, class U>
 struct VecSliderManager : DSM
 {
-	VecSliderManager(sofa::Data<defaulttype::Vec<N, U> >* d, U min, U max, U step)
-	{
-		this->m_data = d;
-		this->m_min = min;
-		this->m_max = max;
-		this->m_step = step;
-	}
+	VecSliderManager(sofa::Data<defaulttype::Vec<N, U> >* d, U min, U max,
+									 U step);
 	~VecSliderManager() {}
 
 	void createSlider(const std::string& winName);

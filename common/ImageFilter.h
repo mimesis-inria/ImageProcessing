@@ -13,8 +13,11 @@ namespace OR
 {
 namespace processor
 {
-template <class T, class U>
+template <class T>
 class ScalarSliderManager;
+
+template <class T, class U>
+class CustomSliderManager;
 
 template <unsigned int N, class T>
 class VecSliderManager;
