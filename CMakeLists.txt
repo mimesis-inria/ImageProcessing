@@ -41,6 +41,8 @@ set(HEADER_FILES
   imgproc/SimpleThreshold.h
   imgproc/MorphologyEx.h
   imgproc/ImageConverter.h
+  imgproc/ImageMask.h
+  imgproc/TemplateMatcher.h
 
   features/Detectors.h
   features/Matchers.h
@@ -90,6 +92,8 @@ set(SOURCE_FILES
   imgproc/SimpleThreshold.cpp
   imgproc/MorphologyEx.cpp
   imgproc/ImageConverter.cpp
+  imgproc/ImageMask.cpp
+  imgproc/TemplateMatcher.cpp
 
   features/Detectors.cpp
   features/Matchers.cpp
