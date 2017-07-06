@@ -9,17 +9,17 @@
 
 #include <opencv2/imgproc.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
+namespace features
+{
 class PointPicker2D : public ImageFilter
 {
-	typedef sofa::core::objectmodel::SingleLink<PointPicker2D, StereoSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+	typedef sofa::core::objectmodel::SingleLink<PointPicker2D, cam::StereoSettings,
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			Settings;
 
  public:
@@ -27,11 +27,11 @@ class PointPicker2D : public ImageFilter
 
 	// INPUTS
 	Settings l_cam;
-	Data<int> d_whichImage;
-	Data<std::string> d_getEpilinesFrom;
+	sofa::Data<int> d_whichImage;
+	sofa::Data<std::string> d_getEpilinesFrom;
 	// OUTPUTS
-	Data<helper::vector<defaulttype::Vec2i> > d_points;
-	helper::vector<defaulttype::Vec3f> epilines;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_points;
+	sofa::helper::vector<sofa::defaulttype::Vec3f> epilines;
 
   PointPicker2D()
       : ImageFilter(false),
@@ -75,14 +75,14 @@ class PointPicker2D : public ImageFilter
   void update()
   {
     ImageFilter::update();
-    helper::vector<defaulttype::Vec2i>* points = d_points.beginWriteOnly();
+		sofa::helper::vector<sofa::defaulttype::Vec2i>* points = d_points.beginWriteOnly();
     points->clear();
     if (!m_pointList.empty())
 		{
 			std::cout << std::endl << std::endl;
 			for (const cv::Point2i& pt : m_pointList)
 			{
-				points->push_back(defaulttype::Vec2i(pt.x, pt.y));
+				points->push_back(sofa::defaulttype::Vec2i(pt.x, pt.y));
 				std::cout << pt.x << " " << pt.y << " ";
 			}
 			std::cout << std::endl << std::endl;
@@ -138,13 +138,10 @@ class PointPicker2D : public ImageFilter
 SOFA_DECL_CLASS(PointPicker2D)
 
 int PointPicker2DClass =
-    core::RegisterObject("Manual 2D image point picker component")
+		sofa::core::RegisterObject("Manual 2D image point picker component")
         .add<PointPicker2D>();
 
+}  // namespace features
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_POINTPICKER2D_H

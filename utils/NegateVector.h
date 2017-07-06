@@ -5,11 +5,11 @@
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace utils
 {
 class NegateVector : public common::ImplicitDataEngine
 {
@@ -37,27 +37,27 @@ class NegateVector : public common::ImplicitDataEngine
 	void update()
 	{
 		d_dst.setValue(-d_src.getValue());
-		defaulttype::Matrix3 rev;
+		sofa::defaulttype::Matrix3 rev;
 		d_dstRot.setValue(-d_srcRot.getValue().transposed());
 		d_dst.setValue(d_dstRot.getValue() * d_dst.getValue());
 	}
 
 	// INPUTS
-	Data<defaulttype::Vector3> d_src;
-	Data<defaulttype::Matrix3> d_srcRot;
+	sofa::Data<sofa::defaulttype::Vector3> d_src;
+	sofa::Data<sofa::defaulttype::Matrix3> d_srcRot;
 	// OUTPUTS
-	Data<defaulttype::Vector3> d_dst;
-	Data<defaulttype::Matrix3> d_dstRot;
+	sofa::Data<sofa::defaulttype::Vector3> d_dst;
+	sofa::Data<sofa::defaulttype::Matrix3> d_dstRot;
 };
 
 SOFA_DECL_CLASS(NegateVector)
 
 int NegateVectorClass =
-		core::RegisterObject("component to negate a defaulttype::Vector3")
+		sofa::core::RegisterObject("component to negate a defaulttype::Vector3")
 				.add<NegateVector>();
 
+}  // namespace utils
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor
 
 #endif  // SOFA_OR_PROCESSOR_NEGATEVECTOR_H

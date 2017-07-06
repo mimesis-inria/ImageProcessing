@@ -4,19 +4,19 @@
 #include <opencv2/imgproc.hpp>
 #include "common/ImageFilter.h"
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace imgproc
 {
 class ImageConverter : public ImageFilter
 {
  public:
 	SOFA_CLASS(ImageConverter, ImageFilter);
 
-	Data<int> d_convertTo;
-	Data<double> d_scaleFactor;
+	sofa::Data<int> d_convertTo;
+	sofa::Data<double> d_scaleFactor;
 
 	ImageConverter()
 			: d_convertTo(initData(&d_convertTo, "convertTo",
@@ -40,13 +40,10 @@ class ImageConverter : public ImageFilter
 SOFA_DECL_CLASS(ImageConverter)
 
 int ImageConverterClass =
-		core::RegisterObject("Image type converter")
+		sofa::core::RegisterObject("Image type converter")
 				.add<ImageConverter>();
 
+}  // namespace imgproc
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_IMAGECONVERTER_H

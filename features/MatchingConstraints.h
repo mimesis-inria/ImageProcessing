@@ -15,17 +15,17 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
+namespace features
+{
 class MatchingConstraints : public ImageFilter
 {
-	typedef sofa::core::objectmodel::SingleLink<MatchingConstraints, StereoSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+	typedef sofa::core::objectmodel::SingleLink<MatchingConstraints, cam::StereoSettings,
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
 public:
@@ -41,31 +41,31 @@ public:
 
   // INPUTS
 	CamSettings l_cam;
-  Data<bool> d_useEpipolarFilter;
-  Data<int> d_epipolarThreshold;
-  Data<bool> d_useMDFilter;
-  Data<float> d_mdfRadius;
-  Data<bool> d_useKNNFilter;
-  Data<float> d_knnLambda;
-  Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_in;
-  Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_in;
-  Data<common::cvMat> d_descriptorsL_in;
-  Data<common::cvMat> d_descriptorsR_in;
-  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches_in;
+	sofa::Data<bool> d_useEpipolarFilter;
+	sofa::Data<int> d_epipolarThreshold;
+	sofa::Data<bool> d_useMDFilter;
+	sofa::Data<float> d_mdfRadius;
+	sofa::Data<bool> d_useKNNFilter;
+	sofa::Data<float> d_knnLambda;
+	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_in;
+	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_in;
+	sofa::Data<common::cvMat> d_descriptorsL_in;
+	sofa::Data<common::cvMat> d_descriptorsR_in;
+	sofa::Data<sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> > > d_matches_in;
 
   // OUTPUTS
-	Data<helper::vector<common::cvDMatch> > d_matches_out;
-  Data<sofa::helper::vector<size_t> > d_outliers_out;
-  Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_out;
-  Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_out;
-  Data<common::cvMat> d_descriptorsL_out;
-  Data<common::cvMat> d_descriptorsR_out;
+	sofa::Data<sofa::helper::vector<common::cvDMatch> > d_matches_out;
+	sofa::Data<sofa::helper::vector<size_t> > d_outliers_out;
+	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_out;
+	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_out;
+	sofa::Data<common::cvMat> d_descriptorsL_out;
+	sofa::Data<common::cvMat> d_descriptorsR_out;
 
  private:
-	helper::vector<common::cvDMatch> m_matches;
-	helper::vector<common::cvKeypoint> m_kpL, m_kpR;
+	sofa::helper::vector<common::cvDMatch> m_matches;
+	sofa::helper::vector<common::cvKeypoint> m_kpL, m_kpR;
 	common::cvMat m_descL, m_descR;
-	helper::vector<size_t> m_outliers_out;
+	sofa::helper::vector<size_t> m_outliers_out;
 
 	std::vector<cv::Vec3f> m_epilines;
 	float m_maxDist;
@@ -89,12 +89,11 @@ public:
 	bool EpipolarConstraintFilter(unsigned& filteredByEpipolar, unsigned i, MatchVector& ms, double epiDist);
 	bool KNearestNeighborFilter(unsigned i, double lambda, MatchVector& ms, unsigned& filteredByKNN);
 	bool MinimalDistanceFilter(MatchVector& ms, unsigned& filteredByMDF, unsigned i, float mdfDist);
-	void PushInlier(const common::cvMat& descL, unsigned i, const helper::vector<common::cvKeypoint>& PointsL, const common::cvMat& descR, MatchVector& ms, const helper::vector<common::cvKeypoint>& PointsR);
+	void PushInlier(const common::cvMat& descL, unsigned i, const sofa::helper::vector<common::cvKeypoint>& PointsL, const common::cvMat& descR, MatchVector& ms, const sofa::helper::vector<common::cvKeypoint>& PointsR);
 	void ClearOutputVectors();
 };
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_MATCHINGCONSTRAINTS_H

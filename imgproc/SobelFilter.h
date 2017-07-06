@@ -4,24 +4,24 @@
 #include <opencv2/imgproc.hpp>
 #include "common/ImageFilter.h"
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace imgproc
 {
 class SobelFilter : public ImageFilter
 {
  public:
   SOFA_CLASS(SobelFilter, ImageFilter);
 
-  Data<int> d_ddepth;
-  Data<int> d_xorder;
-  Data<int> d_yorder;
-  Data<int> d_ksize;
-  Data<double> d_scale;
-  Data<double> d_delta;
-  Data<helper::OptionsGroup> d_bordertype;
+	sofa::Data<int> d_ddepth;
+	sofa::Data<int> d_xorder;
+	sofa::Data<int> d_yorder;
+	sofa::Data<int> d_ksize;
+	sofa::Data<double> d_scale;
+	sofa::Data<double> d_delta;
+	sofa::Data<sofa::helper::OptionsGroup> d_bordertype;
 
   SobelFilter()
       : d_ddepth(initData(&d_ddepth, -1, "ddepth",
@@ -42,7 +42,7 @@ class SobelFilter : public ImageFilter
         d_bordertype(
             initData(&d_bordertype, "borderType", "pixel interpolation method"))
   {
-    helper::OptionsGroup* t = d_bordertype.beginEdit();
+		sofa::helper::OptionsGroup* t = d_bordertype.beginEdit();
     t->setNames(
         6, "CONSTANT",  //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
         "BORDER_REPLICATE",     //!< `aaaaaa|abcdefgh|hhhhhhh`
@@ -109,13 +109,10 @@ class SobelFilter : public ImageFilter
 SOFA_DECL_CLASS(SobelFilter)
 
 int SobelFilterClass =
-    core::RegisterObject("OpenCV's implementation of the Sobel operator")
+		sofa::core::RegisterObject("OpenCV's implementation of the Sobel operator")
         .add<SobelFilter>();
 
+}  // namespace imgproc
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_SOBELFILTER_H

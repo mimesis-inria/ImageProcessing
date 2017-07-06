@@ -7,19 +7,19 @@
 
 #include <opencv2/imgproc.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace imgproc
 {
 class TemplateMatcher : public ImageFilter
 {
  public:
 	SOFA_CLASS(TemplateMatcher, ImageFilter);
 
-	Data<common::cvMat> d_template;
-	Data<helper::OptionsGroup> d_method;
+	sofa::Data<common::cvMat> d_template;
+	sofa::Data<sofa::helper::OptionsGroup> d_method;
 
 	TemplateMatcher()
 			: d_template(initData(&d_template, "template_img",
@@ -66,15 +66,12 @@ class TemplateMatcher : public ImageFilter
 
 SOFA_DECL_CLASS(TemplateMatcher)
 
-int TemplateMatcherClass = core::RegisterObject(
+int TemplateMatcherClass = sofa::core::RegisterObject(
 															 "the 6 Template matching algorithms from "
 															 "OpenCV's cv::matchTemplate() method")
 															 .add<TemplateMatcher>();
 
+}  // namespace imgproc
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_TEMPLATEMATCHER_H

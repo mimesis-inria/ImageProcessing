@@ -9,36 +9,36 @@
 #include <opencv2/tracking.hpp>
 #include <opencv2/video.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 class OpticalFlow : public ImageFilter
 {
  public:
   SOFA_CLASS(OpticalFlow, ImageFilter);
 
-  Data<defaulttype::Vec2i> d_winSize;
-  Data<int> d_maxLevel;
-  Data<int> d_criteria_type;
-  Data<int> d_maxCount;
-  Data<double> d_epsilon;
-  Data<int> d_flags;
-  Data<double> d_minEigThresh;
-  Data<helper::vector<defaulttype::Vec2f> > d_points_in;
-  Data<helper::vector<defaulttype::Vec2f> > d_points_out;
-  Data<helper::vector<uchar> > d_status_out;
-  Data<helper::vector<float> > d_error_out;
-	Data<bool> d_startTracking;
+	sofa::Data<sofa::defaulttype::Vec2i> d_winSize;
+	sofa::Data<int> d_maxLevel;
+	sofa::Data<int> d_criteria_type;
+	sofa::Data<int> d_maxCount;
+	sofa::Data<double> d_epsilon;
+	sofa::Data<int> d_flags;
+	sofa::Data<double> d_minEigThresh;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2f> > d_points_in;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2f> > d_points_out;
+	sofa::Data<sofa::helper::vector<uchar> > d_status_out;
+	sofa::Data<sofa::helper::vector<float> > d_error_out;
+	sofa::Data<bool> d_startTracking;
 
 	std::vector<cv::Point2f> m_pts_in;
 	std::vector<cv::Point2f> m_pts_out;
 
   OpticalFlow()
       : d_winSize(
-						initData(&d_winSize, defaulttype::Vec2i(21, 21), "win_size", "")),
+						initData(&d_winSize, sofa::defaulttype::Vec2i(21, 21), "win_size", "")),
 				d_maxLevel(initData(&d_maxLevel, 3, "max_level", "")),
 				d_criteria_type(initData(&d_criteria_type,
 																 CV_TERMCRIT_ITER + CV_TERMCRIT_EPS,
@@ -86,7 +86,7 @@ class OpticalFlow : public ImageFilter
 			if (d_points_in.getValue().empty()) return;
 			m_pts_in.reserve(d_points_in.getValue().size());
 			m_pts_in.clear();
-			for (const defaulttype::Vec2f& pt : d_points_in.getValue())
+			for (const sofa::defaulttype::Vec2f& pt : d_points_in.getValue())
 				m_pts_in.push_back(cv::Point2f(pt.x(), pt.y()));
 
 			// copy in in out
@@ -132,8 +132,8 @@ class OpticalFlow : public ImageFilter
 														 winSize, d_maxLevel.getValue(), tc,
 														 d_flags.getValue(), d_minEigThresh.getValue());
 
-		helper::vector<defaulttype::Vec2f>* points_out = d_points_out.beginEdit();
-		helper::vector<defaulttype::Vec2f>* points_in = d_points_in.beginEdit();
+		sofa::helper::vector<sofa::defaulttype::Vec2f>* points_out = d_points_out.beginEdit();
+		sofa::helper::vector<sofa::defaulttype::Vec2f>* points_in = d_points_in.beginEdit();
 		points_out->clear();
 		points_in->clear();
 		for (size_t i = 0; i < m_pts_out.size(); ++i)
@@ -141,8 +141,8 @@ class OpticalFlow : public ImageFilter
 			cv::Point2f ptPrev, ptNext;
 			ptPrev = m_pts_in[i];
 			ptNext = m_pts_out[i];
-			points_out->push_back(defaulttype::Vec2f(ptNext.x, ptNext.y));
-			points_in->push_back(defaulttype::Vec2f(ptPrev.x, ptPrev.y));
+			points_out->push_back(sofa::defaulttype::Vec2f(ptNext.x, ptNext.y));
+			points_in->push_back(sofa::defaulttype::Vec2f(ptPrev.x, ptPrev.y));
 		}
 		d_status_out.setValue(status);
 		d_error_out.setValue(error);
@@ -174,12 +174,9 @@ class OpticalFlow : public ImageFilter
 SOFA_DECL_CLASS(OpticalFlow)
 
 int OpticalFlowClass =
-		core::RegisterObject("Optical flow filters from OpenCV").add<OpticalFlow>();
+		sofa::core::RegisterObject("Optical flow filters from OpenCV").add<OpticalFlow>();
 
+}  // namespace features
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_OPTICALFLOW_H

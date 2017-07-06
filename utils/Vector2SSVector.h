@@ -6,11 +6,11 @@
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace utils
 {
 template <class T>
 class Vector2SSVector : public common::ImplicitDataEngine
@@ -39,13 +39,13 @@ class Vector2SSVector : public common::ImplicitDataEngine
 			const Vector2SSVector<T>* = NULL);
 
 	// INPUTS
-	Data<helper::vector<T> > d_src;
+	sofa::Data<sofa::helper::vector<T> > d_src;
 	// OUTPUTS
-	Data<helper::SVector<helper::SVector<T> > > d_dst;
+	sofa::Data<sofa::helper::SVector<sofa::helper::SVector<T> > > d_dst;
 };
 
+}  // namespace utils
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor
 
 #endif  // SOFA_OR_PROCESSOR_VECTOR2SSVECTOR_H

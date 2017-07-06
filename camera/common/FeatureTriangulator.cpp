@@ -3,16 +3,16 @@
 
 #include <sofa/core/ObjectFactory.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
 {
 SOFA_DECL_CLASS(FeatureTriangulator)
 
 int FeatureTriangulatorClass =
-    core::RegisterObject(
+		sofa::core::RegisterObject(
         "component generating a 3D point cloud from two 2D keypoints list and "
         "their matches, and stereo camera parameters")
         .add<FeatureTriangulator>();
@@ -72,17 +72,17 @@ void FeatureTriangulator::update()
 	PL = cmL;
 	PR = cmR;
 
-  helper::vector<Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
+	sofa::helper::vector<Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
 
-  const helper::vector<common::cvKeypoint>& kL = d_keypointsL.getValue();
-  const helper::vector<common::cvKeypoint>& kR = d_keypointsR.getValue();
+	const sofa::helper::vector<common::cvKeypoint>& kL = d_keypointsL.getValue();
+	const sofa::helper::vector<common::cvKeypoint>& kR = d_keypointsR.getValue();
   pts.resize(kL.size());
 	unsigned sizePts = 0;
   (kL.size() > kR.size()) ? (sizePts = kR.size()) : (sizePts = kL.size());
 
 	if (d_matches.isSet())
 	{
-		const helper::vector<common::cvDMatch>& m = d_matches.getValue();
+		const sofa::helper::vector<common::cvDMatch>& m = d_matches.getValue();
 		for (size_t i = 0; i < m.size(); ++i)
 			pts[i] = l_cam->triangulate(kL[m[i].queryIdx].pt, kR[m[i].trainIdx].pt);
 	}
@@ -92,6 +92,6 @@ void FeatureTriangulator::update()
 	d_pointCloud.endEdit();
 }
 
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

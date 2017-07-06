@@ -5,16 +5,14 @@
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
 class PCViewer : public common::ImplicitDataEngine
 {
-	typedef defaulttype::Vector3 Vector3;
-  typedef defaulttype::Vec<3, uint8_t> Vec3b;
+	typedef sofa::defaulttype::Vector3 Vector3;
+	typedef sofa::defaulttype::Vec<3, uint8_t> Vec3b;
 
  public:
 	SOFA_CLASS(PCViewer, common::ImplicitDataEngine);
@@ -25,22 +23,20 @@ class PCViewer : public common::ImplicitDataEngine
 
   void init();
   void update();
-  void computeBBox(const core::ExecParams*, bool);
-  void draw(const core::visual::VisualParams*);
+	void computeBBox(const sofa::core::ExecParams*, bool);
+	void draw(const sofa::core::visual::VisualParams*);
   void reinit();
 
-	Data<double> d_size;
+	sofa::Data<double> d_size;
 	// INPUTS
-	Data<helper::vector<Vector3> > d_positions;
-  Data<helper::vector<Vec3b> > d_colors;
+	sofa::Data<sofa::helper::vector<Vector3> > d_positions;
+	sofa::Data<sofa::helper::vector<Vec3b> > d_colors;
 
  private:
-  std::vector<defaulttype::Vec4f> m_colors;
+	std::vector<sofa::defaulttype::Vec4f> m_colors;
 	std::vector<Vector3> m_positions;
 };
 
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_ACQUISITOR_PCVIEWER_H

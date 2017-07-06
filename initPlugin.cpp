@@ -1,9 +1,7 @@
 #include <sofa/helper/system/config.h>
 #include "initPlugin.h"
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
@@ -42,8 +40,6 @@ const char* getModuleComponentList()
 }
 
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 ////////// BEGIN CLASS LIST //////////
 

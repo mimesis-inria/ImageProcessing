@@ -13,11 +13,11 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 class DescriptorMatcher : public ImageFilter
 {
@@ -46,20 +46,20 @@ class DescriptorMatcher : public ImageFilter
   void update();
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
 
-  Data<sofa::helper::OptionsGroup> d_matcherType;
-  Data<sofa::helper::OptionsGroup> d_matchingAlgo;
-  Data<int> d_k;
-	Data<float> d_maxDistance;
-  Data<common::cvMat> d_mask;
+	sofa::Data<sofa::helper::OptionsGroup> d_matcherType;
+	sofa::Data<sofa::helper::OptionsGroup> d_matchingAlgo;
+	sofa::Data<int> d_k;
+	sofa::Data<float> d_maxDistance;
+	sofa::Data<common::cvMat> d_mask;
 
-  Data<common::cvMat> d_queryDescriptors;
-  Data<common::cvMat> d_trainDescriptors;
+	sofa::Data<common::cvMat> d_queryDescriptors;
+	sofa::Data<common::cvMat> d_trainDescriptors;
 
-  Data<common::cvMat> d_in2;
-  Data<helper::vector<common::cvKeypoint> > d_kptsL;
-  Data<helper::vector<common::cvKeypoint> > d_kptsR;
+	sofa::Data<common::cvMat> d_in2;
+	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_kptsL;
+	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_kptsR;
 
-  Data<helper::SVector<helper::SVector<common::cvDMatch> > > d_matches;
+	sofa::Data<sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> > > d_matches;
 
   void match(const common::cvMat& queryDescriptors,
              std::vector<cv::DMatch>& matches);
@@ -70,15 +70,14 @@ class DescriptorMatcher : public ImageFilter
                    float maxDistance);
 
  protected:
-  void matcherTypeChanged(core::objectmodel::BaseObject*);
+	void matcherTypeChanged(sofa::core::objectmodel::BaseObject*);
 
  private:
   BaseMatcher* m_matchers[MatcherType_COUNT];
   std::vector<std::vector<cv::DMatch> > m_matches;
 };
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_DESCRIPTORMATCHER_H

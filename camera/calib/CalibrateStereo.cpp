@@ -1,16 +1,18 @@
 #include "CalibrateStereo.h"
 #include <SofaORCommon/cvMatUtils.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 SOFA_DECL_CLASS(CalibrateStereo)
 
 int CalibrateStereoClass =
-		core::RegisterObject(
+		sofa::core::RegisterObject(
 				"Component calibrating a Stereoscopic camera from two sets of 2D and "
 				"3D correspondances respectively referring to the reference camera and "
 				"the secondary camera. Computed Extrinsics are set in the linked "
@@ -90,8 +92,8 @@ void CalibrateStereo::calibrate()
 
 //	l_cam->setRotationMatrix(defaulttype::Matrix3((double*)Rmat.ptr()));
 //	l_cam->setTranslationVector(defaulttype::Vector3((double*)Tvec.ptr()));
-	l_cam->setEssentialMatrix(defaulttype::Matrix3((double*)E.ptr()));
-	l_cam->setFundamentalMatrix(defaulttype::Matrix3((double*)F.ptr()));
+	l_cam->setEssentialMatrix(sofa::defaulttype::Matrix3((double*)E.ptr()));
+	l_cam->setFundamentalMatrix(sofa::defaulttype::Matrix3((double*)F.ptr()));
 }
 
 void CalibrateStereo::update()
@@ -106,6 +108,7 @@ void CalibrateStereo::update()
 	}
 }
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

@@ -1,16 +1,18 @@
 #include "SolvePnP.h"
 #include <SofaORCommon/cvMatUtils.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 SOFA_DECL_CLASS(SolvePnP)
 
 int SolvePnPClass =
-		core::RegisterObject(
+		sofa::core::RegisterObject(
 				"The Component estimates the object pose given a set of object points, "
 				"their corresponding image projections, as well as the camera matrix "
 				"and the distortion coefficients.")
@@ -29,13 +31,13 @@ void SolvePnP::update()
 	cv::Mat_<double> camMatrix;
 	cv::Mat_<double> dc;
 	cv::Mat rvec, tvec;
-	defaulttype::Vec2i imsize = d_imgSize.getValue();
+	sofa::defaulttype::Vec2i imsize = d_imgSize.getValue();
 	try
 	{
 		if (d_K.isSet())
 			common::matrix::sofaMat2cvMat(d_K.getValue(), camMatrix);
 		else if (l_cam->getIntrinsicCameraMatrix() ==
-						 defaulttype::Matrix3::Identity())
+						 sofa::defaulttype::Matrix3::Identity())
 			common::matrix::sofaMat2cvMat(l_cam->getIntrinsicCameraMatrix(),
 																		camMatrix);
 		else
@@ -62,7 +64,7 @@ void SolvePnP::update()
 		return;
 	}
 
-	defaulttype::Mat3x4d P;
+	sofa::defaulttype::Mat3x4d P;
 	cv::Mat rotM(3, 3, CV_64F);
 	cv::Rodrigues(rvec, rotM);
 
@@ -81,7 +83,7 @@ void SolvePnP::update()
 		}
 	}
 
-	helper::vector<double> distCoefs;
+	sofa::helper::vector<double> distCoefs;
 	common::matrix::cvMat2sofaVector(dc, distCoefs);
 
 	if (l_cam->getImageSize() != imsize)
@@ -90,6 +92,7 @@ void SolvePnP::update()
 	l_cam->setDistortionCoefficients(distCoefs);
 }
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

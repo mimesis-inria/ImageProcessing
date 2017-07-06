@@ -4,20 +4,20 @@
 #include <opencv2/imgproc.hpp>
 #include "common/ImageFilter.h"
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace imgproc
 {
 class SimpleThreshold : public ImageFilter
 {
  public:
   SOFA_CLASS(SimpleThreshold, ImageFilter);
 
-  Data<double> d_threshold;
-  Data<double> d_max;
-  Data<helper::OptionsGroup> d_type;
+	sofa::Data<double> d_threshold;
+	sofa::Data<double> d_max;
+	sofa::Data<sofa::helper::OptionsGroup> d_type;
 
   SimpleThreshold()
       : d_threshold(
@@ -28,7 +28,7 @@ class SimpleThreshold : public ImageFilter
         d_type(initData(&d_type, "thresholdType",
                         "thresholding type (see cv::ThresholdTypes"))
   {
-    helper::OptionsGroup* t = d_type.beginEdit();
+		sofa::helper::OptionsGroup* t = d_type.beginEdit();
     t->setNames(5, "THRESH_BINARY", "THRESH_BINARY_INV", "THRESH_TRUNC",
                 "THRESH_TOZERO", "THRESH_TOZERO_INV");
     t->setSelectedItem("THRESH_BINARY");
@@ -80,14 +80,11 @@ class SimpleThreshold : public ImageFilter
 SOFA_DECL_CLASS(SimpleThreshold)
 
 int SimpleThresholdClass =
-    core::RegisterObject(
+		sofa::core::RegisterObject(
         "OpenCV's implementation of a simple image thresholding filter")
         .add<SimpleThreshold>();
 
+}  // namespace imgproc
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_SIMPLETHRESHOLD_H

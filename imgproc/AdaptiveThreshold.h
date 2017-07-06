@@ -4,22 +4,22 @@
 #include <opencv2/imgproc.hpp>
 #include "common/ImageFilter.h"
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace imgproc
 {
 class AdaptiveThreshold : public ImageFilter
 {
  public:
   SOFA_CLASS(AdaptiveThreshold, ImageFilter);
 
-  Data<double> d_max;
-  Data<helper::OptionsGroup> d_adaptiveMethod;
-  Data<helper::OptionsGroup> d_thresholdType;
-  Data<int> d_blockSize;
-  Data<double> d_C;
+	sofa::Data<double> d_max;
+	sofa::Data<sofa::helper::OptionsGroup> d_adaptiveMethod;
+	sofa::Data<sofa::helper::OptionsGroup> d_thresholdType;
+	sofa::Data<int> d_blockSize;
+	sofa::Data<double> d_C;
 
   AdaptiveThreshold()
       : d_max(initData(&d_max, 1.0, "maxValue",
@@ -39,7 +39,7 @@ class AdaptiveThreshold : public ImageFilter
                      "the details below).normally it is possitive but may be "
                      "zero or negative as well."))
   {
-    helper::OptionsGroup* t = d_adaptiveMethod.beginEdit();
+		sofa::helper::OptionsGroup* t = d_adaptiveMethod.beginEdit();
     t->setNames(2, "MEAN", "GAUSSIAN");
     t->setSelectedItem("GAUSSIAN");
     d_adaptiveMethod.endEdit();
@@ -99,14 +99,11 @@ class AdaptiveThreshold : public ImageFilter
 SOFA_DECL_CLASS(AdaptiveThreshold)
 
 int AdaptiveThresholdClass =
-    core::RegisterObject(
+		sofa::core::RegisterObject(
         "OpenCV's implementation of an adaptive image thresholding filter")
         .add<AdaptiveThreshold>();
 
+}  // namespace imgproc
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_ADAPTIVETHRESHOLD_H

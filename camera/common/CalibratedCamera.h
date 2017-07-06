@@ -17,25 +17,25 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
+namespace cam
+{
 class CalibratedCamera : public common::ImplicitDataEngine,
-												 public core::visual::VisualManager
+												 public sofa::core::visual::VisualManager
 {
 	typedef sofa::core::objectmodel::SingleLink<CalibratedCamera, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
-	typedef typename defaulttype::Vector3 Vector3;
+	typedef typename sofa::defaulttype::Vector3 Vector3;
 
  public:
 	SOFA_CLASS2(CalibratedCamera, common::ImplicitDataEngine,
-							core::visual::VisualManager);
+							sofa::core::visual::VisualManager);
 
 	CalibratedCamera()
 			: l_cam(initLink("cam",
@@ -65,7 +65,7 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 																					 "to define one";
 	}
 
-	void preDrawScene(core::visual::VisualParams* vparams)
+	void preDrawScene(sofa::core::visual::VisualParams* vparams)
 	{
 		if (!d_freeProj.getValue())
 		{
@@ -82,13 +82,13 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			glMultMatrixd(l_cam->getGLModelview().transposed().ptr());
 		}
 
-		defaulttype::Vec<4, int> v;
+		sofa::defaulttype::Vec<4, int> v;
 		glGetIntegerv(GL_VIEWPORT, v.ptr());
 		l_cam->setGLViewport(v);
 
 		if (m_storeMatrices)
 		{
-			defaulttype::Matrix4 p, m;
+			sofa::defaulttype::Matrix4 p, m;
 			glGetDoublev(GL_PROJECTION_MATRIX, p.ptr());
 			glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
 			l_cam->setGLProjection(p.transposed());
@@ -102,8 +102,8 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		}
 		if (d_drawGizmo.getValue())
 		{
-			defaulttype::Matrix3 R;
-			defaulttype::Quat q = l_cam->getOrientation();
+			sofa::defaulttype::Matrix3 R;
+			sofa::defaulttype::Quat q = l_cam->getOrientation();
 			q.toMatrix(R);
 
 			Vector3 camPos = l_cam->getPosition();
@@ -114,46 +114,46 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 			glColor4f(1, 0, 0, 1);
 			glLineWidth(1);
 
-			defaulttype::Vector3 p1, p2, p3, p4;
+			sofa::defaulttype::Vector3 p1, p2, p3, p4;
 			l_cam->getCornersPosition(p1, p2, p3, p4);
 
 			glDisable(GL_LIGHTING);
 			glBegin(GL_LINES);
 			glColor4f(0, 0, 1, 1);
-			helper::gl::glVertexT(camPos);
-			helper::gl::glVertexT(p1);
-			helper::gl::glVertexT(camPos);
-			helper::gl::glVertexT(p2);
-			helper::gl::glVertexT(camPos);
-			helper::gl::glVertexT(p3);
-			helper::gl::glVertexT(camPos);
-			helper::gl::glVertexT(p4);
+			sofa::helper::gl::glVertexT(camPos);
+			sofa::helper::gl::glVertexT(p1);
+			sofa::helper::gl::glVertexT(camPos);
+			sofa::helper::gl::glVertexT(p2);
+			sofa::helper::gl::glVertexT(camPos);
+			sofa::helper::gl::glVertexT(p3);
+			sofa::helper::gl::glVertexT(camPos);
+			sofa::helper::gl::glVertexT(p4);
 			glEnd();
 
 			glLineWidth(3);
 
 			glBegin(GL_LINES);
 			glColor4f(0, 0, 1, 1);
-			helper::gl::glVertexT(p1);
-			helper::gl::glVertexT(p2);
-			helper::gl::glVertexT(p2);
-			helper::gl::glVertexT(p3);
-			helper::gl::glVertexT(p3);
-			helper::gl::glVertexT(p4);
-			helper::gl::glVertexT(p4);
-			helper::gl::glVertexT(p1);
+			sofa::helper::gl::glVertexT(p1);
+			sofa::helper::gl::glVertexT(p2);
+			sofa::helper::gl::glVertexT(p2);
+			sofa::helper::gl::glVertexT(p3);
+			sofa::helper::gl::glVertexT(p3);
+			sofa::helper::gl::glVertexT(p4);
+			sofa::helper::gl::glVertexT(p4);
+			sofa::helper::gl::glVertexT(p1);
 			glEnd();
 			glEnable(GL_LIGHTING);
 
 			vparams->drawTool()->drawArrow(
 					camPos, camPos + camera_X * 0.01, 0.001,
-					defaulttype::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+					sofa::defaulttype::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 			vparams->drawTool()->drawArrow(
 					camPos, camPos + camera_Y * 0.01, 0.001,
-					defaulttype::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+					sofa::defaulttype::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
 			vparams->drawTool()->drawArrow(
 					camPos, camPos + camera_Z * 0.01, 0.001,
-					defaulttype::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+					sofa::defaulttype::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
 		}
 		if (!d_freeCam.getValue() && !d_freeProj.getValue())
 		{
@@ -164,7 +164,7 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		}
 	}
 
-	void postDrawScene(core::visual::VisualParams* /*vp*/)
+	void postDrawScene(sofa::core::visual::VisualParams* /*vp*/)
 	{
 		if (!d_freeProj.getValue())
 		{
@@ -183,7 +183,7 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		if (sofa::core::objectmodel::KeyreleasedEvent::checkEventType(e))
 		{
 			sofa::core::objectmodel::KeyreleasedEvent* kre =
-					static_cast<core::objectmodel::KeyreleasedEvent*>(e);
+					static_cast<sofa::core::objectmodel::KeyreleasedEvent*>(e);
 			char keyPressed = kre->getKey();
 
 			if (keyPressed == 'u' || keyPressed == 'U') m_storeMatrices = true;
@@ -192,16 +192,15 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 	}
 
 	CamSettings l_cam;
-	Data<bool> d_freeCam;
-	Data<bool> d_freeProj;
-	Data<bool> d_drawGizmo;
+	sofa::Data<bool> d_freeCam;
+	sofa::Data<bool> d_freeProj;
+	sofa::Data<bool> d_drawGizmo;
 
  private:
 	bool m_storeMatrices;
 };
 
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_CALIBRATEDCAMERA_H

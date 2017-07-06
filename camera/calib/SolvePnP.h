@@ -11,17 +11,19 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 class SolvePnP : public common::ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<SolvePnP, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
  public:
@@ -89,18 +91,19 @@ class SolvePnP : public common::ImplicitDataEngine
 	CamSettings l_cam;
 
 	// INPUTS
-	Data<helper::vector<defaulttype::Vector2> > d_imagePoints;
-	Data<helper::vector<defaulttype::Vector3> > d_objectPoints;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector2> > d_imagePoints;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> > d_objectPoints;
 
 	// OPTIONAL INPUT
-	Data<defaulttype::Vec2i> d_imgSize;
-	Data<defaulttype::Matrix3> d_K;
-	Data<helper::vector<double> > d_distCoefs;
-	Data<int> d_pnpFlags;
+	sofa::Data<sofa::defaulttype::Vec2i> d_imgSize;
+	sofa::Data<sofa::defaulttype::Matrix3> d_K;
+	sofa::Data<sofa::helper::vector<double> > d_distCoefs;
+	sofa::Data<int> d_pnpFlags;
 };
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor
 
 #endif  // SOFA_OR_PROCESSOR_SOLVEPNP_H

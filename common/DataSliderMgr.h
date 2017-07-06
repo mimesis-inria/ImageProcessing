@@ -6,9 +6,7 @@
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
@@ -95,7 +93,7 @@ struct CustomSliderManager : DSM
 template <unsigned int N, class U>
 struct VecSliderManager : DSM
 {
-	VecSliderManager(sofa::Data<defaulttype::Vec<N, U> >* d, U min, U max,
+	VecSliderManager(sofa::Data<sofa::defaulttype::Vec<N, U> >* d, U min, U max,
 									 U step);
 	~VecSliderManager() {}
 
@@ -112,12 +110,10 @@ struct VecSliderManager : DSM
 	static void callback_z(int val, void* mgr);
 	static void callback_w(int val, void* mgr);
 
-	sofa::Data<defaulttype::Vec<N, U> >* m_data;
+	sofa::Data<sofa::defaulttype::Vec<N, U> >* m_data;
 	U m_min, m_max, m_step;
 };
 
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_ScalarSliderManager_H

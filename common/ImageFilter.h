@@ -7,9 +7,7 @@
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
@@ -77,45 +75,45 @@ class ImageFilter : public common::ImplicitDataEngine
   void reinitDebugWindow();
 	void refreshDebugWindow();
 
-  Data<common::cvMat> d_img;
-  Data<common::cvMat> d_img_out;
-  Data<bool> d_displayDebugWindow;
-  Data<bool> d_isActive;
+	sofa::Data<common::cvMat> d_img;
+	sofa::Data<common::cvMat> d_img_out;
+	sofa::Data<bool> d_displayDebugWindow;
+	sofa::Data<bool> d_isActive;
 
   void activateMouseCallback();
   // Pass data to this methods to bind them to the OpenCV UI
-  void registerData(Data<bool>* data);
-	void registerData(Data<uchar>* data, uchar min, uchar max, uchar step);
-	void registerData(Data<int>* data, int min, int max, int step);
-	void registerData(Data<unsigned>* data, unsigned min, unsigned max,
+	void registerData(sofa::Data<bool>* data);
+	void registerData(sofa::Data<uchar>* data, uchar min, uchar max, uchar step);
+	void registerData(sofa::Data<int>* data, int min, int max, int step);
+	void registerData(sofa::Data<unsigned>* data, unsigned min, unsigned max,
 										unsigned step);
-	void registerData(Data<double>* data, double min, double max, double step);
-  void registerData(Data<float>* data, float min, float max, float step);
-  void registerData(Data<helper::OptionsGroup>* data);
+	void registerData(sofa::Data<double>* data, double min, double max, double step);
+	void registerData(sofa::Data<float>* data, float min, float max, float step);
+	void registerData(sofa::Data<sofa::helper::OptionsGroup>* data);
 
-	void registerData(Data<defaulttype::Vec2u>* data, unsigned min, unsigned max,
+	void registerData(sofa::Data<sofa::defaulttype::Vec2u>* data, unsigned min, unsigned max,
 										unsigned step);
-	void registerData(Data<defaulttype::Vec3u>* data, unsigned min, unsigned max,
+	void registerData(sofa::Data<sofa::defaulttype::Vec3u>* data, unsigned min, unsigned max,
 										unsigned step);
-	void registerData(Data<defaulttype::Vec4u>* data, unsigned min, unsigned max,
+	void registerData(sofa::Data<sofa::defaulttype::Vec4u>* data, unsigned min, unsigned max,
 										unsigned step);
 
-	void registerData(Data<defaulttype::Vec2i>* data, int min, int max, int step);
-	void registerData(Data<defaulttype::Vec3i>* data, int min, int max, int step);
-	void registerData(Data<defaulttype::Vec4i>* data, int min, int max, int step);
+	void registerData(sofa::Data<sofa::defaulttype::Vec2i>* data, int min, int max, int step);
+	void registerData(sofa::Data<sofa::defaulttype::Vec3i>* data, int min, int max, int step);
+	void registerData(sofa::Data<sofa::defaulttype::Vec4i>* data, int min, int max, int step);
 
-	void registerData(Data<defaulttype::Vec2f>* data, float min, float max,
+	void registerData(sofa::Data<sofa::defaulttype::Vec2f>* data, float min, float max,
 										float step);
-	void registerData(Data<defaulttype::Vec3f>* data, float min, float max,
+	void registerData(sofa::Data<sofa::defaulttype::Vec3f>* data, float min, float max,
 										float step);
-	void registerData(Data<defaulttype::Vec4f>* data, float min, float max,
+	void registerData(sofa::Data<sofa::defaulttype::Vec4f>* data, float min, float max,
 										float step);
 
-	void registerData(Data<defaulttype::Vec2d>* data, double min, double max,
+	void registerData(sofa::Data<sofa::defaulttype::Vec2d>* data, double min, double max,
 										double step);
-	void registerData(Data<defaulttype::Vec3d>* data, double min, double max,
+	void registerData(sofa::Data<sofa::defaulttype::Vec3d>* data, double min, double max,
 										double step);
-	void registerData(Data<defaulttype::Vec4d>* data, double min, double max,
+	void registerData(sofa::Data<sofa::defaulttype::Vec4d>* data, double min, double max,
 										double step);
 
 	void unregisterAllData();
@@ -134,14 +132,12 @@ class ImageFilter : public common::ImplicitDataEngine
   bool m_isMouseCallbackActive;
 
  private:
-	core::DataTracker m_displayDebugDataTracker;
+	sofa::core::DataTracker m_displayDebugDataTracker;
 
 	std::vector<DSM*> m_params;
   const std::string m_win_name;
 };
 
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_IMAGEFILTER_H

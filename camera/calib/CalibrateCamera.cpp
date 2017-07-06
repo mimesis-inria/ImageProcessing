@@ -1,16 +1,18 @@
 #include "CalibrateCamera.h"
 #include <SofaORCommon/cvMatUtils.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 SOFA_DECL_CLASS(CalibrateCamera)
 
 int CalibrateCameraClass =
-		core::RegisterObject(
+		sofa::core::RegisterObject(
 				"Component calibrating a monoscopic camera from a set of 2D and 3D "
 				"correspondances. computed matrices are set in the linked "
 				"CameraSettings, while the multiple translation vectors are rotation "
@@ -64,7 +66,7 @@ void CalibrateCamera::calibrate()
 	common::matrix::cvMat2sofaVector(dc, m_distCoefs);
 
 	common::matrix::cvMat2sofaMat(camMatrix, m_K);
-	helper::vector<defaulttype::Mat3x4d>& RTs = *d_Rts.beginEdit();
+	sofa::helper::vector<sofa::defaulttype::Mat3x4d>& RTs = *d_Rts.beginEdit();
 	for (unsigned i = 0; i < rvecs.size(); ++i)
 	{
 		// get 3d rot mat
@@ -78,7 +80,7 @@ void CalibrateCamera::calibrate()
 		rotMT.push_back(tvecs[0].reshape(1, 1));
 		cv::Mat P = camMatrix * rotMT.t();
 
-		defaulttype::Mat3x4d ProjMat;
+		sofa::defaulttype::Mat3x4d ProjMat;
 		common::matrix::cvMat2sofaMat(P, ProjMat);
 
 		RTs.push_back(ProjMat);
@@ -93,7 +95,7 @@ void CalibrateCamera::update()
 {
 	calibrate();
 
-	const defaulttype::Matrix3& K = m_K;
+	const sofa::defaulttype::Matrix3& K = m_K;
 
 	if (!d_preserveExtrinsics.getValue())
 		l_cam->setProjectionMatrix(d_Rts.getValue().back());
@@ -104,6 +106,7 @@ void CalibrateCamera::update()
 	l_cam->setDistortionCoefficients(m_distCoefs);
 }
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

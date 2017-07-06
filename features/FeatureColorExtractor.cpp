@@ -3,16 +3,16 @@
 
 #include <sofa/core/ObjectFactory.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 SOFA_DECL_CLASS(FeatureColorExtractor)
 
 int FeatureColorExtractorClass =
-		core::RegisterObject(
+		sofa::core::RegisterObject(
 				"component extracting pixel colors from two 2D keypoints")
 				.add<FeatureColorExtractor>();
 
@@ -40,7 +40,7 @@ void FeatureColorExtractor::update()
 {
 	ImageFilter::update();
 
-	helper::vector<Vec3b>& colors = *(d_colors.beginWriteOnly());
+	sofa::helper::vector<Vec3b>& colors = *(d_colors.beginWriteOnly());
 	colors.clear();
 	for (auto c : m_colors)
 		colors.push_back(c);
@@ -51,7 +51,7 @@ void FeatureColorExtractor::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
 	out.zeros(in.rows, in.cols, in.type());
 	m_colors.clear();
-	const helper::vector<common::cvKeypoint>& kpts = d_keypoints.getValue();
+	const sofa::helper::vector<common::cvKeypoint>& kpts = d_keypoints.getValue();
 	for (auto kp : kpts)
 	{
 		cv::Vec3b c = d_img.getValue().at<cv::Vec3b>(kp.pt.y, kp.pt.x);
@@ -60,6 +60,6 @@ void FeatureColorExtractor::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 	}
 }
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

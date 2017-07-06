@@ -10,11 +10,11 @@
 
 #include <opencv2/xfeatures2d.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 struct BaseDetector
 {
@@ -39,7 +39,7 @@ struct BaseDetector
 
 struct SimpleBlobDetector : BaseDetector
 {
-	SimpleBlobDetector(core::objectmodel::BaseObject* c);
+	SimpleBlobDetector(sofa::core::objectmodel::BaseObject* c);
 	void toggleVisible(bool);
 	void init();
 
@@ -118,21 +118,21 @@ struct SimpleBlobDetector : BaseDetector
 		detect(img, mask, kpts);
 	}
 
-	Data<int> minThreshold;
-	Data<int> maxThreshold;
-	Data<bool> filterByArea;
-	Data<int> minArea;
-	Data<bool> filterByCircularity;
-	Data<double> minCircularity;
-	Data<bool> filterByConvexity;
-	Data<double> minConvexity;
-	Data<bool> filterByInertia;
-	Data<double> minInertiaRatio;
+	sofa::Data<int> minThreshold;
+	sofa::Data<int> maxThreshold;
+	sofa::Data<bool> filterByArea;
+	sofa::Data<int> minArea;
+	sofa::Data<bool> filterByCircularity;
+	sofa::Data<double> minCircularity;
+	sofa::Data<bool> filterByConvexity;
+	sofa::Data<double> minConvexity;
+	sofa::Data<bool> filterByInertia;
+	sofa::Data<double> minInertiaRatio;
 };
 
 struct ShiTomasiDetector : BaseDetector
 {
-  ShiTomasiDetector(core::objectmodel::BaseObject* c);
+	ShiTomasiDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter* parent)
@@ -165,15 +165,15 @@ struct ShiTomasiDetector : BaseDetector
     detect(img, mask, kpts);
   }
 
-  Data<int> maxCorners;
-  Data<double> qualityLevel;
-  Data<int> minDistance;
-  Data<int> blockSize;
+	sofa::Data<int> maxCorners;
+	sofa::Data<double> qualityLevel;
+	sofa::Data<int> minDistance;
+	sofa::Data<int> blockSize;
 };
 
 struct FASTDetector : BaseDetector
 {
-  FASTDetector(core::objectmodel::BaseObject* c);
+	FASTDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter* parent)
@@ -197,13 +197,13 @@ struct FASTDetector : BaseDetector
     detect(img, mask, kpts);
   }
 
-  Data<int> threshold;
-  Data<bool> nonmaxsuppression;
-  Data<sofa::helper::OptionsGroup> type;
+	sofa::Data<int> threshold;
+	sofa::Data<bool> nonmaxsuppression;
+	sofa::Data<sofa::helper::OptionsGroup> type;
 };
 struct MSERDetector : BaseDetector
 {
-  MSERDetector(core::objectmodel::BaseObject* c);
+	MSERDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter* parent)
@@ -235,19 +235,19 @@ struct MSERDetector : BaseDetector
     detect(img, mask, kpts);
   }
 
-  Data<int> delta;
-  Data<int> minArea;
-  Data<int> maxArea;
-  Data<float> maxVariation;
-  Data<float> minDiversity;
-  Data<int> maxEvolution;
-  Data<double> areaThreshold;
-  Data<double> minMargin;
-  Data<int> edgeBlurSize;
+	sofa::Data<int> delta;
+	sofa::Data<int> minArea;
+	sofa::Data<int> maxArea;
+	sofa::Data<float> maxVariation;
+	sofa::Data<float> minDiversity;
+	sofa::Data<int> maxEvolution;
+	sofa::Data<double> areaThreshold;
+	sofa::Data<double> minMargin;
+	sofa::Data<int> edgeBlurSize;
 };
 struct ORBDetector : BaseDetector
 {
-  ORBDetector(core::objectmodel::BaseObject* c);
+	ORBDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
 
@@ -256,19 +256,19 @@ struct ORBDetector : BaseDetector
     // TODO: find optimal range of values
   }
 
-  Data<int> nFeatures;
-  Data<float> scaleFactor;
-  Data<int> nLevels;
-  Data<int> edgeThreshold;
-  Data<int> firstLevel;
-  Data<int> WTA_K;
-  Data<sofa::helper::OptionsGroup> scoreType;
-  Data<int> patchSize;
-  Data<int> fastThreshold;
+	sofa::Data<int> nFeatures;
+	sofa::Data<float> scaleFactor;
+	sofa::Data<int> nLevels;
+	sofa::Data<int> edgeThreshold;
+	sofa::Data<int> firstLevel;
+	sofa::Data<int> WTA_K;
+	sofa::Data<sofa::helper::OptionsGroup> scoreType;
+	sofa::Data<int> patchSize;
+	sofa::Data<int> fastThreshold;
 };
 struct BRISKDetector : BaseDetector
 {
-  BRISKDetector(core::objectmodel::BaseObject* c);
+	BRISKDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter*)
@@ -276,13 +276,13 @@ struct BRISKDetector : BaseDetector
     // TODO: find optimal range of values
   }
 
-  Data<int> threshold;
-  Data<int> octaves;
-  Data<float> npatternScale;
+	sofa::Data<int> threshold;
+	sofa::Data<int> octaves;
+	sofa::Data<float> npatternScale;
 };
 struct KAZEDetector : BaseDetector
 {
-  KAZEDetector(core::objectmodel::BaseObject* c);
+	KAZEDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter*)
@@ -290,16 +290,16 @@ struct KAZEDetector : BaseDetector
     // TODO: find optimal range of values
   }
 
-  Data<bool> extended;
-  Data<bool> upright;
-  Data<float> threshold;
-  Data<int> octaves;
-  Data<int> sublevels;
-  Data<sofa::helper::OptionsGroup> diffusivity;
+	sofa::Data<bool> extended;
+	sofa::Data<bool> upright;
+	sofa::Data<float> threshold;
+	sofa::Data<int> octaves;
+	sofa::Data<int> sublevels;
+	sofa::Data<sofa::helper::OptionsGroup> diffusivity;
 };
 struct AKAZEDetector : BaseDetector
 {
-  AKAZEDetector(core::objectmodel::BaseObject* c);
+	AKAZEDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter*)
@@ -307,18 +307,18 @@ struct AKAZEDetector : BaseDetector
     // TODO: find optimal range of values
   }
 
-  Data<sofa::helper::OptionsGroup> descriptorType;
-  Data<int> descriptorSize;
-  Data<int> descriptorChannels;
-  Data<float> threshold;
-  Data<int> octaves;
-  Data<int> sublevels;
-  Data<sofa::helper::OptionsGroup> diffusivity;
+	sofa::Data<sofa::helper::OptionsGroup> descriptorType;
+	sofa::Data<int> descriptorSize;
+	sofa::Data<int> descriptorChannels;
+	sofa::Data<float> threshold;
+	sofa::Data<int> octaves;
+	sofa::Data<int> sublevels;
+	sofa::Data<sofa::helper::OptionsGroup> diffusivity;
 };
 
 struct BRIEFDetector : BaseDetector
 {
-  BRIEFDetector(core::objectmodel::BaseObject* c);
+	BRIEFDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter*)
@@ -340,8 +340,8 @@ struct BRIEFDetector : BaseDetector
            "DetectMode to COMPUTE_ONLY";
   }
 
-  Data<int> bytes;
-  Data<bool> use_orientation;
+	sofa::Data<int> bytes;
+	sofa::Data<bool> use_orientation;
 };
 
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
@@ -349,7 +349,7 @@ struct BRIEFDetector : BaseDetector
 
 struct SIFTDetector : BaseDetector
 {
-  SIFTDetector(core::objectmodel::BaseObject* c);
+	SIFTDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter*)
@@ -357,16 +357,16 @@ struct SIFTDetector : BaseDetector
     // TODO: find optimal range of values
   }
 
-  Data<int> nFeatures;
-  Data<int> nOctaveLayers;
-  Data<double> contrastThreshold;
-  Data<double> edgeThreshold;
-  Data<double> sigma;
+	sofa::Data<int> nFeatures;
+	sofa::Data<int> nOctaveLayers;
+	sofa::Data<double> contrastThreshold;
+	sofa::Data<double> edgeThreshold;
+	sofa::Data<double> sigma;
 };
 
 struct SURFDetector : BaseDetector
 {
-  SURFDetector(core::objectmodel::BaseObject* c);
+	SURFDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter*)
@@ -374,16 +374,16 @@ struct SURFDetector : BaseDetector
     // TODO: find optimal range of values
   }
 
-  Data<double> threshold;
-  Data<int> nOctaves;
-  Data<int> nOctaveLayers;
-  Data<bool> extended;
-  Data<bool> upright;
+	sofa::Data<double> threshold;
+	sofa::Data<int> nOctaves;
+	sofa::Data<int> nOctaveLayers;
+	sofa::Data<bool> extended;
+	sofa::Data<bool> upright;
 };
 
 struct DAISYDetector : BaseDetector
 {
-  DAISYDetector(core::objectmodel::BaseObject* c);
+	DAISYDetector(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   virtual void registerData(ImageFilter*)
@@ -405,14 +405,14 @@ struct DAISYDetector : BaseDetector
            "DetectMode to COMPUTE_ONLY";
   }
 
-  Data<float> radius;
-  Data<int> q_radius;
-  Data<int> q_theta;
-  Data<int> q_hist;
-  Data<sofa::helper::OptionsGroup> norm;
-  Data<common::cvMat> H;
-  Data<bool> interpolation;
-  Data<bool> use_orientation;
+	sofa::Data<float> radius;
+	sofa::Data<int> q_radius;
+	sofa::Data<int> q_theta;
+	sofa::Data<int> q_hist;
+	sofa::Data<sofa::helper::OptionsGroup> norm;
+	sofa::Data<common::cvMat> H;
+	sofa::Data<bool> interpolation;
+	sofa::Data<bool> use_orientation;
 };
 
 #endif // SOFAOR_OPENCV_CONTRIB_ENABLED

@@ -11,16 +11,18 @@
 
 #include <opencv2/core/persistence.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 SOFA_DECL_CLASS(CalibExporter)
 
 int CalibExporterClass =
-		core::RegisterObject("Mono / stereo Camera calibration settings exporter")
+		sofa::core::RegisterObject("Mono / stereo Camera calibration settings exporter")
 				.add<CalibExporter>();
 
 CalibExporter::CalibExporter()
@@ -215,6 +217,7 @@ bool CalibExporter::canExport(const std::string& fileDir,
 	return true;
 }
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

@@ -7,11 +7,13 @@
 
 #include <opencv2/imgproc.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 class FindPatternCorners : public ImageFilter
 {
@@ -92,10 +94,8 @@ int FindPatternCornersClass =
 		core::RegisterObject("detection of a calibration pattern in images")
 				.add<FindPatternCorners>();
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_FINDPATTERNCORNERS_H

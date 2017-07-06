@@ -4,20 +4,20 @@
 #include <opencv2/imgproc.hpp>
 #include "common/ImageFilter.h"
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace imgproc
 {
 class MorphologyEx : public ImageFilter
 {
  public:
   SOFA_CLASS(MorphologyEx, ImageFilter);
 
-  Data<int> d_ksize;
-  Data<helper::OptionsGroup> d_operator;
-  Data<helper::OptionsGroup> d_element;
+	sofa::Data<int> d_ksize;
+	sofa::Data<sofa::helper::OptionsGroup> d_operator;
+	sofa::Data<sofa::helper::OptionsGroup> d_element;
 
   MorphologyEx()
       : d_ksize(initData(&d_ksize, 5, "ksize", "kernel size (3 5 7 ...)")),
@@ -28,7 +28,7 @@ class MorphologyEx : public ImageFilter
                            "kernel element to be used (available shapes: RECT, "
                            "CROSS, ELLIPSE"))
   {
-    helper::OptionsGroup* t = d_operator.beginEdit();
+		sofa::helper::OptionsGroup* t = d_operator.beginEdit();
     t->setNames(5, "OPEN", "CLOSE", "GRADIENT", "TOPHAT", "BLACKHAT");
     t->setSelectedItem("OPEN");
     d_operator.endEdit();
@@ -71,14 +71,11 @@ class MorphologyEx : public ImageFilter
 SOFA_DECL_CLASS(MorphologyEx)
 
 int MorphologyExClass =
-    core::RegisterObject(
+		sofa::core::RegisterObject(
         "OpenCV's implementation of a opencv's morphology operators")
         .add<MorphologyEx>();
 
+}  // namespace imgproc
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_MORPHOLOGYEX_H

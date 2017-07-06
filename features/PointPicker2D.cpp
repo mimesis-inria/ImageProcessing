@@ -3,11 +3,11 @@
 #include <opencv2/calib3d.hpp>
 #include <opencv2/highgui.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 /// Simple Mouse FSM:
 ///        LDown     +--------+     RUp
@@ -37,7 +37,7 @@ void PointPicker2D::computeEpipolarLines()
 		std::vector<cv::Point2f> points(m_pointList.begin(), m_pointList.end());
 		cv::computeCorrespondEpilines(points, d_whichImage.getValue(), F, lines);
 		for (const cv::Vec3f& pt : lines)
-			epilines.push_back(defaulttype::Vec3f(pt.val));
+			epilines.push_back(sofa::defaulttype::Vec3f(pt.val));
 	}
 	m_picker->reinitDebugWindow();
 	m_picker->refreshDebugWindow();
@@ -93,6 +93,6 @@ void PointPicker2D::mouseCallback(int event, int x, int y, int flags)
   (this->*m_activeState)(event, x, y, flags);
 }
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

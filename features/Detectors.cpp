@@ -2,11 +2,11 @@
 
 #include <opencv2/xfeatures2d.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 BaseDetector::~BaseDetector() {}
 void BaseDetector::detect(const common::cvMat& img, const common::cvMat& mask,
@@ -30,7 +30,7 @@ void BaseDetector::detectAndCompute(const common::cvMat& img,
   m_detector->detectAndCompute(img, mask, keypoints, descriptors);
 }
 
-SimpleBlobDetector::SimpleBlobDetector(core::objectmodel::BaseObject* c)
+SimpleBlobDetector::SimpleBlobDetector(sofa::core::objectmodel::BaseObject* c)
 		: minThreshold(c->initData(&minThreshold, 10, "BLOBminThreshold", "")),
 			maxThreshold(c->initData(&maxThreshold, 200, "BLOBmaxThreshold", "")),
 			filterByArea(c->initData(&filterByArea, true, "BLOBfilterByArea", "")),
@@ -66,7 +66,7 @@ void SimpleBlobDetector::toggleVisible(bool show)
 void SimpleBlobDetector::init() {}
 
 
-ShiTomasiDetector::ShiTomasiDetector(core::objectmodel::BaseObject* c)
+ShiTomasiDetector::ShiTomasiDetector(sofa::core::objectmodel::BaseObject* c)
 		: maxCorners(c->initData(&maxCorners, 100, "ShiTomasiMaxCorners", "")),
       qualityLevel(
 					c->initData(&qualityLevel, 0.3, "ShiTomasiQualityLevel", "")),
@@ -84,7 +84,7 @@ void ShiTomasiDetector::toggleVisible(bool show)
   blockSize.setDisplayed(show);
 }
 
-FASTDetector::FASTDetector(core::objectmodel::BaseObject* c)
+FASTDetector::FASTDetector(sofa::core::objectmodel::BaseObject* c)
     : threshold(c->initData(&threshold, 0, "FASTThreshold",
                             "threshold on difference between intensity of the "
                             "central pixel and pixels of a circle around this "
@@ -117,7 +117,7 @@ void FASTDetector::toggleVisible(bool show)
   type.setDisplayed(show);
 }
 
-MSERDetector::MSERDetector(core::objectmodel::BaseObject* c)
+MSERDetector::MSERDetector(sofa::core::objectmodel::BaseObject* c)
     : delta(c->initData(&delta, 5, "MSERDelta",
                         "Compares (sizei - sizei-delta)/sizei-delta")),
       minArea(c->initData(&minArea, 60, "MSERMinArea",
@@ -164,7 +164,7 @@ void MSERDetector::init()
       areaThreshold.getValue(), minMargin.getValue(), edgeBlurSize.getValue());
 }
 
-ORBDetector::ORBDetector(core::objectmodel::BaseObject* c)
+ORBDetector::ORBDetector(sofa::core::objectmodel::BaseObject* c)
     : nFeatures(c->initData(&nFeatures, 500, "ORBNFeatures",
                             "Compares (sizei - sizei-delta)/sizei-delta")),
       scaleFactor(c->initData(&scaleFactor, 1.2f, "scaleFactor",
@@ -217,7 +217,7 @@ void ORBDetector::toggleVisible(bool show)
   fastThreshold.setDisplayed(show);
 }
 
-BRISKDetector::BRISKDetector(core::objectmodel::BaseObject* c)
+BRISKDetector::BRISKDetector(sofa::core::objectmodel::BaseObject* c)
     : threshold(c->initData(&threshold, 30, "BRISKThreshold",
                             "FAST/AGAST detection threshold score.")),
       octaves(c->initData(&octaves, 3, "BRISKOctaves",
@@ -240,7 +240,7 @@ void BRISKDetector::toggleVisible(bool show)
   npatternScale.setDisplayed(show);
 }
 
-KAZEDetector::KAZEDetector(core::objectmodel::BaseObject* c)
+KAZEDetector::KAZEDetector(sofa::core::objectmodel::BaseObject* c)
     : extended(c->initData(
           &extended, false, "KAZEExtended",
           "Set to enable extraction of extended (128-byte) descriptor.")),
@@ -281,7 +281,7 @@ void KAZEDetector::toggleVisible(bool show)
   diffusivity.setDisplayed(show);
 }
 
-AKAZEDetector::AKAZEDetector(core::objectmodel::BaseObject* c)
+AKAZEDetector::AKAZEDetector(sofa::core::objectmodel::BaseObject* c)
     : descriptorType(
           c->initData(&descriptorType, "AKAZEDescriptorType",
                       "Type of the extracted descriptor: "
@@ -334,7 +334,7 @@ void AKAZEDetector::toggleVisible(bool show)
   diffusivity.setDisplayed(show);
 }
 
-BRIEFDetector::BRIEFDetector(core::objectmodel::BaseObject* c)
+BRIEFDetector::BRIEFDetector(sofa::core::objectmodel::BaseObject* c)
     : bytes(c->initData(&bytes, 32, "BRIEFBytes",
                         "length of the descriptor in bytes, valid values are: "
                         "16, 32 (default) or 64 ")),
@@ -358,7 +358,7 @@ void BRIEFDetector::toggleVisible(bool show)
 
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
 
-SIFTDetector::SIFTDetector(core::objectmodel::BaseObject* c)
+SIFTDetector::SIFTDetector(sofa::core::objectmodel::BaseObject* c)
     : nFeatures(c->initData(&nFeatures, 0, "SIFTNFeatures",
                             "The number of best features to retain. The "
                             "features are ranked by their scores (measured in "
@@ -402,7 +402,7 @@ void SIFTDetector::toggleVisible(bool show)
   sigma.setDisplayed(show);
 }
 
-SURFDetector::SURFDetector(core::objectmodel::BaseObject* c)
+SURFDetector::SURFDetector(sofa::core::objectmodel::BaseObject* c)
     : threshold(c->initData(
           &threshold, 100.0, "SURFThreshold",
           "Hessian threshold for keypoint detector. Only features, whose "
@@ -452,7 +452,7 @@ void SURFDetector::toggleVisible(bool show)
 }
 
 
-DAISYDetector::DAISYDetector(core::objectmodel::BaseObject* c)
+DAISYDetector::DAISYDetector(sofa::core::objectmodel::BaseObject* c)
     : radius(c->initData(&radius, 15.0f, "DAISYRadius",
                          "radius of the descriptor at the initial scale")),
       q_radius(c->initData(&q_radius, 3, "DAISYQRadius",
@@ -508,6 +508,6 @@ void DAISYDetector::toggleVisible(bool show)
 
 #endif // SOFAOR_OPENCV_CONTRIB_ENABLED
 
-}  // namespace sofa
-}  // namespace OR
+}  // namespace features
 }  // namespace processor
+}  // namespace sofaor

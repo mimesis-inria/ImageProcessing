@@ -8,23 +8,23 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
 {
 class StereoSettings : public common::ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<StereoSettings, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
  public:
-	typedef defaulttype::Vector3 Vector3;
-	typedef defaulttype::Vector2 Vector2;
-	typedef defaulttype::Matrix3 Matrix3;
+	typedef sofa::defaulttype::Vector3 Vector3;
+	typedef sofa::defaulttype::Vector2 Vector2;
+	typedef sofa::defaulttype::Matrix3 Matrix3;
 
  public:
 	SOFA_CLASS(StereoSettings, common::ImplicitDataEngine);
@@ -80,22 +80,20 @@ class StereoSettings : public common::ImplicitDataEngine
  private:
 	CamSettings l_cam1;
 	CamSettings l_cam2;
-	Data<Matrix3> d_F;
-	Data<Matrix3> d_E;
-	//	Data<Matrix3> d_R;
-	//	Data<Vector3> d_t;
+	sofa::Data<Matrix3> d_F;
+	sofa::Data<Matrix3> d_E;
 
 	//	cv::Mat_<double> K1, K2;
 	cv::Mat_<double> P1, P2;
 
  public:
 	// Data callbacks for GUI
-	void FundamentalMatrixChanged(core::objectmodel::BaseObject*)
+	void FundamentalMatrixChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setFundamentalMatrix(d_F.getValue());
 		this->checkData(false);
 	}
-	void EssentialMatrixChanged(core::objectmodel::BaseObject*)
+	void EssentialMatrixChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setEssentialMatrix(d_E.getValue());
 		this->checkData(false);
@@ -118,8 +116,7 @@ class StereoSettings : public common::ImplicitDataEngine
 	void updateRt();
 };
 
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_STEREOSETTINGS_H

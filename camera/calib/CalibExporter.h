@@ -16,22 +16,24 @@
 
 #include <map>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 class CalibExporter : public common::ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<CalibExporter, StereoSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			StereoCam;
 
 	typedef sofa::core::objectmodel::SingleLink<CalibExporter, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
  public:
@@ -48,13 +50,13 @@ class CalibExporter : public common::ImplicitDataEngine
 	CamSettings l_cam1;
 	CamSettings l_cam2;
 	sofa::core::objectmodel::DataFileName d_calibFolder;
-	Data<std::string> d_calibName;
-	Data<unsigned> d_nSteps;
-	Data<helper::OptionsGroup> d_exportType;
-	Data<bool> d_activate;
+	sofa::Data<std::string> d_calibName;
+	sofa::Data<unsigned> d_nSteps;
+	sofa::Data<sofa::helper::OptionsGroup> d_exportType;
+	sofa::Data<bool> d_activate;
 
  protected:
-	void calibFolderChanged(core::objectmodel::BaseObject*);
+	void calibFolderChanged(sofa::core::objectmodel::BaseObject*);
 	unsigned m_stepCounter;
 	bool m_isStereo;
 
@@ -65,8 +67,8 @@ class CalibExporter : public common::ImplicitDataEngine
 	void export_cam(cv::Mat K, cv::Mat T, cv::Mat R, cv::FileStorage fs, double e, cv::Mat dv, cv::Mat res);
 };
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_CALIBEXPORTER_H

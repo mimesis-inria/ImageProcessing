@@ -9,11 +9,11 @@
 
 #include <opencv2/xfeatures2d.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 struct BaseMatcher
 {
@@ -41,17 +41,17 @@ struct BFMatcher : BaseMatcher
 {
   static const int cvNorms[4];
 
-  BFMatcher(core::objectmodel::BaseObject* c);
+	BFMatcher(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   bool acceptsBinary() { return true; }
-  Data<sofa::helper::OptionsGroup> normType;
-  Data<bool> crossCheck;
+	sofa::Data<sofa::helper::OptionsGroup> normType;
+	sofa::Data<bool> crossCheck;
 };
 
 struct FlannMatcher : BaseMatcher
 {
-  FlannMatcher(core::objectmodel::BaseObject* c);
+	FlannMatcher(sofa::core::objectmodel::BaseObject* c);
   void toggleVisible(bool);
   void init();
   bool acceptsBinary()
@@ -82,103 +82,102 @@ struct FlannMatcher : BaseMatcher
 
   struct AutotunedIndexParams : IndexParams
   {
-    AutotunedIndexParams(core::objectmodel::BaseObject* c);
+		AutotunedIndexParams(sofa::core::objectmodel::BaseObject* c);
     void toggleVisible(bool);
     cv::Ptr<cv::flann::IndexParams> getIndexParams();
 
-    Data<float> target_precision;
-    Data<float> build_weight;
-    Data<float> memory_weight;
-    Data<float> sample_fraction;
+		sofa::Data<float> target_precision;
+		sofa::Data<float> build_weight;
+		sofa::Data<float> memory_weight;
+		sofa::Data<float> sample_fraction;
   };
 
   struct CompositeIndexParams : IndexParams
   {
-    CompositeIndexParams(core::objectmodel::BaseObject* c);
+		CompositeIndexParams(sofa::core::objectmodel::BaseObject* c);
     void toggleVisible(bool);
     cv::Ptr<cv::flann::IndexParams> getIndexParams();
 
-    Data<int> trees;
-    Data<int> branching;
-    Data<int> iterations;
-    Data<helper::OptionsGroup> centers_init;
-    Data<float> cb_index;
+		sofa::Data<int> trees;
+		sofa::Data<int> branching;
+		sofa::Data<int> iterations;
+		sofa::Data<sofa::helper::OptionsGroup> centers_init;
+		sofa::Data<float> cb_index;
   };
   struct HierarchicalClusteringIndexParams : IndexParams
   {
-    HierarchicalClusteringIndexParams(core::objectmodel::BaseObject* c);
+		HierarchicalClusteringIndexParams(sofa::core::objectmodel::BaseObject* c);
     void toggleVisible(bool);
     cv::Ptr<cv::flann::IndexParams> getIndexParams();
 
-    Data<int> branching;
-    Data<helper::OptionsGroup> centers_init;
-    Data<int> trees;
-    Data<int> leaf_size;
+		sofa::Data<int> branching;
+		sofa::Data<sofa::helper::OptionsGroup> centers_init;
+		sofa::Data<int> trees;
+		sofa::Data<int> leaf_size;
   };
   struct KDTreeIndexParams : IndexParams
   {
-    KDTreeIndexParams(core::objectmodel::BaseObject* c);
+		KDTreeIndexParams(sofa::core::objectmodel::BaseObject* c);
     void toggleVisible(bool);
     cv::Ptr<cv::flann::IndexParams> getIndexParams();
 
-    Data<int> trees;
+		sofa::Data<int> trees;
   };
   struct KMeansIndexParams : IndexParams
   {
-    KMeansIndexParams(core::objectmodel::BaseObject* c);
+		KMeansIndexParams(sofa::core::objectmodel::BaseObject* c);
     void toggleVisible(bool);
     cv::Ptr<cv::flann::IndexParams> getIndexParams();
 
-    Data<int> branching;
-    Data<int> iterations;
-    Data<helper::OptionsGroup> centers_init;
-    Data<float> cb_index;
+		sofa::Data<int> branching;
+		sofa::Data<int> iterations;
+		sofa::Data<sofa::helper::OptionsGroup> centers_init;
+		sofa::Data<float> cb_index;
   };
   struct LinearIndexParams : IndexParams
   {
-    LinearIndexParams(core::objectmodel::BaseObject* c);
+		LinearIndexParams(sofa::core::objectmodel::BaseObject* c);
     void toggleVisible(bool);
     cv::Ptr<cv::flann::IndexParams> getIndexParams();
   };
   struct LshIndexParams : IndexParams
   {
-    LshIndexParams(core::objectmodel::BaseObject* c);
+		LshIndexParams(sofa::core::objectmodel::BaseObject* c);
     void toggleVisible(bool);
     cv::Ptr<cv::flann::IndexParams> getIndexParams();
 
-    Data<int> table_number;
-    Data<int> key_size;
-    Data<int> multi_probe_level;
+		sofa::Data<int> table_number;
+		sofa::Data<int> key_size;
+		sofa::Data<int> multi_probe_level;
   };
   struct SavedIndexParams : IndexParams
   {
-    SavedIndexParams(core::objectmodel::BaseObject* c);
+		SavedIndexParams(sofa::core::objectmodel::BaseObject* c);
     void toggleVisible(bool);
     cv::Ptr<cv::flann::IndexParams> getIndexParams();
 
-    Data<std::string> filename;
+		sofa::Data<std::string> filename;
   };
 
   struct SearchParams
   {
-    SearchParams(core::objectmodel::BaseObject* c);
+		SearchParams(sofa::core::objectmodel::BaseObject* c);
     void toggleVisible(bool);
     cv::Ptr<cv::flann::SearchParams> getSearchParams();
 
-    Data<int> checks;
-    Data<float> epsilon;
-    Data<bool> sorted;
+		sofa::Data<int> checks;
+		sofa::Data<float> epsilon;
+		sofa::Data<bool> sorted;
   };
 
  public:
-  Data<sofa::helper::OptionsGroup> indexParamsType;
+	sofa::Data<sofa::helper::OptionsGroup> indexParamsType;
   IndexParams* m_AllIndexParams[8];
   SearchParams* m_searchParams;
   IndexParams* m_indexParams;
 };
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_MATCHERS_H

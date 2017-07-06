@@ -16,11 +16,11 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
 {
 class CameraSettings : public common::ImplicitDataEngine
 {
@@ -51,16 +51,16 @@ class CameraSettings : public common::ImplicitDataEngine
 	///   context
 
  public:
-	typedef defaulttype::RigidTypes::Coord Rigid;
-	typedef defaulttype::Vector2 Vector2;
-	typedef defaulttype::Vector3 Vector3;
-	typedef defaulttype::Vec<4, int> Vector4;
-	typedef defaulttype::Vec<2, int> Vec2i;
-	typedef defaulttype::Vec<5, double> Vector5;
-	typedef defaulttype::Mat3x4d Mat3x4d;
-	typedef defaulttype::Matrix4 Matrix4;
-	typedef defaulttype::Matrix3 Matrix3;
-	typedef defaulttype::Quat Quat;
+	typedef sofa::defaulttype::RigidTypes::Coord Rigid;
+	typedef sofa::defaulttype::Vector2 Vector2;
+	typedef sofa::defaulttype::Vector3 Vector3;
+	typedef sofa::defaulttype::Vec<4, int> Vector4;
+	typedef sofa::defaulttype::Vec<2, int> Vec2i;
+	typedef sofa::defaulttype::Vec<5, double> Vector5;
+	typedef sofa::defaulttype::Mat3x4d Mat3x4d;
+	typedef sofa::defaulttype::Matrix4 Matrix4;
+	typedef sofa::defaulttype::Matrix3 Matrix3;
+	typedef sofa::defaulttype::Quat Quat;
 
  public:
 	SOFA_CLASS(CameraSettings, common::ImplicitDataEngine);
@@ -132,8 +132,8 @@ class CameraSettings : public common::ImplicitDataEngine
 	const Matrix3& getIntrinsicCameraMatrix() const;
 	void setIntrinsicCameraMatrix(const Matrix3& K, bool update = true);
 
-	const helper::vector<double>& getDistortionCoefficients() const;
-	void setDistortionCoefficients(const helper::vector<double>& distCoefs);
+	const sofa::helper::vector<double>& getDistortionCoefficients() const;
+	void setDistortionCoefficients(const sofa::helper::vector<double>& distCoefs);
 
 	const Matrix3& getRotationMatrix() const;
 	void setRotationMatrix(const Matrix3& R, bool update = true);
@@ -175,53 +175,53 @@ class CameraSettings : public common::ImplicitDataEngine
 
  private:
 	// Dimensions in pixels of the image
-	Data<Vec2i> d_imageSize;
+	sofa::Data<Vec2i> d_imageSize;
 	// Focal distance
-	Data<double> d_f;
+	sofa::Data<double> d_f;
 
 	// 2D translation matrix (u0 v0)
-	Data<Matrix3> d_translate2D;
+	sofa::Data<Matrix3> d_translate2D;
 	// 2D scale matrix (focal opening)
-	Data<Matrix3> d_scale2D;
+	sofa::Data<Matrix3> d_scale2D;
 	// Distortion coefficients
-	Data<helper::vector<double> > d_distCoefs;
+	sofa::Data<sofa::helper::vector<double> > d_distCoefs;
 
 	// 3x4 global projection matrix
-	Data<Mat3x4d> d_M;
+	sofa::Data<Mat3x4d> d_M;
 
 	// Intrinsic camera matrix
-	Data<Matrix3> d_K;
+	sofa::Data<Matrix3> d_K;
 	// 3x3 rotation matrix
-	Data<Matrix3> d_R;
+	sofa::Data<Matrix3> d_R;
 	// Position in world coordinates of the camera's optical center
-	Data<Vector3> d_t;
+	sofa::Data<Vector3> d_t;
 
 	// 4x4 Opengl Projection matrix
-	Data<Matrix4> d_glProjection;
+	sofa::Data<Matrix4> d_glProjection;
 	// 4x4 Opengl Modelview matrix
-	Data<Matrix4> d_glModelview;
+	sofa::Data<Matrix4> d_glModelview;
 	// Quaternion representation of the Rotation Matrix
-	Data<Quat> d_orientation;
+	sofa::Data<Quat> d_orientation;
 	// Opengl Viewport
-	Data<Vector4> d_glViewport;
+	sofa::Data<Vector4> d_glViewport;
 	// zNear, zFar
-	Data<Vector2> d_zClip;
+	sofa::Data<Vector2> d_zClip;
 
-	Data<helper::vector<defaulttype::Vector3> > d_3DCorners;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> > d_3DCorners;
 
 	// Camera can be constructed with K, t, upVector and fwdVector
-	Data<Vector3> d_upVector;
+	sofa::Data<Vector3> d_upVector;
 
 	// Camera can be constructed with K, t, upVector and lookAt
-	Data<Vector3> d_fwdVector;  // direction cam -> lookat
-	Data<Vector3> d_lookAt;  // target position (a point on the direction camPos
+	sofa::Data<Vector3> d_fwdVector;  // direction cam -> lookat
+	sofa::Data<Vector3> d_lookAt;  // target position (a point on the direction camPos
 													 // -> fwdVector)
 
 	// Whether or not this camera is an XRay source-detector model (in which case,
 	// in CalibratedCamera, it is necessary to reverse depth when rasterizing
 	// models, to ensure that the view comes from behind the detector towards the
 	// source, opposite to the standard pinhole camera model
-	Data<bool> d_isXRay;
+	sofa::Data<bool> d_isXRay;
 
 	// Decomposes M
 	void decomposeM();
@@ -244,59 +244,59 @@ class CameraSettings : public common::ImplicitDataEngine
 
  public:
 	// Data callbacks for GUI
-	void ProjectionMatrixChanged(core::objectmodel::BaseObject*)
+	void ProjectionMatrixChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setProjectionMatrix(d_M.getValue());
 	}
-	void IntrinsicCameraMatrixChanged(core::objectmodel::BaseObject*)
+	void IntrinsicCameraMatrixChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setIntrinsicCameraMatrix(d_K.getValue());
 	}
-	void DistortionCoefficientsChanged(core::objectmodel::BaseObject*)
+	void DistortionCoefficientsChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setDistortionCoefficients(d_distCoefs.getValue());
 	}
-	void RotationMatrixChanged(core::objectmodel::BaseObject*)
+	void RotationMatrixChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setRotationMatrix(d_R.getValue());
 	}
-	void TranslationVectorChanged(core::objectmodel::BaseObject*)
+	void TranslationVectorChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setPosition(d_t.getValue());
 	}
-	void ImageSizeChanged(core::objectmodel::BaseObject*)
+	void ImageSizeChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setImageSize(d_imageSize.getValue());
 	}
-	void GLProjectionChanged(core::objectmodel::BaseObject*)
+	void GLProjectionChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setGLProjection(d_glProjection.getValue());
 	}
-	void GLModelviewChanged(core::objectmodel::BaseObject*)
+	void GLModelviewChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setGLModelview(d_glModelview.getValue());
 	}
-	void GLViewportChanged(core::objectmodel::BaseObject*)
+	void GLViewportChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setGLViewport(d_glViewport.getValue());
 	}
-	void GLZClipChanged(core::objectmodel::BaseObject*)
+	void GLZClipChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setGLZClip(d_zClip.getValue());
 	}
-	void OrientationChanged(core::objectmodel::BaseObject*)
+	void OrientationChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setOrientation(d_orientation.getValue());
 	}
-	void Scale2DChanged(core::objectmodel::BaseObject*)
+	void Scale2DChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		set2DScaleMatrix(d_scale2D.getValue());
 	}
-	void FocalDistanceChanged(core::objectmodel::BaseObject*)
+	void FocalDistanceChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		setFocalDistance(d_f.getValue());
 	}
-	void Translation2DChanged(core::objectmodel::BaseObject*)
+	void Translation2DChanged(sofa::core::objectmodel::BaseObject*)
 	{
 		set2DTranslationMatrix(d_translate2D.getValue());
 	}
@@ -305,8 +305,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	void recalculate3DCorners();
 };
 
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_CAMERASETTINGS_H

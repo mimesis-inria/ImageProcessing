@@ -7,25 +7,25 @@
 
 #include <opencv2/imgproc.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 class Segmenter2D : public ImageFilter
 {
  public:
   SOFA_CLASS(Segmenter2D, ImageFilter);
 
-	Data<std::string> d_regionLabel;
+	sofa::Data<std::string> d_regionLabel;
 
   // INPUTS
-	Data<helper::vector<defaulttype::Vec2i> > d_points;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_points;
 
   // OUTPUTS
-	Data<helper::vector<defaulttype::Vec2i> > d_regionPoly;
-	Data<helper::vector<defaulttype::Vec2i> > d_regionPoints;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_regionPoly;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_regionPoints;
 
   Segmenter2D()
 			: ImageFilter(false),
@@ -61,15 +61,15 @@ class Segmenter2D : public ImageFilter
 		}
 
 		std::vector<cv::Point2i> polygon;
-		for (const defaulttype::Vec2i& pt : d_regionPoly.getValue())
+		for (const sofa::defaulttype::Vec2i& pt : d_regionPoly.getValue())
     {
 			polygon.push_back(cv::Point2i(pt.x(), pt.y()));
     }
-		helper::vector<defaulttype::Vec2i>& points =
+		sofa::helper::vector<sofa::defaulttype::Vec2i>& points =
         *d_regionPoints.beginWriteOnly();
 		points.clear();
 
-		const helper::vector<defaulttype::Vec2i>& pts = d_points.getValue();
+		const sofa::helper::vector<sofa::defaulttype::Vec2i>& pts = d_points.getValue();
 
 		for (auto point : pts)
 		{
@@ -87,7 +87,7 @@ class Segmenter2D : public ImageFilter
 		if (m_activeState == &Segmenter2D::freeMove)
     {
       if (d_regionPoly.getValue().empty()) return;
-			for (const defaulttype::Vec2i& pt : d_regionPoly.getValue())
+			for (const sofa::defaulttype::Vec2i& pt : d_regionPoly.getValue())
       {
 				polygon[0].push_back(cv::Point2i(pt.x(), pt.y()));
       }
@@ -122,12 +122,9 @@ class Segmenter2D : public ImageFilter
 SOFA_DECL_CLASS(Segmenter2D)
 
 int Segmenter2DClass =
-    core::RegisterObject("Manual segmentation component").add<Segmenter2D>();
+		sofa::core::RegisterObject("Manual segmentation component").add<Segmenter2D>();
 
+}  // namespace features
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_SEGMENTER2D_H

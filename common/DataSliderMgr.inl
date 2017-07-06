@@ -7,9 +7,7 @@
 #include <sofa/helper/OptionsGroup.h>
 #include <opencv2/highgui.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
@@ -36,8 +34,8 @@ CustomSliderManager<T, U>::CustomSliderManager(sofa::Data<T>* d, U min, U max,
 }
 
 template <>
-CustomSliderManager<helper::OptionsGroup, int>::CustomSliderManager(
-		sofa::Data<helper::OptionsGroup>* d, int /*min*/, int /*max*/, int /*step*/)
+CustomSliderManager<sofa::helper::OptionsGroup, int>::CustomSliderManager(
+		sofa::Data<sofa::helper::OptionsGroup>* d, int /*min*/, int /*max*/, int /*step*/)
 {
 	this->m_data = d;
 	this->m_min = 0;
@@ -46,7 +44,7 @@ CustomSliderManager<helper::OptionsGroup, int>::CustomSliderManager(
 }
 
 template <unsigned int N, class U>
-VecSliderManager<N, U>::VecSliderManager(sofa::Data<defaulttype::Vec<N, U> >* d,
+VecSliderManager<N, U>::VecSliderManager(sofa::Data<sofa::defaulttype::Vec<N, U> >* d,
 																				 U min, U max, U step)
 {
 	this->m_data = d;
@@ -166,7 +164,7 @@ int CustomSliderManager<T, U>::getTrackbarRangedValue()
 }
 
 template <>
-int CustomSliderManager<helper::OptionsGroup, int>::getTrackbarRangedValue()
+int CustomSliderManager<sofa::helper::OptionsGroup, int>::getTrackbarRangedValue()
 {
 	return int(m_data->getValue().getSelectedId());
 }
@@ -234,11 +232,11 @@ void CustomSliderManager<T, U>::callback(int val, void* mgr)
 }
 
 template <>
-void CustomSliderManager<helper::OptionsGroup, int>::callback(int val,
+void CustomSliderManager<sofa::helper::OptionsGroup, int>::callback(int val,
 																															void* mgr)
 {
-	CustomSliderManager<helper::OptionsGroup, int>* m =
-			reinterpret_cast<CustomSliderManager<helper::OptionsGroup, int>*>(mgr);
+	CustomSliderManager<sofa::helper::OptionsGroup, int>* m =
+			reinterpret_cast<CustomSliderManager<sofa::helper::OptionsGroup, int>*>(mgr);
 	if (m->getTrackbarRangedValue() != val)
 	{
 		m->m_data->beginEdit()->setSelectedItem(unsigned(val));
@@ -308,7 +306,6 @@ void VecSliderManager<N, U>::callback_w(int val, void* mgr)
 }
 
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor
 
 #endif  // SOFA_OR_PROCESSOR_ScalarSliderManager_INL

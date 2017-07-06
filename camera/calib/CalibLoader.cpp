@@ -11,16 +11,18 @@
 
 #include <opencv2/core/persistence.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 SOFA_DECL_CLASS(CalibLoader)
 
 int CalibLoaderClass =
-    core::RegisterObject("Mono / stereo Camera calibration settings loader")
+		sofa::core::RegisterObject("Mono / stereo Camera calibration settings loader")
         .add<CalibLoader>();
 
 CalibLoader::CalibLoader()
@@ -127,7 +129,7 @@ void CalibLoader::setCurrentCalib(const std::string& calibName)
   auto it = m_calibs.find(calibName);
   if (it != m_calibs.end())
   {
-    helper::OptionsGroup* t = d_calibNames.beginWriteOnly();
+		sofa::helper::OptionsGroup* t = d_calibNames.beginWriteOnly();
     t->setSelectedItem(it->first);
     d_calibNames.endEdit();
 
@@ -169,7 +171,7 @@ void CalibLoader::load(const std::string& filename)
 	cv::Mat T2;
 	double totalError;
 
-  calibName = helper::system::SetDirectory::GetFileNameWithoutExtension(
+	calibName = sofa::helper::system::SetDirectory::GetFileNameWithoutExtension(
       filename.c_str());
 
 	cv::read((*fs)["imsize"], imsize1, cv::Mat(1, 2, CV_32S));
@@ -222,14 +224,14 @@ void CalibLoader::load(const std::string& filename)
 
 std::string CalibLoader::getPathToCalibs()
 {
-  std::string currentDir = helper::system::SetDirectory::GetCurrentDir();
+	std::string currentDir = sofa::helper::system::SetDirectory::GetCurrentDir();
   // If exists, add calibFolder to current dir
   if (d_calibFolder.getValue() != "")
   {
     std::string path = d_calibFolder.getValue();
 
     if (!path.empty())
-      currentDir = helper::system::SetDirectory::GetRelativeFromDir(
+			currentDir = sofa::helper::system::SetDirectory::GetRelativeFromDir(
           path.c_str(), currentDir.c_str());
   }
   return currentDir;
@@ -238,7 +240,7 @@ std::string CalibLoader::getPathToCalibs()
 void CalibLoader::getAllCalibFiles(std::vector<std::string>& calibFiles)
 {
   // Retrieve all calib files (files ending in ".yml" in calibFolder)
-  helper::system::FileSystem::listDirectory(getPathToCalibs(), calibFiles,
+	sofa::helper::system::FileSystem::listDirectory(getPathToCalibs(), calibFiles,
                                             "yml");
 }
 
@@ -278,16 +280,16 @@ void CalibLoader::init()
 	setCurrentCalib(d_calibNames.getValue().getSelectedItem());
 }
 
-void CalibLoader::calibChanged(core::objectmodel::BaseObject*)
+void CalibLoader::calibChanged(sofa::core::objectmodel::BaseObject*)
 {
   setCurrentCalib(d_calibNames.getValue().getSelectedItem());
 }
 
-void CalibLoader::calibFolderChanged(core::objectmodel::BaseObject*)
+void CalibLoader::calibFolderChanged(sofa::core::objectmodel::BaseObject*)
 {
   std::string calibname = d_calibNames.getValue().getSelectedItem();
   m_calibs.clear();
-  helper::OptionsGroup* t = d_calibNames.beginEdit();
+	sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
   t->setNames(0);
   d_calibNames.endEdit();
 
@@ -297,7 +299,7 @@ void CalibLoader::calibFolderChanged(core::objectmodel::BaseObject*)
 
   if (calibFiles.empty())
   {
-    helper::OptionsGroup* t = d_calibNames.beginEdit();
+		sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
     t->setNames(1, "NO_CALIB");
     m_calibs["NO_CALIB"];
     setCurrentCalib("NO_CALIB");
@@ -305,14 +307,14 @@ void CalibLoader::calibFolderChanged(core::objectmodel::BaseObject*)
   }
   else
   {
-    helper::OptionsGroup* t = d_calibNames.beginEdit();
+		sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
     t->setNbItems(unsigned(calibFiles.size()));
     unsigned i = 0;
     for (std::string& s : calibFiles)
     {
       t->setItemName(
           i++,
-          helper::system::SetDirectory::GetFileNameWithoutExtension(s.c_str()));
+					sofa::helper::system::SetDirectory::GetFileNameWithoutExtension(s.c_str()));
     }
     (calibname != "") ? (t->setSelectedItem(calibname))
                       : t->setSelectedItemToDefault();
@@ -331,6 +333,8 @@ void CalibLoader::calibFolderChanged(core::objectmodel::BaseObject*)
 }
 
 void CalibLoader::update() {}
+
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

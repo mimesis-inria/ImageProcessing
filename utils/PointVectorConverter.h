@@ -7,18 +7,18 @@
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <SofaORCommon/cvKeypoint.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace utils
 {
 template <class SrcType, class DstType>
 class PointVectorConverter : public common::ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<
-			PointVectorConverter, CameraSettings,
-			BaseLink::FLAG_STOREPATH | BaseLink::FLAG_STRONGLINK>
+			PointVectorConverter, cam::CameraSettings,
+			sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
  public:
@@ -60,18 +60,16 @@ class PointVectorConverter : public common::ImplicitDataEngine
 			const PointVectorConverter<SrcType, DstType>* = NULL);
 
 	// INPUTS
-	Data<helper::vector<SrcType> > d_src;
+	sofa::Data<sofa::helper::vector<SrcType> > d_src;
 	// OUTPUTS
-	Data<helper::vector<DstType> > d_dst;
+	sofa::Data<sofa::helper::vector<DstType> > d_dst;
 
 	CamSettings l_cam;
-	Data<double> d_depth;
-
-	//	LinkFunctor l_functor;
+	sofa::Data<double> d_depth;
 };
 
+}  // namespace utils
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor
 
 #endif  // SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H

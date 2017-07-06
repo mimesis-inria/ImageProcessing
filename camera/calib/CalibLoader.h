@@ -16,37 +16,39 @@
 
 #include <map>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 class CalibLoader : public common::ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<CalibLoader, StereoSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			StereoCam;
 
 	typedef sofa::core::objectmodel::SingleLink<CalibLoader, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
   struct CalibData
   {
     CalibData() {}
-		CalibData(const defaulttype::Matrix3& _K1, const defaulttype::Matrix3& _R1,
-							const defaulttype::Vector3& _T1,
-							const helper::vector<double>& _delta1,
-							const defaulttype::Vec2i _imSize1, double _error1,
-							const defaulttype::Matrix3& _K2, const defaulttype::Matrix3& _R2,
-							const defaulttype::Vector3& _T2,
-							const helper::vector<double>& _delta2,
-							const defaulttype::Vec2i _imSize2, double _error2,
-							const defaulttype::Matrix3& _Rs, const defaulttype::Vector3& _Ts,
-							const defaulttype::Matrix3& _F, const defaulttype::Matrix3& _E,
+		CalibData(const sofa::defaulttype::Matrix3& _K1, const sofa::defaulttype::Matrix3& _R1,
+							const sofa::defaulttype::Vector3& _T1,
+							const sofa::helper::vector<double>& _delta1,
+							const sofa::defaulttype::Vec2i _imSize1, double _error1,
+							const sofa::defaulttype::Matrix3& _K2, const sofa::defaulttype::Matrix3& _R2,
+							const sofa::defaulttype::Vector3& _T2,
+							const sofa::helper::vector<double>& _delta2,
+							const sofa::defaulttype::Vec2i _imSize2, double _error2,
+							const sofa::defaulttype::Matrix3& _Rs, const sofa::defaulttype::Vector3& _Ts,
+							const sofa::defaulttype::Matrix3& _F, const sofa::defaulttype::Matrix3& _E,
 							double _totalError)
 				: imSize1(_imSize1),
 					K1(_K1),
@@ -68,24 +70,24 @@ class CalibLoader : public common::ImplicitDataEngine
     {
     }
 
-		defaulttype::Vec2i imSize1;
-		defaulttype::Matrix3 K1;
-		defaulttype::Matrix3 R1;
-		defaulttype::Vector3 T1;
-		helper::vector<double> delta1;
+		sofa::defaulttype::Vec2i imSize1;
+		sofa::defaulttype::Matrix3 K1;
+		sofa::defaulttype::Matrix3 R1;
+		sofa::defaulttype::Vector3 T1;
+		sofa::helper::vector<double> delta1;
 		double error1;
 
-		defaulttype::Vec2i imSize2;
-		defaulttype::Matrix3 K2;
-		defaulttype::Matrix3 R2;
-		defaulttype::Vector3 T2;
-		helper::vector<double> delta2;
+		sofa::defaulttype::Vec2i imSize2;
+		sofa::defaulttype::Matrix3 K2;
+		sofa::defaulttype::Matrix3 R2;
+		sofa::defaulttype::Vector3 T2;
+		sofa::helper::vector<double> delta2;
 		double error2;
 
-		defaulttype::Matrix3 Rs;
-		defaulttype::Vector3 Ts;
-    defaulttype::Matrix3 F;
-		defaulttype::Matrix3 E;
+		sofa::defaulttype::Matrix3 Rs;
+		sofa::defaulttype::Vector3 Ts;
+		sofa::defaulttype::Matrix3 F;
+		sofa::defaulttype::Matrix3 E;
 		double totalError;
   };
 
@@ -102,34 +104,34 @@ class CalibLoader : public common::ImplicitDataEngine
 	CamSettings l_cam1;
 	CamSettings l_cam2;
 	sofa::core::objectmodel::DataFileName d_calibFolder;
-  Data<helper::OptionsGroup> d_calibNames;
+	sofa::Data<sofa::helper::OptionsGroup> d_calibNames;
 	bool m_isStereo;
 
-	Data<defaulttype::Vec2i> d_imSize1;
-	Data<defaulttype::Matrix3> d_K1;
-	Data<defaulttype::Matrix3> d_R1;
-	Data<defaulttype::Vector3> d_T1;
-	Data<helper::vector<double> > d_delta1;
-	Data<double> d_error1;
+	sofa::Data<sofa::defaulttype::Vec2i> d_imSize1;
+	sofa::Data<sofa::defaulttype::Matrix3> d_K1;
+	sofa::Data<sofa::defaulttype::Matrix3> d_R1;
+	sofa::Data<sofa::defaulttype::Vector3> d_T1;
+	sofa::Data<sofa::helper::vector<double> > d_delta1;
+	sofa::Data<double> d_error1;
 
-	Data<defaulttype::Vec2i> d_imSize2;
-	Data<defaulttype::Matrix3> d_K2;
-	Data<defaulttype::Matrix3> d_R2;
-	Data<defaulttype::Vector3> d_T2;
-	Data<helper::vector<double> > d_delta2;
-	Data<double> d_error2;
+	sofa::Data<sofa::defaulttype::Vec2i> d_imSize2;
+	sofa::Data<sofa::defaulttype::Matrix3> d_K2;
+	sofa::Data<sofa::defaulttype::Matrix3> d_R2;
+	sofa::Data<sofa::defaulttype::Vector3> d_T2;
+	sofa::Data<sofa::helper::vector<double> > d_delta2;
+	sofa::Data<double> d_error2;
 
-	Data<defaulttype::Matrix3> d_Rs;
-	Data<defaulttype::Vector3> d_Ts;
-  Data<defaulttype::Matrix3> d_F;
-	Data<defaulttype::Matrix3> d_E;
-	Data<double> d_totalError;
+	sofa::Data<sofa::defaulttype::Matrix3> d_Rs;
+	sofa::Data<sofa::defaulttype::Vector3> d_Ts;
+	sofa::Data<sofa::defaulttype::Matrix3> d_F;
+	sofa::Data<sofa::defaulttype::Matrix3> d_E;
+	sofa::Data<double> d_totalError;
 
  protected:
   std::map<std::string, CalibData> m_calibs;
 
-  void calibChanged(core::objectmodel::BaseObject*);
-  void calibFolderChanged(core::objectmodel::BaseObject*);
+	void calibChanged(sofa::core::objectmodel::BaseObject*);
+	void calibFolderChanged(sofa::core::objectmodel::BaseObject*);
 
  private:
   void load(const std::string& calibfile);
@@ -140,8 +142,8 @@ class CalibLoader : public common::ImplicitDataEngine
   void getAllCalibFiles(std::vector<std::string>& calibFiles);
 };
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_CALIBLOADER_H

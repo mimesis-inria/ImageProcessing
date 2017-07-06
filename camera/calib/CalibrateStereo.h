@@ -11,17 +11,19 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 class CalibrateStereo : public common::ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<CalibrateStereo, StereoSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			Settings;
 
  public:
@@ -87,17 +89,17 @@ class CalibrateStereo : public common::ImplicitDataEngine
 	Settings l_cam;
 
 	// INPUTS
-	Data<helper::SVector<helper::SVector<defaulttype::Vector2> > > d_imagePoints1;
-	Data<helper::SVector<helper::SVector<defaulttype::Vector2> > > d_imagePoints2;
-	Data<helper::SVector<helper::SVector<defaulttype::Vector3> > > d_objectPoints;
-	Data<defaulttype::Vec2i> d_imgSize;
+	sofa::Data<sofa::helper::SVector<sofa::helper::SVector<sofa::defaulttype::Vector2> > > d_imagePoints1;
+	sofa::Data<sofa::helper::SVector<sofa::helper::SVector<sofa::defaulttype::Vector2> > > d_imagePoints2;
+	sofa::Data<sofa::helper::SVector<sofa::helper::SVector<sofa::defaulttype::Vector3> > > d_objectPoints;
+	sofa::Data<sofa::defaulttype::Vec2i> d_imgSize;
 
 	// OPTIONAL INPUTS
-	Data<int> d_calibFlags;
+	sofa::Data<int> d_calibFlags;
 };
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_CALIBRATESTEREO_H

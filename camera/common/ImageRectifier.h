@@ -7,17 +7,17 @@
 
 #include <opencv2/imgproc.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
 {
 class ImageRectifier : public ImageFilter
 {
 	typedef sofa::core::objectmodel::SingleLink<ImageRectifier, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
  public:
@@ -52,12 +52,9 @@ class ImageRectifier : public ImageFilter
 SOFA_DECL_CLASS(ImageRectifier)
 
 int ImageRectifierClass =
-    core::RegisterObject("Image undistortion").add<ImageRectifier>();
+		sofa::core::RegisterObject("Image undistortion").add<ImageRectifier>();
 
+}  // namespace cam
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_IMAGERECTIFIER_H

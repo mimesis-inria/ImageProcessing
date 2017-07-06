@@ -8,21 +8,21 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
 {
 class ProjectPoints : public common::ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<ProjectPoints, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
-	typedef typename defaulttype::Vector3 Vector3;
-	typedef typename defaulttype::Vector2 Vector2;
+	typedef typename sofa::defaulttype::Vector3 Vector3;
+	typedef typename sofa::defaulttype::Vector2 Vector2;
 
  public:
 	SOFA_CLASS(ProjectPoints, common::ImplicitDataEngine);
@@ -62,14 +62,14 @@ class ProjectPoints : public common::ImplicitDataEngine
 	{
 		if (d_2Dto3D.getValue())
 		{
-			helper::vector<Vector3>& pts3d = *d_Pts3D.beginEdit();
+			sofa::helper::vector<Vector3>& pts3d = *d_Pts3D.beginEdit();
 			pts3d.clear();
 			for (auto pt : d_Pts2D.getValue())
 				pts3d.push_back(l_cam->get3DFrom2DPosition(pt, d_depth.getValue()));
 		}
 		else
 		{
-			helper::vector<Vector2>& pts2d = *d_Pts2D.beginEdit();
+			sofa::helper::vector<Vector2>& pts2d = *d_Pts2D.beginEdit();
 			pts2d.clear();
 			for (auto pt : d_Pts3D.getValue())
 				pts2d.push_back(l_cam->get2DFrom3DPosition(pt));
@@ -77,14 +77,13 @@ class ProjectPoints : public common::ImplicitDataEngine
 	}
 
 	CamSettings l_cam;
-	Data<bool> d_2Dto3D;
-	Data<double> d_depth;
-	Data<helper::vector<Vector3> > d_Pts3D;
-	Data<helper::vector<Vector2> > d_Pts2D;
+	sofa::Data<bool> d_2Dto3D;
+	sofa::Data<double> d_depth;
+	sofa::Data<sofa::helper::vector<Vector3> > d_Pts3D;
+	sofa::Data<sofa::helper::vector<Vector2> > d_Pts2D;
 };
 
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_PROJECTPOINTS_H

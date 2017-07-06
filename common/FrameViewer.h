@@ -13,9 +13,7 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
@@ -30,13 +28,13 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 
 	void init();
   void update();
-	void draw(const core::visual::VisualParams*);
-	void computeBBox(const core::ExecParams* params, bool);
+	void draw(const sofa::core::visual::VisualParams*);
+	void computeBBox(const sofa::core::ExecParams* params, bool);
 
-	Data<common::cvMat> d_frame;
-	Data<helper::vector<defaulttype::Vector3> > d_corners;
-	Data<helper::OptionsGroup> d_mode;
-	Data<float> d_alpha;
+	sofa::Data<common::cvMat> d_frame;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> > d_corners;
+	sofa::Data<sofa::helper::OptionsGroup> d_mode;
+	sofa::Data<float> d_alpha;
 
  private:
 	void perspectiveDraw();
@@ -45,7 +43,5 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 };
 
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_ACQUISITOR_FRAMEVIEWER_H

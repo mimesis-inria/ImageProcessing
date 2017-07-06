@@ -1,18 +1,18 @@
 #include "CalibratedCamera.h"
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
 {
 
 SOFA_DECL_CLASS(CalibratedCamera)
 
 int CalibratedCameraClass =
-		core::RegisterObject("Component setting the CameraSettings to the camera")
+		sofa::core::RegisterObject("Component setting the CameraSettings to the camera")
 				.add<CalibratedCamera>();
 
+} // namespace cam
 } // namespace processor
-} // namespace OR
-} // namespace sofa
+} // namespace sofaor

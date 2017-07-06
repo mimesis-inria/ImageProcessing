@@ -12,11 +12,11 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 class FeatureDetector : public ImageFilter
 {
@@ -56,26 +56,25 @@ class FeatureDetector : public ImageFilter
   virtual void update();
   virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
 
-  Data<sofa::helper::OptionsGroup> d_detectMode;
-  Data<common::cvMat> d_mask;
-  Data<sofa::helper::OptionsGroup> d_detectorType;
-  Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
-  Data<common::cvMat> d_descriptors;
+	sofa::Data<sofa::helper::OptionsGroup> d_detectMode;
+	sofa::Data<common::cvMat> d_mask;
+	sofa::Data<sofa::helper::OptionsGroup> d_detectorType;
+	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
+	sofa::Data<common::cvMat> d_descriptors;
 
  protected:
-  void detectTypeChanged(core::objectmodel::BaseData*);
-  void detectModeChanged(core::objectmodel::BaseData*);
+	void detectTypeChanged(sofa::core::objectmodel::BaseData*);
+	void detectModeChanged(sofa::core::objectmodel::BaseData*);
 
  private:
   BaseDetector* m_detectors[DetectorType_COUNT];
-  core::DataTracker m_dataTracker;
+	sofa::core::DataTracker m_dataTracker;
 
   std::vector<cv::KeyPoint> _v;
   common::cvMat _d;
 };
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_FEATUREDETECTOR_H

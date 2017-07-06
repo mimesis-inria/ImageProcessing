@@ -8,19 +8,17 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
 class ImageExporter : public common::ImplicitDataEngine
 {
-  Data<std::string> d_fileName;
-  Data<common::cvMat> d_img;
-	Data<unsigned> d_nSteps;
-	Data<helper::OptionsGroup> d_exportType;
-	Data<bool> d_activate;
+	sofa::Data<std::string> d_fileName;
+	sofa::Data<common::cvMat> d_img;
+	sofa::Data<unsigned> d_nSteps;
+	sofa::Data<sofa::helper::OptionsGroup> d_exportType;
+	sofa::Data<bool> d_activate;
 
  public:
   SOFA_CLASS(ImageExporter, common::ImplicitDataEngine);
@@ -39,7 +37,7 @@ class ImageExporter : public common::ImplicitDataEngine
                             "if false, nothing will be exported")),
         m_stepCounter(0)
   {
-    sofa::helper::OptionsGroup* t = d_exportType.beginEdit();
+		sofa::helper::OptionsGroup* t = d_exportType.beginEdit();
     t->setNames(3, "BEGIN", "END", "STEP");
     t->setSelectedItem("END");
     d_exportType.endEdit();
@@ -119,12 +117,10 @@ class ImageExporter : public common::ImplicitDataEngine
 SOFA_DECL_CLASS(ImageExporter)
 
 int ImageExporterClass =
-    core::RegisterObject(
+		sofa::core::RegisterObject(
         "component to export Opencv images as a file on your system")
         .add<ImageExporter>();
 
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_IMAGEEXPORTER_H

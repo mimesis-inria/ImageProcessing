@@ -1,16 +1,16 @@
 #include "StereoSettings.h"
 #include <SofaORCommon/cvMatUtils.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
 {
 SOFA_DECL_CLASS(StereoSettings)
 
 int StereoSettingsClass =
-		core::RegisterObject(
+		sofa::core::RegisterObject(
 				"Stereo camera settings component whose task is to store and maintain "
 				"stereoscopic camera parameters up to date")
 				.add<StereoSettings>();
@@ -93,7 +93,7 @@ void StereoSettings::init()
 }
 
 // returns the 3D position of a pair of 2D matches 'X, Y'
-defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
+sofa::defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
 																								 const Vector2& x2)
 {
 	common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
@@ -118,7 +118,7 @@ defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
 	return Vector3(X(0), X(1), X(2));
 }
 
-defaulttype::Vector3 StereoSettings::triangulate(const cv::Point2d& x1,
+sofa::defaulttype::Vector3 StereoSettings::triangulate(const cv::Point2d& x1,
 																				const cv::Point2d& x2)
 {
 	common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
@@ -143,13 +143,13 @@ void StereoSettings::triangulate(const cv::Point2d& x1, const cv::Point2d& x2,
 
 // Getters & setters for the private Data (also used as callbacks when
 // modifying values in the GUI
-const defaulttype::Matrix3& StereoSettings::getFundamentalMatrix()
+const sofa::defaulttype::Matrix3& StereoSettings::getFundamentalMatrix()
 {
 	return d_F.getValue();
 }
 
 void StereoSettings::setFundamentalMatrix(const Matrix3& F) { d_F.setValue(F); }
-const defaulttype::Matrix3& StereoSettings::getEssentialMatrix()
+const sofa::defaulttype::Matrix3& StereoSettings::getEssentialMatrix()
 {
 	return d_E.getValue();
 }
@@ -234,6 +234,6 @@ void StereoSettings::recomputeFromCameras()
 	this->setEssentialMatrix(E);
 }
 
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

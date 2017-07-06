@@ -8,15 +8,13 @@
 #include <sofa/helper/system/glut.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
 SOFA_DECL_CLASS(FrameViewer)
 
-int FrameViewerClass = core::RegisterObject(
+int FrameViewerClass = sofa::core::RegisterObject(
 													 "debug component to project images in OpenGL using "
 													 "the a projection matrix")
 													 .add<FrameViewer>();
@@ -124,7 +122,7 @@ void FrameViewer::perspectiveDraw()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //	glDepthMask(GL_FALSE);
 
-	helper::vector<defaulttype::Vector3> p = d_corners.getValue();
+	sofa::helper::vector<sofa::defaulttype::Vector3> p = d_corners.getValue();
 
 	glBegin(GL_QUADS);
 	glColor4f(1.0f, 1.0f, 1.0f, d_alpha.getValue());
@@ -193,7 +191,7 @@ void FrameViewer::orthoDraw()
 	glDepthMask(GL_TRUE);
 }
 
-void FrameViewer::draw(const core::visual::VisualParams *)
+void FrameViewer::draw(const sofa::core::visual::VisualParams *)
 {
 	if (d_frame.getValue().data)
 	{
@@ -211,11 +209,11 @@ void FrameViewer::draw(const core::visual::VisualParams *)
 	}
 }
 
-void FrameViewer::computeBBox(const core::ExecParams *params, bool)
+void FrameViewer::computeBBox(const sofa::core::ExecParams *params, bool)
 {
 	if (d_mode.getValue().getSelectedId() != 0) return;
 
-	const helper::vector<defaulttype::Vector3>& x = d_corners.getValue();
+	const sofa::helper::vector<sofa::defaulttype::Vector3>& x = d_corners.getValue();
 	if (x.empty())
 		return;
 
@@ -228,7 +226,7 @@ void FrameViewer::computeBBox(const core::ExecParams *params, bool)
 
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
-		const defaulttype::Vector3 &p = x[i];
+		const sofa::defaulttype::Vector3 &p = x[i];
 		for (int c = 0; c < 3; c++)
 		{
 			if (p[c] > maxBBox[c]) maxBBox[c] = p[c];
@@ -240,5 +238,4 @@ void FrameViewer::computeBBox(const core::ExecParams *params, bool)
 }
 
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

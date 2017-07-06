@@ -5,11 +5,11 @@
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace utils
 {
 
 class ConversionFunctor : core::objectmodel::BaseObject
@@ -31,8 +31,8 @@ int ConversionFunctorClass =
 				"component apply alternative conversion algorithm when linked from PointVectorConverter")
 				.add<ConversionFunctor>();
 
+}  // namespace utils
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor
 
 #endif  // SOFA_OR_PROCESSOR_CONVERSIONFUNCTOR_H

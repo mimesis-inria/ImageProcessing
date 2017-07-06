@@ -2,11 +2,11 @@
 
 #include <opencv2/features2d.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 BaseMatcher::~BaseMatcher() {}
 void BaseMatcher::knnMatch(const common::cvMat& queryDescriptors,
@@ -26,7 +26,7 @@ void BaseMatcher::radiusMatch(const common::cvMat& queryDescriptors,
                          maxDistance, mask);
 }
 
-BFMatcher::BFMatcher(core::objectmodel::BaseObject* c)
+BFMatcher::BFMatcher(sofa::core::objectmodel::BaseObject* c)
     : normType(c->initData(
           &normType, "BFNormType",
           "One of NORM_L1, NORM_L2, NORM_HAMMING, NORM_HAMMING2. L1 and L2 "
@@ -67,7 +67,7 @@ void BFMatcher::init()
                                 crossCheck.getValue());
 }
 
-FlannMatcher::FlannMatcher(core::objectmodel::BaseObject* c)
+FlannMatcher::FlannMatcher(sofa::core::objectmodel::BaseObject* c)
     : indexParamsType(c->initData(&indexParamsType, "indexParams",
                                   "AUTOTUNED, COMPOSITE, "
                                   "HIERARCHICAL_CLUSTERING, KDTREE, KMEANS, "
@@ -117,7 +117,7 @@ void FlannMatcher::toggleVisible(bool show)
 }
 
 FlannMatcher::AutotunedIndexParams::AutotunedIndexParams(
-    core::objectmodel::BaseObject* c)
+		sofa::core::objectmodel::BaseObject* c)
     : target_precision(
           c->initData(&target_precision, 0.8f, "AUTOTUNEDTargetPrecision", "")),
       build_weight(
@@ -146,7 +146,7 @@ void FlannMatcher::AutotunedIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::CompositeIndexParams::CompositeIndexParams(
-    core::objectmodel::BaseObject* c)
+		sofa::core::objectmodel::BaseObject* c)
     : trees(c->initData(&trees, 4, "COMPOSITETrees", "")),
       branching(c->initData(&branching, 32, "COMPOSITEBranching", "")),
       iterations(c->initData(&iterations, 11, "COMPOSITEIterations", "")),
@@ -180,7 +180,7 @@ void FlannMatcher::CompositeIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::HierarchicalClusteringIndexParams::
-    HierarchicalClusteringIndexParams(core::objectmodel::BaseObject* c)
+		HierarchicalClusteringIndexParams(sofa::core::objectmodel::BaseObject* c)
     : branching(c->initData(&branching, 32, "HIERARCHICALBranching", "")),
       centers_init(c->initData(&centers_init, "HIERARCHICALCentersInit",
                                "default value: FLANN_CENTERS_RANDOM")),
@@ -213,7 +213,7 @@ void FlannMatcher::HierarchicalClusteringIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::KDTreeIndexParams::KDTreeIndexParams(
-    core::objectmodel::BaseObject* c)
+		sofa::core::objectmodel::BaseObject* c)
     : trees(c->initData(&trees, 4, "KDTREETrees", ""))
 
 {
@@ -231,7 +231,7 @@ void FlannMatcher::KDTreeIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::KMeansIndexParams::KMeansIndexParams(
-    core::objectmodel::BaseObject* c)
+		sofa::core::objectmodel::BaseObject* c)
     : branching(c->initData(&branching, 32, "KMEANSBranching", "")),
       iterations(c->initData(&iterations, 11, "KMEANSIterations", "")),
       centers_init(c->initData(&centers_init, "KMEANSCentersInit",
@@ -263,7 +263,7 @@ void FlannMatcher::KMeansIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::LinearIndexParams::LinearIndexParams(
-    core::objectmodel::BaseObject*)
+		sofa::core::objectmodel::BaseObject*)
 {
 }
 
@@ -274,7 +274,7 @@ FlannMatcher::LinearIndexParams::getIndexParams()
 }
 
 void FlannMatcher::LinearIndexParams::toggleVisible(bool) {}
-FlannMatcher::LshIndexParams::LshIndexParams(core::objectmodel::BaseObject* c)
+FlannMatcher::LshIndexParams::LshIndexParams(sofa::core::objectmodel::BaseObject* c)
     : table_number(c->initData(&table_number, 0, "LSHTableNumber", "")),
       key_size(c->initData(&key_size, 0, "LSHKeySize", "")),
       multi_probe_level(
@@ -297,7 +297,7 @@ void FlannMatcher::LshIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::SavedIndexParams::SavedIndexParams(
-    core::objectmodel::BaseObject* c)
+		sofa::core::objectmodel::BaseObject* c)
     : filename(c->initData(&filename, std::string("SavedIndexParams"),
                            "SAVEDFilename", ""))
 {
@@ -313,7 +313,7 @@ void FlannMatcher::SavedIndexParams::toggleVisible(bool show)
   filename.setDisplayed(show);
 }
 
-FlannMatcher::SearchParams::SearchParams(core::objectmodel::BaseObject* c)
+FlannMatcher::SearchParams::SearchParams(sofa::core::objectmodel::BaseObject* c)
     : checks(c->initData(&checks, 32, "checks", "")),
       epsilon(c->initData(&epsilon, .0f, "epsilon", "")),
       sorted(c->initData(&sorted, true, "sorted", ""))
@@ -333,6 +333,6 @@ void FlannMatcher::SearchParams::toggleVisible(bool show)
   sorted.setDisplayed(show);
 }
 
-}  // namespace sofa
-}  // namespace OR
+}  // namespace features
 }  // namespace processor
+}  // namespace sofaor

@@ -4,16 +4,16 @@
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 SOFA_DECL_CLASS(FeatureDetector)
 
 int FeatureDetectorClass =
-    core::RegisterObject(
+		sofa::core::RegisterObject(
         "debug component to visualize images using OpenCV highgui")
         .add<FeatureDetector>();
 
@@ -198,7 +198,7 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
   }
 }
 
-void FeatureDetector::detectModeChanged(core::objectmodel::BaseData*)
+void FeatureDetector::detectModeChanged(sofa::core::objectmodel::BaseData*)
 {
   switch (d_detectMode.getValue().getSelectedId())
   {
@@ -225,7 +225,7 @@ void FeatureDetector::detectModeChanged(core::objectmodel::BaseData*)
   }
 }
 
-void FeatureDetector::detectTypeChanged(core::objectmodel::BaseData*)
+void FeatureDetector::detectTypeChanged(sofa::core::objectmodel::BaseData*)
 {
   for (size_t i = 0; i < DetectorType_COUNT; ++i)
   {
@@ -241,6 +241,6 @@ void FeatureDetector::detectTypeChanged(core::objectmodel::BaseData*)
   }
 }
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

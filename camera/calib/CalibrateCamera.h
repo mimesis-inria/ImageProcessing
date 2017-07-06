@@ -11,17 +11,19 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace cam
+{
+namespace calib
 {
 class CalibrateCamera : public common::ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<CalibrateCamera, CameraSettings,
-																							BaseLink::FLAG_STOREPATH |
-																									BaseLink::FLAG_STRONGLINK>
+																							sofa::BaseLink::FLAG_STOREPATH |
+																									sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
  public:
@@ -91,27 +93,27 @@ class CalibrateCamera : public common::ImplicitDataEngine
 	CamSettings l_cam;
 
 	// INPUTS
-	Data<helper::SVector<helper::SVector<defaulttype::Vector2> > > d_imagePoints;
-	Data<helper::SVector<helper::SVector<defaulttype::Vector3> > > d_objectPoints;
-	Data<defaulttype::Vec2i> d_imgSize;
+	sofa::Data<sofa::helper::SVector<sofa::helper::SVector<sofa::defaulttype::Vector2> > > d_imagePoints;
+	sofa::Data<sofa::helper::SVector<sofa::helper::SVector<sofa::defaulttype::Vector3> > > d_objectPoints;
+	sofa::Data<sofa::defaulttype::Vec2i> d_imgSize;
 
 	// OPTIONAL INPUTS
-	Data<int> d_calibFlags;
-	Data<defaulttype::Matrix3> d_K;
-	Data<helper::vector<double> > d_distCoefs;
+	sofa::Data<int> d_calibFlags;
+	sofa::Data<sofa::defaulttype::Matrix3> d_K;
+	sofa::Data<sofa::helper::vector<double> > d_distCoefs;
 
 	// OUTPUTS
-	Data<helper::vector<defaulttype::Mat3x4d> > d_Rts;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Mat3x4d> > d_Rts;
 
-	Data<bool> d_preserveExtrinsics;
+	sofa::Data<bool> d_preserveExtrinsics;
 
  private:
-	defaulttype::Matrix3 m_K;
-	helper::vector<double> m_distCoefs;
+	sofa::defaulttype::Matrix3 m_K;
+	sofa::helper::vector<double> m_distCoefs;
 };
 
+}  // namespace calib
+}  // namespace cam
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_CALIBRATECAMERA_H

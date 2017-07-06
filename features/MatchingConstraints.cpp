@@ -5,16 +5,16 @@
 
 #include <opencv2/calib3d.hpp>
 #include <opencv2/imgproc.hpp>
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 SOFA_DECL_CLASS(MatchingConstraints)
 
 int MatchingConstraintsClass =
-    core::RegisterObject("Constraint filtering for opencv matcher")
+		sofa::core::RegisterObject("Constraint filtering for opencv matcher")
         .add<MatchingConstraints>();
 
 MatchingConstraints::MatchingConstraints()
@@ -197,7 +197,7 @@ void MatchingConstraints::update()
 		for (auto match : matchVector) mvec.push_back(match);
 		matches.push_back(mvec);
 	}
-	const helper::vector<common::cvKeypoint>& PointsR =
+	const sofa::helper::vector<common::cvKeypoint>& PointsR =
 			d_keypointsR_in.getValue();
 
 	/// Fill matchVector with all the necessary info:
@@ -300,9 +300,9 @@ bool MatchingConstraints::MinimalDistanceFilter(MatchVector& ms,
 
 void MatchingConstraints::PushInlier(
 		const common::cvMat& descL, unsigned i,
-		const helper::vector<common::cvKeypoint>& PointsL,
+		const sofa::helper::vector<common::cvKeypoint>& PointsL,
 		const common::cvMat& descR, MatchVector& ms,
-		const helper::vector<common::cvKeypoint>& PointsR)
+		const sofa::helper::vector<common::cvKeypoint>& PointsR)
 {
 	unsigned inliersIdx = i - m_outliers_out.size();
 	m_matches.push_back(
@@ -368,9 +368,9 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 		}
 	}
 
-	const helper::vector<common::cvKeypoint>& PointsL =
+	const sofa::helper::vector<common::cvKeypoint>& PointsL =
 			d_keypointsL_in.getValue();
-	const helper::vector<common::cvKeypoint>& PointsR =
+	const sofa::helper::vector<common::cvKeypoint>& PointsR =
 			d_keypointsR_in.getValue();
 
 	const common::cvMat& descL = d_descriptorsL_in.getValue();
@@ -417,6 +417,6 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 	std::cout << m_outliers_out.size() << " outliers in total" << std::endl;
 }
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

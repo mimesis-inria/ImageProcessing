@@ -4,21 +4,21 @@
 #include <opencv2/imgproc.hpp>
 #include "common/ImageFilter.h"
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace imgproc
 {
 class CannyFilter : public ImageFilter
 {
  public:
   SOFA_CLASS(CannyFilter, ImageFilter);
 
-  Data<double> d_minThreshold;
-  Data<double> d_maxThreshold;
-  Data<int> d_apertureSize;
-  Data<bool> d_l2gradient;
+	sofa::Data<double> d_minThreshold;
+	sofa::Data<double> d_maxThreshold;
+	sofa::Data<int> d_apertureSize;
+	sofa::Data<bool> d_l2gradient;
 
   CannyFilter()
       : d_minThreshold(
@@ -81,13 +81,10 @@ class CannyFilter : public ImageFilter
 SOFA_DECL_CLASS(CannyFilter)
 
 int CannyFilterClass =
-    core::RegisterObject("Canny edge detection filter from OpenCV")
+		sofa::core::RegisterObject("Canny edge detection filter from OpenCV")
         .add<CannyFilter>();
 
+}  // namespace imgproc
 }  // namespace processor
-
-}  // namespace OR
-
-}  // namespace sofa
-
+}  // namespace sofaor
 #endif  // SOFA_OR_PROCESSOR_CANNYFILTER_H

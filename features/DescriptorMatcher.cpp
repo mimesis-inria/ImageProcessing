@@ -4,16 +4,16 @@
 #include <sofa/simulation/AnimateBeginEvent.h>
 #include <opencv2/features2d.hpp>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 SOFA_DECL_CLASS(DescriptorMatcher)
 
 int DescriptorMatcherClass =
-    core::RegisterObject("OpenCV component matching descriptors")
+		sofa::core::RegisterObject("OpenCV component matching descriptors")
         .add<DescriptorMatcher>();
 
 DescriptorMatcher::DescriptorMatcher()
@@ -104,7 +104,7 @@ void DescriptorMatcher::update()
   {
     for (std::vector<cv::DMatch>& matchVec : m_matches)
     {
-      vec->push_back(helper::SVector<common::cvDMatch>());
+			vec->push_back(sofa::helper::SVector<common::cvDMatch>());
       for (cv::DMatch& match : matchVec)
         vec->back().push_back(common::cvDMatch(match));
     }
@@ -175,7 +175,7 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   }
 }
 
-void DescriptorMatcher::matcherTypeChanged(core::objectmodel::BaseObject*)
+void DescriptorMatcher::matcherTypeChanged(sofa::core::objectmodel::BaseObject*)
 {
   for (size_t i = 0; i < MatcherType_COUNT; ++i)
   {
@@ -189,6 +189,6 @@ void DescriptorMatcher::matcherTypeChanged(core::objectmodel::BaseObject*)
   }
 }
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

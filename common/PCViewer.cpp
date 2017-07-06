@@ -5,16 +5,14 @@
 #include <sofa/helper/system/gl.h>
 #include <sofa/helper/system/glut.h>
 
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
 {
 SOFA_DECL_CLASS(PCViewer)
 
 int PCViewerClass =
-    core::RegisterObject("component to visualize pointclouds in Sofa")
+		sofa::core::RegisterObject("component to visualize pointclouds in Sofa")
         .add<PCViewer>();
 
 PCViewer::PCViewer()
@@ -36,13 +34,13 @@ void PCViewer::init()
 void PCViewer::update()
 {
 	m_positions = d_positions.getValue();
-	const helper::vector<Vec3b>& c = d_colors.getValue();
+	const sofa::helper::vector<Vec3b>& c = d_colors.getValue();
   m_colors.resize(c.size());
   for (size_t i = 0; i < c.size(); ++i)
     m_colors[i].set(c[i][2] / 255.0f, c[i][1] / 255.0f, c[i][0] / 255.0f, 1.0f);
 }
 
-void PCViewer::computeBBox(const core::ExecParams* params, bool)
+void PCViewer::computeBBox(const sofa::core::ExecParams* params, bool)
 {
   static const double max_double = std::numeric_limits<double>::max();
 
@@ -67,7 +65,7 @@ void PCViewer::computeBBox(const core::ExecParams* params, bool)
       params, sofa::defaulttype::TBoundingBox<double>(minBBox, maxBBox));
 }
 
-void PCViewer::draw(const core::visual::VisualParams*)
+void PCViewer::draw(const sofa::core::visual::VisualParams*)
 {
 	glPointSize(d_size.getValue());
 	glDisable(GL_LIGHTING);
@@ -75,7 +73,7 @@ void PCViewer::draw(const core::visual::VisualParams*)
 
 	if (d_colors.isSet())
 	{
-		const helper::vector<Vec3b>& colors = d_colors.getValue();
+		const sofa::helper::vector<Vec3b>& colors = d_colors.getValue();
 		for (size_t i = 0; i < m_positions.size(); ++i)
 		{
 			Vector3 pt = m_positions[i];
@@ -110,5 +108,4 @@ void PCViewer::draw(const core::visual::VisualParams*)
 
 void PCViewer::reinit() { update(); }
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor

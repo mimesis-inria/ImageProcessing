@@ -1,10 +1,10 @@
 #include "Segmenter2D.h"
 #include <opencv2/highgui.hpp>
-namespace sofa
-{
-namespace OR
+namespace sofaor
 {
 namespace processor
+{
+namespace features
 {
 /// Simple Mouse FSM:
 ///        LDown     +--------+     RUp
@@ -91,13 +91,13 @@ void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
 		case cv::EVENT_LBUTTONUP:
     {
 			std::cout << "STOPPED" << std::endl;
-			helper::vector<defaulttype::Vec2i>* regionsPoly =
+			sofa::helper::vector<sofa::defaulttype::Vec2i>* regionsPoly =
           d_regionPoly.beginEdit();
 			regionsPoly->clear();
 			regionsPoly->reserve(m_poly.size());
       for (const cv::Point2i& pt : m_poly)
 			{
-				regionsPoly->push_back(defaulttype::Vec2i(pt.x, pt.y));
+				regionsPoly->push_back(sofa::defaulttype::Vec2i(pt.x, pt.y));
 				std::cout << pt.x << " " << pt.y << " ";
 			}
 			std::cout << std::endl << std::endl;
@@ -119,6 +119,6 @@ void Segmenter2D::mouseCallback(int event, int x, int y, int flags)
 		(this->*m_activeState)(event, x, y, flags);
 }
 
+}  // namespace features
 }  // namespace processor
-}  // namespace OR
-}  // namespace sofa
+}  // namespace sofaor
