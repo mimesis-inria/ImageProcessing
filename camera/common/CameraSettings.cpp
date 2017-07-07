@@ -541,6 +541,75 @@ void CameraSettings::buildFromCamPosAndImageCorners()
 	d_f = f;
 	d_translate2D = Matrix3(Vector3(1, 0, u0),Vector3(0, 1, v0),Vector3(0, 0, 1));
 	d_scale2D = Matrix3(Vector3(fu, 0, 0),Vector3(0, fv, 0),Vector3(0, 0, 1));
+
+	composeCV();
+	composeM();
+	composeGL();
+}
+
+void CameraSettings::buildFromIntrinsicCamPosLookAtAndUpVector()
+{
+	Vector3 up, fwd, right;
+	fwd = d_lookAt.getValue() - d_t.getValue();
+	fwd.normalize();
+
+	up = d_upVector.getValue().normalized();
+	right = up.cross(fwd).normalized();
+
+	Matrix3 R(right.normalized(), up.normalized(), fwd.normalized());
+	//			R.transpose();
+	d_R.setValue(R);
+
+	decomposeCV();
+	composeM();
+	composeGL();
+}
+
+void CameraSettings::buildFromIntrinsicCamPosUpVectorAndFwdVector()
+{
+	std::cout << "setting calibration from K, t, up and lookAt" << std::endl;
+	Vector3 right(d_upVector.getValue().normalized().cross(
+									d_fwdVector.getValue().normalized()));
+	Matrix3 R(right.normalized(), d_fwdVector.getValue().normalized(),
+						d_upVector.getValue().normalized());
+	//			R.transpose();
+	d_R.setValue(R);
+
+	decomposeCV();
+	composeM();
+	composeGL();
+}
+
+void CameraSettings::buildFromM()
+{
+	decomposeM();
+	composeCV();
+	composeGL();
+}
+
+void CameraSettings::buildFromKRT()
+{
+	decomposeCV();
+	composeM();
+	composeGL();
+}
+
+void CameraSettings::buildFromOpenGL()
+{
+	decomposeGL();
+	composeM();
+}
+
+void CameraSettings::buildFromOpenGLContext()
+{
+	Matrix4 p, m;
+	std::cout << "initializing from Opengl's default settings" << std::endl;
+	glGetDoublev(GL_PROJECTION_MATRIX, p.ptr());
+	glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
+	d_glProjection.setValue(p);
+	d_glModelview.setValue(m);
+	decomposeGL();
+	composeM();
 }
 
 void CameraSettings::init()
@@ -575,70 +644,32 @@ void CameraSettings::init()
 
 	if (d_t.isSet() && d_K.isSet() && d_upVector.isSet() && d_lookAt.isSet())
 	{
-		Vector3 up, fwd, right;
-		fwd = d_lookAt.getValue() - d_t.getValue();
-		fwd.normalize();
-
-		up = d_upVector.getValue().normalized();
-		right = up.cross(fwd).normalized();
-
-		Matrix3 R(right.normalized(), up.normalized(), fwd.normalized());
-		//			R.transpose();
-		d_R.setValue(R);
-
-		decomposeCV();
-		composeM();
-		composeGL();
+		buildFromIntrinsicCamPosLookAtAndUpVector();
 	}
 	else if (d_t.isSet() && d_K.isSet() && d_upVector.isSet() &&
 					 d_fwdVector.isSet())
 	{
-		std::cout << "setting calibration from K, t, up and lookAt" << std::endl;
-		Vector3 right(d_upVector.getValue().normalized().cross(
-										d_fwdVector.getValue().normalized()));
-		Matrix3 R(right.normalized(), d_fwdVector.getValue().normalized(),
-							d_upVector.getValue().normalized());
-		//			R.transpose();
-		d_R.setValue(R);
-
-		decomposeCV();
-		composeM();
-		composeGL();
+		buildFromIntrinsicCamPosUpVectorAndFwdVector();
 	}
 	else if (d_3DCorners.isSet() && d_t.isSet())
 	{
 		this->buildFromCamPosAndImageCorners();
-		composeCV();
-		composeM();
-		composeGL();
 	}
 	else if (d_M.isSet())
 	{
-		decomposeM();
-		composeCV();
-		composeGL();
+		buildFromM();
 	}
 	else if (d_K.isSet() || d_R.isSet() || d_t.isSet())
 	{
-		decomposeCV();
-		composeM();
-		composeGL();
+		buildFromKRT();
 	}
 	else if (d_glProjection.isSet() || d_glModelview.isSet())
 	{
-		decomposeGL();
-		composeM();
+		buildFromOpenGL();
 	}
 	else
 	{
-		Matrix4 p, m;
-		std::cout << "initializing from Opengl's default settings" << std::endl;
-		glGetDoublev(GL_PROJECTION_MATRIX, p.ptr());
-		glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
-		d_glProjection.setValue(p);
-		d_glModelview.setValue(m);
-		decomposeGL();
-		composeM();
+		buildFromOpenGLContext();
 	}
 	recalculate3DCorners();
 
