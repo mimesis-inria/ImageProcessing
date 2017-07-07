@@ -84,8 +84,8 @@ class SolvePnP : public common::ImplicitDataEngine
 		addInput(&d_imagePoints);
 		addInput(&d_objectPoints);
 		addInput(&d_imgSize);
-		addOutput(&d_K);
-		addOutput(&d_distCoefs);
+		addInput(&d_K);
+		addInput(&d_distCoefs);
 
 		if (!(l_cam.get()))
 			msg_error(this->getName() + "::init()") << "Error: No camera link set. "
@@ -105,10 +105,10 @@ class SolvePnP : public common::ImplicitDataEngine
 			d_objectPoints;  ///< [INPUT] 3D points on the object
 
 	// OPTIONAL INPUT
-	sofa::Data<sofa::defaulttype::Vec2i> d_imgSize;  ///< image size to estimate K
-	sofa::Data<sofa::defaulttype::Matrix3> d_K;      ///< Intrinsic Guess
+	sofa::Data<sofa::defaulttype::Vec2i> d_imgSize;  ///< [INPUT] image size to estimate K
+	sofa::Data<sofa::defaulttype::Matrix3> d_K;      ///< [INPUT] Intrinsic Guess
 	sofa::Data<sofa::helper::vector<double> >
-			d_distCoefs;             ///< Distortion coefficients guess
+			d_distCoefs;             ///< [INPUT] Distortion coefficients guess
 	sofa::Data<int> d_pnpFlags;  ///< OpenCV's PNP flags
 };
 
