@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>SofaWidgets/ImageViewerWidget.qml</file>
-    </qresource>
-</RCC>
