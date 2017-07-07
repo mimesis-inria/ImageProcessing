@@ -19,11 +19,20 @@ namespace cam
 {
 namespace calib
 {
+/**
+ * @brief The SolvePnP class
+ *
+ * Estimates the pose of a camera relative to a 3D object by using a set of
+ * points on the object, and their 2D correspondances in the camera's image
+ *
+ * (see SolvePnP in http://docs.opencv.org/3.2.0/d9/d0c/group__calib3d.html
+ * for details)
+ */
 class SolvePnP : public common::ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<SolvePnP, CameraSettings,
-																							sofa::BaseLink::FLAG_STOREPATH |
-																									sofa::BaseLink::FLAG_STRONGLINK>
+	typedef sofa::core::objectmodel::SingleLink<
+			SolvePnP, CameraSettings,
+			sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
  public:
@@ -87,18 +96,20 @@ class SolvePnP : public common::ImplicitDataEngine
 
 	void update();
 
-	// Camera settings to update
-	CamSettings l_cam;
+	CamSettings l_cam;  ///< Camera settings to update
 
 	// INPUTS
-	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector2> > d_imagePoints;
-	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> > d_objectPoints;
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector2> >
+			d_imagePoints;  ///< [INPUT] 2D points in the image
+	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> >
+			d_objectPoints;  ///< [INPUT] 3D points on the object
 
 	// OPTIONAL INPUT
-	sofa::Data<sofa::defaulttype::Vec2i> d_imgSize;
-	sofa::Data<sofa::defaulttype::Matrix3> d_K;
-	sofa::Data<sofa::helper::vector<double> > d_distCoefs;
-	sofa::Data<int> d_pnpFlags;
+	sofa::Data<sofa::defaulttype::Vec2i> d_imgSize;  ///< image size to estimate K
+	sofa::Data<sofa::defaulttype::Matrix3> d_K;      ///< Intrinsic Guess
+	sofa::Data<sofa::helper::vector<double> >
+			d_distCoefs;             ///< Distortion coefficients guess
+	sofa::Data<int> d_pnpFlags;  ///< OpenCV's PNP flags
 };
 
 }  // namespace calib

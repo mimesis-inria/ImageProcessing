@@ -20,11 +20,16 @@ namespace processor
 {
 namespace cam
 {
+/**
+ * @brief The FeatureTriangulator class
+ *
+ * Triangulates a set of two 2D point matches to get their 3D position.
+ */
 class FeatureTriangulator : public common::ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<FeatureTriangulator, StereoSettings,
-																							sofa::BaseLink::FLAG_STOREPATH |
-																									sofa::BaseLink::FLAG_STRONGLINK>
+	typedef sofa::core::objectmodel::SingleLink<
+			FeatureTriangulator, StereoSettings,
+			sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
 			StereoCamSettings;
 	typedef sofa::defaulttype::Vec<3, uint8_t> Vec3b;
 	typedef sofa::defaulttype::Vec3d Vec3d;
@@ -38,17 +43,19 @@ class FeatureTriangulator : public common::ImplicitDataEngine
 
   void init();
   void update();
-	// DATA
-	sofa::Data<bool> d_rectify;
 
 	// INPUTS
-	StereoCamSettings l_cam;
-	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL;
-	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR;
-	sofa::Data<sofa::helper::vector<common::cvDMatch> > d_matches;
+	StereoCamSettings l_cam;  ///< StereoSettings component holding the two camera
+														/// settings and the fundamental matrix
+	sofa::Data<sofa::helper::vector<common::cvKeypoint> >
+			d_keypointsL;  ///< [INPUT] reference camera's keypoints
+	sofa::Data<sofa::helper::vector<common::cvKeypoint> >
+			d_keypointsR;  ///< [INPUT] second camera's keypoints
+	sofa::Data<sofa::helper::vector<common::cvDMatch> >
+			d_matches;  ///< [INPUT] matches between the keypoints, if not ordered
 
-  // OUTPUTS
-	sofa::Data<sofa::helper::vector<Vec3d> > d_pointCloud;
+	sofa::Data<sofa::helper::vector<Vec3d> >
+			d_pointCloud;  ///< [OUTPUT] triangulated 3D point cloud
 
  private:
   cv::Mat_<double> R;

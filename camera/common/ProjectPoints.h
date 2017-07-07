@@ -14,11 +14,17 @@ namespace processor
 {
 namespace cam
 {
+/**
+ * @brief The ProjectPoints class
+ *
+ * Projects a 2D point cloud in 3D or vice-versa using a linked CameraSettings
+ * component
+ */
 class ProjectPoints : public common::ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<ProjectPoints, CameraSettings,
-																							sofa::BaseLink::FLAG_STOREPATH |
-																									sofa::BaseLink::FLAG_STRONGLINK>
+	typedef sofa::core::objectmodel::SingleLink<
+			ProjectPoints, CameraSettings,
+			sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
 	typedef typename sofa::defaulttype::Vector3 Vector3;
@@ -32,7 +38,9 @@ class ProjectPoints : public common::ImplicitDataEngine
 											 "link to CameraSettings component containing and "
 											 "maintaining the camera's parameters")),
 				d_2Dto3D(initData(&d_2Dto3D, true, "to3D", "if false, 3D to 2D")),
-				d_depth(initData(&d_depth, -1.0, "depth", "default is -1 (retrieves depth from fz in camSettings)")),
+				d_depth(
+						initData(&d_depth, -1.0, "depth",
+										 "default is -1 (retrieves depth from fz in camSettings)")),
 				d_Pts3D(initData(&d_Pts3D, "points3D", "3D points")),
 				d_Pts2D(initData(&d_Pts2D, "points2D", "2D points"))
 	{
@@ -76,11 +84,14 @@ class ProjectPoints : public common::ImplicitDataEngine
 		}
 	}
 
-	CamSettings l_cam;
-	sofa::Data<bool> d_2Dto3D;
-	sofa::Data<double> d_depth;
-	sofa::Data<sofa::helper::vector<Vector3> > d_Pts3D;
-	sofa::Data<sofa::helper::vector<Vector2> > d_Pts2D;
+	CamSettings l_cam;           ///< Linked CameraSettings
+	sofa::Data<bool> d_2Dto3D;   ///< projection direction (2Dto3D or 3Dto2D)
+	sofa::Data<double> d_depth;  ///< focal distance for 2Dto3D projection (-1 to
+															 /// take CameraSettings focal distance)
+	sofa::Data<sofa::helper::vector<Vector3> >
+			d_Pts3D;  ///< [INPUT / OUTPUT] set of 3D points
+	sofa::Data<sofa::helper::vector<Vector2> >
+			d_Pts2D;  ///< [INPUT / OUTPUT] set of 2D points
 };
 
 }  // namespace cam

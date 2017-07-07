@@ -18,10 +18,7 @@ int FeatureTriangulatorClass =
         .add<FeatureTriangulator>();
 
 FeatureTriangulator::FeatureTriangulator()
-		: d_rectify(initData(
-          &d_rectify, false, "rectify",
-          "if set to true, points will be rectified before triangulating")),
-			l_cam(initLink("cam",
+		: l_cam(initLink("cam",
 										 "link to CameraSettings component containing and "
 										 "maintaining the camera's parameters")),
 			d_keypointsL(initData(&d_keypointsL, "keypoints1",

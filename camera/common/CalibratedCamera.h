@@ -23,12 +23,18 @@ namespace processor
 {
 namespace cam
 {
+/**
+ * @brief The CalibratedCamera class
+ *
+ * This component gets / sets OpenGL parameters from / to a linked
+ * CameraSettings component, and modifies the OpenGL view in SOFA
+ */
 class CalibratedCamera : public common::ImplicitDataEngine,
 												 public sofa::core::visual::VisualManager
 {
-	typedef sofa::core::objectmodel::SingleLink<CalibratedCamera, CameraSettings,
-																							sofa::BaseLink::FLAG_STOREPATH |
-																									sofa::BaseLink::FLAG_STRONGLINK>
+	typedef sofa::core::objectmodel::SingleLink<
+			CalibratedCamera, CameraSettings,
+			sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
 	typedef typename sofa::defaulttype::Vector3 Vector3;
@@ -65,6 +71,8 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 																					 "to define one";
 	}
 
+	/// sets the correct GL params for drawing and displays the camera gizmo if
+	/// drawGizmo=true
 	void preDrawScene(sofa::core::visual::VisualParams* vparams)
 	{
 		if (!d_freeProj.getValue())
@@ -158,12 +166,13 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		if (!d_freeCam.getValue() && !d_freeProj.getValue())
 		{
 			if (l_cam->isXRay())
-				glDepthRange(1,0);
+				glDepthRange(1, 0);
 			else
-				glDepthRange(0,1);
+				glDepthRange(0, 1);
 		}
 	}
 
+	/// Restores initial GL parameters
 	void postDrawScene(sofa::core::visual::VisualParams* /*vp*/)
 	{
 		if (!d_freeProj.getValue())
@@ -178,6 +187,9 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		}
 	}
 
+	/// Overriden implementation of ImplicitDataEngine's handleEvent
+	/// Adds a hook on the C-u keyboard shortcut to set GL params in
+	/// CameraSettings
 	virtual void handleEvent(sofa::core::objectmodel::Event* e)
 	{
 		if (sofa::core::objectmodel::KeyreleasedEvent::checkEventType(e))
@@ -191,10 +203,11 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		ImplicitDataEngine::handleEvent(e);
 	}
 
-	CamSettings l_cam;
-	sofa::Data<bool> d_freeCam;
-	sofa::Data<bool> d_freeProj;
-	sofa::Data<bool> d_drawGizmo;
+	CamSettings l_cam;           ///< The linked CameraSettings component
+	sofa::Data<bool> d_freeCam;  ///< locks / unlocks the modelview in OpenGL
+	sofa::Data<bool>
+			d_freeProj;  ///< set / unset CameraSettings intrinsic params in OpenGL
+	sofa::Data<bool> d_drawGizmo;  ///< draws / hides the camera gizmo
 
  private:
 	bool m_storeMatrices;

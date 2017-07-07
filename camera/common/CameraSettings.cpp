@@ -19,7 +19,8 @@ int CameraSettingsClass =
 				"transformations")
 				.add<CameraSettings>();
 
-sofa::defaulttype::Vector2 CameraSettings::get2DFrom3DPosition(const Vector3& pt)
+sofa::defaulttype::Vector2 CameraSettings::get2DFrom3DPosition(
+		const Vector3& pt)
 {
 	const Mat3x4d& M = d_M.getValue();
 	double rx = M[0][0] * pt[0] + M[0][1] * pt[1] + M[0][2] * pt[2] + M[0][3];
@@ -29,8 +30,9 @@ sofa::defaulttype::Vector2 CameraSettings::get2DFrom3DPosition(const Vector3& pt
 	return Vector2(rx, ry) * 1.0 / rz;
 }
 
-sofa::defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x, double y,
-																												 double f)
+sofa::defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x,
+																															 double y,
+																															 double f)
 {
 	Matrix3 K = d_K.getValue();
 	Matrix3 R = d_R.getValue();
@@ -46,7 +48,7 @@ sofa::defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x, double 
 }
 
 sofa::defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(const Vector2& p,
-																												 double f)
+																															 double f)
 {
 	return get3DFrom2DPosition(p[0], p[1], f);
 }
@@ -87,7 +89,8 @@ void CameraSettings::setProjectionMatrix(const Mat3x4d& M)
 	recalculate3DCorners();
 }
 
-const sofa::defaulttype::Matrix3& CameraSettings::getIntrinsicCameraMatrix() const
+const sofa::defaulttype::Matrix3& CameraSettings::getIntrinsicCameraMatrix()
+		const
 {
 	return d_K.getValue();
 }
@@ -105,7 +108,8 @@ void CameraSettings::setIntrinsicCameraMatrix(const Matrix3& K, bool update)
 	recalculate3DCorners();
 }
 
-const sofa::helper::vector<double>& CameraSettings::getDistortionCoefficients() const
+const sofa::helper::vector<double>& CameraSettings::getDistortionCoefficients()
+		const
 {
 	return d_distCoefs.getValue();
 }
@@ -277,16 +281,8 @@ void CameraSettings::set2DTranslationMatrix(const Matrix3& translation2D)
 	recalculate3DCorners();
 }
 
-bool CameraSettings::isXRay() const
-{
-	return d_isXRay.getValue();
-}
-void CameraSettings::setXRay(bool isXray)
-{
-	d_isXRay.setValue(isXray);
-}
-
-
+bool CameraSettings::isXRay() const { return d_isXRay.getValue(); }
+void CameraSettings::setXRay(bool isXray) { d_isXRay.setValue(isXray); }
 
 void CameraSettings::decomposeK(const Matrix3& K)
 {
@@ -473,14 +469,15 @@ void CameraSettings::recalculate3DCorners()
 
 /// Projects a point p on a plane defined by a Point A and a normal n
 sofa::defaulttype::Vector3 orthoProj(const sofa::defaulttype::Vector3& p,
-															 const sofa::defaulttype::Vector3& A,
-															 const sofa::defaulttype::Vector3& n)
+																		 const sofa::defaulttype::Vector3& A,
+																		 const sofa::defaulttype::Vector3& n)
 {
 	double lambda = ((A * n) - (p * n)) / (n * n);
 	return p + lambda * n;
 }
 
-double length(const sofa::defaulttype::Vector3& a, const sofa::defaulttype::Vector3& b)
+double length(const sofa::defaulttype::Vector3& a,
+							const sofa::defaulttype::Vector3& b)
 {
 	return sqrt((a.x() - b.x()) * (a.x() - b.x()) +
 							(a.y() - b.y()) * (a.y() - b.y()) +
@@ -539,8 +536,9 @@ void CameraSettings::buildFromCamPosAndImageCorners()
 	cam.getCenter() = c;
 
 	d_f = f;
-	d_translate2D = Matrix3(Vector3(1, 0, u0),Vector3(0, 1, v0),Vector3(0, 0, 1));
-	d_scale2D = Matrix3(Vector3(fu, 0, 0),Vector3(0, fv, 0),Vector3(0, 0, 1));
+	d_translate2D =
+			Matrix3(Vector3(1, 0, u0), Vector3(0, 1, v0), Vector3(0, 0, 1));
+	d_scale2D = Matrix3(Vector3(fu, 0, 0), Vector3(0, fv, 0), Vector3(0, 0, 1));
 
 	composeCV();
 	composeM();
@@ -569,7 +567,7 @@ void CameraSettings::buildFromIntrinsicCamPosUpVectorAndFwdVector()
 {
 	std::cout << "setting calibration from K, t, up and lookAt" << std::endl;
 	Vector3 right(d_upVector.getValue().normalized().cross(
-									d_fwdVector.getValue().normalized()));
+			d_fwdVector.getValue().normalized()));
 	Matrix3 R(right.normalized(), d_fwdVector.getValue().normalized(),
 						d_upVector.getValue().normalized());
 	//			R.transpose();
@@ -638,9 +636,7 @@ void CameraSettings::init()
 
 	addOutput(&d_3DCorners);
 
-
-	if (!d_imageSize.isSet())
-		d_imageSize.setValue(Vec2i(1280, 720));
+	if (!d_imageSize.isSet()) d_imageSize.setValue(Vec2i(1280, 720));
 
 	if (d_t.isSet() && d_K.isSet() && d_upVector.isSet() && d_lookAt.isSet())
 	{

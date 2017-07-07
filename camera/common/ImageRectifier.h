@@ -13,11 +13,16 @@ namespace processor
 {
 namespace cam
 {
+/**
+ * @brief The ImageRectifier class
+ *
+ * Rectifies a given image frame using the linked CameraSettings parameters
+ */
 class ImageRectifier : public ImageFilter
 {
-	typedef sofa::core::objectmodel::SingleLink<ImageRectifier, CameraSettings,
-																							sofa::BaseLink::FLAG_STOREPATH |
-																									sofa::BaseLink::FLAG_STRONGLINK>
+	typedef sofa::core::objectmodel::SingleLink<
+			ImageRectifier, CameraSettings,
+			sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
  public:
@@ -46,7 +51,7 @@ class ImageRectifier : public ImageFilter
 		cv::undistort(in, out, cam, l_cam->getDistortionCoefficients());
   }
 
-	CamSettings l_cam;
+	CamSettings l_cam;  ///< linked CameraSettings component
 };
 
 SOFA_DECL_CLASS(ImageRectifier)

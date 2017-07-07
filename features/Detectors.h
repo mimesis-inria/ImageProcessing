@@ -43,7 +43,7 @@ struct SimpleBlobDetector : BaseDetector
 	void toggleVisible(bool);
 	void init();
 
-	virtual void registerData(ImageFilter *parent)
+	virtual void registerData(ImageFilter* parent)
 	{
 		parent->registerData(&minThreshold, 0, 255, 1);
 		parent->registerData(&maxThreshold, 0, 255, 1);
@@ -58,7 +58,7 @@ struct SimpleBlobDetector : BaseDetector
 	}
 
 	virtual void detect(const common::cvMat& img, const common::cvMat& mask,
-																	std::vector<cv::KeyPoint>& keypoints)
+											std::vector<cv::KeyPoint>& keypoints)
 	{
 		// Setup SimpleBlobDetector parameters.
 		cv::SimpleBlobDetector::Params params;
@@ -83,24 +83,25 @@ struct SimpleBlobDetector : BaseDetector
 		params.filterByInertia = filterByInertia.getValue();
 		params.minInertiaRatio = minInertiaRatio.getValue();
 
-	#if CV_MAJOR_VERSION < 3  // If you are using OpenCV 2
+#if CV_MAJOR_VERSION < 3  // If you are using OpenCV 2
 
 		// Set up detector with params
 		cv::SimpleBlobDetector detector(params);
 
-	// You can use the detector this way
-	detector.detect( img, keypoints);
+		// You can use the detector this way
+		detector.detect(img, keypoints);
 
-	#else
+#else
 
 		// Set up detector with params
-		cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
+		cv::Ptr<cv::SimpleBlobDetector> detector =
+				cv::SimpleBlobDetector::create(params);
 
 		// SimpleBlobDetector::create creates a smart pointer.
 		// So you need to use arrow ( ->) instead of dot ( . )
 		detector->detect(img, keypoints, mask);
 
-	#endif
+#endif
 	}
 
 	virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
@@ -143,9 +144,8 @@ struct ShiTomasiDetector : BaseDetector
     parent->registerData(&blockSize, 0, 20, 1);
   }
 
-  virtual void detect(const common::cvMat&,
-                                         const common::cvMat&,
-                                         std::vector<cv::KeyPoint>&)
+	virtual void detect(const common::cvMat&, const common::cvMat&,
+											std::vector<cv::KeyPoint>&)
   {
     msg_error("ShiTomasiDetector::detect()") << "Not Implemented Yet";
   }
@@ -346,7 +346,6 @@ struct BRIEFDetector : BaseDetector
 
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
 
-
 struct SIFTDetector : BaseDetector
 {
 	SIFTDetector(sofa::core::objectmodel::BaseObject* c);
@@ -415,7 +414,7 @@ struct DAISYDetector : BaseDetector
 	sofa::Data<bool> use_orientation;
 };
 
-#endif // SOFAOR_OPENCV_CONTRIB_ENABLED
+#endif  // SOFAOR_OPENCV_CONTRIB_ENABLED
 
 }  // namespace features
 }  // namespace processor

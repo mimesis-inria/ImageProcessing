@@ -14,11 +14,17 @@ namespace processor
 {
 namespace cam
 {
+/**
+ * @brief The StereoSettings class
+ *
+ * Stores the links to the Two CameraSettings used for Stereoscopy and the
+ * camera's Essential and Fundamental matrix
+ */
 class StereoSettings : public common::ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<StereoSettings, CameraSettings,
-																							sofa::BaseLink::FLAG_STOREPATH |
-																									sofa::BaseLink::FLAG_STRONGLINK>
+	typedef sofa::core::objectmodel::SingleLink<
+			StereoSettings, CameraSettings,
+			sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
 			CamSettings;
 
  public:
@@ -29,59 +35,52 @@ class StereoSettings : public common::ImplicitDataEngine
  public:
 	SOFA_CLASS(StereoSettings, common::ImplicitDataEngine);
 
-	// StereoSettings ctor. All parameters are optional and can be set using
-	// calibration components or file loaders
+	/// StereoSettings ctor. All parameters are optional and can be set using
+	/// calibration components or file loaders
 	StereoSettings()
 			: l_cam1(
 						initLink("cam1", "link to the reference CameraSettings component")),
 				l_cam2(initLink("cam2", "link to the second CameraSettings component")),
 				d_F(initData(&d_F, "F", "Fundamental matrix")),
 				d_E(initData(&d_E, "E", "Essential matrix"))
-	//				d_R(initData(&d_R, "R", "Rotation matrix from camera1
-	//to
-	// camera2")),
-	//				d_t(initData(&d_t, "t", "tranlsation vector from camera1
-	//to
-	// camera2"))
 	{
 	}
 
 	~StereoSettings() {}
 	void init();
 	void update() {}
-	// returns the 3D position of a pair of 2D matches 'X, Y'
+	/// returns the 3D position of a pair of 2D matches 'X, Y'
 	Vector3 triangulate(const Vector2& x1, const Vector2& x2);
+	/// returns the 3D position of a pair of 2D matches 'X, Y'
 	Vector3 triangulate(const cv::Point2d& x1, const cv::Point2d& x2);
-	// returns the 3D position of
-	// a pair of 2D matches 'X, Y'
+	/// returns the 3D position of a pair of 2D matches 'X, Y'
 	void triangulate(const Vector2& x1, const Vector2& x2, Vector3& w);
-	void triangulate(const cv::Point2d& x1, const cv::Point2d& x2,
-									 Vector3& w);
+	/// returns the 3D position of a pair of 2D matches 'X, Y'
+	void triangulate(const cv::Point2d& x1, const cv::Point2d& x2, Vector3& w);
 
-	// Getters & setters for the private Data (also used as callbacks when
-	// modifying values in the GUI
+	/// Returns the Fundamental Matrix F
 	const Matrix3& getFundamentalMatrix();
+	/// sets the Fundamental Matrix F
 	void setFundamentalMatrix(const Matrix3& F);
 
+	/// Returns the Essential Matrix E
 	const Matrix3& getEssentialMatrix();
+	/// Sets the Essential Matrix E
 	void setEssentialMatrix(const Matrix3& E);
 
-	//	const Matrix3& getRotationMatrix();
-	//	void setRotationMatrix(const Matrix3& R);
-
-	//	const Vector3& getTranslationVector();
-	//	void setTranslationVector(const Vector3& t);
-
+	/// returns the reference camera's settings
 	CameraSettings& getCamera1() { return *l_cam1.get(); }
+	/// returns the second camera's settings
 	CameraSettings& getCamera2() { return *l_cam2.get(); }
 
+	/// Recomputes F and E from the two CameraSettings
 	void recomputeFromCameras();
 
  private:
-	CamSettings l_cam1;
-	CamSettings l_cam2;
-	sofa::Data<Matrix3> d_F;
-	sofa::Data<Matrix3> d_E;
+	CamSettings l_cam1;       ///< Reference Cam
+	CamSettings l_cam2;       ///< Second cam
+	sofa::Data<Matrix3> d_F;  ///< Fundamental Mat
+	sofa::Data<Matrix3> d_E;  ///< Essential Mat
 
 	//	cv::Mat_<double> K1, K2;
 	cv::Mat_<double> P1, P2;
@@ -98,16 +97,6 @@ class StereoSettings : public common::ImplicitDataEngine
 		setEssentialMatrix(d_E.getValue());
 		this->checkData(false);
 	}
-	//	void RotationMatrixChanged(core::objectmodel::BaseObject*)
-	//	{
-	//		setRotationMatrix(d_R.getValue());
-	//		this->checkData(false);
-	//	}
-	//	void TranslationVectorChanged(core::objectmodel::BaseObject*)
-	//	{
-	//		setTranslationVector(d_t.getValue());
-	//		this->checkData(false);
-	//	}
 
  private:
 	cv::Mat_<double> iterativeLinearLSTriangulation(cv::Point3d u,

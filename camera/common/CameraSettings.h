@@ -221,11 +221,9 @@ class CameraSettings : public common::ImplicitDataEngine
 	/// sets the axis skew parameter (Always 0 in this implementation)
 	void setAxisSkew(double s);
 
-	/// returns true if the camera is an XRay device (if true, depth range needs
-	/// to be inverted when projecting in OpenGL)
+	/// returns true if the camera is an XRay device
 	bool isXRay() const;
-	/// sets whether the camera is an XRay device (if true, depth range needs
-	/// to be inverted when projecting in OpenGL)
+	/// sets whether the camera is an XRay device
 	void setXRay(bool isXray);
 
  private:
@@ -249,7 +247,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	sofa::Data<Vector2> d_zClip;       ///< zNear, zFar
 
 	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> >
-			d_3DCorners;  ///< 3D positions of the Image plane's corners
+			d_3DCorners;  ///< [OUTPUT] 3D positions of the Image plane's corners
 
 	sofa::Data<Vector3> d_upVector;  ///< camera's up vector
 
