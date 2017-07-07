@@ -22,6 +22,9 @@ namespace processor
 {
 namespace cam
 {
+/**
+ * \brief Code related to mono / stereo Camera calibration, and pose estimation
+ */
 namespace calib
 {
 class CalibLoader : public common::ImplicitDataEngine

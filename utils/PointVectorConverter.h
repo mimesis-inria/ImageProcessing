@@ -59,12 +59,13 @@ class PointVectorConverter : public common::ImplicitDataEngine
 	static std::string templateName(
 			const PointVectorConverter<SrcType, DstType>* = NULL);
 
+	CamSettings l_cam;
+
 	// INPUTS
 	sofa::Data<sofa::helper::vector<SrcType> > d_src;
 	// OUTPUTS
 	sofa::Data<sofa::helper::vector<DstType> > d_dst;
 
-	CamSettings l_cam;
 	sofa::Data<double> d_depth;
 };
 

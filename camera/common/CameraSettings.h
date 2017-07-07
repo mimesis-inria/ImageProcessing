@@ -20,6 +20,9 @@ namespace sofaor
 {
 namespace processor
 {
+/**
+ * \brief Camera-related stuff
+ */
 namespace cam
 {
 class CameraSettings : public common::ImplicitDataEngine

@@ -417,8 +417,8 @@ struct DAISYDetector : BaseDetector
 
 #endif // SOFAOR_OPENCV_CONTRIB_ENABLED
 
-}  // namespace sofa
-}  // namespace OR
+}  // namespace features
 }  // namespace processor
+}  // namespace sofaor
 
 #endif  // SOFA_OR_PROCESSOR_DETECTORS_H

@@ -3,6 +3,10 @@
 
 namespace sofaor
 {
+/**
+ * \brief Data processing library
+ *  provides 2D / volumic image, point cloud and sensors data processing algorithms to extract simulation-relevant data.
+ */
 namespace processor
 {
 // Here are just several convenient functions to help user to know what contains
