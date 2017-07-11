@@ -45,7 +45,7 @@ class VecSliderManager;
 class DSM;
 
 /**
- *  \brief provides UI mechanisms for image filters
+ *  \brief provides a Debug UI mechanism for image filters
  *
  * Implementation good rules: @see ImplicitDataEngine for additional impl rules
  *
@@ -58,6 +58,11 @@ class DSM;
  *    activateMouseCallback();
  *
  *    ImageFilter::init(); // Always call at the end of init()
+ * }
+ *
+ * void applyFilter(const cv::Mat& in, cv::Mat& out, bool **debug**)
+ * {
+ *   // code here your filter's behavior
  * }
  *
  * // optional
@@ -82,6 +87,15 @@ class ImageFilter : public common::ImplicitDataEngine
  public:
   SOFA_CLASS(ImageFilter, common::ImplicitDataEngine);
 
+	/**
+	 * @brief ImageFilter
+	 * @param outputImage set to false if you don't want this filter to output an
+	 * image useful for filters
+	 * such as FeatureDetectors / matchers, where we want to visualize the
+	 * resulting image in
+	 * the debug window, but we don't need the debug output for further
+	 * processing)
+	 */
   ImageFilter(bool outputImage = true);
   virtual ~ImageFilter();
 
@@ -89,7 +103,13 @@ class ImageFilter : public common::ImplicitDataEngine
   virtual void update();
   virtual void reinit();
 
-  // Implement the filter in this method;
+	/**
+	 * Implement the filter's behavior in this method;
+	 * @param[in] in input image matrix
+	 * @param[out] output image matrix to modify
+	 * @param debug true if applyFilter is called from the mouse callback or from
+	 * a modified slider in the Debug UI
+	 */
   virtual void applyFilter(const cv::Mat& in, cv::Mat& out,
                            bool debug = false) = 0;
 
@@ -97,60 +117,117 @@ class ImageFilter : public common::ImplicitDataEngine
   void reinitDebugWindow();
 	void refreshDebugWindow();
 
-	sofa::Data<common::cvMat> d_img;
-	sofa::Data<common::cvMat> d_img_out;
-	sofa::Data<bool> d_displayDebugWindow;
-	sofa::Data<bool> d_isActive;
+	sofa::Data<common::cvMat> d_img;        ///< [INPUT] image to process
+	sofa::Data<common::cvMat> d_img_out;    ///< [OUTPUT] processed image
+	sofa::Data<bool> d_displayDebugWindow;  ///< toggles the Debug UI
+	sofa::Data<bool> d_isActive;  ///< Whether the filter is performed or not
 
+	/// activates the mouse callback when mouse interaction is performed on the
+	/// image's debug UI
   void activateMouseCallback();
-  // Pass data to this methods to bind them to the OpenCV UI
+	/**
+	 *
+	 *
+	 * \fn void registerData(sofa::Data<bool>* data)
+	 *
+	 * \brief Pass data to @registerData to bind them to ImageFilter's debug UI
+	 *
+	 * @param[in] data the data to bind to a slider
+	 *
+	 */
 	void registerData(sofa::Data<bool>* data);
-	void registerData(sofa::Data<uchar>* data, uchar min, uchar max, uchar step);
-	void registerData(sofa::Data<int>* data, int min, int max, int step);
-	void registerData(sofa::Data<unsigned>* data, unsigned min, unsigned max,
-										unsigned step);
-	void registerData(sofa::Data<double>* data, double min, double max, double step);
-	void registerData(sofa::Data<float>* data, float min, float max, float step);
+
+	/// @see void registerData(sofa::Data<bool>* data)
 	void registerData(sofa::Data<sofa::helper::OptionsGroup>* data);
 
-	void registerData(sofa::Data<sofa::defaulttype::Vec2u>* data, unsigned min, unsigned max,
+	/**
+	 * \fn void registerData(sofa::Data<uchar>* data, uchar min, uchar max, uchar
+	 * step)
+	 *
+	 * \brief Pass data to @registerData to bind them to ImageFilter's debug UI
+	 *
+	 * @param[in] data the data to bind to a slider
+	 * @param[in] min the minimum value of the data
+	 * @param[in] max the maximum value of the data
+	 * @param[in] step the discretized interval for the slider
+	 *
+	 */
+	void registerData(sofa::Data<uchar>* data, uchar min, uchar max, uchar step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<int>* data, int min, int max, int step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<unsigned>* data, unsigned min, unsigned max,
 										unsigned step);
-	void registerData(sofa::Data<sofa::defaulttype::Vec3u>* data, unsigned min, unsigned max,
-										unsigned step);
-	void registerData(sofa::Data<sofa::defaulttype::Vec4u>* data, unsigned min, unsigned max,
-										unsigned step);
-
-	void registerData(sofa::Data<sofa::defaulttype::Vec2i>* data, int min, int max, int step);
-	void registerData(sofa::Data<sofa::defaulttype::Vec3i>* data, int min, int max, int step);
-	void registerData(sofa::Data<sofa::defaulttype::Vec4i>* data, int min, int max, int step);
-
-	void registerData(sofa::Data<sofa::defaulttype::Vec2f>* data, float min, float max,
-										float step);
-	void registerData(sofa::Data<sofa::defaulttype::Vec3f>* data, float min, float max,
-										float step);
-	void registerData(sofa::Data<sofa::defaulttype::Vec4f>* data, float min, float max,
-										float step);
-
-	void registerData(sofa::Data<sofa::defaulttype::Vec2d>* data, double min, double max,
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<double>* data, double min, double max,
 										double step);
-	void registerData(sofa::Data<sofa::defaulttype::Vec3d>* data, double min, double max,
-										double step);
-	void registerData(sofa::Data<sofa::defaulttype::Vec4d>* data, double min, double max,
-										double step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<float>* data, float min, float max, float step);
 
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec2u>* data, unsigned min,
+										unsigned max, unsigned step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec3u>* data, unsigned min,
+										unsigned max, unsigned step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec4u>* data, unsigned min,
+										unsigned max, unsigned step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec2i>* data, int min,
+										int max, int step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec3i>* data, int min,
+										int max, int step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec4i>* data, int min,
+										int max, int step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec2f>* data, float min,
+										float max, float step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec3f>* data, float min,
+										float max, float step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec4f>* data, float min,
+										float max, float step);
+
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec2d>* data, double min,
+										double max, double step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec3d>* data, double min,
+										double max, double step);
+	/// @see void registerData(sofa::Data<uchar>* data, uchar min, uchar max,
+	/// uchar step)
+	void registerData(sofa::Data<sofa::defaulttype::Vec4d>* data, double min,
+										double max, double step);
+
+	/// unregisters all data passed through @see registerData() for the Debug UI
 	void unregisterAllData();
 
-	void drawImage();
-
  protected:
+	/// mouse callback (if activated through @see activateMouseCallback()
   virtual void mouseCallback(int, int, int, int) {}
-  static unsigned m_window_uid;
-  cv::Mat m_debugImage;
+	static unsigned m_window_uid;  ///< Unique identifier for the Debug UI window
+	cv::Mat m_debugImage;
 
-  // if set to false, will not write in the output image (useful for filters
-  // such as FeatureDetectors / matchers, where we want to visualize filters in
-  // the debug window, but we don't need the debug output for other filters)
-  bool m_outputImage;
+	bool m_outputImage;
   bool m_isMouseCallbackActive;
 
  private:
