@@ -101,10 +101,7 @@ void ImageFilter::update()
 void ImageFilter::reinit()
 {
   if (m_displayDebugDataTracker.isDirty() && d_isActive.getValue())
-  {
-    reinitDebugWindow();
-    refreshDebugWindow();
-  }
+		refreshDebugWindow();
 
   // to set needsRefresh to true
   ImplicitDataEngine::reinit();
@@ -130,6 +127,7 @@ void ImageFilter::reinitDebugWindow()
 
 void ImageFilter::refreshDebugWindow()
 {
+	reinitDebugWindow();
   if (!d_displayDebugWindow.getValue()) return;
   applyFilter(d_img.getValue(), m_debugImage, true);
   if (m_debugImage.empty()) return;

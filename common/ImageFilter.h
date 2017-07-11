@@ -113,8 +113,8 @@ class ImageFilter : public common::ImplicitDataEngine
   virtual void applyFilter(const cv::Mat& in, cv::Mat& out,
                            bool debug = false) = 0;
 
-  // Creates the debugging window and its associated trackbars
-  void reinitDebugWindow();
+	/// Creates the Debug UI window if not created yet, sets its registered
+	/// trackbars, and activates the necessary callbacks
 	void refreshDebugWindow();
 
 	sofa::Data<common::cvMat> d_img;        ///< [INPUT] image to process
@@ -141,7 +141,7 @@ class ImageFilter : public common::ImplicitDataEngine
 	void registerData(sofa::Data<sofa::helper::OptionsGroup>* data);
 
 	/**
-	 * \fn void registerData(sofa::Data<uchar>* data, uchar min, uchar max, uchar
+	 * \fn void registerData(sofa::Data<uchar>* data, uchar min, uchar max, uchar\
 	 * step)
 	 *
 	 * \brief Pass data to @registerData to bind them to ImageFilter's debug UI
@@ -224,13 +224,13 @@ class ImageFilter : public common::ImplicitDataEngine
  protected:
 	/// mouse callback (if activated through @see activateMouseCallback()
   virtual void mouseCallback(int, int, int, int) {}
-	static unsigned m_window_uid;  ///< Unique identifier for the Debug UI window
-	cv::Mat m_debugImage;
-
-	bool m_outputImage;
-  bool m_isMouseCallbackActive;
 
  private:
+	bool m_outputImage;
+	static unsigned m_window_uid;
+	bool m_isMouseCallbackActive;
+	cv::Mat m_debugImage;
+	void reinitDebugWindow();
 	sofa::core::DataTracker m_displayDebugDataTracker;
 
 	std::vector<DSM*> m_params;

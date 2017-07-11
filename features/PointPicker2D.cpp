@@ -61,7 +61,6 @@ void PointPicker2D::computeEpipolarLines()
 		for (const cv::Vec3f& pt : lines)
 			epilines.push_back(sofa::defaulttype::Vec3f(pt.val));
 	}
-	m_picker->reinitDebugWindow();
 	m_picker->refreshDebugWindow();
 }
 

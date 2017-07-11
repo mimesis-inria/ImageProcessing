@@ -71,7 +71,6 @@ DescriptorMatcher::DescriptorMatcher()
                          true))
 {
   addAlias(&d_matches, "matches_out");
-  m_outputImage = false;
   sofa::helper::OptionsGroup* t = d_matcherType.beginEdit();
   t->setNames(MatcherType_COUNT, "FLANN", "BRUTEFORCE");
   t->setSelectedItem(0);

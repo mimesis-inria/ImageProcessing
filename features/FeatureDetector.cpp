@@ -61,7 +61,6 @@ FeatureDetector::FeatureDetector()
 {
   addAlias(&d_keypoints, "keypoints_out");
   addAlias(&d_descriptors, "descriptors_out");
-  m_outputImage = false;
 
   sofa::helper::OptionsGroup* t = d_detectMode.beginEdit();
   t->setNames(3, "DETECT_ONLY", "COMPUTE_ONLY", "DETECT_AND_COMPUTE");
