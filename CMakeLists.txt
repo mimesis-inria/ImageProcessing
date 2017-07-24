@@ -40,9 +40,15 @@ set(HEADER_FILES
   imgproc/AdaptiveThreshold.h
   imgproc/SimpleThreshold.h
   imgproc/MorphologyEx.h
-  imgproc/ImageConverter.h
+  imgproc/ConvertTo.h
+  imgproc/ConvertTo.inl
+  imgproc/CvtColor.h
   imgproc/ImageMask.h
   imgproc/TemplateMatcher.h
+  imgproc/AddWeighted.h
+  imgproc/Flip.h
+  imgproc/InRange.h
+  imgproc/CopyTo.h
 
   features/Detectors.h
   features/Matchers.h
@@ -91,9 +97,14 @@ set(SOURCE_FILES
   imgproc/AdaptiveThreshold.cpp
   imgproc/SimpleThreshold.cpp
   imgproc/MorphologyEx.cpp
-  imgproc/ImageConverter.cpp
+  imgproc/ConvertTo.cpp
+  imgproc/CvtColor.cpp
   imgproc/ImageMask.cpp
   imgproc/TemplateMatcher.cpp
+  imgproc/AddWeighted.cpp
+  imgproc/Flip.cpp
+  imgproc/InRange.cpp
+  imgproc/CopyTo.cpp
 
   features/Detectors.cpp
   features/Matchers.cpp
