@@ -66,7 +66,6 @@ void FrameViewer::init()
 
 void FrameViewer::update()
 {
-	std::cout << "FrameViewer::update()" << std::endl;
 }
 
 
