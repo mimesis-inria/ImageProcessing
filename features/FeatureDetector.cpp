@@ -35,7 +35,7 @@ namespace features
 SOFA_DECL_CLASS(FeatureDetector)
 
 int FeatureDetectorClass =
-		sofa::core::RegisterObject(
+    sofa::core::RegisterObject(
         "debug component to visualize images using OpenCV highgui")
         .add<FeatureDetector>();
 
@@ -73,7 +73,7 @@ FeatureDetector::FeatureDetector()
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
               ,
               "SIFT", "SURF", "DAISY"
-#endif // SOFAOR_OPENCV_CONTRIB_ENABLED
+#endif  // SOFAOR_OPENCV_CONTRIB_ENABLED
               );
   t->setSelectedItem("FAST");
   d_detectorType.endEdit();
@@ -90,7 +90,7 @@ FeatureDetector::FeatureDetector()
   m_detectors[SIFT] = new SIFTDetector(this);
   m_detectors[SURF] = new SURFDetector(this);
   m_detectors[DAISY] = new DAISYDetector(this);
-#endif // SOFAOR_OPENCV_CONTRIB_ENABLED
+#endif  // SOFAOR_OPENCV_CONTRIB_ENABLED
 }
 
 FeatureDetector::~FeatureDetector() {}
@@ -161,11 +161,14 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 
       _v.assign(arr, arr + d_keypoints.getValue().size());
     }
-    m_detectors[d_detectorType.getValue().getSelectedId()]->init();
-    m_detectors[d_detectorType.getValue().getSelectedId()]->detect(
-        in, d_mask.getValue(), _v);
-		msg_warning_when(_v.empty(), "FeatureDetector::update()") << "No Features detected";
+    cv::Mat m = d_mask.getValue();
+    if (d_mask.getValue().channels() != 1)
+      cv::cvtColor(d_mask.getValue(), m, cv::COLOR_BGR2GRAY);
 
+    m_detectors[d_detectorType.getValue().getSelectedId()]->init();
+    m_detectors[d_detectorType.getValue().getSelectedId()]->detect(in, m, _v);
+    msg_warning_when(_v.empty(), "FeatureDetector::update()")
+        << "No Features detected";
   }
   else if (detect == COMPUTE_ONLY)
   {
@@ -177,12 +180,14 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 
       _v.assign(arr, arr + d_keypoints.getValue().size());
     }
-		msg_warning_when(_v.empty(), "FeatureDetector::update()") << "No Features to describe";
-		_d = cv::Mat();
+    msg_warning_when(_v.empty(), "FeatureDetector::update()")
+        << "No Features to describe";
+    _d = cv::Mat();
     m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->compute(in, _v, _d);
-		msg_warning_when(!_d.rows, "FeatureDetector::update()") << "Couldn't describe features...";
-	}
+    msg_warning_when(!_d.rows, "FeatureDetector::update()")
+        << "Couldn't describe features...";
+  }
   else
   {
     if (in.empty()) return;
@@ -198,22 +203,24 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->detectAndCompute(
         in, d_mask.getValue(), _v, _d);
-		msg_warning_when(_v.empty(), "FeatureDetector::update()") << "Didn't detect any feature...";
-		msg_warning_when(!_d.rows, "FeatureDetector::update()") << "Couldn't describe features...";
-	}
+    msg_warning_when(_v.empty(), "FeatureDetector::update()")
+        << "Didn't detect any feature...";
+    msg_warning_when(!_d.rows, "FeatureDetector::update()")
+        << "Couldn't describe features...";
+  }
   if (d_displayDebugWindow.getValue())
   {
     in.copyTo(out);
-		if (in.depth() == CV_32F)
-		{
-			std::cout << "converting to 8bit" << std::endl;
-			out.convertTo(out, 0, 255.0);
-		}
-		if (out.channels() == 1)
-		{
-			std::cout << "converting from grayscale to BGR" << std::endl;
-			cv::cvtColor(out, out, CV_GRAY2BGR);
-		}
+    if (in.depth() == CV_32F)
+    {
+      std::cout << "converting to 8bit" << std::endl;
+      out.convertTo(out, 0, 255.0);
+    }
+    if (out.channels() == 1)
+    {
+      std::cout << "converting from grayscale to BGR" << std::endl;
+      cv::cvtColor(out, out, CV_GRAY2BGR);
+    }
 
     cv::drawKeypoints(in, _v, out, cv::Scalar(0, 255, 0), 1);
   }
