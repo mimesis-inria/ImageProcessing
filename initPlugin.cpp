@@ -20,17 +20,38 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#include <sofa/helper/system/config.h>
 #include "initPlugin.h"
+#include <sofa/helper/system/config.h>
 
 namespace sofaor
 {
 /**
  * \brief Data processing library
- *  provides 2D / volumic image, point cloud and sensors data processing algorithms to extract simulation-relevant data.
+ *  provides 2D / volumic image, point cloud and sensors data processing
+ * algorithms to extract simulation-relevant data.
  */
 namespace processor
 {
+/**
+ * \brief Feature detection & matching
+ *
+ * provides 2D feature detection, extraction and matching algorithms, mainly
+ * from OpenCV's feature2D and xfeature2D modules.
+ */
+namespace features
+{
+}  // namespace features
+
+/**
+ * \brief Image processing filters
+ *
+ * implements ImageFilter, and provides image filtering components such as
+ * Sobel, Canny etc.
+ */
+namespace imgproc
+{
+}  // namespace imgproc
+
 // Here are just several convenient functions to help user to know what contains
 // the plugin
 
@@ -55,17 +76,10 @@ void initExternalModule()
 const char* getModuleName() { return "ProcessOR"; }
 const char* getModuleVersion() { return "0.1"; }
 const char* getModuleLicense() { return ""; }
-const char* getModuleDescription()
-{
-  return "ProcessOR's Base module";
-}
+const char* getModuleDescription() { return "ProcessOR's Base module"; }
 
-const char* getModuleComponentList()
-{
-  return "";
-}
+const char* getModuleComponentList() { return ""; }
 
 }  // namespace processor
 }  // namespace sofaor
 ////////// BEGIN CLASS LIST //////////
-
