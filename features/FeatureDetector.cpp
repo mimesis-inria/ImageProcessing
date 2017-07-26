@@ -115,7 +115,6 @@ void FeatureDetector::init()
 
 void FeatureDetector::update()
 {
-  std::cout << getName() << std::endl;
   ImageFilter::update();
 
   switch (d_detectMode.getValue().getSelectedId())
@@ -144,7 +143,6 @@ void FeatureDetector::update()
       break;
     }
   }
-  std::cout << "end" << getName() << std::endl;
 }
 
 void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)

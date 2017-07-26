@@ -110,7 +110,7 @@ void PCViewer::draw(const sofa::core::visual::VisualParams*)
 		for (size_t i = 0; i < m_positions.size(); ++i)
 		{
 			Vector3 pt = m_positions[i];
-			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+            glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 			glVertex3f(pt.x(),
 								 pt.y(),
 								 pt.z());

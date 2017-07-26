@@ -66,6 +66,7 @@ set(HEADER_FILES
   utils/Vector2SSVector.h
   utils/Vector2SSVector.inl
   utils/NegateVector.h
+  utils/OrthoProj.h
 #  utils/ConversionFunctor.h
 #  utils/ConversionFunctor.inl
   )
@@ -120,7 +121,8 @@ set(SOURCE_FILES
   utils/PointVec2Keypoint.cpp
   utils/Vector2SSVector.cpp
   utils/NegateVector.cpp
-#  utils/ConversionFunctor.cpp
+  utils/OrthoProj.cpp
+  #  utils/ConversionFunctor.cpp
   )
 
 include_directories(ProcessOR/)
