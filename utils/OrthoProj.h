@@ -71,6 +71,7 @@ class OrthoProj : public common::ImplicitDataEngine
     addInput(&d_S);
     addInput(&d_V);
     addOutput(&d_P);
+    m_isMapped = false;
   }
 
   void update()
@@ -90,7 +91,6 @@ class OrthoProj : public common::ImplicitDataEngine
     vector<Vec3d>& P = *d_P.beginWriteOnly();
     P.clear();
     P.resize(V.size());
-
 
     // Compute the projection of each slave on each line of sight
     std::vector<std::vector<Vec3d> > PtsMap;
@@ -120,24 +120,38 @@ class OrthoProj : public common::ImplicitDataEngine
       PtsMap.push_back(ptsP);
     }
 
-    // keep only closest P for each slave
+    if (!m_isMapped) m_pMap.resize(V.size());
+
     for (size_t i = 0; i < V.size(); ++i)
     {
-      double dist = std::numeric_limits<double>::max();
-      P[i] = PtsMap[i][0];
-      for (auto pt1 : PtsMap[i])
+      if (m_isMapped)
       {
-        Vec3d pt2 = V[i];
-        double d = (pt2.x() - pt1.x()) * (pt2.x() - pt1.x()) +
-                   (pt2.y() - pt1.y()) * (pt2.y() - pt1.y()) +
-                   (pt2.z() - pt1.z()) * (pt2.z() - pt1.z());
-        if (d < dist)
+        // If we already mapped the pairs, then we directly set P[i] to its
+        // match
+        P[i] = PtsMap[i][m_pMap[i]];
+      }
+      else
+      {
+        // Otherwise, we keep only the closest P for each slave
+        double dist = std::numeric_limits<double>::max();
+        P[i] = PtsMap[i][0];
+        for (size_t j = 0; j < PtsMap[i].size(); ++j)
         {
+          Vec3d pt1 = PtsMap[i][j];
+          Vec3d pt2 = V[i];
+          double d = (pt2.x() - pt1.x()) * (pt2.x() - pt1.x()) +
+                     (pt2.y() - pt1.y()) * (pt2.y() - pt1.y()) +
+                     (pt2.z() - pt1.z()) * (pt2.z() - pt1.z());
+          if (d < dist)
+          {
             P[i] = pt1;
             dist = d;
+            m_pMap[i] = j;
+          }
         }
       }
     }
+    m_isMapped = true;
     d_P.endEdit();
   }
 
@@ -150,6 +164,8 @@ class OrthoProj : public common::ImplicitDataEngine
   // OUTPUTS
   /// The projected points P that belong to camPos -> V
   sofa::Data<sofa::helper::vector<Vec3d> > d_P;
+  std::vector<int> m_pMap;
+  bool m_isMapped;
 };
 
 SOFA_DECL_CLASS(OrthoProj)
