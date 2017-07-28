@@ -56,8 +56,13 @@ class OrthoProj : public common::ImplicitDataEngine
         d_S(initData(&d_S, "observations", "Observation points")),
         d_V(initData(&d_V, "slavePts",
                      "slave points to project on the line cam -> observation")),
-        d_P(initData(&d_P, "points_out", "output projected points"))
+        d_P(initData(&d_P, "points_out", "output projected points")),
+        d_method(initData(&d_method, "method",
+                          "projection method (either ORTHO or PARALLEL)"))
   {
+    sofa::helper::OptionsGroup* t = d_method.beginEdit();
+    t->setNames(2, "ORTHO", "PARALLEL");
+    t->setSelectedItem(0);
   }
 
   ~OrthoProj() {}
@@ -74,6 +79,23 @@ class OrthoProj : public common::ImplicitDataEngine
     m_isMapped = false;
   }
 
+  // Project the line defined by the point p1 and the direction vector d1
+  // On the plane defined by the point p2 and the normal n2
+  void linePlaneIntersection(const Vec3d& p1, const Vec3d& d1, const Vec3d& p2,
+                             const Vec3d& n2, Vec3d& P)
+  {
+    double lambda =
+        sofa::defaulttype::dot(p2 - p1, n2) / sofa::defaulttype::dot(d1, n2);
+    P = lambda * d1 + p1;
+  }
+
+  // Finds the normal of the plane to which at least d1 and 1 point of d2 belong
+  // to
+  void lines2PlaneNormal(const Vec3d& d1, const Vec3d& d2, Vec3d& n)
+  {
+    n = d1.cross(d1.cross(d2));
+  }
+
   void update()
   {
     Vec3d C = l_cam->getPosition();
@@ -82,15 +104,9 @@ class OrthoProj : public common::ImplicitDataEngine
 
     if (S.size() != V.size())
     {
-      msg_warning(getName() + "update()")
-          << "Warning: uneven number of points to project and lines of sight";
+      m_isMapped = false;
       return;
     }
-
-    // Clean P and resize it to the number of slaves
-    vector<Vec3d>& P = *d_P.beginWriteOnly();
-    P.clear();
-    P.resize(V.size());
 
     // Compute the projection of each slave on each line of sight
     std::vector<std::vector<Vec3d> > PtsMap;
@@ -120,7 +136,16 @@ class OrthoProj : public common::ImplicitDataEngine
       PtsMap.push_back(ptsP);
     }
 
-    if (!m_isMapped) m_pMap.resize(V.size());
+    if (!m_isMapped)
+    {
+      m_pMap.clear();
+      m_pMap.resize(V.size());
+    }
+
+    //     Clean P and resize it to the number of slaves
+    vector<Vec3d> /*&*/ P /* = *d_P.beginWriteOnly()*/;
+    //    P.clear();
+    P.resize(V.size());
 
     for (size_t i = 0; i < V.size(); ++i)
     {
@@ -151,7 +176,45 @@ class OrthoProj : public common::ImplicitDataEngine
         }
       }
     }
-    m_isMapped = true;
+    m_isMapped = false;
+
+    if (d_method.getValue().getSelectedItem() == "PARALLEL")
+    {
+      // S now contains the master points list, and V contains the slaves list
+      // m_pMap contains the indexes of S to match V
+      vector<Vec3d> Pbis;
+      Pbis.resize(P.size());
+
+      // normal of our image plane (also dP)
+      Vec3d nC = l_cam->getRotationMatrix().line(2);
+
+      for (size_t i = 0; i < V.size(); ++i)
+      {
+        // direction vector of line LP
+        Vec3d dP = nC;
+        // direction vector of the line L1
+        Vec3d d1 = (V[i] - C).normalized();
+        // direction vector of the line L2
+        Vec3d d2 = (S[m_pMap[i]] - C).normalized();
+
+        // Slave point projected on the image plane
+        Vec3d P1;
+        linePlaneIntersection(V[i], nC, S[m_pMap[i]], nC, P1);
+
+        // normal of the plane to which Lp and s2 belong
+        Vec3d nP;
+        lines2PlaneNormal(dP, d2, nP);
+
+        // The projection of s1 on the line L2
+        Vec3d s2;
+        linePlaneIntersection(C, d2, P1, nP, s2);
+
+        Pbis[i] = s2;
+      }
+      d_P.setValue(Pbis);
+    }
+    else if (d_method.getValue().getSelectedItem() == "ORTHO")
+      d_P.setValue(P);
     d_P.endEdit();
   }
 
@@ -164,6 +227,7 @@ class OrthoProj : public common::ImplicitDataEngine
   // OUTPUTS
   /// The projected points P that belong to camPos -> V
   sofa::Data<sofa::helper::vector<Vec3d> > d_P;
+  sofa::Data<sofa::helper::OptionsGroup> d_method;
   std::vector<int> m_pMap;
   bool m_isMapped;
 };
