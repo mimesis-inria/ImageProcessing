@@ -24,8 +24,8 @@
 #include <SofaORCommon/cvMatUtils.h>
 
 #include <sofa/core/ObjectFactory.h>
+#include <sofa/helper/AdvancedTimer.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
-
 namespace sofaor
 {
 namespace processor
@@ -96,9 +96,6 @@ FeatureDetector::FeatureDetector()
 FeatureDetector::~FeatureDetector() {}
 void FeatureDetector::init()
 {
-  std::cout << "Detector type: " << d_detectorType.getValue().getSelectedItem()
-            << std::endl;
-
   detectTypeChanged(NULL);
   detectModeChanged(NULL);
 
@@ -115,6 +112,7 @@ void FeatureDetector::init()
 
 void FeatureDetector::update()
 {
+  sofa::helper::AdvancedTimer::stepBegin("FeatureDetection");
   ImageFilter::update();
 
   switch (d_detectMode.getValue().getSelectedId())
@@ -143,6 +141,7 @@ void FeatureDetector::update()
       break;
     }
   }
+  sofa::helper::AdvancedTimer::stepEnd("FeatureDetection");
 }
 
 void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
@@ -211,12 +210,10 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     in.copyTo(out);
     if (in.depth() == CV_32F)
     {
-      std::cout << "converting to 8bit" << std::endl;
       out.convertTo(out, 0, 255.0);
     }
     if (out.channels() == 1)
     {
-      std::cout << "converting from grayscale to BGR" << std::endl;
       cv::cvtColor(out, out, CV_GRAY2BGR);
     }
 

@@ -28,6 +28,7 @@
 #include <sofa/helper/gl/RAII.h>
 #include <sofa/helper/system/gl.h>
 #include <sofa/helper/system/glut.h>
+#include <sofa/helper/AdvancedTimer.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
 namespace sofaor
@@ -214,6 +215,7 @@ void FrameViewer::orthoDraw()
 
 void FrameViewer::draw(const sofa::core::visual::VisualParams *)
 {
+    sofa::helper::AdvancedTimer::stepBegin("FrameViewer");
 	if (d_frame.getValue().data)
 	{
 		switch (d_mode.getValue().getSelectedId())
@@ -228,6 +230,7 @@ void FrameViewer::draw(const sofa::core::visual::VisualParams *)
 				break;
 		}
 	}
+    sofa::helper::AdvancedTimer::stepEnd("FrameViewer");
 }
 
 void FrameViewer::computeBBox(const sofa::core::ExecParams *params, bool)

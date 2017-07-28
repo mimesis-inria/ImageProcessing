@@ -27,6 +27,7 @@
 
 #include <sofa/core/visual/DrawToolGL.h>
 
+#include <sofa/helper/AdvancedTimer.h>
 #include <sofa/helper/gl/RAII.h>
 #include <sofa/helper/system/gl.h>
 #include <sofa/helper/system/glut.h>
@@ -66,6 +67,8 @@ void ImageFilter::init()
 
 void ImageFilter::update()
 {
+  sofa::helper::AdvancedTimer::stepBegin("Image Filters");
+
   if (!d_isActive.getValue())
   {
     // filter inactive, out = in
@@ -76,6 +79,7 @@ void ImageFilter::update()
       cv::imshow(m_win_name, d_img_out.getValue());
       cv::waitKey(1);
     }
+    sofa::helper::AdvancedTimer::stepEnd("Image Filters");
     return;
   }
   m_debugImage = d_img.getValue().zeros(
@@ -96,12 +100,13 @@ void ImageFilter::update()
     cv::imshow(m_win_name, m_debugImage);
     cv::waitKey(1);
   }
+  sofa::helper::AdvancedTimer::stepEnd(("Image Filters"));
 }
 
 void ImageFilter::reinit()
 {
   if (m_displayDebugDataTracker.isDirty() && d_isActive.getValue())
-		refreshDebugWindow();
+    refreshDebugWindow();
 
   // to set needsRefresh to true
   ImplicitDataEngine::reinit();
@@ -116,18 +121,18 @@ void ImageFilter::reinitDebugWindow()
     return;
   }
 
-	// WITH QT:
-	//  cv::namedWindow(m_win_name,
-	//                  CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
-	cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
-	for (DSM* dmgr : m_params) dmgr->createSlider(m_win_name);
+  // WITH QT:
+  //  cv::namedWindow(m_win_name,
+  //                  CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
+  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
+  for (DSM* dmgr : m_params) dmgr->createSlider(m_win_name);
   if (m_isMouseCallbackActive)
     cv::setMouseCallback(m_win_name, &ImageFilter::_mouseCallback, this);
 }
 
 void ImageFilter::refreshDebugWindow()
 {
-	reinitDebugWindow();
+  reinitDebugWindow();
   if (!d_displayDebugWindow.getValue()) return;
   applyFilter(d_img.getValue(), m_debugImage, true);
   if (m_debugImage.empty()) return;
@@ -145,101 +150,100 @@ void ImageFilter::unregisterAllData() { m_params.clear(); }
 
 void ImageFilter::registerData(sofa::Data<bool>* data)
 {
-	m_params.push_back(new ScalarSliderManager<bool>(data));
+  m_params.push_back(new ScalarSliderManager<bool>(data));
 }
 
 void ImageFilter::registerData(sofa::Data<sofa::helper::OptionsGroup>* data)
 {
-	m_params.push_back(new CustomSliderManager<sofa::helper::OptionsGroup, int>(data));
+  m_params.push_back(
+      new CustomSliderManager<sofa::helper::OptionsGroup, int>(data));
 }
 
-void ImageFilter::registerData(sofa::Data<int>* data, int min, int max, int step)
+void ImageFilter::registerData(sofa::Data<int>* data, int min, int max,
+                               int step)
 {
-	m_params.push_back(new ScalarSliderManager<int>(data, min, max, step));
+  m_params.push_back(new ScalarSliderManager<int>(data, min, max, step));
 }
-void ImageFilter::registerData(sofa::Data<unsigned>* data, unsigned min, unsigned max,
-															 unsigned step)
+void ImageFilter::registerData(sofa::Data<unsigned>* data, unsigned min,
+                               unsigned max, unsigned step)
 {
-	m_params.push_back(
-			new ScalarSliderManager<unsigned>(data, min, max, step));
+  m_params.push_back(new ScalarSliderManager<unsigned>(data, min, max, step));
 }
 void ImageFilter::registerData(sofa::Data<double>* data, double min, double max,
                                double step)
 {
-	m_params.push_back(
-			new ScalarSliderManager<double>(data, min, max, step));
+  m_params.push_back(new ScalarSliderManager<double>(data, min, max, step));
 }
 void ImageFilter::registerData(sofa::Data<float>* data, float min, float max,
                                float step)
 {
-	m_params.push_back(
-			new ScalarSliderManager<float>(data, min, max, step));
+  m_params.push_back(new ScalarSliderManager<float>(data, min, max, step));
 }
 
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec2u>* data, unsigned min,
-															 unsigned max, unsigned step)
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec2u>* data,
+                               unsigned min, unsigned max, unsigned step)
 {
-	m_params.push_back(new VecSliderManager<2, unsigned>(data, min, max, step));
+  m_params.push_back(new VecSliderManager<2, unsigned>(data, min, max, step));
 }
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec3u>* data, unsigned min,
-															 unsigned max, unsigned step)
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec3u>* data,
+                               unsigned min, unsigned max, unsigned step)
 {
-	m_params.push_back(new VecSliderManager<3, unsigned>(data, min, max, step));
+  m_params.push_back(new VecSliderManager<3, unsigned>(data, min, max, step));
 }
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4u>* data, unsigned min,
-															 unsigned max, unsigned step)
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4u>* data,
+                               unsigned min, unsigned max, unsigned step)
 {
-	m_params.push_back(new VecSliderManager<4, unsigned>(data, min, max, step));
-}
-
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec2i>* data, int min, int max,
-															 int step)
-{
-	m_params.push_back(new VecSliderManager<2, int>(data, min, max, step));
+  m_params.push_back(new VecSliderManager<4, unsigned>(data, min, max, step));
 }
 
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec3i>* data, int min, int max,
-															 int step)
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec2i>* data,
+                               int min, int max, int step)
 {
-	m_params.push_back(new VecSliderManager<3, int>(data, min, max, step));
+  m_params.push_back(new VecSliderManager<2, int>(data, min, max, step));
 }
 
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4i>* data, int min, int max,
-															 int step)
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec3i>* data,
+                               int min, int max, int step)
 {
-	m_params.push_back(new VecSliderManager<4, int>(data, min, max, step));
+  m_params.push_back(new VecSliderManager<3, int>(data, min, max, step));
 }
 
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec2f>* data, float min,
-															 float max, float step)
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4i>* data,
+                               int min, int max, int step)
 {
-	m_params.push_back(new VecSliderManager<2, float>(data, min, max, step));
-}
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec3f>* data, float min,
-															 float max, float step)
-{
-	m_params.push_back(new VecSliderManager<3, float>(data, min, max, step));
-}
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4f>* data, float min,
-															 float max, float step)
-{
-	m_params.push_back(new VecSliderManager<4, float>(data, min, max, step));
+  m_params.push_back(new VecSliderManager<4, int>(data, min, max, step));
 }
 
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec2d>* data, double min,
-															 double max, double step)
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec2f>* data,
+                               float min, float max, float step)
 {
-	m_params.push_back(new VecSliderManager<2, double>(data, min, max, step));
+  m_params.push_back(new VecSliderManager<2, float>(data, min, max, step));
 }
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec3d>* data, double min,
-															 double max, double step)
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec3f>* data,
+                               float min, float max, float step)
 {
-	m_params.push_back(new VecSliderManager<3, double>(data, min, max, step));
+  m_params.push_back(new VecSliderManager<3, float>(data, min, max, step));
 }
-void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4d>* data, double min,
-															 double max, double step)
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4f>* data,
+                               float min, float max, float step)
 {
-	m_params.push_back(new VecSliderManager<4, double>(data, min, max, step));
+  m_params.push_back(new VecSliderManager<4, float>(data, min, max, step));
+}
+
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec2d>* data,
+                               double min, double max, double step)
+{
+  m_params.push_back(new VecSliderManager<2, double>(data, min, max, step));
+}
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec3d>* data,
+                               double min, double max, double step)
+{
+  m_params.push_back(new VecSliderManager<3, double>(data, min, max, step));
+}
+void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4d>* data,
+                               double min, double max, double step)
+{
+  m_params.push_back(new VecSliderManager<4, double>(data, min, max, step));
 }
 
 }  // namespace processor
