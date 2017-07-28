@@ -49,6 +49,7 @@ set(HEADER_FILES
   imgproc/Flip.h
   imgproc/InRange.h
   imgproc/CopyTo.h
+  imgproc/Resize.h
 
   features/Detectors.h
   features/Matchers.h
@@ -106,6 +107,7 @@ set(SOURCE_FILES
   imgproc/Flip.cpp
   imgproc/InRange.cpp
   imgproc/CopyTo.cpp
+  imgproc/Resize.cpp
 
   features/Detectors.cpp
   features/Matchers.cpp
