@@ -43,8 +43,8 @@ class SimpleThreshold : public ImageFilter
 
   SimpleThreshold()
       : d_threshold(
-            initData(&d_threshold, 128.0, "threshold", "threshold value")),
-        d_max(initData(&d_max, 255.0, "max",
+            initData(&d_threshold, .5, "threshold", "threshold value")),
+        d_max(initData(&d_max, 1.0, "max",
                        "maximum value to use with the THRESH_BINARY and "
                        "THRESH_BINARY_INV thresholding types")),
         d_type(initData(&d_type, "thresholdType",

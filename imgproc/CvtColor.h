@@ -23,8 +23,9 @@
 #ifndef SOFA_OR_PROCESSOR_CVTCOLOR_H
 #define SOFA_OR_PROCESSOR_CVTCOLOR_H
 
-#include <opencv2/imgproc.hpp>
 #include "common/ImageFilter.h"
+
+#include <opencv2/imgproc.hpp>
 
 namespace sofaor
 {
@@ -43,11 +44,11 @@ class CvtColor : public ImageFilter
  public:
   SOFA_CLASS(CvtColor, ImageFilter);
 
-  sofa::Data<double> d_code;
-  sofa::Data<double> d_dstCn;
+  sofa::Data<int> d_code;
+  sofa::Data<int> d_dstCn;
 
   CvtColor()
-      : d_code(initData(&d_code, "code", "color space conversion code")),
+      : d_code(initData(&d_code, 6, "code", "color space conversion code default is BGR2GRAY")),
         d_dstCn(initData(&d_dstCn, 0, "dstCn",
                          "[OPTIONAL] number of channels in the destination "
                          "image; if the parameter is 0, the number of the "
@@ -57,9 +58,6 @@ class CvtColor : public ImageFilter
 
   void init()
   {
-    if (!d_code.isSet())
-      msg_error(getName() + "::init()") << "conversion code not provided";
-
     ImageFilter::init();
   }
 
@@ -78,6 +76,12 @@ class CvtColor : public ImageFilter
     }
   }
 };
+
+SOFA_DECL_CLASS(CvtColor)
+
+int CvtColorClass = sofa::core::RegisterObject(
+                        "Converts an image from one color space to another.")
+                        .add<CvtColor>();
 
 }  // namespace imgproc
 }  // namespace processor

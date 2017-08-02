@@ -21,20 +21,3 @@
 ******************************************************************************/
 
 #include "CvtColor.h"
-
-#include <sofa/core/ObjectFactory.h>
-
-namespace sofaor
-{
-namespace processor
-{
-namespace imgproc
-{
-SOFA_DECL_CLASS(CvtColor)
-
-int CvtColorClass =
-    sofa::core::RegisterObject(
-        "Converts an image from one color space to another.");
-}  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
