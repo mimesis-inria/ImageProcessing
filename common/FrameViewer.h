@@ -62,6 +62,7 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 	void perspectiveDraw();
 	void orthoDraw();
 	void bindGlTexture(const std::string& imageString);
+    void drawImpl();
 };
 
 }  // namespace processor

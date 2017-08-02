@@ -106,7 +106,7 @@ void CameraSettings::setProjectionMatrix(const Mat3x4d& M)
 	composeCV();
 	composeGL();
 
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -125,9 +125,9 @@ void CameraSettings::setIntrinsicCameraMatrix(const Matrix3& K, bool update)
 		composeM();
 		composeGL();
 	}
-	this->checkData(false);
+    this->cleanTrackers(false);
 
-	recalculate3DCorners();
+    recalculate3DCorners();
 }
 
 const sofa::helper::vector<double>& CameraSettings::getDistortionCoefficients()
@@ -141,7 +141,7 @@ void CameraSettings::setDistortionCoefficients(
 	// Nothing to do, distortion coefficients are not (yet?) taken into account in
 	// OpenGL
 	d_distCoefs.setValue(distCoefs);
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -159,7 +159,7 @@ void CameraSettings::setRotationMatrix(const Matrix3& R, bool update)
 		composeM();
 		composeGL();
 	}
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -177,7 +177,7 @@ void CameraSettings::setPosition(const Vector3& t, bool update)
 		composeM();
 		composeGL();
 	}
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -194,7 +194,7 @@ void CameraSettings::setImageSize(const Vec2i& imgSize, bool update)
 		composeM();
 		composeGL();
 	}
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -207,7 +207,7 @@ void CameraSettings::setGLProjection(const Matrix4& glProjection)
 	d_glProjection.setValue(glProjection);
 	decomposeGL();
 	composeM();
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -220,7 +220,7 @@ void CameraSettings::setGLModelview(const Matrix4& glModelview)
 	d_glModelview.setValue(glModelview);
 	decomposeGL();
 	composeM();
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -232,7 +232,7 @@ const sofa::defaulttype::Vec<4, int>& CameraSettings::getGLViewport() const
 void CameraSettings::setGLViewport(const Vector4& glViewport)
 {
 	d_glViewport.setValue(glViewport);
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -245,7 +245,7 @@ void CameraSettings::setGLZClip(const Vector2& zClip)
 {
 	d_zClip.setValue(zClip);
 	composeGL();
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -261,7 +261,7 @@ void CameraSettings::setOrientation(const Quat& orientation)
 	d_R.setValue(R);
 	composeM();
 	composeGL();
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -275,7 +275,7 @@ void CameraSettings::set2DScaleMatrix(const Matrix3& scale2D)
 	d_scale2D.setValue(scale2D);
 	composeM();
 	composeGL();
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -284,7 +284,7 @@ void CameraSettings::setFocalDistance(double f)
 {
 	// No need to recompose, fz only used for projection operations
 	d_f.setValue(f);
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -298,7 +298,7 @@ void CameraSettings::set2DTranslationMatrix(const Matrix3& translation2D)
 	d_translate2D.setValue(translation2D);
 	composeM();
 	composeGL();
-	this->checkData(false);
+    this->cleanTrackers(false);
 
 	recalculate3DCorners();
 }
@@ -634,27 +634,20 @@ void CameraSettings::buildFromOpenGLContext()
 
 void CameraSettings::init()
 {
-	typedef ImplicitDataEngine::DataCallback callback;
-	addDataCallback(&d_M, (callback)&CameraSettings::ProjectionMatrixChanged);
-	addDataCallback(&d_K,
-									(callback)&CameraSettings::IntrinsicCameraMatrixChanged);
-	addDataCallback(&d_distCoefs,
-									(callback)&CameraSettings::DistortionCoefficientsChanged);
-	addDataCallback(&d_R, (callback)&CameraSettings::RotationMatrixChanged);
-	addDataCallback(&d_t, (callback)&CameraSettings::TranslationVectorChanged);
-	addDataCallback(&d_imageSize, (callback)&CameraSettings::ImageSizeChanged);
-	addDataCallback(&d_glProjection,
-									(callback)&CameraSettings::GLProjectionChanged);
-	addDataCallback(&d_glModelview,
-									(callback)&CameraSettings::GLModelviewChanged);
-	addDataCallback(&d_glViewport, (callback)&CameraSettings::GLViewportChanged);
-	addDataCallback(&d_zClip, (callback)&CameraSettings::GLZClipChanged);
-	addDataCallback(&d_orientation,
-									(callback)&CameraSettings::OrientationChanged);
-	addDataCallback(&d_scale2D, (callback)&CameraSettings::Scale2DChanged);
-	addDataCallback(&d_f, (callback)&CameraSettings::FocalDistanceChanged);
-	addDataCallback(&d_translate2D,
-									(callback)&CameraSettings::Translation2DChanged);
+    SOFAOR_ADD_CALLBACK(&d_M, &CameraSettings::ProjectionMatrixChanged);
+    SOFAOR_ADD_CALLBACK(&d_K, &CameraSettings::IntrinsicCameraMatrixChanged);
+    SOFAOR_ADD_CALLBACK(&d_distCoefs, &CameraSettings::DistortionCoefficientsChanged);
+    SOFAOR_ADD_CALLBACK(&d_R, &CameraSettings::RotationMatrixChanged);
+    SOFAOR_ADD_CALLBACK(&d_t, &CameraSettings::TranslationVectorChanged);
+    SOFAOR_ADD_CALLBACK(&d_imageSize, &CameraSettings::ImageSizeChanged);
+    SOFAOR_ADD_CALLBACK(&d_glProjection, &CameraSettings::GLProjectionChanged);
+    SOFAOR_ADD_CALLBACK(&d_glModelview, &CameraSettings::GLModelviewChanged);
+    SOFAOR_ADD_CALLBACK(&d_glViewport, &CameraSettings::GLViewportChanged);
+    SOFAOR_ADD_CALLBACK(&d_zClip, &CameraSettings::GLZClipChanged);
+    SOFAOR_ADD_CALLBACK(&d_orientation, &CameraSettings::OrientationChanged);
+    SOFAOR_ADD_CALLBACK(&d_scale2D, &CameraSettings::Scale2DChanged);
+    SOFAOR_ADD_CALLBACK(&d_f, &CameraSettings::FocalDistanceChanged);
+    SOFAOR_ADD_CALLBACK(&d_translate2D, &CameraSettings::Translation2DChanged);
 
 	addOutput(&d_3DCorners);
 
@@ -691,7 +684,7 @@ void CameraSettings::init()
 	}
 	recalculate3DCorners();
 
-	checkData(false);
+    cleanTrackers(false);
 }
 
 }  // namespace cam

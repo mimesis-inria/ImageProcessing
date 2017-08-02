@@ -92,7 +92,7 @@ class DescriptorMatcher : public ImageFilter
                    float maxDistance);
 
  protected:
-	void matcherTypeChanged(sofa::core::objectmodel::BaseObject*);
+    void matcherTypeChanged(sofa::core::objectmodel::BaseData*);
 
  private:
   BaseMatcher* m_matchers[MatcherType_COUNT];

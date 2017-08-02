@@ -60,6 +60,7 @@ namespace cam
  */
 class CameraSettings : public common::ImplicitDataEngine
 {
+    SOFAOR_CALLBACK_SYSTEM(CameraSettings);
  public:
 	typedef sofa::defaulttype::RigidTypes::Coord Rigid;
 	typedef sofa::defaulttype::Vector2 Vector2;
@@ -134,7 +135,8 @@ class CameraSettings : public common::ImplicitDataEngine
 	{
 		addAlias(&d_t, "t");
 		addAlias(&d_3DCorners, "corners");
-	}
+        addAlias(&d_3DCorners, "corners_out");
+    }
 
 	~CameraSettings() {}
 
@@ -154,7 +156,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	void buildFromOpenGLContext();
 
 	void init();
-	void update() { checkData(true); }
+    void update() {}
 
 	/// returns the 2D pixel position of a given 3D point
 	Vector2 get2DFrom3DPosition(const Vector3& p);
@@ -303,59 +305,59 @@ class CameraSettings : public common::ImplicitDataEngine
 	void decomposeK(const Matrix3& K);
 
  public:
-	void ProjectionMatrixChanged(sofa::core::objectmodel::BaseObject*)
+    void ProjectionMatrixChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setProjectionMatrix(d_M.getValue());
 	}
-	void IntrinsicCameraMatrixChanged(sofa::core::objectmodel::BaseObject*)
+    void IntrinsicCameraMatrixChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setIntrinsicCameraMatrix(d_K.getValue());
 	}
-	void DistortionCoefficientsChanged(sofa::core::objectmodel::BaseObject*)
+    void DistortionCoefficientsChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setDistortionCoefficients(d_distCoefs.getValue());
 	}
-	void RotationMatrixChanged(sofa::core::objectmodel::BaseObject*)
+    void RotationMatrixChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setRotationMatrix(d_R.getValue());
 	}
-	void TranslationVectorChanged(sofa::core::objectmodel::BaseObject*)
+    void TranslationVectorChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setPosition(d_t.getValue());
 	}
-	void ImageSizeChanged(sofa::core::objectmodel::BaseObject*)
+    void ImageSizeChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setImageSize(d_imageSize.getValue());
 	}
-	void GLProjectionChanged(sofa::core::objectmodel::BaseObject*)
+    void GLProjectionChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setGLProjection(d_glProjection.getValue());
 	}
-	void GLModelviewChanged(sofa::core::objectmodel::BaseObject*)
+    void GLModelviewChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setGLModelview(d_glModelview.getValue());
 	}
-	void GLViewportChanged(sofa::core::objectmodel::BaseObject*)
+    void GLViewportChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setGLViewport(d_glViewport.getValue());
 	}
-	void GLZClipChanged(sofa::core::objectmodel::BaseObject*)
+    void GLZClipChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setGLZClip(d_zClip.getValue());
 	}
-	void OrientationChanged(sofa::core::objectmodel::BaseObject*)
+    void OrientationChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setOrientation(d_orientation.getValue());
 	}
-	void Scale2DChanged(sofa::core::objectmodel::BaseObject*)
+    void Scale2DChanged(sofa::core::objectmodel::BaseData*)
 	{
 		set2DScaleMatrix(d_scale2D.getValue());
 	}
-	void FocalDistanceChanged(sofa::core::objectmodel::BaseObject*)
+    void FocalDistanceChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setFocalDistance(d_f.getValue());
 	}
-	void Translation2DChanged(sofa::core::objectmodel::BaseObject*)
+    void Translation2DChanged(sofa::core::objectmodel::BaseData*)
 	{
 		set2DTranslationMatrix(d_translate2D.getValue());
 	}

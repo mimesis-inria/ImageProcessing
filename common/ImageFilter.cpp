@@ -38,7 +38,7 @@ namespace processor
 {
 unsigned ImageFilter::m_window_uid = 0;
 
-ImageFilter::ImageFilter(bool outputImage)
+ImageFilter::ImageFilter()
     : d_img(initData(
           &d_img, common::cvMat(), "img",
           "Input image, that will undergo changes through the filter.", false)),
@@ -49,7 +49,9 @@ ImageFilter::ImageFilter(bool outputImage)
                                     "the changes applied to the filter")),
       d_isActive(initData(&d_isActive, true, "isActive",
                           "if false, does not call applyFilter")),
-      m_outputImage(outputImage),
+      d_outputImage(
+          initData(&d_outputImage, true, "outputImage",
+                   "whether or not the computed image will be set in img_out")),
       m_win_name(std::to_string(m_window_uid) + "_" + getClassName())
 {
   addAlias(&d_img_out, "img1_out");
@@ -73,7 +75,7 @@ void ImageFilter::update()
   {
     // filter inactive, out = in
     d_img_out.setValue(d_img.getValue());
-    d_img_out.endEdit();
+
     if (d_displayDebugWindow.getValue())
     {
       cv::imshow(m_win_name, d_img_out.getValue());
@@ -85,15 +87,13 @@ void ImageFilter::update()
   m_debugImage = d_img.getValue().zeros(
       d_img.getValue().rows, d_img.getValue().cols, d_img.getValue().type());
   applyFilter(d_img.getValue(), m_debugImage);
-  if (!m_outputImage)
+  if (!d_outputImage.getValue())
   {
     d_img_out.setValue(d_img.getValue());
-    d_img_out.endEdit();
   }
   else
   {
     d_img_out.setValue(m_debugImage);
-    d_img_out.endEdit();
   }
   if (d_displayDebugWindow.getValue() && !m_debugImage.empty())
   {
@@ -138,7 +138,6 @@ void ImageFilter::refreshDebugWindow()
   if (m_debugImage.empty()) return;
 
   cv::imshow(m_win_name, m_debugImage);
-  cv::waitKey(1);
 }
 
 void ImageFilter::activateMouseCallback()

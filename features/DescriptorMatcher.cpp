@@ -33,14 +33,14 @@ namespace processor
 namespace features
 {
 SOFA_DECL_CLASS(DescriptorMatcher)
+SOFAOR_CALLBACK_SYSTEM(DescriptorMatcher);
 
 int DescriptorMatcherClass =
-		sofa::core::RegisterObject("OpenCV component matching descriptors")
+    sofa::core::RegisterObject("OpenCV component matching descriptors")
         .add<DescriptorMatcher>();
 
 DescriptorMatcher::DescriptorMatcher()
-    : ImageFilter(false),
-      d_matcherType(initData(&d_matcherType, "matcher",
+    : d_matcherType(initData(&d_matcherType, "matcher",
                              "type of matcher to use (BRUTEFORCE or FLANN).")),
       d_matchingAlgo(initData(
           &d_matchingAlgo, "algo",
@@ -48,9 +48,9 @@ DescriptorMatcher::DescriptorMatcher()
       d_k(initData(&d_k, 2, "k",
                    "k Count of best matches found per each query descriptor or "
                    "less if a query descriptor has less than k possible "
-									 "matches in total. If K == -1, all descriptors will be "
-									 "matched together")),
-			d_maxDistance(initData(
+                   "matches in total. If K == -1, all descriptors will be "
+                   "matched together")),
+      d_maxDistance(initData(
           &d_maxDistance, .0f, "maxDistance",
           "maxDistance Threshold for the distance between matched descriptors. "
           "Distance means here metric distance (e.g. Hamming distance), not "
@@ -93,9 +93,7 @@ void DescriptorMatcher::init()
             << std::endl;
 
   matcherTypeChanged(NULL);
-  addDataCallback(
-      &d_matcherType,
-      (ImplicitDataEngine::DataCallback)&DescriptorMatcher::matcherTypeChanged);
+  SOFAOR_ADD_CALLBACK(&d_matcherType, &DescriptorMatcher::matcherTypeChanged);
 
   addInput(&d_queryDescriptors);
   addInput(&d_trainDescriptors);
@@ -107,16 +105,16 @@ void DescriptorMatcher::init()
 
   addOutput(&d_img_out);
   addOutput(&d_matches);
-	ImageFilter::init();
+  ImageFilter::init();
 }
 void DescriptorMatcher::update()
 {
   std::cout << getName() << std::endl;
-	msg_warning_when(!d_queryDescriptors.getValue().rows ||
-											 !d_trainDescriptors.getValue().rows,
-									 "DescriptorMatcher::update()")
-			<< "Error: Empty descriptor matrix!";
-	ImageFilter::update();
+  msg_warning_when(!d_queryDescriptors.getValue().rows ||
+                       !d_trainDescriptors.getValue().rows,
+                   "DescriptorMatcher::update()")
+      << "Error: Empty descriptor matrix!";
+  ImageFilter::update();
 
   sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> >* vec =
       d_matches.beginWriteOnly();
@@ -125,7 +123,7 @@ void DescriptorMatcher::update()
   {
     for (std::vector<cv::DMatch>& matchVec : m_matches)
     {
-			vec->push_back(sofa::helper::SVector<common::cvDMatch>());
+      vec->push_back(sofa::helper::SVector<common::cvDMatch>());
       for (cv::DMatch& match : matchVec)
         vec->back().push_back(common::cvDMatch(match));
     }
@@ -164,16 +162,16 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
                             d_trainDescriptors.getValue(), m_matches, 1,
                             d_mask.getValue());
   else if (d_matchingAlgo.getValue().getSelectedId() == KNN_MATCH)
-	{
-		int k = d_k.getValue();
-		int n = std::min(d_queryDescriptors.getValue().size[0],
-										 d_trainDescriptors.getValue().size[0]);
-		if (k > n || k == -1) k = n;
+  {
+    int k = d_k.getValue();
+    int n = std::min(d_queryDescriptors.getValue().size[0],
+                     d_trainDescriptors.getValue().size[0]);
+    if (k > n || k == -1) k = n;
 
-		m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
-														d_trainDescriptors.getValue(), m_matches, k,
-														d_mask.getValue());
-	}
+    m_matchers[m]->knnMatch(d_queryDescriptors.getValue(),
+                            d_trainDescriptors.getValue(), m_matches, k,
+                            d_mask.getValue());
+  }
   else if (d_matchingAlgo.getValue().getSelectedId() == RADIUS_MATCH)
     m_matchers[m]->radiusMatch(d_queryDescriptors.getValue(),
                                d_trainDescriptors.getValue(), m_matches,
@@ -190,13 +188,13 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
       arr = dynamic_cast<const cv::KeyPoint*>(d_kptsR.getValue().data());
       kpR.assign(arr, arr + d_kptsR.getValue().size());
 
-			std::cout << m_matches.size() << std::endl;
-			cv::drawMatches(in, kpL, d_in2.getValue(), kpR, m_matches, out);
+      std::cout << m_matches.size() << std::endl;
+      cv::drawMatches(in, kpL, d_in2.getValue(), kpR, m_matches, out);
     }
   }
 }
 
-void DescriptorMatcher::matcherTypeChanged(sofa::core::objectmodel::BaseObject*)
+void DescriptorMatcher::matcherTypeChanged(sofa::core::objectmodel::BaseData*)
 {
   for (size_t i = 0; i < MatcherType_COUNT; ++i)
   {

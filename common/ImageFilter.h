@@ -96,7 +96,7 @@ class ImageFilter : public common::ImplicitDataEngine
 	 * the debug window, but we don't need the debug output for further
 	 * processing)
 	 */
-  ImageFilter(bool outputImage = true);
+  ImageFilter();
   virtual ~ImageFilter();
 
   virtual void init();
@@ -121,6 +121,7 @@ class ImageFilter : public common::ImplicitDataEngine
 	sofa::Data<common::cvMat> d_img_out;    ///< [OUTPUT] processed image
 	sofa::Data<bool> d_displayDebugWindow;  ///< toggles the Debug UI
 	sofa::Data<bool> d_isActive;  ///< Whether the filter is performed or not
+    sofa::Data<bool> d_outputImage;
 
 	/// activates the mouse callback when mouse interaction is performed on the
 	/// image's debug UI
@@ -226,10 +227,9 @@ class ImageFilter : public common::ImplicitDataEngine
   virtual void mouseCallback(int, int, int, int) {}
 
  private:
-	bool m_outputImage;
 	static unsigned m_window_uid;
 	bool m_isMouseCallbackActive;
-	cv::Mat m_debugImage;
+    cv::Mat m_debugImage;
 	void reinitDebugWindow();
 	sofa::core::DataTracker m_displayDebugDataTracker;
 

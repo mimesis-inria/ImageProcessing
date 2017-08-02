@@ -40,64 +40,64 @@ class Segmenter2D : public ImageFilter
  public:
   SOFA_CLASS(Segmenter2D, ImageFilter);
 
-	sofa::Data<std::string> d_regionLabel;
+  sofa::Data<std::string> d_regionLabel;
 
   // INPUTS
-	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_points;
+  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_points;
 
   // OUTPUTS
-	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_regionPoly;
-	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_regionPoints;
+  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_regionPoly;
+  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_regionPoints;
 
   Segmenter2D()
-			: ImageFilter(false),
-				d_regionLabel(initData(&d_regionLabel, "label",
-															 "label for the segmented region")),
-				d_points(initData(&d_points, "points", "input vector keypoints")),
-				d_regionPoly(initData(&d_regionPoly, "poly", "optional input polygon")),
-				d_regionPoints(initData(&d_regionPoints, "points_out",
-																"output vector of points fitting in the poly"))
+      : d_regionLabel(initData(&d_regionLabel, "label",
+                               "label for the segmented region")),
+        d_points(initData(&d_points, "points", "input vector keypoints")),
+        d_regionPoly(initData(&d_regionPoly, "poly", "optional input polygon")),
+        d_regionPoints(initData(&d_regionPoints, "points_out",
+                                "output vector of points fitting in the poly"))
   {
     addAlias(&d_regionPoly, "poly_out");
-	}
+  }
 
   void init()
   {
-		addInput(&d_points);
-		addInput(&d_regionPoly);
-		addOutput(&d_regionPoints);
+    addInput(&d_points);
+    addInput(&d_regionPoly);
+    addOutput(&d_regionPoints);
     ImageFilter::activateMouseCallback();
     setMouseState(&Segmenter2D::freeMove);
     ImageFilter::init();
-		update();
+    update();
   }
 
   void update()
   {
     ImageFilter::update();
 
-		if (d_regionPoly.getValue().size() <= 2)
-		{
-			d_regionPoints.setValue(d_points.getValue());
-			return;
-		}
-
-		std::vector<cv::Point2i> polygon;
-		for (const sofa::defaulttype::Vec2i& pt : d_regionPoly.getValue())
+    if (d_regionPoly.getValue().size() <= 2)
     {
-			polygon.push_back(cv::Point2i(pt.x(), pt.y()));
+      d_regionPoints.setValue(d_points.getValue());
+      return;
     }
-		sofa::helper::vector<sofa::defaulttype::Vec2i>& points =
+
+    std::vector<cv::Point2i> polygon;
+    for (const sofa::defaulttype::Vec2i& pt : d_regionPoly.getValue())
+    {
+      polygon.push_back(cv::Point2i(pt.x(), pt.y()));
+    }
+    sofa::helper::vector<sofa::defaulttype::Vec2i>& points =
         *d_regionPoints.beginWriteOnly();
-		points.clear();
+    points.clear();
 
-		const sofa::helper::vector<sofa::defaulttype::Vec2i>& pts = d_points.getValue();
+    const sofa::helper::vector<sofa::defaulttype::Vec2i>& pts =
+        d_points.getValue();
 
-		for (auto point : pts)
-		{
-			cv::Point2f pt(point.x(), point.y());
-			if (cv::pointPolygonTest(polygon, pt, false) > 0) points.push_back(point);
-		}
+    for (auto point : pts)
+    {
+      cv::Point2f pt(point.x(), point.y());
+      if (cv::pointPolygonTest(polygon, pt, false) > 0) points.push_back(point);
+    }
     d_regionPoints.endEdit();
   }
 
@@ -105,22 +105,22 @@ class Segmenter2D : public ImageFilter
   {
     if (in.empty()) return;
     in.copyTo(out);
-		std::vector<std::vector<cv::Point2i> > polygon(1);
-		if (m_activeState == &Segmenter2D::freeMove)
+    std::vector<std::vector<cv::Point2i> > polygon(1);
+    if (m_activeState == &Segmenter2D::freeMove)
     {
       if (d_regionPoly.getValue().empty()) return;
-			for (const sofa::defaulttype::Vec2i& pt : d_regionPoly.getValue())
+      for (const sofa::defaulttype::Vec2i& pt : d_regionPoly.getValue())
       {
-				polygon[0].push_back(cv::Point2i(pt.x(), pt.y()));
+        polygon[0].push_back(cv::Point2i(pt.x(), pt.y()));
       }
     }
     else
     {
-			if (m_poly.size() < 2) return;
-			polygon[0] = std::vector<cv::Point2i>(m_poly.begin(), m_poly.end());
+      if (m_poly.size() < 2) return;
+      polygon[0] = std::vector<cv::Point2i>(m_poly.begin(), m_poly.end());
     }
     cv::Scalar color(255, 255, 255, 50);
-		cv::fillPoly(out, polygon, color);
+    cv::fillPoly(out, polygon, color);
     cv::addWeighted(in, 0.8, out, 0.2, 0.0, out);
   }
 
@@ -144,7 +144,8 @@ class Segmenter2D : public ImageFilter
 SOFA_DECL_CLASS(Segmenter2D)
 
 int Segmenter2DClass =
-		sofa::core::RegisterObject("Manual segmentation component").add<Segmenter2D>();
+    sofa::core::RegisterObject("Manual segmentation component")
+        .add<Segmenter2D>();
 
 }  // namespace features
 }  // namespace processor

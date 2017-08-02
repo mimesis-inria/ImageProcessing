@@ -42,6 +42,7 @@ namespace features
 {
 class FeatureDetector : public ImageFilter
 {
+    SOFAOR_CALLBACK_SYSTEM(FeatureDetector);
   enum DetectorMode
   {
     DETECT_ONLY,

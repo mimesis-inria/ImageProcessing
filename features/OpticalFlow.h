@@ -134,14 +134,11 @@ class OpticalFlow : public ImageFilter
 
     if (m_pts_in.empty() || m_prev.empty() || gray.empty())
     {
-      std::cout << "something is wrong: please check your input frames and / "
-                   "or input points"
-                << std::endl;
+      msg_error(getName() + "::applyFilter()")
+          << "something is wrong: please check your input frames and / "
+             "or input points";
       return;
     }
-    std::cout << "optical flow started" << std::endl;
-    std::cout << m_pts_in.size() << std::endl;
-
     std::vector<uchar> status = d_status_out.getValue();
     std::vector<float> error = d_error_out.getValue();
 

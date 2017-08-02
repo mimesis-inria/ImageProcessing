@@ -78,7 +78,7 @@ class CalibExporter : public common::ImplicitDataEngine
 	sofa::Data<bool> d_activate;
 
  protected:
-	void calibFolderChanged(sofa::core::objectmodel::BaseObject*);
+    void calibFolderChanged(sofa::core::objectmodel::BaseData*);
 	unsigned m_stepCounter;
 	bool m_isStereo;
 

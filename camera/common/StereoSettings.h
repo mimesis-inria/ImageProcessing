@@ -109,15 +109,15 @@ class StereoSettings : public common::ImplicitDataEngine
 
  public:
 	// Data callbacks for GUI
-	void FundamentalMatrixChanged(sofa::core::objectmodel::BaseObject*)
+    void FundamentalMatrixChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setFundamentalMatrix(d_F.getValue());
-		this->checkData(false);
+        this->cleanTrackers(false);
 	}
-	void EssentialMatrixChanged(sofa::core::objectmodel::BaseObject*)
+    void EssentialMatrixChanged(sofa::core::objectmodel::BaseData*)
 	{
 		setEssentialMatrix(d_E.getValue());
-		this->checkData(false);
+        this->cleanTrackers(false);
 	}
 
  private:

@@ -40,8 +40,7 @@ int FeatureDetectorClass =
         .add<FeatureDetector>();
 
 FeatureDetector::FeatureDetector()
-    : ImageFilter(false),
-      d_detectMode(initData(&d_detectMode, "detectorMode",
+    : d_detectMode(initData(&d_detectMode, "detectorMode",
                             "if true, does not compute the descriptors")),
       d_mask(initData(&d_mask, common::cvMat(), "mask",
                       "Mask specifying where to look for keypoints "
@@ -99,12 +98,8 @@ void FeatureDetector::init()
   detectTypeChanged(NULL);
   detectModeChanged(NULL);
 
-  addDataCallback(
-      &d_detectMode,
-      (ImplicitDataEngine::DataCallback)&FeatureDetector::detectModeChanged);
-  addDataCallback(
-      &d_detectorType,
-      (ImplicitDataEngine::DataCallback)&FeatureDetector::detectTypeChanged);
+  SOFAOR_ADD_CALLBACK(&d_detectMode, &FeatureDetector::detectModeChanged);
+  SOFAOR_ADD_CALLBACK(&d_detectorType, &FeatureDetector::detectTypeChanged);
 
   ImageFilter::init();
   update();
