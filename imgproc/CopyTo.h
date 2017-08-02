@@ -38,14 +38,18 @@ class CopyTo : public ImageFilter
   SOFA_CLASS(CopyTo, ImageFilter);
 
   sofa::Data<common::cvMat> d_mask;
+  sofa::Data<bool> d_useMask;
 
   CopyTo()
-      : d_mask(initData(&d_mask, "mask", "mask"))
+      : d_mask(initData(&d_mask, "mask", "mask")),
+        d_useMask(initData(&d_useMask, true, "useMask",
+                           "whether or not to use the input mask"))
   {
   }
 
   void init()
   {
+    registerData(&d_useMask);
     ImageFilter::init();
   }
 
@@ -58,15 +62,15 @@ class CopyTo : public ImageFilter
       return;
     }
 
-    in.copyTo(out, d_mask.getValue());
+    in.copyTo(out,
+              (d_useMask.getValue()) ? (d_mask.getValue()) : (common::cvMat()));
   }
 };
 
 SOFA_DECL_CLASS(CopyTo)
 
 int CopyToClass =
-    sofa::core::RegisterObject("OpenCV's CopyTo function")
-        .add<CopyTo>();
+    sofa::core::RegisterObject("OpenCV's CopyTo function").add<CopyTo>();
 
 }  // namespace imgproc
 }  // namespace processor

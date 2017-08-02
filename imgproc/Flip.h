@@ -40,12 +40,14 @@ class Flip : public ImageFilter
   sofa::Data<int> d_flipCode;
 
   Flip()
-      : d_flipCode(initData(&d_flipCode, 1, "flipCode", "0 for X axis flip, 1 for Y, and -1 for both"))
+      : d_flipCode(initData(&d_flipCode, 1, "flipCode",
+                            "0 for X axis flip, 1 for Y, and -1 for both"))
   {
   }
 
   void init()
   {
+    registerData(&d_flipCode, -1, 1, 1);
     ImageFilter::init();
   }
 
@@ -54,7 +56,7 @@ class Flip : public ImageFilter
     if (in.empty())
     {
       msg_error(getName() + "::applyFilter()")
-          << "Error: cv::add requires a source and dest image";
+          << "Error: Flip requires a source and dest image";
       return;
     }
 
@@ -65,8 +67,7 @@ class Flip : public ImageFilter
 SOFA_DECL_CLASS(Flip)
 
 int FlipClass =
-    sofa::core::RegisterObject("OpenCV's Flip function")
-        .add<Flip>();
+    sofa::core::RegisterObject("OpenCV's Flip function").add<Flip>();
 
 }  // namespace imgproc
 }  // namespace processor

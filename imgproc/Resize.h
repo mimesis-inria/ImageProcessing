@@ -55,7 +55,13 @@ class Resize : public ImageFilter
     d_interp.endEdit();
   }
 
-  void init() { ImageFilter::init(); }
+  void init()
+  {
+//      registerData(&d_size, 10, 4096, 10);
+//      registerData(&d_fx, 0, 1, 0.01);
+//      registerData(&d_fy, 0, 1, 0.01);
+      registerData(&d_interp);
+      ImageFilter::init(); }
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   {
