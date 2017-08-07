@@ -23,6 +23,19 @@
 #include "initPlugin.h"
 #include <sofa/helper/system/config.h>
 
+#ifdef QT_PLUGIN
+#include <gui/ImageFilterDisplay.h>
+#include <gui/ImageFilterModel.h>
+#include <QApplication>
+#include <QDebug>
+#include <QQuickPaintedItem>
+
+const int versionMajor = 1;
+const int versionMinor = 0;
+
+static void initResources() { Q_INIT_RESOURCE(ProcessOR_qml); }
+#endif  // QT_PLUGIN
+
 namespace sofaor
 {
 /**
@@ -56,12 +69,12 @@ namespace imgproc
 // the plugin
 
 extern "C" {
-SOFA_PROCESSORPLUGIN_API void initExternalModule();
-SOFA_PROCESSORPLUGIN_API const char* getModuleName();
-SOFA_PROCESSORPLUGIN_API const char* getModuleVersion();
-SOFA_PROCESSORPLUGIN_API const char* getModuleLicense();
-SOFA_PROCESSORPLUGIN_API const char* getModuleDescription();
-SOFA_PROCESSORPLUGIN_API const char* getModuleComponentList();
+SOFA_PROCESSOR_API void initExternalModule();
+SOFA_PROCESSOR_API const char* getModuleName();
+SOFA_PROCESSOR_API const char* getModuleVersion();
+SOFA_PROCESSOR_API const char* getModuleLicense();
+SOFA_PROCESSOR_API const char* getModuleDescription();
+SOFA_PROCESSOR_API const char* getModuleComponentList();
 }
 
 void initExternalModule()
@@ -70,6 +83,17 @@ void initExternalModule()
   if (first)
   {
     first = false;
+#ifdef QT_PLUGIN
+    initResources();
+
+    qmlRegisterType<sofaor::processor::ImageFilterDisplay>(
+        "ImageFilterDisplay", versionMajor, versionMinor, "ImageFilterDisplay");
+    qmlRegisterType<sofaor::processor::ImageFilterModel>(
+        "ImageFilterModel", versionMajor, versionMinor, "ImageFilterModel");
+    qmlRegisterType<sofaor::processor::ImageFilterModelList>(
+        "ImageFilterModelList", versionMajor, versionMinor,
+        "ImageFilterModelList");
+#endif  // QT_PLUGIN
   }
 }
 
@@ -78,7 +102,15 @@ const char* getModuleVersion() { return "0.1"; }
 const char* getModuleLicense() { return ""; }
 const char* getModuleDescription() { return "ProcessOR's Base module"; }
 
-const char* getModuleComponentList() { return ""; }
+const char* getModuleComponentList()
+{
+//  std::string commonentlist;
+
+//  commonentlist += "ImageFilter";
+//  commonentlist += "";
+
+//  return commonentlist.c_str();
+}
 
 }  // namespace processor
 }  // namespace sofaor

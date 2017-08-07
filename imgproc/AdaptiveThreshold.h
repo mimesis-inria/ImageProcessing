@@ -37,11 +37,11 @@ class AdaptiveThreshold : public ImageFilter
  public:
   SOFA_CLASS(AdaptiveThreshold, ImageFilter);
 
-	sofa::Data<double> d_max;
-	sofa::Data<sofa::helper::OptionsGroup> d_adaptiveMethod;
-	sofa::Data<sofa::helper::OptionsGroup> d_thresholdType;
-	sofa::Data<int> d_blockSize;
-	sofa::Data<double> d_C;
+  sofa::Data<double> d_max;
+  sofa::Data<sofa::helper::OptionsGroup> d_adaptiveMethod;
+  sofa::Data<sofa::helper::OptionsGroup> d_thresholdType;
+  sofa::Data<int> d_blockSize;
+  sofa::Data<double> d_C;
 
   AdaptiveThreshold()
       : d_max(initData(&d_max, 1.0, "maxValue",
@@ -61,7 +61,7 @@ class AdaptiveThreshold : public ImageFilter
                      "the details below).normally it is possitive but may be "
                      "zero or negative as well."))
   {
-		sofa::helper::OptionsGroup* t = d_adaptiveMethod.beginEdit();
+    sofa::helper::OptionsGroup* t = d_adaptiveMethod.beginEdit();
     t->setNames(2, "MEAN", "GAUSSIAN");
     t->setSelectedItem("GAUSSIAN");
     d_adaptiveMethod.endEdit();
@@ -88,9 +88,9 @@ class AdaptiveThreshold : public ImageFilter
     cv::Mat img;
     if (in.type() == CV_32FC1)
     {
-        msg_warning("ImageExporter::export()")
-            << "CV_32F matrices will be normalized into a CV_8U matrix. Consider "
-               "converting first to optimize performances";
+      msg_warning("ImageExporter::export()")
+          << "CV_32F matrices will be normalized into a CV_8U matrix. Consider "
+             "converting first to optimize performances";
       cv::normalize(in, img, 0, 255, cv::NORM_MINMAX, CV_8UC1);
     }
     else if (in.type() != CV_8UC1)
@@ -101,10 +101,10 @@ class AdaptiveThreshold : public ImageFilter
       return;
     }
     else
-        img = in;
+      img = in;
     try
     {
-        std::cout << d_max.getValue() << std::endl;
+      std::cout << d_max.getValue() << std::endl;
       cv::adaptiveThreshold(img, out, d_max.getValue() * 255,
                             d_adaptiveMethod.getValue().getSelectedId(),
                             d_thresholdType.getValue().getSelectedId(),
@@ -121,7 +121,7 @@ class AdaptiveThreshold : public ImageFilter
 SOFA_DECL_CLASS(AdaptiveThreshold)
 
 int AdaptiveThresholdClass =
-		sofa::core::RegisterObject(
+    sofa::core::RegisterObject(
         "OpenCV's implementation of an adaptive image thresholding filter")
         .add<AdaptiveThreshold>();
 

@@ -36,6 +36,13 @@ namespace sofaor
 {
 namespace processor
 {
+
+SOFA_DECL_CLASS(ImageFilter)
+
+int ImageFilterClass =
+    sofa::core::RegisterObject("Abstract mother class for introspection")
+        .add<ImageFilter>();
+
 unsigned ImageFilter::m_window_uid = 0;
 
 ImageFilter::ImageFilter()
@@ -44,25 +51,35 @@ ImageFilter::ImageFilter()
           "Input image, that will undergo changes through the filter.", false)),
       d_img_out(initData(&d_img_out, "img_out",
                          "Output image, holding the filter's result", false)),
-      d_displayDebugWindow(initData(&d_displayDebugWindow, false, "Debug",
-                                    "Display a debug window to see in live "
-                                    "the changes applied to the filter")),
       d_isActive(initData(&d_isActive, true, "isActive",
                           "if false, does not call applyFilter")),
       d_outputImage(
           initData(&d_outputImage, true, "outputImage",
-                   "whether or not the computed image will be set in img_out")),
+                   "whether or not the computed image will be set in img_out"))
+#ifndef SOFAOR_NEW_GUI_ENABLED
+      ,
+      d_displayDebugWindow(initData(&d_displayDebugWindow, false, "Debug",
+                                    "Display a debug window to see in live "
+                                    "the changes applied to the filter")),
       m_win_name(std::to_string(m_window_uid) + "_" + getClassName())
+#endif  // SOFAOR_NEW_GUI_ENABLED
 {
   addAlias(&d_img_out, "img1_out");
   f_listening.setValue(true);
+#ifndef SOFAOR_NEW_GUI_ENABLED
   m_window_uid++;
+#endif  // SOFAOR_NEW_GUI_ENABLED
 }
 
 ImageFilter::~ImageFilter() {}
 void ImageFilter::init()
 {
+  if (getClassName() == "ImageFilter")
+    msg_error(getName())
+        << "Cannot instantiate an abstract component of type ImageFilter";
+#ifndef SOFAOR_NEW_GUI_ENABLED
   m_displayDebugDataTracker.trackData(d_displayDebugWindow);
+#endif  // SOFAOR_NEW_GUI_ENABLED
   addInput(&d_img);
   addOutput(&d_img_out);
 }
@@ -76,11 +93,13 @@ void ImageFilter::update()
     // filter inactive, out = in
     d_img_out.setValue(d_img.getValue());
 
+#ifndef SOFAOR_NEW_GUI_ENABLED
     if (d_displayDebugWindow.getValue())
     {
       cv::imshow(m_win_name, d_img_out.getValue());
       cv::waitKey(1);
     }
+#endif  // SOFAOR_NEW_GUI_ENABLED
     sofa::helper::AdvancedTimer::stepEnd("Image Filters");
     return;
   }
@@ -95,11 +114,13 @@ void ImageFilter::update()
   {
     d_img_out.setValue(m_debugImage);
   }
+#ifndef SOFAOR_NEW_GUI_ENABLED
   if (d_displayDebugWindow.getValue() && !m_debugImage.empty())
   {
     cv::imshow(m_win_name, m_debugImage);
     cv::waitKey(1);
   }
+#endif  // SOFAOR_NEW_GUI_ENABLED
   sofa::helper::AdvancedTimer::stepEnd(("Image Filters"));
 }
 
@@ -112,6 +133,114 @@ void ImageFilter::reinit()
   ImplicitDataEngine::reinit();
 }
 
+void ImageFilter::bindGlTexture(const std::string& imageString)
+{
+  glEnable(GL_TEXTURE_2D);  // enable the texture
+  glDisable(GL_LIGHTING);   // disable the light
+
+  glBindTexture(GL_TEXTURE_2D, 0);  // texture bind
+
+  unsigned internalFormat = GL_RGB;
+  unsigned format = GL_BGR_EXT;
+  unsigned type = GL_UNSIGNED_BYTE;
+
+  switch (m_debugImage.channels())
+  {
+    case 1:  // grayscale
+      internalFormat = GL_LUMINANCE;
+      format = GL_RED;
+      break;
+    case 3:  // RGB / BGR
+      internalFormat = GL_RGB;
+
+      format = GL_BGR_EXT;
+      break;
+    case 4:  // RGBA / BGRA
+      internalFormat = GL_RGBA;
+      format = GL_BGRA_EXT;
+      break;
+  }
+  switch (m_debugImage.type())
+  {
+    case CV_8U:
+      type = GL_UNSIGNED_BYTE;
+      break;
+    case CV_8S:
+      type = GL_BYTE;
+      break;
+    case CV_16U:
+      type = GL_UNSIGNED_SHORT;
+    case CV_16S:
+      type = GL_SHORT;
+      break;
+    case CV_32S:
+      type = GL_INT;
+      break;
+    case CV_32F:
+      type = GL_FLOAT;
+      break;
+    default:
+      type = GL_UNSIGNED_BYTE;
+      break;
+  }
+  glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_debugImage.cols,
+               m_debugImage.rows, 0, format, type, imageString.c_str());
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+}
+
+#ifdef SOFAOR_NEW_GUI_ENABLED
+void ImageFilter::drawFullFrame()
+{
+    std::cout << getName() << " drawFullFrame" << std::endl;
+//  glDisable(GL_LIGHTING);
+//  glDisable(GL_DEPTH_TEST);
+//  glDisable(GL_BLEND);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(GL_FALSE);
+
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(0, 1, 0, 1, -1, 1);  // orthogonal view
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  std::stringstream imageString;
+  imageString.write((const char*)m_debugImage.data,
+                    m_debugImage.total() * m_debugImage.elemSize());
+
+  bindGlTexture(imageString.str());
+
+  glBegin(GL_QUADS);
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  glTexCoord2f(0, 0);
+  glVertex2f(0, 0);
+  glTexCoord2f(1, 0);
+  glVertex2f(1, 0);
+  glTexCoord2f(1, 1);
+  glVertex2f(1, 1);
+  glTexCoord2f(0, 1);
+  glVertex2f(0, 1);
+  glEnd();
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);     // enable light
+  glDisable(GL_TEXTURE_2D);  // disable texture 2D
+                             // glDepthMask (GL_TRUE);		// enable zBuffer
+  glDisable(GL_BLEND);
+  glDepthMask(GL_TRUE);
+
+}
+#endif  // SOFAOR_NEW_GUI_ENABLED
+
+#ifndef SOFAOR_NEW_GUI_ENABLED
 void ImageFilter::reinitDebugWindow()
 {
   if (!d_displayDebugWindow.getValue())
@@ -129,15 +258,20 @@ void ImageFilter::reinitDebugWindow()
   if (m_isMouseCallbackActive)
     cv::setMouseCallback(m_win_name, &ImageFilter::_mouseCallback, this);
 }
+#endif  // SOFAOR_NEW_GUI_ENABLED
 
 void ImageFilter::refreshDebugWindow()
 {
+#ifndef SOFAOR_NEW_GUI_ENABLED
   reinitDebugWindow();
   if (!d_displayDebugWindow.getValue()) return;
+#endif  // SOFAOR_NEW_GUI_ENABLED
   applyFilter(d_img.getValue(), m_debugImage, true);
   if (m_debugImage.empty()) return;
 
+#ifndef SOFAOR_NEW_GUI_ENABLED
   cv::imshow(m_win_name, m_debugImage);
+#endif  // SOFAOR_NEW_GUI_ENABLED
 }
 
 void ImageFilter::activateMouseCallback()
