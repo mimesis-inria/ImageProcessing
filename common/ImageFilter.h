@@ -126,7 +126,6 @@ class ImageFilter : public common::ImplicitDataEngine
 
   sofa::Data<common::cvMat> d_img;        ///< [INPUT] image to process
   sofa::Data<common::cvMat> d_img_out;    ///< [OUTPUT] processed image
-  sofa::Data<bool> d_displayDebugWindow;  ///< toggles the Debug UI
   sofa::Data<bool> d_isActive;  ///< Whether the filter is performed or not
   sofa::Data<bool> d_outputImage;
 

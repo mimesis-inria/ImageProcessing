@@ -36,7 +36,6 @@ namespace sofaor
 {
 namespace processor
 {
-
 SOFA_DECL_CLASS(ImageFilter)
 
 int ImageFilterClass =
@@ -191,13 +190,9 @@ void ImageFilter::bindGlTexture(const std::string& imageString)
 #ifdef SOFAOR_NEW_GUI_ENABLED
 void ImageFilter::drawFullFrame()
 {
-    std::cout << getName() << " drawFullFrame" << std::endl;
-//  glDisable(GL_LIGHTING);
-//  glDisable(GL_DEPTH_TEST);
-//  glDisable(GL_BLEND);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDepthMask(GL_FALSE);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glDepthMask(GL_FALSE);
 
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
@@ -236,7 +231,6 @@ void ImageFilter::drawFullFrame()
                              // glDepthMask (GL_TRUE);		// enable zBuffer
   glDisable(GL_BLEND);
   glDepthMask(GL_TRUE);
-
 }
 #endif  // SOFAOR_NEW_GUI_ENABLED
 

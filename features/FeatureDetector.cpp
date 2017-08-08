@@ -63,7 +63,7 @@ FeatureDetector::FeatureDetector()
 
   sofa::helper::OptionsGroup* t = d_detectMode.beginEdit();
   t->setNames(3, "DETECT_ONLY", "COMPUTE_ONLY", "DETECT_AND_COMPUTE");
-  t->setSelectedItem("DETECT_AND_COMPUTE");
+  t->setSelectedItem("DETECT_ONLY");
   d_detectMode.endEdit();
 
   t = d_detectorType.beginEdit();
@@ -200,9 +200,9 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     msg_warning_when(!_d.rows, "FeatureDetector::update()")
         << "Couldn't describe features...";
   }
-  if (d_displayDebugWindow.getValue())
+  in.copyTo(out);
+  if (d_outputImage.getValue())
   {
-    in.copyTo(out);
     if (in.depth() == CV_32F)
     {
       out.convertTo(out, 0, 255.0);
@@ -245,6 +245,8 @@ void FeatureDetector::detectModeChanged(sofa::core::objectmodel::BaseData*)
 
 void FeatureDetector::detectTypeChanged(sofa::core::objectmodel::BaseData*)
 {
+  std::cout << "Detector type changed to "
+            << d_detectorType.getValue().getSelectedItem() << std::endl;
   for (size_t i = 0; i < DetectorType_COUNT; ++i)
   {
     if (i == d_detectorType.getValue().getSelectedId())

@@ -137,8 +137,8 @@ void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
 
 void Segmenter2D::mouseCallback(int event, int x, int y, int flags)
 {
-	if (d_displayDebugWindow.getValue())
-		(this->*m_activeState)(event, x, y, flags);
+    if (d_outputImage.getValue())
+        (this->*m_activeState)(event, x, y, flags);
 }
 
 }  // namespace features

@@ -104,12 +104,7 @@ const char* getModuleDescription() { return "ProcessOR's Base module"; }
 
 const char* getModuleComponentList()
 {
-//  std::string commonentlist;
-
-//  commonentlist += "ImageFilter";
-//  commonentlist += "";
-
-//  return commonentlist.c_str();
+    return "";
 }
 
 }  // namespace processor

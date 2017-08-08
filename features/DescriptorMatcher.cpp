@@ -177,7 +177,7 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
                                d_trainDescriptors.getValue(), m_matches,
                                d_maxDistance.getValue(), d_mask.getValue());
 
-  if (d_displayDebugWindow.getValue())
+  if (d_outputImage.getValue())
   {
     if (d_in2.isSet() && d_kptsL.isSet() && d_kptsR.isSet())
     {

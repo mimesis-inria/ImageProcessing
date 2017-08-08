@@ -175,7 +175,7 @@ class OpticalFlow : public ImageFilter
 
     // copy in in out
     in.copyTo(out);
-    if (d_displayDebugWindow.getValue())
+    if (d_outputImage.getValue())
     {
       for (size_t i = 0; i < m_pts_out.size(); ++i)
       {

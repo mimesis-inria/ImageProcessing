@@ -375,7 +375,7 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   ClearOutputVectors();
 
   /// Prepare the output matrix to display the colored points
-  if (d_displayDebugWindow.getValue())
+  if (d_outputImage.getValue())
   {
     in.copyTo(out);
     if (in.depth() == CV_32F)
@@ -424,7 +424,7 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     PushInlier(descL, i, PointsL, descR, ms, PointsR);
 
     // Draw inlier on output image
-    if (d_displayDebugWindow.getValue())
+    if (d_outputImage.getValue())
       cv::circle(out, m_kpL.back().pt, 3, cv::Scalar(0, 255, 0));
   }
 
