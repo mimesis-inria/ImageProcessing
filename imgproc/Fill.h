@@ -20,9 +20,11 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#include "ConvertTo.inl"
+#ifndef SOFA_OR_PROCESSOR_FILL_H
+#define SOFA_OR_PROCESSOR_FILL_H
 
-#include <sofa/core/ObjectFactory.h>
+#include <opencv2/imgproc.hpp>
+#include "common/ImageFilter.h"
 
 namespace sofaor
 {
@@ -30,18 +32,60 @@ namespace processor
 {
 namespace imgproc
 {
-SOFA_DECL_CLASS(ConvertTo)
+class Fill : public ImageFilter
+{
+  SOFAOR_CALLBACK_SYSTEM(Fill);
 
-int ConvertToClass = sofa::core::RegisterObject(
-                         "Converts OpenCV Matrices types, and optionally "
-                         "scales / crop the histogram using alpha & beta")
-                         .add<ConvertTo<char> >()
-                         .add<ConvertTo<unsigned char> >()
-                         .add<ConvertTo<short> >()
-                         .add<ConvertTo<unsigned short> >()
-                         .add<ConvertTo<int> >()
-                         .add<ConvertTo<float> >()
-                         .add<ConvertTo<double> >();
+ public:
+  SOFA_CLASS(Fill, ImageFilter);
+
+  sofa::Data<sofa::defaulttype::Vec4d> d_color;
+
+  Fill()
+      : d_color(initData(&d_color, sofa::defaulttype::Vec4d(1.0, 1.0, 1.0, 1.0),
+                         "scalar", "pixel color value."))
+  {
+  }
+
+  void init()
+  {
+    registerData(&d_color, 0.0, 1.0, 0.0001);
+    ImageFilter::init();
+  }
+
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
+  {
+    if (in.empty()) return;
+
+    sofa::defaulttype::Vec4d color;
+    if (in.depth() == CV_8U)
+    {
+      color = d_color.getValue() * 255;
+    }
+    else if (in.depth() == CV_32F)
+    {
+      color = d_color.getValue();
+    }
+    try
+    {
+      in.copyTo(out);
+      out.setTo(cv::Scalar(color.x(), color.y(), color.z(), color.w()));
+    }
+    catch (cv::Exception& e)
+    {
+      std::cout << e.what() << std::endl;
+      return;
+    }
+  }
+};
+
+SOFA_DECL_CLASS(Fill)
+
+int FillClass =
+    sofa::core::RegisterObject("OpenCV's implementation of cv::Mat::setTo()")
+        .add<Fill>();
+
 }  // namespace imgproc
 }  // namespace processor
 }  // namespace sofaor
+#endif  // SOFA_OR_PROCESSOR_SIMPLETHRESHOLD_H

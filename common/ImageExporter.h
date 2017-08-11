@@ -133,7 +133,7 @@ class ImageExporter : public common::ImplicitDataEngine
   void cleanup()
   {
     std::cout << "cleanup called on exporter" << std::endl;
-    if (d_exportType.getValue().getSelectedId() == 2)  // END
+    if (d_exportType.getValue().getSelectedId() == 1)  // END
     {
       std::vector<int> qualityType;
       qualityType.push_back(CV_IMWRITE_JPEG_QUALITY);

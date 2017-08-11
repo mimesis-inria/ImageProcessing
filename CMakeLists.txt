@@ -53,6 +53,7 @@ set(HEADER_FILES
   imgproc/InRange.h
   imgproc/CopyTo.h
   imgproc/Resize.h
+  imgproc/Fill.h
 
   features/Detectors.h
   features/Matchers.h
@@ -110,6 +111,7 @@ set(SOURCE_FILES
   imgproc/InRange.cpp
   imgproc/CopyTo.cpp
   imgproc/Resize.cpp
+  imgproc/Fill.cpp
 
   features/Detectors.cpp
   features/Matchers.cpp

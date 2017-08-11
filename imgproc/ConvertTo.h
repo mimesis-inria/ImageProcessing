@@ -45,29 +45,31 @@ namespace imgproc
 template <class T>
 class ConvertTo : public ImageFilter
 {
-	T internal_type;
+  T internal_type;
+
  public:
-    SOFA_CLASS(ConvertTo, ImageFilter);
+  SOFA_CLASS(ConvertTo, ImageFilter);
 
-	sofa::Data<double> d_alpha;
-	sofa::Data<double> d_beta;
+  sofa::Data<double> d_alpha;
+  sofa::Data<double> d_beta;
 
-    ConvertTo()
-			: d_alpha(initData(&d_alpha, "scale", "[OPTIONAL] scale factor")),
-				d_beta(initData(&d_beta, "delta", "[OPTIONAL] delta added to the scaled values"))
+  ConvertTo()
+      : d_alpha(initData(&d_alpha, "scale", "[OPTIONAL] scale factor")),
+        d_beta(initData(&d_beta, "delta",
+                        "[OPTIONAL] delta added to the scaled values"))
   {
-		std::cout << SHOWVAL(cv::COLOR_BayerBG2GRAY) << std::endl;
-	}
+  }
 
-	void init() { ImageFilter::init(); }
+  void init() { ImageFilter::init(); }
 
-	void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
-	{
-		if (in.empty()) return;
-		in.convertTo(out, getCVType(internal_type), d_alpha.getValue(), d_beta.getValue());
-	}
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool)
+  {
+    if (in.empty()) return;
+    in.convertTo(out, getCVType(internal_type), d_alpha.getValue(),
+                 d_beta.getValue());
+  }
 
-	int getCVType(T type);
+  int getCVType(T type);
 };
 
 }  // namespace imgproc

@@ -141,10 +141,10 @@ void FeatureDetector::update()
 
 void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 {
+  if (in.empty()) return;
   int detect = int(d_detectMode.getValue().getSelectedId());
   if (detect == DETECT_ONLY)
   {
-    if (in.empty()) return;
     _v.clear();
     if (!d_keypoints.getValue().empty() && !debug)
     {
@@ -200,20 +200,22 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     msg_warning_when(!_d.rows, "FeatureDetector::update()")
         << "Couldn't describe features...";
   }
-  in.copyTo(out);
   if (d_outputImage.getValue())
   {
-    if (in.depth() == CV_32F)
+    cv::Mat _in;
+    in.copyTo(_in);
+    if (_in.depth() == CV_32F)
     {
-      out.convertTo(out, 0, 255.0);
+      _in.convertTo(_in, 0, 255.0);
     }
-    if (out.channels() == 1)
+    if (_in.channels() == 1)
     {
-      cv::cvtColor(out, out, CV_GRAY2BGR);
+      cv::cvtColor(_in, _in, CV_GRAY2BGR);
     }
-
-    cv::drawKeypoints(in, _v, out, cv::Scalar(0, 255, 0), 1);
+    cv::drawKeypoints(_in, _v, out, cv::Scalar(0, 255, 0), 1);
   }
+  else
+    in.copyTo(out);
 }
 
 void FeatureDetector::detectModeChanged(sofa::core::objectmodel::BaseData*)
