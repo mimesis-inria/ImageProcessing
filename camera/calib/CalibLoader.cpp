@@ -244,13 +244,13 @@ void CalibLoader::load(const std::string& filename)
   fs->release();
 }
 
-std::string CalibLoader::getPathToCalibs()
+std::string CalibLoader::getPathToCalibs(const std::string& calibFolder)
 {
   std::string currentDir = sofa::helper::system::SetDirectory::GetCurrentDir();
   // If exists, add calibFolder to current dir
   if (d_calibFolder.getValue() != "")
   {
-    std::string path = d_calibFolder.getValue();
+    std::string path = calibFolder;
 
     if (!path.empty())
       currentDir = sofa::helper::system::SetDirectory::GetRelativeFromDir(
@@ -259,12 +259,22 @@ std::string CalibLoader::getPathToCalibs()
   return currentDir;
 }
 
-void CalibLoader::getAllCalibFiles(std::vector<std::string>& calibFiles)
+void CalibLoader::getAllCalibFiles(const std::string& calibFolder, std::vector<std::string>& calibFiles)
 {
   // Retrieve all calib files (files ending in ".yml" in calibFolder)
-  sofa::helper::system::FileSystem::listDirectory(getPathToCalibs(), calibFiles,
+  sofa::helper::system::FileSystem::listDirectory(getPathToCalibs(calibFolder), calibFiles,
                                                   "yml");
 }
+
+void CalibLoader::parse(sofa::core::objectmodel::BaseObjectDescription *arg)
+{
+    if (arg->getAttribute("calibDir"))
+    {
+        std::string dir = arg->getAttribute("calibDir");
+        setOptionsGroupToFolder(dir, std::string(""));
+    }
+}
+
 
 void CalibLoader::init()
 {
@@ -293,15 +303,52 @@ void CalibLoader::init()
                                          "to define one";
   if (!l_sCam.get()) m_isStereo = false;
 
-  calibFolderChanged(NULL);
-  d_calibNames.beginEdit()->setSelectedItemToDefault();
-  d_calibNames.endEdit();
-  setCurrentCalib(d_calibNames.getValue().getSelectedItem());
+//  calibFolderChanged(NULL);
 }
 
 void CalibLoader::calibChanged(sofa::core::objectmodel::BaseData*)
 {
   setCurrentCalib(d_calibNames.getValue().getSelectedItem());
+}
+
+void CalibLoader::setOptionsGroupToFolder(std::string calibFolder, std::string calibname)
+{
+    std::string currentDir = getPathToCalibs(calibFolder);
+    std::vector<std::string> calibFiles;
+    getAllCalibFiles(calibFolder, calibFiles);
+
+    if (calibFiles.empty())
+    {
+      sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
+      t->setNames(1, "NO_CALIB");
+      m_calibs["NO_CALIB"];
+      setCurrentCalib("NO_CALIB");
+      d_calibNames.endEdit();
+    }
+    else
+    {
+      sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
+      t->setNbItems(unsigned(calibFiles.size()));
+      unsigned i = 0;
+      for (std::string& s : calibFiles)
+      {
+        t->setItemName(
+            i++, sofa::helper::system::SetDirectory::GetFileNameWithoutExtension(
+                     s.c_str()));
+      }
+      if (calibname != "") t->setSelectedItem(calibname);
+      if (t->getSelectedItem() != calibname)
+      {
+        t->setSelectedItem(0);
+        calibname = t->getSelectedItem();
+      }
+      d_calibNames.endEdit();
+
+      // Load calibration files
+      for (std::string& f : calibFiles)
+        if (canLoad(currentDir + "/" + f)) load(currentDir + "/" + f);
+      this->setCurrentCalib(calibname);
+    }
 }
 
 void CalibLoader::calibFolderChanged(sofa::core::objectmodel::BaseData*)
@@ -312,43 +359,9 @@ void CalibLoader::calibFolderChanged(sofa::core::objectmodel::BaseData*)
   t->setNames(0);
   d_calibNames.endEdit();
 
-  std::string currentDir = getPathToCalibs();
-  std::vector<std::string> calibFiles;
-  getAllCalibFiles(calibFiles);
+  const std::string& calibFolder = d_calibFolder.getValue();
 
-  if (calibFiles.empty())
-  {
-    sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
-    t->setNames(1, "NO_CALIB");
-    m_calibs["NO_CALIB"];
-    setCurrentCalib("NO_CALIB");
-    d_calibNames.endEdit();
-  }
-  else
-  {
-    sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
-    t->setNbItems(unsigned(calibFiles.size()));
-    unsigned i = 0;
-    for (std::string& s : calibFiles)
-    {
-      t->setItemName(
-          i++, sofa::helper::system::SetDirectory::GetFileNameWithoutExtension(
-                   s.c_str()));
-    }
-    (calibname != "") ? (t->setSelectedItem(calibname))
-                      : t->setSelectedItemToDefault();
-    if (t->getSelectedItem() != calibname)
-    {
-      t->setSelectedItem(0);
-      calibname = t->getSelectedItem();
-    }
-    d_calibNames.endEdit();
-
-    // Load calibration files
-    for (std::string& f : calibFiles)
-      if (canLoad(currentDir + "/" + f)) load(currentDir + "/" + f);
-    this->setCurrentCalib(calibname);
-  }
+  setOptionsGroupToFolder(calibFolder, calibname);
 }
 
 void CalibLoader::update() {}

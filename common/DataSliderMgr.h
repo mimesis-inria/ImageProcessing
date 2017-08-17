@@ -69,49 +69,6 @@ struct CustomSliderManager : DSM
 	static void callback(int, void*);
 };
 
-// template <>
-// struct CustomSliderManager<helper::OptionsGroup, int> : DSM
-//{
-//	CustomSliderManager(sofa::Data<helper::OptionsGroup>* d)
-//	{
-//		this->m_data = d;
-//		this->m_min = 0;
-//		this->m_max = d->getValue().size() - 1;
-//		this->m_step = 1;
-//	}
-//	~CustomSliderManager() {}
-
-//	void createSlider(const std::string& winName);
-//	int getTrackbarMaxValue();
-//	int getTrackbarRangedValue();
-//	static void callback(int, void*);
-
-//	sofa::Data<helper::OptionsGroup>* m_data;
-//	int m_min, m_max, m_step;
-//};
-
-// template <>
-// struct ScalarSliderManager<bool> : DSM
-//{
-//	ScalarSliderManager(sofa::Data<bool>* d)
-//	{
-//		this->m_data = d;
-//		this->m_min = 0;
-//		this->m_max = 1;
-//		this->m_step = 1;
-//	}
-
-//	~ScalarSliderManager() {}
-
-//	void createSlider(const std::string& winName);
-//	int getTrackbarMaxValue();
-//	int getTrackbarRangedValue();
-//	static void callback(int, void*);
-
-//	sofa::Data<bool>* m_data;
-//	bool m_min, m_max, m_step;
-//};
-
 template <unsigned int N, class U>
 struct VecSliderManager : DSM
 {

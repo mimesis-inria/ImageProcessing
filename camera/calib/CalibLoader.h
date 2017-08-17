@@ -126,6 +126,7 @@ class CalibLoader : public common::ImplicitDataEngine
   CalibLoader();
   virtual ~CalibLoader();
 
+  void parse(sofa::core::objectmodel::BaseObjectDescription *arg);
   void init();
   void update();
 
@@ -167,8 +168,9 @@ class CalibLoader : public common::ImplicitDataEngine
   bool canLoad(const std::string& calibfile) const;
   void setCurrentCalib(CalibData& d);
   void setCurrentCalib(const std::string& calibName);
-  std::string getPathToCalibs();
-  void getAllCalibFiles(std::vector<std::string>& calibFiles);
+  std::string getPathToCalibs(const std::string& path);
+  void getAllCalibFiles(const std::string& path, std::vector<std::string>& calibFiles);
+  void setOptionsGroupToFolder(std::string calibFolder, std::string calibname);
 };
 
 }  // namespace calib
