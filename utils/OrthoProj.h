@@ -193,7 +193,7 @@ class OrthoProj : public common::ImplicitDataEngine
         // direction vector of line LP
         Vec3d dP = nC;
         // direction vector of the line L1
-        Vec3d d1 = (V[i] - C).normalized();
+        //        Vec3d d1 = (V[i] - C).normalized();
         // direction vector of the line L2
         Vec3d d2 = (S[m_pMap[i]] - C).normalized();
 

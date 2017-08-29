@@ -35,6 +35,7 @@
 #include <sofa/helper/gl/template.h>
 #include <sofa/helper/system/gl.h>
 #include <sofa/helper/system/glu.h>
+#include <sofa/defaulttype/RigidTypes.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -62,7 +63,7 @@ class CameraSettings : public common::ImplicitDataEngine
 {
     SOFAOR_CALLBACK_SYSTEM(CameraSettings);
  public:
-	typedef sofa::defaulttype::RigidTypes::Coord Rigid;
+    typedef sofa::defaulttype::RigidTypes::Coord Rigid;
 	typedef sofa::defaulttype::Vector2 Vector2;
 	typedef sofa::defaulttype::Vector3 Vector3;
 	typedef sofa::defaulttype::Vec<4, int> Vector4;

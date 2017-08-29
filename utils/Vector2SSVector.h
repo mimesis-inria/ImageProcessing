@@ -27,6 +27,7 @@
 #include "initPlugin.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
+#include <sofa/helper/SVector.h>
 
 namespace sofaor
 {

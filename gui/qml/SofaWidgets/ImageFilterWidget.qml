@@ -156,7 +156,7 @@ Item {
                                         id: indexViewerComboBox
                                         Layout.fillWidth: true
 
-                                        model: root.comboList
+                                        model: undefined !== root.comboList ? root.combolist : ""
 
                                         onCurrentIndexChanged : switchImageFilter();
 

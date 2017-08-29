@@ -26,6 +26,7 @@
 #include "initPlugin.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
+#include <sofa/defaulttype/Mat.h>
 
 namespace sofaor
 {

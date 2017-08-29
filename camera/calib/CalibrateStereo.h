@@ -30,6 +30,7 @@
 
 #include <sofa/core/objectmodel/Link.h>
 #include <sofa/helper/OptionsGroup.h>
+#include <sofa/helper/SVector.h>
 
 #include <opencv2/opencv.hpp>
 
