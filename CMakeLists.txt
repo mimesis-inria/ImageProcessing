@@ -20,8 +20,6 @@ set(HEADER_FILES
   common/FrameViewer.h
   common/PCViewer.h
   common/ImageFilter.h
-  common/DataSliderMgr.h
-  common/DataSliderMgr.inl
   common/ImageExporter.h
 
   camera/common/CameraSettings.h
@@ -80,7 +78,6 @@ set(SOURCE_FILES
 
   common/FrameViewer.cpp
   common/PCViewer.cpp
-  common/ImageFilter.cpp
   common/ImageExporter.cpp
 
   camera/common/CameraSettings.cpp
@@ -130,12 +127,13 @@ set(SOURCE_FILES
   utils/OrthoProj.cpp
   )
 
-set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES} SofaQtQuickGUI)
+set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})
 set(ProcessOR_SOURCES ${ProcessOR_SOURCES} ${SOURCE_FILES} ${HEADER_FILES})
 include_directories(SofaORCommon/ ProcessOR/)
 
+set (SOFAOR_NEW_GUI_ENABLED ON CACHE BOOL "Enables ImageFilter Widgets for runSofa2")
 
-if(SofaQtQuickGUI_FOUND)
+if((SofaQtQuickGUI_FOUND) AND (SOFAOR_NEW_GUI_ENABLED))
     find_package(Qt5QuickControls2 REQUIRED)
     find_package(Qt5Quick REQUIRED)
     find_package(Qt5Qml REQUIRED)
@@ -148,11 +146,13 @@ if(SofaQtQuickGUI_FOUND)
     list(APPEND SOURCE_FILES
         gui/ImageFilterDisplay.cpp
         gui/ImageFilterModel.cpp
+        common/ImageFilter_newGUI.cpp
         )
 
     list(APPEND HEADER_FILES
         gui/ImageFilterDisplay.h
         gui/ImageFilterModel.h
+        common/ImageFilter_newGUI.h
         )
 
     set(MOC_HEADER_FILES
@@ -193,7 +193,22 @@ if(SofaQtQuickGUI_FOUND)
         add_definitions(-DQT_NO_DEBUG)
     endif(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-DQT_PLUGIN)
-endif (SofaQtQuickGUI_FOUND)
+else ()
+    list(APPEND HEADER_FILES
+        common/DataSliderMgr.h
+        common/DataSliderMgr.inl
+        common/ImageFilter_oldGUI.h
+        )
+
+    list(APPEND SOURCE_FILES
+        common/ImageFilter_oldGUI.cpp
+        )
+    set(ProcessOR_SOURCES
+        ${SOURCE_FILES}
+        ${HEADER_FILES}
+        )
+endif()
+
 
 add_library(${PROJECT_NAME} SHARED ${ProcessOR_SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${ProcessOR_LIBRARIES})
