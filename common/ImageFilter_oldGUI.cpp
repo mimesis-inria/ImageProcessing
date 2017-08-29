@@ -122,9 +122,10 @@ void ImageFilter::reinitDebugWindow()
   }
 
   // WITH QT:
-  //  cv::namedWindow(m_win_name,
-  //                  CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
-  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
+    cv::namedWindow(m_win_name,
+                    CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
+  std::cout << "LOL" << m_win_name << std::endl;
+//  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
   for (DSM* dmgr : m_params) dmgr->createSlider(m_win_name);
   if (m_isMouseCallbackActive)
     cv::setMouseCallback(m_win_name, &ImageFilter::_mouseCallback, this);
