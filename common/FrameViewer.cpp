@@ -107,6 +107,7 @@ void FrameViewer::bindGlTexture(const std::string &imageString)
       break;
     case CV_16U:
       type = GL_UNSIGNED_SHORT;
+      break;
     case CV_16S:
       type = GL_SHORT;
       break;

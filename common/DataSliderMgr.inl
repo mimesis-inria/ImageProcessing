@@ -2,7 +2,7 @@
 #define SOFA_OR_PROCESSOR_ScalarSliderManager_INL
 
 #include "DataSliderMgr.h"
-#include "ImageFilter.h"
+#include "ImageFilter_oldGUI.h"
 
 #include <sofa/helper/OptionsGroup.h>
 #include <opencv2/highgui.hpp>
@@ -241,7 +241,7 @@ void CustomSliderManager<sofa::helper::OptionsGroup, int>::callback(int val,
 	{
 		m->m_data->beginEdit()->setSelectedItem(unsigned(val));
 		m->m_data->endEdit();
-		dynamic_cast<ImageFilter*>(m->m_data->getOwner())->refreshDebugWindow();
+                dynamic_cast<ImageFilter*>(m->m_data->getOwner())->refreshDebugWindow();
 	}
 }
 
