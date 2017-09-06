@@ -279,7 +279,7 @@ class CameraSettings : public common::ImplicitDataEngine
 
 	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> >
 			d_3DCorners;  ///< [OUTPUT] 3D positions of the Image plane's corners
-
+public:
 	sofa::Data<Vector3> d_upVector;  ///< camera's up vector
 
 	sofa::Data<Vector3>
@@ -289,7 +289,7 @@ class CameraSettings : public common::ImplicitDataEngine
 	sofa::Data<Vector3>
 			d_lookAt;  ///< target position (a point on the direction camPos
 								 /// -> fwdVector)
-
+private:
 	sofa::Data<bool> d_isXRay;  ///< Whether or not this camera is an XRay
 															/// source-detector model (in which case,
 	/// in CalibratedCamera, it is necessary to reverse depth when rasterizing
