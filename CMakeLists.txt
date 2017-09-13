@@ -29,6 +29,9 @@ set(HEADER_FILES
   camera/common/ProjectPoints.h
   camera/common/FeatureTriangulator.h
 
+  camera/control/CameraTrajectory.h
+  camera/control/TrajectoryAround.h
+
   camera/calib/CalibrateCamera.h
   camera/calib/SolvePnP.h
   camera/calib/CalibrateStereo.h
@@ -93,6 +96,9 @@ set(SOURCE_FILES
   camera/calib/CalibLoader.cpp
   camera/calib/CalibExporter.cpp
   camera/calib/FindChessboardCorners.cpp
+
+  camera/control/CameraTrajectory.cpp
+  camera/control/TrajectoryAround.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
