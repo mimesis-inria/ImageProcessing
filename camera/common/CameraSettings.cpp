@@ -303,6 +303,11 @@ void CameraSettings::set2DTranslationMatrix(const Matrix3& translation2D)
   recalculate3DCorners();
 }
 
+const sofa::helper::vector<sofa::defaulttype::Vector3>& CameraSettings::getCorners() const
+{
+  return d_3DCorners.getValue();
+}
+
 bool CameraSettings::isXRay() const { return d_isXRay.getValue(); }
 void CameraSettings::setXRay(bool isXray) { d_isXRay.setValue(isXray); }
 
@@ -671,7 +676,7 @@ void CameraSettings::init()
   {
     buildFromM();
   }
-  else if (d_K.isSet() || d_R.isSet() || d_t.isSet())
+  else if (d_K.isSet() && (d_R.isSet() || d_t.isSet()))
   {
     buildFromKRT();
   }
