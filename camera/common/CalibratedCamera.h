@@ -225,6 +225,34 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 		ImplicitDataEngine::handleEvent(e);
 	}
 
+    void computeBBox(const sofa::core::ExecParams *params, bool)
+    {
+      sofa::helper::vector<sofa::defaulttype::Vector3> x =
+          l_cam->getCorners();
+      x.push_back(l_cam->getPosition());
+      if (x.empty()) return;
+
+      double minBBox[3] = {std::numeric_limits<double>::max(),
+                           std::numeric_limits<double>::max(),
+                           std::numeric_limits<double>::max()};
+      double maxBBox[3] = {-std::numeric_limits<double>::max(),
+                           -std::numeric_limits<double>::max(),
+                           -std::numeric_limits<double>::max()};
+
+      for (unsigned int i = 0; i < x.size(); i++)
+      {
+        const sofa::defaulttype::Vector3 &p = x[i];
+        for (int c = 0; c < 3; c++)
+        {
+          if (p[c] > maxBBox[c]) maxBBox[c] = p[c];
+          if (p[c] < minBBox[c]) minBBox[c] = p[c];
+        }
+      }
+      this->f_bbox.setValue(
+          params, sofa::defaulttype::TBoundingBox<double>(minBBox, maxBBox));
+    }
+
+
 	CamSettings l_cam;           ///< The linked CameraSettings component
 	sofa::Data<bool> d_freeCam;  ///< locks / unlocks the modelview in OpenGL
 	sofa::Data<bool>
