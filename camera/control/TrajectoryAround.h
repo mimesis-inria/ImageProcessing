@@ -52,19 +52,17 @@ class TrajectoryAround : public common::ImplicitDataEngine
       : l_cam(initLink("cam", "camera to control")),
         d_center(initData(&d_center, "center",
                           "Point in world coordinates to rotate around")),
-        d_theta(initData(&d_theta, "theta",
+        d_theta(initData(&d_theta, "delta_theta",
                          "longitudinal angle to add at each step")),
-        d_phi(initData(&d_phi, "phi",
+        d_phi(initData(&d_phi, "delta_phi",
                        "polar (colatitude) angle to add at each step")),
-        d_rho(initData(&d_rho, "rho",
+        d_rho(initData(&d_rho, "delta_rho",
                        "distance to add to the sphere's radius at each step")),
-        d_thetaInit(initData(&d_thetaInit, "thetaInit",
-                             "longitudinal angle to add at each step")),
-        d_phiInit(initData(&d_phiInit, "phiInit",
-                           "polar (colatitude) angle to add at each step")),
-        d_rhoInit(
-            initData(&d_rhoInit, "rhoInit",
-                     "distance to add to the sphere's radius at each step"))
+        d_thetaInit(
+            initData(&d_thetaInit, "theta", "Initial longitudinal angle")),
+        d_phiInit(
+            initData(&d_phiInit, "phi", "initial polar (colatitude) angle")),
+        d_rhoInit(initData(&d_rhoInit, "rho", "initial sphere's radius"))
   {
   }
 
@@ -83,8 +81,6 @@ class TrajectoryAround : public common::ImplicitDataEngine
 
     if (!l_cam.get())
       msg_error(getName() + "::init()") << "Error: No camera link set. ";
-    // initialize camera position with correct orientation
-//    m_pole = l_cam->getPosition() - d_center.getValue();
     m_rho = d_rho.getValue();
     m_theta = d_theta.getValue();
     m_phi = d_phi.getValue();
@@ -107,7 +103,8 @@ class TrajectoryAround : public common::ImplicitDataEngine
 
     if (init)
     {
-    } else
+    }
+    else
     {
       sphCoord.x() += m_rho;
       sphCoord.x() = std::abs(sphCoord.x());
@@ -122,6 +119,7 @@ class TrajectoryAround : public common::ImplicitDataEngine
     p.x() = sphCoord.x() * std::sin(sphCoord.y()) * std::cos(sphCoord.z());
     p.y() = sphCoord.x() * std::sin(sphCoord.y()) * std::sin(sphCoord.z());
     p.z() = sphCoord.x() * std::cos(sphCoord.y());
+    p += d_center.getValue();
 
     Quat q1 = Quat(Vector3(1.0, 0.0, 0.0), M_PI);
     Quat q2 = Quat::fromEuler(0, sphCoord.y(), 0);
