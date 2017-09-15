@@ -88,4 +88,4 @@ int FillClass =
 }  // namespace imgproc
 }  // namespace processor
 }  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_SIMPLETHRESHOLD_H
+#endif  // SOFA_OR_PROCESSOR_FILL_H
