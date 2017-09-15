@@ -55,6 +55,7 @@ set(HEADER_FILES
   imgproc/CopyTo.h
   imgproc/Resize.h
   imgproc/Fill.h
+  imgproc/MinMaxLoc.h
 
   features/Detectors.h
   features/Matchers.h
@@ -115,6 +116,7 @@ set(SOURCE_FILES
   imgproc/CopyTo.cpp
   imgproc/Resize.cpp
   imgproc/Fill.cpp
+  imgproc/MinMaxLoc.cpp
 
   features/Detectors.cpp
   features/Matchers.cpp
