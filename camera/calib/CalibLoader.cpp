@@ -25,6 +25,7 @@
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/helper/system/FileSystem.h>
 #include <sofa/helper/system/SetDirectory.h>
+#include <sofa/helper/system/FileRepository.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
 #include <cstring>
@@ -80,7 +81,8 @@ bool CalibLoader::canLoad(const std::string& calibfile) const
   const char* filename = calibfile.c_str();
   std::string sfilename(filename);
 
-  if (!sofa::helper::system::DataRepository.findFile(sfilename))
+  sofa::helper::system::FileRepository fr;
+  if (!fr.findFile(sfilename))
   {
     msg_error("CalibLoader::canLoad()")
         << "Error: File '" << calibfile << "' not found. ";
