@@ -54,6 +54,7 @@ set(HEADER_FILES
   imgproc/InRange.h
   imgproc/CopyTo.h
   imgproc/Resize.h
+  imgproc/Crop.h
   imgproc/Fill.h
   imgproc/MinMaxLoc.h
 
@@ -115,6 +116,7 @@ set(SOURCE_FILES
   imgproc/InRange.cpp
   imgproc/CopyTo.cpp
   imgproc/Resize.cpp
+  imgproc/Crop.cpp
   imgproc/Fill.cpp
   imgproc/MinMaxLoc.cpp
 
