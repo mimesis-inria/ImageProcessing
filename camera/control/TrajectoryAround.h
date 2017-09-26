@@ -120,10 +120,10 @@ class TrajectoryAround : public common::ImplicitDataEngine
     p.z() = sphCoord.x() * std::cos(sphCoord.y());
 
     Quat q1 = Quat(Vector3(1.0, 0.0, 0.0), M_PI);
-    Quat q2 = Quat::fromEuler(0, sphCoord.y(), 0);
-    Quat q3 = Quat::fromEuler(0, 0, sphCoord.z());
+    Quat q2 = Quat::fromEuler(0, -sphCoord.y()+ M_PI, 0);
+    Quat q3 = Quat::fromEuler(0, 0, -sphCoord.z());
     Quat q4 = Quat(Vector3(0.0, 0.0, 1.0), -M_PI / 2);
-    Quat q5 = q1 * Quat(Vector3(1.0, 0.0, 0.0), -M_PI / 2);
+    Quat q5 = Quat(Vector3(1.0, 0.0, 0.0), -M_PI / 2);
 
     Matrix3 R1, R2, R3, R4, R5;
     q1.toMatrix(R1);
@@ -131,12 +131,11 @@ class TrajectoryAround : public common::ImplicitDataEngine
     q3.toMatrix(R3);
     q4.toMatrix(R4);
     q5.toMatrix(R5);
-    // R.invert(R);
 
     p = Vector3(p.x(), -p.z(), p.y());
     p += d_center.getValue();
-    Matrix3 R = R5 * R3 * R2 * R1 * R4;
-    R.invert(R);
+    Matrix3 R =    R2 * R3* R5 ;
+
     l_cam->setPosition(p, false);
     l_cam->setRotationMatrix(R, false);
     l_cam->buildFromKRT();
