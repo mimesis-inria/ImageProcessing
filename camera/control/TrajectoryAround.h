@@ -62,7 +62,10 @@ class TrajectoryAround : public common::ImplicitDataEngine
             initData(&d_thetaInit, "theta", "Initial longitudinal angle")),
         d_phiInit(
             initData(&d_phiInit, "phi", "initial polar (colatitude) angle")),
-        d_rhoInit(initData(&d_rhoInit, "rho", "initial sphere's radius"))
+        d_rhoInit(initData(&d_rhoInit, "rho", "initial sphere's radius")),
+        shift_x(initData(&shift_x, "shift_x", "shift along the x axis wrt the CT")),
+        shift_y(initData(&shift_y, "shift_y", "shift along the y axis wrt the CT")),
+        shift_z(initData(&shift_z, "shift_z", "shift along the z axis wrt the CT"))
   {
   }
 
@@ -132,7 +135,7 @@ class TrajectoryAround : public common::ImplicitDataEngine
     q4.toMatrix(R4);
     q5.toMatrix(R5);
 
-    p = Vector3(p.x(), -p.z(), p.y());
+    p = Vector3(p.x() + shift_x.getValue(), -p.z() + shift_y.getValue() , p.y() + shift_z.getValue());
     p += d_center.getValue();
     Matrix3 R =    R2 * R3* R5 ;
 
@@ -165,6 +168,10 @@ class TrajectoryAround : public common::ImplicitDataEngine
   sofa::Data<double> d_thetaInit;
   sofa::Data<double> d_phiInit;
   sofa::Data<double> d_rhoInit;
+
+  sofa::Data<double> shift_x;
+  sofa::Data<double> shift_y;
+  sofa::Data<double> shift_z;
 
   double m_theta;
   double m_phi;
