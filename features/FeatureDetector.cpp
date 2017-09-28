@@ -83,9 +83,9 @@ FeatureDetector::FeatureDetector()
   m_detectors[BRISK] = new BRISKDetector(this);
   m_detectors[KAZE] = new KAZEDetector(this);
   m_detectors[AKAZE] = new AKAZEDetector(this);
-  m_detectors[BRIEF] = new BRIEFDetector(this);
   m_detectors[BLOB] = new SimpleBlobDetector(this);
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+  m_detectors[BRIEF] = new BRIEFDetector(this); 
   m_detectors[SIFT] = new SIFTDetector(this);
   m_detectors[SURF] = new SURFDetector(this);
   m_detectors[DAISY] = new DAISYDetector(this);

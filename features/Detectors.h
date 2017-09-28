@@ -338,6 +338,8 @@ struct AKAZEDetector : BaseDetector
 	sofa::Data<sofa::helper::OptionsGroup> diffusivity;
 };
 
+#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+
 struct BRIEFDetector : BaseDetector
 {
 	BRIEFDetector(sofa::core::objectmodel::BaseObject* c);
@@ -365,8 +367,6 @@ struct BRIEFDetector : BaseDetector
 	sofa::Data<int> bytes;
 	sofa::Data<bool> use_orientation;
 };
-
-#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
 
 struct SIFTDetector : BaseDetector
 {

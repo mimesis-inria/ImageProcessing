@@ -58,9 +58,9 @@ class FeatureDetector : public ImageFilter
     BRISK = 3,
     KAZE = 4,
     AKAZE = 5,
-    BRIEF = 6,
     BLOB = 7,
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+    BRIEF = 6,
     SIFT = 8,
     SURF = 9,
     DAISY = 10,

@@ -356,6 +356,8 @@ void AKAZEDetector::toggleVisible(bool show)
   diffusivity.setDisplayed(show);
 }
 
+#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+
 BRIEFDetector::BRIEFDetector(sofa::core::objectmodel::BaseObject* c)
     : bytes(c->initData(&bytes, 32, "BRIEFBytes",
                         "length of the descriptor in bytes, valid values are: "
@@ -378,7 +380,6 @@ void BRIEFDetector::toggleVisible(bool show)
 }
 
 
-#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
 
 SIFTDetector::SIFTDetector(sofa::core::objectmodel::BaseObject* c)
     : nFeatures(c->initData(&nFeatures, 0, "SIFTNFeatures",
