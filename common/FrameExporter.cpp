@@ -20,4 +20,4 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#include "ImageExporter.h"
+#include "FrameExporter.h"

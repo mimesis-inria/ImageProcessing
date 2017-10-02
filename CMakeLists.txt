@@ -20,7 +20,7 @@ set(HEADER_FILES
   common/FrameViewer.h
   common/PCViewer.h
   common/ImageFilter.h
-  common/ImageExporter.h
+  common/FrameExporter.h
 
   camera/common/CameraSettings.h
   camera/common/StereoSettings.h
@@ -83,7 +83,7 @@ set(SOURCE_FILES
 
   common/FrameViewer.cpp
   common/PCViewer.cpp
-  common/ImageExporter.cpp
+  common/FrameExporter.cpp
 
   camera/common/CameraSettings.cpp
   camera/common/StereoSettings.cpp
