@@ -32,7 +32,6 @@ Item {
 
     function updateIndex(index)
     {
-        //console.log("updateIndex() : " + index);
         imagemodel.sofaComponent = (sofaScene.componentsByType("ImageFilter").at(index));
     }
 
@@ -41,6 +40,7 @@ Item {
         comboList.clear()
         for (var i = 0; i < models.size(); ++i)
         {
+            console.log(models.at(i).name())
             comboList.append({text: models.at(i).name()})
         }
     }
@@ -137,8 +137,6 @@ Item {
                             id: savePanel
                             implicitWidth: parent.width
 
-                            title: "Misc"
-
                             GridLayout {
                                 anchors.fill: parent
                                 columnSpacing: 2
@@ -156,12 +154,19 @@ Item {
                                         id: indexViewerComboBox
                                         Layout.fillWidth: true
 
-                                        model: undefined !== root.comboList ? root.combolist : ""
+                                        property  var fakelist: ListModel {
+                                            id: tralalol
+                                            ListElement { text: "kapoue1"; }
+                                            ListElement { text: "kapoue2"; }
+                                            ListElement { text: "kapoue3"; }
+                                        }
+
+                                        model: undefined !== root.comboList ? root.comboList : fakelist;
 
                                         onCurrentIndexChanged : switchImageFilter();
 
                                         function switchImageFilter() {
-                                            //onsole.log("Change to " + indexViewerComboBox.currentIndex);
+                                            console.log("Change to " + indexViewerComboBox.currentIndex);
                                             root.updateIndex(indexViewerComboBox.currentIndex);
                                             //root.imagemodel.update()
                                         }
