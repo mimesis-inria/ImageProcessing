@@ -76,8 +76,47 @@ class TemplateMatcher : public ImageFilter
           << "TemplateMatcher::template_img must be grayscale";
 
     out = in.clone();
+    cv::imwrite("in.png", in);
+    cv::imwrite("template.png", d_template.getValue());
+
     cv::matchTemplate(in, d_template.getValue(), out,
                       d_method.getValue().getSelectedId());
+
+    /// Localizing the best match with minMaxLoc
+    double minVal; double maxVal; cv::Point minLoc; cv::Point maxLoc;
+    cv::Point matchLoc;
+    cv::minMaxLoc( out, &minVal, &maxVal, &minLoc, &maxLoc, cv::Mat() );
+
+    std::cout << " min val max val " << minVal << " " << maxVal << std::endl;
+
+    cv::normalize(out,out,0,1,cv::NORM_MINMAX, -1, cv::Mat() );
+    cv::minMaxLoc( out, &minVal, &maxVal, &minLoc, &maxLoc, cv::Mat() );
+
+    cv::Mat img_display;
+    in.copyTo( img_display );
+
+    /*char* image_window = "Source Image";
+    char* result_window = "Result window";
+
+    cv::namedWindow( image_window, CV_WINDOW_AUTOSIZE );
+    cv::namedWindow( result_window, CV_WINDOW_AUTOSIZE );*/
+
+    /// For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the better
+    //if( match_method  == CV_TM_SQDIFF || match_method == CV_TM_SQDIFF_NORMED )
+     // { matchLoc = minLoc; }
+    //else
+      { matchLoc = maxLoc; }
+
+    cv::Mat templ = d_template.getValue().clone();
+
+    /// Show me what you got
+    cv::rectangle( img_display, matchLoc, cv::Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), cv::Scalar::all(0), 2, 8, 0 );
+    cv::rectangle( out, matchLoc, cv::Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), cv::Scalar::all(0), 2, 8, 0 );
+
+    //cv::imshow( image_window, img_display );
+    //cv::imshow( result_window, out );
+    cv::imwrite("img_display.png", img_display);
+
   }
 };
 
