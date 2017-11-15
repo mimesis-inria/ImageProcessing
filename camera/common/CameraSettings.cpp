@@ -466,6 +466,8 @@ void CameraSettings::composeM()
   const Matrix3& R = d_R.getValue();
   const Matrix3& K = d_K.getValue();
 
+  std::cout << " d_t " << d_t.getValue() << " " << R << std::endl;
+
   // gets the camera position from the position of the world's reference frame
   // in camera coordinates
   t = -R * t;
