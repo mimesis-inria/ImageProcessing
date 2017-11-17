@@ -214,8 +214,10 @@ class OrthoProj : public common::ImplicitDataEngine
       d_P.setValue(Pbis);
     }
     else if (d_method.getValue().getSelectedItem() == "ORTHO")
+    {
+      std::cout << "PROJECTION" << std::endl;
       d_P.setValue(P);
-    d_P.endEdit();
+    }
   }
 
   // INPUTS

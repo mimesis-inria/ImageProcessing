@@ -212,7 +212,8 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     {
       cv::cvtColor(_in, _in, CV_GRAY2BGR);
     }
-    cv::drawKeypoints(_in, _v, out, cv::Scalar(0, 255, 0), 1);
+    cv::drawKeypoints(_in, _v, _in, cv::Scalar(0, 255, 0), 1);
+    out = _in.clone();
   }
   else
     in.copyTo(out);

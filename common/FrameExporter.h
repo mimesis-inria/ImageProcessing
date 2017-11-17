@@ -20,8 +20,8 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_IMAGEEXPORTER_H
-#define SOFA_OR_PROCESSOR_IMAGEEXPORTER_H
+#ifndef SOFA_OR_PROCESSOR_FRAMEEXPORTER_H
+#define SOFA_OR_PROCESSOR_FRAMEEXPORTER_H
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <SofaORCommon/cvMat.h>
@@ -35,13 +35,13 @@ namespace sofaor
 namespace processor
 {
 /**
- * @brief The ImageExporter class
+ * @brief The FrameExporter class
  *
  * Export an input image (img) into [fileName] either at BEGIN, END or at a
  * specific frequency of the simulation (STEP).
  * Can be activated / deactivated manually with [active]
  */
-class ImageExporter : public common::ImplicitDataEngine
+class FrameExporter : public common::ImplicitDataEngine
 {
   sofa::Data<std::string> d_fileName;  ///< name of the file to write into
   sofa::Data<common::cvMat> d_img;     ///< [INPUT] image to write in fileName
@@ -57,9 +57,9 @@ class ImageExporter : public common::ImplicitDataEngine
       d_activate;  ///< set to false to manually activate through GUI
 
  public:
-  SOFA_CLASS(ImageExporter, common::ImplicitDataEngine);
+  SOFA_CLASS(FrameExporter, common::ImplicitDataEngine);
 
-  ImageExporter()
+  FrameExporter()
       : d_fileName(initData(&d_fileName, "fileName", "output image file name")),
         d_img(initData(&d_img, "img", "image to export")),
         d_nSteps(initData(&d_nSteps, (unsigned)0, "nSteps",
@@ -79,7 +79,7 @@ class ImageExporter : public common::ImplicitDataEngine
     d_exportType.endEdit();
   }
 
-  ~ImageExporter() {}
+  ~FrameExporter() {}
   void init()
   {
     m_stepCounter = 0;
@@ -97,7 +97,7 @@ class ImageExporter : public common::ImplicitDataEngine
         return;
     if (d_img.getValue().type() == CV_32FC1)
     {
-      msg_warning("ImageExporter::export()")
+      msg_warning("FrameExporter::export()")
           << "CV_32F matrices will be normalized into a CV_8U matrix. Consider "
              "converting first to optimize performances";
       cv::normalize(d_img.getValue(), img, 0, 255, cv::NORM_MINMAX, CV_8UC1);
@@ -142,7 +142,7 @@ class ImageExporter : public common::ImplicitDataEngine
       cv::Mat img;
       if (d_img.getValue().type() == CV_32FC1)
       {
-        msg_warning("ImageExporter::export()")
+        msg_warning("FrameExporter::export()")
             << "CV_32F matrices will be normalized into a CV_8U matrix. "
                "Consider "
                "converting first to optimize performances";
@@ -158,13 +158,13 @@ class ImageExporter : public common::ImplicitDataEngine
   unsigned m_stepCounter;
 };
 
-SOFA_DECL_CLASS(ImageExporter)
+SOFA_DECL_CLASS(FrameExporter)
 
-int ImageExporterClass =
+int FrameExporterClass =
     sofa::core::RegisterObject(
         "component to export Opencv images as a file on your system")
-        .add<ImageExporter>();
+        .add<FrameExporter>();
 
 }  // namespace processor
 }  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_IMAGEEXPORTER_H
+#endif  // SOFA_OR_PROCESSOR_FRAMEEXPORTER_H

@@ -20,7 +20,7 @@ set(HEADER_FILES
   common/FrameViewer.h
   common/PCViewer.h
   common/ImageFilter.h
-  common/ImageExporter.h
+  common/FrameExporter.h
 
   camera/common/CameraSettings.h
   camera/common/StereoSettings.h
@@ -31,6 +31,8 @@ set(HEADER_FILES
 
   camera/control/CameraTrajectory.h
   camera/control/TrajectoryAround.h
+  camera/control/LinesOfSightConstraintManager.h
+  camera/control/LinesOfSightConstraintManager.inl
 
   camera/calib/CalibrateCamera.h
   camera/calib/SolvePnP.h
@@ -75,6 +77,8 @@ set(HEADER_FILES
   utils/Vector2SSVector.inl
   utils/NegateVector.h
   utils/OrthoProj.h
+  utils/MatchPoints.h
+  utils/HungarianPointMatch.h
 
   )
 
@@ -83,7 +87,7 @@ set(SOURCE_FILES
 
   common/FrameViewer.cpp
   common/PCViewer.cpp
-  common/ImageExporter.cpp
+  common/FrameExporter.cpp
 
   camera/common/CameraSettings.cpp
   camera/common/StereoSettings.cpp
@@ -101,6 +105,7 @@ set(SOURCE_FILES
 
   camera/control/CameraTrajectory.cpp
   camera/control/TrajectoryAround.cpp
+  camera/control/LinesOfSightConstraintManager.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
@@ -135,6 +140,8 @@ set(SOURCE_FILES
   utils/Vector2SSVector.cpp
   utils/NegateVector.cpp
   utils/OrthoProj.cpp
+  utils/MatchPoints.cpp
+  utils/HungarianPointMatch.cpp
   )
 
 set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})
