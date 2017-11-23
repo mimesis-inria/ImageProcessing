@@ -77,9 +77,6 @@ set(HEADER_FILES
   utils/Vector2SSVector.inl
   utils/NegateVector.h
   utils/OrthoProj.h
-  utils/MatchPoints.h
-  utils/HungarianPointMatch.h
-
   )
 
 set(SOURCE_FILES
@@ -140,8 +137,6 @@ set(SOURCE_FILES
   utils/Vector2SSVector.cpp
   utils/NegateVector.cpp
   utils/OrthoProj.cpp
-  utils/MatchPoints.cpp
-  utils/HungarianPointMatch.cpp
   )
 
 set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES})
