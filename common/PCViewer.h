@@ -53,6 +53,7 @@ class PCViewer : public common::ImplicitDataEngine
 	// INPUTS
 	sofa::Data<sofa::helper::vector<Vector3> > d_positions;
 	sofa::Data<sofa::helper::vector<Vec3b> > d_colors;
+    sofa::Data<Vec3b> d_color;
 
  private:
 	std::vector<sofa::defaulttype::Vec4f> m_colors;
