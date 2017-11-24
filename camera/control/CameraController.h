@@ -25,9 +25,17 @@
 
 #include "camera/common/CameraSettings.h"
 #include "initPlugin.h"
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <fstream>
+#include "serialization.h"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <sofa/helper/OptionsGroup.h>
+
+#include <zmq.hpp>
 
 namespace sofaor
 {
@@ -73,7 +81,9 @@ class CameraController : public common::ImplicitDataEngine
       d_R21(initData(&d_R21, "R21",
                    "Rotation matrix 21")),
       d_R22(initData(&d_R22, "R22",
-                   "Rotation matrix 22"))
+                   "Rotation matrix 22")),
+      d_imgS(initData(&d_imgS, "d_img",
+                   "serialized image"))
   {
   }
 
@@ -112,9 +122,20 @@ class CameraController : public common::ImplicitDataEngine
     if (!l_cam.get())
       msg_error(getName() + "::init()") << "Error: No camera link set. ";
 
+    m_socket =new zmq::socket_t(m_context, ZMQ_PUB);
+    m_socket->bind("tcp://127.0.0.1:6667");
+
     update();
   }
 
+  std::string save( const cv::Mat & mat )
+  {
+      std::ostringstream oss;
+      boost::archive::text_oarchive toa( oss );
+      toa << mat;
+
+      return oss.str();
+  }
 
   void update()
   {
@@ -137,14 +158,51 @@ class CameraController : public common::ImplicitDataEngine
     l_cam->setPosition(t, false);
     l_cam->setRotationMatrix(R, false);
     l_cam->buildFromKRT();
+
+    int wdth = 764;
+    int hght = 800;
+
+    GLfloat depths[hght * wdth ];
+    GLfloat depthsN[hght * wdth ];
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT,viewport);
+    //glEnable(GL_DEPTH_TEST);
+
+    cv::Mat temp = cv::Mat::zeros(hght, wdth, CV_8UC1);
+    cv::Mat tempI;
+
+    glReadPixels(viewport[0], viewport[1], viewport[2],viewport[3], GL_LUMINANCE, GL_UNSIGNED_BYTE,temp.data);
+
+    // Process buffer so it matches correct format and orientation
+    //cv::cvtColor(temp, tempI, CV_BGR2RGB);
+    tempI = temp;
+    cv::flip(tempI, temp, 0);
+
+    temp = (temp.reshape(0,1)); // to make it continuous
+    // Write to file
+    //cv::imwrite("savedWindow.png", temp);
+
+    int  imgSize = temp.total()*temp.elemSize();
+
+    std::string serialized = save(temp);
+
+    d_imgS.setValue(serialized);
+
+    // Send data here
+
+     zmq::message_t message(serialized.length());
+     //memcpy(message.data(), temp.data, imgSize);
+     memcpy(message.data(), serialized.c_str(), serialized.length());
+
+     bool status = m_socket->send(message);
   }
 
   virtual void handleEvent(sofa::core::objectmodel::Event* e)
   {
     if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
     {
-      /*cleanInputs();
-      update();*/
+      cleanInputs();
+      update();
     }
   }
 
@@ -175,6 +233,11 @@ class CameraController : public common::ImplicitDataEngine
   sofa::Data<double> d_R20;  ///< 3x3 rotation matrix 20
   sofa::Data<double> d_R21;  ///< 3x3 rotation matrix 21
   sofa::Data<double> d_R22;  ///< 3x3 rotation matrix 22
+
+  sofa::Data<std::string> d_imgS;  ///< serialized image
+
+  zmq::context_t     m_context{1};
+  zmq::socket_t      *m_socket;
 
  private:
   void TranslationVectorDataChanged(sofa::core::objectmodel::BaseData*)
