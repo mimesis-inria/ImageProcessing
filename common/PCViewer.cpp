@@ -65,25 +65,25 @@ void PCViewer::update()
 
 void PCViewer::computeBBox(const sofa::core::ExecParams* params, bool)
 {
-  static const double max_double = std::numeric_limits<double>::max();
-
   if (m_positions.size() == 0)
-  {
-    double maxBBox[3] = {1, 1, 1};
-    double minBBox[3] = {-1, -1, -1};
-    this->f_bbox.setValue(
-        params, sofa::defaulttype::TBoundingBox<double>(minBBox, maxBBox));
     return;
-  }
-  double maxBBox[3] = {-max_double, -max_double, -max_double};
-  double minBBox[3] = {max_double, max_double, max_double};
-  double r = d_size.getValue();
-  for (const Vector3& p : m_positions)
-    for (int i = 0; i < 3; ++i)
+
+  double minBBox[3] = {std::numeric_limits<double>::max(),
+                       std::numeric_limits<double>::max(),
+                       std::numeric_limits<double>::max()};
+  double maxBBox[3] = {-std::numeric_limits<double>::max(),
+                       -std::numeric_limits<double>::max(),
+                       -std::numeric_limits<double>::max()};
+
+  for (unsigned int i = 0; i < m_positions.size(); i++)
+  {
+    const sofa::defaulttype::Vector3 &p = m_positions[i];
+    for (int c = 0; c < 3; c++)
     {
-      if (p[i] + r > maxBBox[i]) maxBBox[i] = p[i] + r;
-      if (p[i] - r < minBBox[i]) minBBox[i] = p[i] - r;
+      if (p[c] > maxBBox[c]) maxBBox[c] = p[c];
+      if (p[c] < minBBox[c]) minBBox[c] = p[c];
     }
+  }
   this->f_bbox.setValue(
       params, sofa::defaulttype::TBoundingBox<double>(minBBox, maxBBox));
 }
