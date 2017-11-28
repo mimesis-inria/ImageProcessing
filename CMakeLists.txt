@@ -35,6 +35,7 @@ set(HEADER_FILES
   camera/control/TrajectoryAround.h
   camera/control/CameraController.h
   camera/control/serialization.h
+  camera/control/RenderCommunication.h
 
   camera/calib/CalibrateCamera.h
   camera/calib/SolvePnP.h
@@ -106,6 +107,7 @@ set(SOURCE_FILES
   camera/control/CameraTrajectory.cpp
   camera/control/TrajectoryAround.cpp
   camera/control/CameraController.cpp
+  camera/control/RenderCommunication.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp

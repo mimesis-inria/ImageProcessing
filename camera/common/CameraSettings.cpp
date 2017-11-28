@@ -472,6 +472,8 @@ void CameraSettings::composeM()
   // in camera coordinates
   t = -R * t;
 
+  std::cout << " d_tT " <<t << " " << R << std::endl;
+
   double ptr2[12] = {R[0][0], R[0][1], R[0][2], t[0],    R[1][0], R[1][1],
                      R[1][2], t[1],    R[2][0], R[2][1], R[2][2], t[2]};
   Mat3x4d Rt(ptr2);
