@@ -65,8 +65,7 @@ void PCViewer::update()
 
 void PCViewer::computeBBox(const sofa::core::ExecParams* params, bool)
 {
-  if (m_positions.size() == 0)
-    return;
+  if (m_positions.size() == 0) return;
 
   double minBBox[3] = {std::numeric_limits<double>::max(),
                        std::numeric_limits<double>::max(),
@@ -77,7 +76,7 @@ void PCViewer::computeBBox(const sofa::core::ExecParams* params, bool)
 
   for (unsigned int i = 0; i < m_positions.size(); i++)
   {
-    const sofa::defaulttype::Vector3 &p = m_positions[i];
+    const sofa::defaulttype::Vector3& p = m_positions[i];
     for (int c = 0; c < 3; c++)
     {
       if (p[c] > maxBBox[c]) maxBBox[c] = p[c];
