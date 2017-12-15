@@ -271,6 +271,7 @@ class CameraSettings : public common::ImplicitDataEngine
   sofa::Data<Mat3x4d> d_M;  ///< 3x4 global projection matrix
   sofa::Data<Matrix3> d_K;  ///< 3x3 Intrinsic Matrix
   sofa::Data<Matrix3> d_R;  ///< 3x3 rotation matrix
+
   sofa::Data<Vector3>
       d_t;  ///< Position in world coordinates of the camera's optical center
 

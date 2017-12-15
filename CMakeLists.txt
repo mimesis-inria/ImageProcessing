@@ -14,6 +14,8 @@ if (SOFAOR_ENABLE_OPENCV_CONTRIB)
     add_definitions("-DSOFAOR_OPENCV_CONTRIB_ENABLED")
 endif ()
 
+find_package(Boost COMPONENTS system filesystem serialization REQUIRED)
+
 set(HEADER_FILES
   initPlugin.h
 
@@ -33,6 +35,9 @@ set(HEADER_FILES
   camera/control/TrajectoryAround.h
   camera/control/LinesOfSightConstraintManager.h
   camera/control/LinesOfSightConstraintManager.inl
+  camera/control/CameraController.h
+  camera/control/serialization.h
+  camera/control/RenderCommunication.h
 
   camera/calib/CalibrateCamera.h
   camera/calib/SolvePnP.h
@@ -103,6 +108,8 @@ set(SOURCE_FILES
   camera/control/CameraTrajectory.cpp
   camera/control/TrajectoryAround.cpp
   camera/control/LinesOfSightConstraintManager.cpp
+  camera/control/CameraController.cpp
+  camera/control/RenderCommunication.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
@@ -223,7 +230,7 @@ endif()
 
 
 add_library(${PROJECT_NAME} SHARED ${ProcessOR_SOURCES})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${ProcessOR_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${ProcessOR_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
 
 target_include_directories(${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>")
 target_include_directories(${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/.>")
