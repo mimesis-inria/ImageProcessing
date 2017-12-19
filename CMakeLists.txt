@@ -11,7 +11,7 @@ include_directories( . )
 set (SOFAOR_ENABLE_OPENCV_CONTRIB OFF CACHE BOOL "Enables OpenCV's non-free features hosted in opencv_contrib")
 
 if (SOFAOR_ENABLE_OPENCV_CONTRIB)
-    add_definitions("-DSOFAOR_OPENCV_CONTRIB_ENABLED")
+  add_definitions("-DSOFAOR_OPENCV_CONTRIB_ENABLED")
 endif ()
 
 find_package(Boost COMPONENTS system filesystem serialization REQUIRED)

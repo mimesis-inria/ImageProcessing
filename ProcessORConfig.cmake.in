@@ -9,3 +9,7 @@ if(NOT TARGET ProcessOR)
 endif()
 
 check_required_components(ProcessOR)
+
+get_filename_component(ProcessOR_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(ProcessOR_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+set(ProcessOR_LIBRARIES ProcessOR)

@@ -23,7 +23,7 @@
 #ifndef SOFA_OR_PROCESSOR_CAMERASETTINGS_H
 #define SOFA_OR_PROCESSOR_CAMERASETTINGS_H
 
-#include "initPlugin.h"
+#include "ProcessOR/initPlugin.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 
@@ -261,7 +261,7 @@ class CameraSettings : public common::ImplicitDataEngine
   /// sets whether the camera is an XRay device
   void setXRay(bool isXray);
 
- private:
+ public:
   sofa::Data<Vec2i> d_imageSize;      ///< Dimensions of the image in pixels
   sofa::Data<double> d_f;             ///< Focal distance
   sofa::Data<Matrix3> d_translate2D;  ///< 2D translation matrix (u0 v0)
@@ -284,7 +284,6 @@ class CameraSettings : public common::ImplicitDataEngine
 
   sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> >
       d_3DCorners;  ///< [OUTPUT] 3D positions of the Image plane's corners
- public:
   sofa::Data<Vector3> d_upVector;  ///< camera's up vector
 
   sofa::Data<Vector3>
@@ -294,13 +293,12 @@ class CameraSettings : public common::ImplicitDataEngine
   sofa::Data<Vector3>
       d_lookAt;  ///< target position (a point on the direction camPos
                  /// -> fwdVector)
- private:
-  sofa::Data<bool> d_isXRay;  ///< Whether or not this camera is an XRay
-                              /// source-detector model (in which case,
   /// in CalibratedCamera, it is necessary to reverse depth when rasterizing
   /// models, to ensure that the view comes from behind the detector towards the
   /// source, opposite to the standard pinhole camera model
-
+  sofa::Data<bool> d_isXRay;  ///< Whether or not this camera is an XRay
+                              /// source-detector model (in which case,
+private:
   /// Decomposes the global projection matrix
   void decomposeM();
   /// Decomposes OpenGL modelview and projection matrix
