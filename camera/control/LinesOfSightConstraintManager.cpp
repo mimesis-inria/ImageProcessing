@@ -17,7 +17,7 @@ int LOSConstraintManagerClass =
         ;
 
 template<class DataTypes>
-LOSConstraintManager::LOSConstraintManager()
+LOSConstraintManager<DataTypes>::LOSConstraintManager()
     : l_cam(initLink("cam", "camera to use for lines of sight projections")),
       l_slavePoints(initLink("slaveMO",
                              "MechanicalObject containing the position to "
@@ -32,7 +32,7 @@ LOSConstraintManager::LOSConstraintManager()
 }
 
 template<class DataTypes>
-void LOSConstraintManager::handleEvent(sofa::core::objectmodel::Event *)
+void LOSConstraintManager<DataTypes>::handleEvent(sofa::core::objectmodel::Event *)
 {
     cleanInputs();
     update();

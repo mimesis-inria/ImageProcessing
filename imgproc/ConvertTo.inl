@@ -28,6 +28,29 @@ namespace processor
 {
 namespace imgproc
 {
+
+template <class T>
+ConvertTo<T>::ConvertTo()
+    : d_alpha(initData(&d_alpha, "scale", "[OPTIONAL] scale factor")),
+      d_beta(initData(&d_beta, "delta",
+                      "[OPTIONAL] delta added to the scaled values"))
+{
+}
+
+template <class T>
+void ConvertTo<T>::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
+{
+  if (in.empty()) return;
+  in.convertTo(out, getCVType(internal_type), d_alpha.getValue(),
+               d_beta.getValue());
+}
+
+template <class T>
+void ConvertTo<T>::init()
+{
+  ImageFilter::init();
+}
+
 template <class T>
 int ConvertTo<T>::getCVType(T)
 {

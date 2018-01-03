@@ -43,27 +43,6 @@ int ConvertToClass = sofa::core::RegisterObject(
                          .add<ConvertTo<float> >()
                          .add<ConvertTo<double> >();
 
-template <class T>
-ConvertTo::ConvertTo()
-    : d_alpha(initData(&d_alpha, "scale", "[OPTIONAL] scale factor")),
-      d_beta(initData(&d_beta, "delta",
-                      "[OPTIONAL] delta added to the scaled values"))
-{
-}
-
-template <class T>
-void ConvertTo::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
-{
-  if (in.empty()) return;
-  in.convertTo(out, getCVType(internal_type), d_alpha.getValue(),
-               d_beta.getValue());
-}
-
-template <class T>
-void ConvertTo::init()
-{
-  ImageFilter::init();
-}
 
 }  // namespace imgproc
 }  // namespace processor

@@ -1,7 +1,7 @@
+#include "FindChessboardCorners.h"
 
 sofaor::processor::cam::calib::FindPatternCorners::FindPatternCorners()
-    : ImageFilter(false),
-      d_imagePoints(initData(&d_imagePoints, "imagePoints",
+    : d_imagePoints(initData(&d_imagePoints, "imagePoints",
                              "output vector of image points")),
       d_patternType(initData(
           &d_patternType, "patternType",
@@ -22,7 +22,7 @@ sofaor::processor::cam::calib::FindPatternCorners::FindPatternCorners()
           &d_refineCorners, true, "refineCorners",
           "set to false if you don't want cv::cornerSubPix() to be called"))
 {
-  helper::OptionsGroup* o = d_patternType.beginEdit();
+  sofa::helper::OptionsGroup* o = d_patternType.beginEdit();
   o->setNames(2, "DOT", "CHESS");
   o->setSelectedItem("CHESS");
   d_patternType.endEdit();
@@ -45,17 +45,17 @@ void sofaor::processor::cam::calib::FindPatternCorners::applyFilter(
         corners, d_flags.getValue());
   if (found && d_refineCorners.getValue())
     cv::cornerSubPix(
-        *dst, *corners, cv::Size(5, 5), cv::Size(-1, -1),
+        in, corners, cv::Size(5, 5), cv::Size(-1, -1),
         cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30,
                          0.1));
   out = in.clone();
   cv::drawChessboardCorners(
-      m, cv::Size(d_patternSize.getValue().x(), d_patternSize.getValue().y()),
+      out, cv::Size(d_patternSize.getValue().x(), d_patternSize.getValue().y()),
       corners, found);
 
-  helper::vector<defaulttype::vec2i>& pts = *d_imagePoints.beginEdit();
+  sofa::helper::vector<sofa::defaulttype::Vec2i>& pts = *d_imagePoints.beginEdit();
   pts.clear();
-  for (auto pt : corners) pts.push_back(defaulttype::Vec2i(pt.x, pt.y));
+  for (auto pt : corners) pts.push_back(sofa::defaulttype::Vec2i(pt.x, pt.y));
   d_imagePoints.endEdit();
 }
 

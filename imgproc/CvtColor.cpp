@@ -21,6 +21,7 @@
  ******************************************************************************/
 
 #include "CvtColor.h"
+#include <opencv2/imgproc.hpp>
 
 sofaor::processor::imgproc::CvtColor::CvtColor()
     : d_code(initData(&d_code, 6, "code",

@@ -21,6 +21,7 @@
  ******************************************************************************/
 
 #include "SimpleThreshold.h"
+#include <opencv2/imgproc.hpp>
 
 sofaor::processor::imgproc::SimpleThreshold::SimpleThreshold()
     : d_threshold(initData(&d_threshold, .5, "threshold", "threshold value")),

@@ -21,6 +21,7 @@
  ******************************************************************************/
 
 #include "CannyFilter.h"
+#include <opencv2/imgproc.hpp>
 
 sofaor::processor::imgproc::CannyFilter::CannyFilter()
     : d_minThreshold(initData(&d_minThreshold, 0.0, "min",

@@ -736,11 +736,6 @@ void DAISYDetector::registerData(ImageFilter *)
   // TODO: find optimal range of values
 }
 
-void DAISYDetector::registerData(ImageFilter *)
-{
-  // TODO: find optimal range of values
-}
-
 void DAISYDetector::detect(const common::cvMat &, const common::cvMat &,
                            std::vector<cv::KeyPoint> &)
 {

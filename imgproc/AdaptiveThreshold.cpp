@@ -21,6 +21,7 @@
  ******************************************************************************/
 
 #include "AdaptiveThreshold.h"
+#include <opencv2/imgproc.hpp>
 
 sofaor::processor::imgproc::AdaptiveThreshold::AdaptiveThreshold()
     : d_max(initData(&d_max, 1.0, "maxValue",
