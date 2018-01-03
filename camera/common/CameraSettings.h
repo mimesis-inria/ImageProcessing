@@ -1,24 +1,24 @@
 /******************************************************************************
-*       SOFAOR, SOFA plugin for the Operating Room, development version       *
-*                        (c) 2017 INRIA, MIMESIS Team                         *
-*                                                                             *
-* This program is a free software; you can redistribute it and/or modify it   *
-* under the terms of the GNU Lesser General Public License as published by    *
-* the Free Software Foundation; either version 1.0 of the License, or (at     *
-* your option) any later version.                                             *
-*                                                                             *
-* This program is distributed in the hope that it will be useful, but WITHOUT *
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
-* for more details.                                                           *
-*                                                                             *
-* You should have received a copy of the GNU Lesser General Public License    *
-* along with this program. If not, see <http://www.gnu.org/licenses/>.        *
-*******************************************************************************
-* Authors: Bruno Marques and external contributors (see Authors.txt)          *
-*                                                                             *
-* Contact information: contact-mimesis@inria.fr                               *
-******************************************************************************/
+ *       SOFAOR, SOFA plugin for the Operating Room, development version       *
+ *                        (c) 2017 INRIA, MIMESIS Team                         *
+ *                                                                             *
+ * This program is a free software; you can redistribute it and/or modify it   *
+ * under the terms of the GNU Lesser General Public License as published by    *
+ * the Free Software Foundation; either version 1.0 of the License, or (at     *
+ * your option) any later version.                                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful, but WITHOUT *
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
+ * for more details.                                                           *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.        *
+ *******************************************************************************
+ * Authors: Bruno Marques and external contributors (see Authors.txt)          *
+ *                                                                             *
+ * Contact information: contact-mimesis@inria.fr                               *
+ ******************************************************************************/
 
 #ifndef SOFA_OR_PROCESSOR_CAMERASETTINGS_H
 #define SOFA_OR_PROCESSOR_CAMERASETTINGS_H
@@ -98,47 +98,7 @@ class CameraSettings : public common::ImplicitDataEngine
    * - The Opengl modelview / projection matrix currently set in OpenGL's
    *   context
    */
-  CameraSettings()
-      : d_imageSize(
-            initData(&d_imageSize, "imageSize", "Image resolution in pixels")),
-        d_f(initData(&d_f, 1.0, "f", "distance camera -> plane")),
-        d_translate2D(
-            initData(&d_translate2D, "translate2D",
-                     "principal point position in the image (in pixel units)")),
-        d_scale2D(initData(&d_scale2D, "scale2D", "focal opening")),
-        d_distCoefs(initData(&d_distCoefs, "distCoefs",
-                             "The camera's distortion coefficients")),
-
-        d_M(initData(&d_M, "M",
-                     "3x4 Projection matrix as described in Computer Vision")),
-
-        d_K(initData(&d_K, "K", "3x3 camera matrix from OpenCV")),
-        d_R(initData(&d_R, "R", "3x3 rotation matrix")),
-        d_t(initData(&d_t, "position",
-                     "optical center position in the world reference frame")),
-        d_glProjection(initData(&d_glProjection, "glProjection",
-                                "OpenGL's 4x4 Projection matrix")),
-        d_glModelview(initData(&d_glModelview, "glModelview",
-                               "OpenGL's 4x4 Modelview matrix")),
-        d_orientation(initData(&d_orientation, "orientation",
-                               "OpenGL's camera orientation z-axis flipped")),
-        d_glViewport(
-            initData(&d_glViewport, "glViewport", "OpenGL's Viewport")),
-        d_zClip(initData(&d_zClip, Vector2(0.001, 1000.0), "zClip",
-                         "OpenGL's z clipping values in scene unit")),
-        d_3DCorners(initData(&d_3DCorners, "3DCorners",
-                             "image's corners in world coordinates")),
-        d_upVector(initData(&d_upVector, "up", "Camera's Up vector")),
-        d_fwdVector(initData(&d_fwdVector, "fwd", "Camera's lookat direction")),
-        d_lookAt(initData(&d_lookAt, "lookAt", "Camera's lookat point")),
-        d_isXRay(initData(&d_isXRay, "isXRay",
-                          "whether or not the camera model is an XRay model as "
-                          "opposite to the standard pinhole model"))
-  {
-    addAlias(&d_t, "t");
-    addAlias(&d_3DCorners, "corners");
-    addAlias(&d_3DCorners, "corners_out");
-  }
+  CameraSettings();
 
   ~CameraSettings() {}
 
@@ -298,7 +258,7 @@ class CameraSettings : public common::ImplicitDataEngine
   /// source, opposite to the standard pinhole camera model
   sofa::Data<bool> d_isXRay;  ///< Whether or not this camera is an XRay
                               /// source-detector model (in which case,
-private:
+ private:
   /// Decomposes the global projection matrix
   void decomposeM();
   /// Decomposes OpenGL modelview and projection matrix
@@ -315,62 +275,20 @@ private:
   void decomposeK(const Matrix3& K);
 
  public:
-  void ProjectionMatrixChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setProjectionMatrix(d_M.getValue());
-  }
-  void IntrinsicCameraMatrixChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setIntrinsicCameraMatrix(d_K.getValue());
-  }
-  void DistortionCoefficientsChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setDistortionCoefficients(d_distCoefs.getValue());
-  }
-  void RotationMatrixChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setRotationMatrix(d_R.getValue());
-  }
-  void TranslationVectorChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setPosition(d_t.getValue());
-  }
-  void ImageSizeChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setImageSize(d_imageSize.getValue());
-  }
-  void GLProjectionChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setGLProjection(d_glProjection.getValue());
-  }
-  void GLModelviewChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setGLModelview(d_glModelview.getValue());
-  }
-  void GLViewportChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setGLViewport(d_glViewport.getValue());
-  }
-  void GLZClipChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setGLZClip(d_zClip.getValue());
-  }
-  void OrientationChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setOrientation(d_orientation.getValue());
-  }
-  void Scale2DChanged(sofa::core::objectmodel::BaseData*)
-  {
-    set2DScaleMatrix(d_scale2D.getValue());
-  }
-  void FocalDistanceChanged(sofa::core::objectmodel::BaseData*)
-  {
-    setFocalDistance(d_f.getValue());
-  }
-  void Translation2DChanged(sofa::core::objectmodel::BaseData*)
-  {
-    set2DTranslationMatrix(d_translate2D.getValue());
-  }
+  void ProjectionMatrixChanged(sofa::core::objectmodel::BaseData*);
+  void IntrinsicCameraMatrixChanged(sofa::core::objectmodel::BaseData*);
+  void DistortionCoefficientsChanged(sofa::core::objectmodel::BaseData*);
+  void RotationMatrixChanged(sofa::core::objectmodel::BaseData*);
+  void TranslationVectorChanged(sofa::core::objectmodel::BaseData*);
+  void ImageSizeChanged(sofa::core::objectmodel::BaseData*);
+  void GLProjectionChanged(sofa::core::objectmodel::BaseData*);
+  void GLModelviewChanged(sofa::core::objectmodel::BaseData*);
+  void GLViewportChanged(sofa::core::objectmodel::BaseData*);
+  void GLZClipChanged(sofa::core::objectmodel::BaseData*);
+  void OrientationChanged(sofa::core::objectmodel::BaseData*);
+  void Scale2DChanged(sofa::core::objectmodel::BaseData*);
+  void FocalDistanceChanged(sofa::core::objectmodel::BaseData*);
+  void Translation2DChanged(sofa::core::objectmodel::BaseData*);
 
   void recalculate3DCorners();
 };

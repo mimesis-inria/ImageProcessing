@@ -29,10 +29,7 @@ class SOFA_PROCESSOR_API ImageFilterModel : public QObject
   void setSofaComponent(sofa::qtquick::SofaComponent* sofaComponent);
 
   sofaor::processor::ImageFilter* imageFilter() const;
-  void setImageFilter(sofaor::processor::ImageFilter* imageFilter)
-  {
-    m_imageFilter = imageFilter;
-  }
+  void setImageFilter(sofaor::processor::ImageFilter* imageFilter);
 
   void display();
 

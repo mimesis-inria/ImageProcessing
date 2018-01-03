@@ -1,24 +1,24 @@
 /******************************************************************************
-*       SOFAOR, SOFA plugin for the Operating Room, development version       *
-*                        (c) 2017 INRIA, MIMESIS Team                         *
-*                                                                             *
-* This program is a free software; you can redistribute it and/or modify it   *
-* under the terms of the GNU Lesser General Public License as published by    *
-* the Free Software Foundation; either version 1.0 of the License, or (at     *
-* your option) any later version.                                             *
-*                                                                             *
-* This program is distributed in the hope that it will be useful, but WITHOUT *
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
-* for more details.                                                           *
-*                                                                             *
-* You should have received a copy of the GNU Lesser General Public License    *
-* along with this program. If not, see <http://www.gnu.org/licenses/>.        *
-*******************************************************************************
-* Authors: Bruno Marques and external contributors (see Authors.txt)          *
-*                                                                             *
-* Contact information: contact-mimesis@inria.fr                               *
-******************************************************************************/
+ *       SOFAOR, SOFA plugin for the Operating Room, development version       *
+ *                        (c) 2017 INRIA, MIMESIS Team                         *
+ *                                                                             *
+ * This program is a free software; you can redistribute it and/or modify it   *
+ * under the terms of the GNU Lesser General Public License as published by    *
+ * the Free Software Foundation; either version 1.0 of the License, or (at     *
+ * your option) any later version.                                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful, but WITHOUT *
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
+ * for more details.                                                           *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.        *
+ *******************************************************************************
+ * Authors: Bruno Marques and external contributors (see Authors.txt)          *
+ *                                                                             *
+ * Contact information: contact-mimesis@inria.fr                               *
+ ******************************************************************************/
 
 #include "CameraSettings.h"
 #include <SofaORCommon/cvMatUtils.h>
@@ -155,7 +155,7 @@ void CameraSettings::setRotationMatrix(const Matrix3& R, bool update)
   d_R.setValue(R);
   if (update)
   {
-//    decomposeCV();
+    //    decomposeCV();
     composeM();
     composeGL();
   }
@@ -173,7 +173,7 @@ void CameraSettings::setPosition(const Vector3& t, bool update)
   d_t.setValue(t);
   if (update)
   {
-//    decomposeCV();
+    //    decomposeCV();
     composeM();
     composeGL();
   }
@@ -303,7 +303,8 @@ void CameraSettings::set2DTranslationMatrix(const Matrix3& translation2D)
   recalculate3DCorners();
 }
 
-const sofa::helper::vector<sofa::defaulttype::Vector3>& CameraSettings::getCorners() const
+const sofa::helper::vector<sofa::defaulttype::Vector3>&
+CameraSettings::getCorners() const
 {
   return d_3DCorners.getValue();
 }
@@ -327,6 +328,79 @@ void CameraSettings::decomposeK(const Matrix3& K)
 
   d_scale2D.setValue(scale2D);
   d_translate2D.setValue(translate2D);
+}
+
+void CameraSettings::IntrinsicCameraMatrixChanged(
+    sofa::core::objectmodel::BaseData*)
+{
+  setIntrinsicCameraMatrix(d_K.getValue());
+}
+
+void CameraSettings::RotationMatrixChanged(sofa::core::objectmodel::BaseData*)
+{
+  setRotationMatrix(d_R.getValue());
+}
+
+void CameraSettings::TranslationVectorChanged(
+    sofa::core::objectmodel::BaseData*)
+{
+  setPosition(d_t.getValue());
+}
+
+void CameraSettings::DistortionCoefficientsChanged(
+    sofa::core::objectmodel::BaseData*)
+{
+  setDistortionCoefficients(d_distCoefs.getValue());
+}
+
+void CameraSettings::ProjectionMatrixChanged(sofa::core::objectmodel::BaseData*)
+{
+  setProjectionMatrix(d_M.getValue());
+}
+
+void CameraSettings::ImageSizeChanged(sofa::core::objectmodel::BaseData*)
+{
+  setImageSize(d_imageSize.getValue());
+}
+
+void CameraSettings::GLProjectionChanged(sofa::core::objectmodel::BaseData*)
+{
+  setGLProjection(d_glProjection.getValue());
+}
+
+void CameraSettings::GLModelviewChanged(sofa::core::objectmodel::BaseData*)
+{
+  setGLModelview(d_glModelview.getValue());
+}
+
+void CameraSettings::GLViewportChanged(sofa::core::objectmodel::BaseData*)
+{
+  setGLViewport(d_glViewport.getValue());
+}
+
+void CameraSettings::GLZClipChanged(sofa::core::objectmodel::BaseData*)
+{
+  setGLZClip(d_zClip.getValue());
+}
+
+void CameraSettings::OrientationChanged(sofa::core::objectmodel::BaseData*)
+{
+  setOrientation(d_orientation.getValue());
+}
+
+void CameraSettings::Scale2DChanged(sofa::core::objectmodel::BaseData*)
+{
+  set2DScaleMatrix(d_scale2D.getValue());
+}
+
+void CameraSettings::FocalDistanceChanged(sofa::core::objectmodel::BaseData*)
+{
+  setFocalDistance(d_f.getValue());
+}
+
+void CameraSettings::Translation2DChanged(sofa::core::objectmodel::BaseData*)
+{
+  set2DTranslationMatrix(d_translate2D.getValue());
 }
 
 // Decomposes P (sets f, c, s, camPos)
@@ -472,7 +546,7 @@ void CameraSettings::composeM()
   // in camera coordinates
   t = -R * t;
 
-  std::cout << " d_tT " <<t << " " << R << std::endl;
+  std::cout << " d_tT " << t << " " << R << std::endl;
 
   double ptr2[12] = {R[0][0], R[0][1], R[0][2], t[0],    R[1][0], R[1][1],
                      R[1][2], t[1],    R[2][0], R[2][1], R[2][2], t[2]};
@@ -574,6 +648,47 @@ void CameraSettings::buildFromCamPosAndImageCorners()
   composeCV();
   composeM();
   composeGL();
+}
+
+CameraSettings::CameraSettings()
+    : d_imageSize(
+          initData(&d_imageSize, "imageSize", "Image resolution in pixels")),
+      d_f(initData(&d_f, 1.0, "f", "distance camera -> plane")),
+      d_translate2D(
+          initData(&d_translate2D, "translate2D",
+                   "principal point position in the image (in pixel units)")),
+      d_scale2D(initData(&d_scale2D, "scale2D", "focal opening")),
+      d_distCoefs(initData(&d_distCoefs, "distCoefs",
+                           "The camera's distortion coefficients")),
+
+      d_M(initData(&d_M, "M",
+                   "3x4 Projection matrix as described in Computer Vision")),
+
+      d_K(initData(&d_K, "K", "3x3 camera matrix from OpenCV")),
+      d_R(initData(&d_R, "R", "3x3 rotation matrix")),
+      d_t(initData(&d_t, "position",
+                   "optical center position in the world reference frame")),
+      d_glProjection(initData(&d_glProjection, "glProjection",
+                              "OpenGL's 4x4 Projection matrix")),
+      d_glModelview(initData(&d_glModelview, "glModelview",
+                             "OpenGL's 4x4 Modelview matrix")),
+      d_orientation(initData(&d_orientation, "orientation",
+                             "OpenGL's camera orientation z-axis flipped")),
+      d_glViewport(initData(&d_glViewport, "glViewport", "OpenGL's Viewport")),
+      d_zClip(initData(&d_zClip, Vector2(0.001, 1000.0), "zClip",
+                       "OpenGL's z clipping values in scene unit")),
+      d_3DCorners(initData(&d_3DCorners, "3DCorners",
+                           "image's corners in world coordinates")),
+      d_upVector(initData(&d_upVector, "up", "Camera's Up vector")),
+      d_fwdVector(initData(&d_fwdVector, "fwd", "Camera's lookat direction")),
+      d_lookAt(initData(&d_lookAt, "lookAt", "Camera's lookat point")),
+      d_isXRay(initData(&d_isXRay, "isXRay",
+                        "whether or not the camera model is an XRay model as "
+                        "opposite to the standard pinhole model"))
+{
+  addAlias(&d_t, "t");
+  addAlias(&d_3DCorners, "corners");
+  addAlias(&d_3DCorners, "corners_out");
 }
 
 void CameraSettings::buildFromIntrinsicCamPosLookAtAndUpVector()

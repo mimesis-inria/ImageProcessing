@@ -30,8 +30,6 @@
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include <sofa/helper/OptionsGroup.h>
 
-#include <zmq.hpp>
-
 namespace sofaor
 {
 namespace processor

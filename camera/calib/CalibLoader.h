@@ -78,26 +78,7 @@ class CalibLoader : public common::ImplicitDataEngine
               const sofa::defaulttype::Matrix3& _Rs,
               const sofa::defaulttype::Vector3& _Ts,
               const sofa::defaulttype::Matrix3& _F,
-              const sofa::defaulttype::Matrix3& _E, double _totalError)
-        : imSize1(_imSize1),
-          K1(_K1),
-          R1(_R1),
-          T1(_T1),
-          delta1(_delta1),
-          error1(_error1),
-          imSize2(_imSize2),
-          K2(_K2),
-          R2(_R2),
-          T2(_T2),
-          delta2(_delta2),
-          error2(_error2),
-          Rs(_Rs),
-          Ts(_Ts),
-          F(_F),
-          E(_E),
-          totalError(_totalError)
-    {
-    }
+              const sofa::defaulttype::Matrix3& _E, double _totalError);
 
     sofa::defaulttype::Vec2i imSize1;
     sofa::defaulttype::Matrix3 K1;

@@ -1,24 +1,24 @@
 /******************************************************************************
-*       SOFAOR, SOFA plugin for the Operating Room, development version       *
-*                        (c) 2017 INRIA, MIMESIS Team                         *
-*                                                                             *
-* This program is a free software; you can redistribute it and/or modify it   *
-* under the terms of the GNU Lesser General Public License as published by    *
-* the Free Software Foundation; either version 1.0 of the License, or (at     *
-* your option) any later version.                                             *
-*                                                                             *
-* This program is distributed in the hope that it will be useful, but WITHOUT *
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
-* for more details.                                                           *
-*                                                                             *
-* You should have received a copy of the GNU Lesser General Public License    *
-* along with this program. If not, see <http://www.gnu.org/licenses/>.        *
-*******************************************************************************
-* Authors: Bruno Marques and external contributors (see Authors.txt)          *
-*                                                                             *
-* Contact information: contact-mimesis@inria.fr                               *
-******************************************************************************/
+ *       SOFAOR, SOFA plugin for the Operating Room, development version       *
+ *                        (c) 2017 INRIA, MIMESIS Team                         *
+ *                                                                             *
+ * This program is a free software; you can redistribute it and/or modify it   *
+ * under the terms of the GNU Lesser General Public License as published by    *
+ * the Free Software Foundation; either version 1.0 of the License, or (at     *
+ * your option) any later version.                                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful, but WITHOUT *
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
+ * for more details.                                                           *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.        *
+ *******************************************************************************
+ * Authors: Bruno Marques and external contributors (see Authors.txt)          *
+ *                                                                             *
+ * Contact information: contact-mimesis@inria.fr                               *
+ ******************************************************************************/
 
 #include "Matchers.h"
 
@@ -113,7 +113,7 @@ FlannMatcher::FlannMatcher(sofa::core::objectmodel::BaseObject* c)
   m_AllIndexParams[SAVED] = new SavedIndexParams(c);
 
   m_searchParams = new SearchParams(c);
-	m_indexParams = m_AllIndexParams[KDTREE];
+  m_indexParams = m_AllIndexParams[KDTREE];
 }
 
 void FlannMatcher::init()
@@ -135,11 +135,11 @@ void FlannMatcher::init()
 void FlannMatcher::toggleVisible(bool show)
 {
   indexParamsType.setDisplayed(show);
-	m_indexParams->toggleVisible(show);
+  m_indexParams->toggleVisible(show);
 }
 
 FlannMatcher::AutotunedIndexParams::AutotunedIndexParams(
-		sofa::core::objectmodel::BaseObject* c)
+    sofa::core::objectmodel::BaseObject* c)
     : target_precision(
           c->initData(&target_precision, 0.8f, "AUTOTUNEDTargetPrecision", "")),
       build_weight(
@@ -168,7 +168,7 @@ void FlannMatcher::AutotunedIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::CompositeIndexParams::CompositeIndexParams(
-		sofa::core::objectmodel::BaseObject* c)
+    sofa::core::objectmodel::BaseObject* c)
     : trees(c->initData(&trees, 4, "COMPOSITETrees", "")),
       branching(c->initData(&branching, 32, "COMPOSITEBranching", "")),
       iterations(c->initData(&iterations, 11, "COMPOSITEIterations", "")),
@@ -202,7 +202,7 @@ void FlannMatcher::CompositeIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::HierarchicalClusteringIndexParams::
-		HierarchicalClusteringIndexParams(sofa::core::objectmodel::BaseObject* c)
+    HierarchicalClusteringIndexParams(sofa::core::objectmodel::BaseObject* c)
     : branching(c->initData(&branching, 32, "HIERARCHICALBranching", "")),
       centers_init(c->initData(&centers_init, "HIERARCHICALCentersInit",
                                "default value: FLANN_CENTERS_RANDOM")),
@@ -235,7 +235,7 @@ void FlannMatcher::HierarchicalClusteringIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::KDTreeIndexParams::KDTreeIndexParams(
-		sofa::core::objectmodel::BaseObject* c)
+    sofa::core::objectmodel::BaseObject* c)
     : trees(c->initData(&trees, 4, "KDTREETrees", ""))
 
 {
@@ -253,7 +253,7 @@ void FlannMatcher::KDTreeIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::KMeansIndexParams::KMeansIndexParams(
-		sofa::core::objectmodel::BaseObject* c)
+    sofa::core::objectmodel::BaseObject* c)
     : branching(c->initData(&branching, 32, "KMEANSBranching", "")),
       iterations(c->initData(&iterations, 11, "KMEANSIterations", "")),
       centers_init(c->initData(&centers_init, "KMEANSCentersInit",
@@ -285,7 +285,7 @@ void FlannMatcher::KMeansIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::LinearIndexParams::LinearIndexParams(
-		sofa::core::objectmodel::BaseObject*)
+    sofa::core::objectmodel::BaseObject*)
 {
 }
 
@@ -296,7 +296,8 @@ FlannMatcher::LinearIndexParams::getIndexParams()
 }
 
 void FlannMatcher::LinearIndexParams::toggleVisible(bool) {}
-FlannMatcher::LshIndexParams::LshIndexParams(sofa::core::objectmodel::BaseObject* c)
+FlannMatcher::LshIndexParams::LshIndexParams(
+    sofa::core::objectmodel::BaseObject* c)
     : table_number(c->initData(&table_number, 0, "LSHTableNumber", "")),
       key_size(c->initData(&key_size, 0, "LSHKeySize", "")),
       multi_probe_level(
@@ -319,7 +320,7 @@ void FlannMatcher::LshIndexParams::toggleVisible(bool show)
 }
 
 FlannMatcher::SavedIndexParams::SavedIndexParams(
-		sofa::core::objectmodel::BaseObject* c)
+    sofa::core::objectmodel::BaseObject* c)
     : filename(c->initData(&filename, std::string("SavedIndexParams"),
                            "SAVEDFilename", ""))
 {

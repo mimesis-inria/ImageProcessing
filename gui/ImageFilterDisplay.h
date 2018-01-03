@@ -42,16 +42,13 @@ class SOFA_PROCESSOR_API ImageFilterDisplay
  public:
   Renderer* createRenderer() const;
 
-  ImageFilterModel* imageFilterModel() const { return m_imageFilterModel; }
+  ImageFilterModel *imageFilterModel() const;
 
  public slots:
   void update();
 
  protected:
-  void setImageFilterModel(ImageFilterModel* imageFilterModel)
-  {
-    m_imageFilterModel = imageFilterModel;
-  }
+  void setImageFilterModel(ImageFilterModel* imageFilterModel);
 
  private:
   ImageFilterModel* m_imageFilterModel;

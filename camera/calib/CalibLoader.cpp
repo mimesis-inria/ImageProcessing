@@ -1,31 +1,31 @@
 /******************************************************************************
-*       SOFAOR, SOFA plugin for the Operating Room, development version       *
-*                        (c) 2017 INRIA, MIMESIS Team                         *
-*                                                                             *
-* This program is a free software; you can redistribute it and/or modify it   *
-* under the terms of the GNU Lesser General Public License as published by    *
-* the Free Software Foundation; either version 1.0 of the License, or (at     *
-* your option) any later version.                                             *
-*                                                                             *
-* This program is distributed in the hope that it will be useful, but WITHOUT *
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
-* for more details.                                                           *
-*                                                                             *
-* You should have received a copy of the GNU Lesser General Public License    *
-* along with this program. If not, see <http://www.gnu.org/licenses/>.        *
-*******************************************************************************
-* Authors: Bruno Marques and external contributors (see Authors.txt)          *
-*                                                                             *
-* Contact information: contact-mimesis@inria.fr                               *
-******************************************************************************/
+ *       SOFAOR, SOFA plugin for the Operating Room, development version       *
+ *                        (c) 2017 INRIA, MIMESIS Team                         *
+ *                                                                             *
+ * This program is a free software; you can redistribute it and/or modify it   *
+ * under the terms of the GNU Lesser General Public License as published by    *
+ * the Free Software Foundation; either version 1.0 of the License, or (at     *
+ * your option) any later version.                                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful, but WITHOUT *
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
+ * for more details.                                                           *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.        *
+ *******************************************************************************
+ * Authors: Bruno Marques and external contributors (see Authors.txt)          *
+ *                                                                             *
+ * Contact information: contact-mimesis@inria.fr                               *
+ ******************************************************************************/
 
 #include "CalibLoader.h"
 
 #include <sofa/core/ObjectFactory.h>
+#include <sofa/helper/system/FileRepository.h>
 #include <sofa/helper/system/FileSystem.h>
 #include <sofa/helper/system/SetDirectory.h>
-#include <sofa/helper/system/FileRepository.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
 #include <cstring>
@@ -261,22 +261,22 @@ std::string CalibLoader::getPathToCalibs(const std::string& calibFolder)
   return currentDir;
 }
 
-void CalibLoader::getAllCalibFiles(const std::string& calibFolder, std::vector<std::string>& calibFiles)
+void CalibLoader::getAllCalibFiles(const std::string& calibFolder,
+                                   std::vector<std::string>& calibFiles)
 {
   // Retrieve all calib files (files ending in ".yml" in calibFolder)
-  sofa::helper::system::FileSystem::listDirectory(getPathToCalibs(calibFolder), calibFiles,
-                                                  "yml");
+  sofa::helper::system::FileSystem::listDirectory(getPathToCalibs(calibFolder),
+                                                  calibFiles, "yml");
 }
 
-void CalibLoader::parse(sofa::core::objectmodel::BaseObjectDescription *arg)
+void CalibLoader::parse(sofa::core::objectmodel::BaseObjectDescription* arg)
 {
-    if (arg->getAttribute("calibDir"))
-    {
-        std::string dir = arg->getAttribute("calibDir");
-        setOptionsGroupToFolder(dir, std::string(""));
-    }
+  if (arg->getAttribute("calibDir"))
+  {
+    std::string dir = arg->getAttribute("calibDir");
+    setOptionsGroupToFolder(dir, std::string(""));
+  }
 }
-
 
 void CalibLoader::init()
 {
@@ -305,7 +305,7 @@ void CalibLoader::init()
                                          "to define one";
   if (!l_sCam.get()) m_isStereo = false;
 
-//  calibFolderChanged(NULL);
+  //  calibFolderChanged(NULL);
 }
 
 void CalibLoader::calibChanged(sofa::core::objectmodel::BaseData*)
@@ -313,44 +313,45 @@ void CalibLoader::calibChanged(sofa::core::objectmodel::BaseData*)
   setCurrentCalib(d_calibNames.getValue().getSelectedItem());
 }
 
-void CalibLoader::setOptionsGroupToFolder(std::string calibFolder, std::string calibname)
+void CalibLoader::setOptionsGroupToFolder(std::string calibFolder,
+                                          std::string calibname)
 {
-    std::string currentDir = getPathToCalibs(calibFolder);
-    std::vector<std::string> calibFiles;
-    getAllCalibFiles(calibFolder, calibFiles);
+  std::string currentDir = getPathToCalibs(calibFolder);
+  std::vector<std::string> calibFiles;
+  getAllCalibFiles(calibFolder, calibFiles);
 
-    if (calibFiles.empty())
+  if (calibFiles.empty())
+  {
+    sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
+    t->setNames(1, "NO_CALIB");
+    m_calibs["NO_CALIB"];
+    setCurrentCalib("NO_CALIB");
+    d_calibNames.endEdit();
+  }
+  else
+  {
+    sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
+    t->setNbItems(unsigned(calibFiles.size()));
+    unsigned i = 0;
+    for (std::string& s : calibFiles)
     {
-      sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
-      t->setNames(1, "NO_CALIB");
-      m_calibs["NO_CALIB"];
-      setCurrentCalib("NO_CALIB");
-      d_calibNames.endEdit();
+      t->setItemName(
+          i++, sofa::helper::system::SetDirectory::GetFileNameWithoutExtension(
+                   s.c_str()));
     }
-    else
+    if (calibname != "") t->setSelectedItem(calibname);
+    if (t->getSelectedItem() != calibname)
     {
-      sofa::helper::OptionsGroup* t = d_calibNames.beginEdit();
-      t->setNbItems(unsigned(calibFiles.size()));
-      unsigned i = 0;
-      for (std::string& s : calibFiles)
-      {
-        t->setItemName(
-            i++, sofa::helper::system::SetDirectory::GetFileNameWithoutExtension(
-                     s.c_str()));
-      }
-      if (calibname != "") t->setSelectedItem(calibname);
-      if (t->getSelectedItem() != calibname)
-      {
-        t->setSelectedItem(0);
-        calibname = t->getSelectedItem();
-      }
-      d_calibNames.endEdit();
+      t->setSelectedItem(0);
+      calibname = t->getSelectedItem();
+    }
+    d_calibNames.endEdit();
 
-      // Load calibration files
-      for (std::string& f : calibFiles)
-        if (canLoad(currentDir + "/" + f)) load(currentDir + "/" + f);
-      this->setCurrentCalib(calibname);
-    }
+    // Load calibration files
+    for (std::string& f : calibFiles)
+      if (canLoad(currentDir + "/" + f)) load(currentDir + "/" + f);
+    this->setCurrentCalib(calibname);
+  }
 }
 
 void CalibLoader::calibFolderChanged(sofa::core::objectmodel::BaseData*)
@@ -367,6 +368,40 @@ void CalibLoader::calibFolderChanged(sofa::core::objectmodel::BaseData*)
 }
 
 void CalibLoader::update() {}
+
+CalibLoader::CalibData::CalibData(
+    const sofa::defaulttype::Matrix3& _K1,
+    const sofa::defaulttype::Matrix3& _R1,
+    const sofa::defaulttype::Vector3& _T1,
+    const sofa::helper::vector<double>& _delta1,
+    const sofa::defaulttype::Vec2i _imSize1, double _error1,
+    const sofa::defaulttype::Matrix3& _K2,
+    const sofa::defaulttype::Matrix3& _R2,
+    const sofa::defaulttype::Vector3& _T2,
+    const sofa::helper::vector<double>& _delta2,
+    const sofa::defaulttype::Vec2i _imSize2, double _error2,
+    const sofa::defaulttype::Matrix3& _Rs,
+    const sofa::defaulttype::Vector3& _Ts, const sofa::defaulttype::Matrix3& _F,
+    const sofa::defaulttype::Matrix3& _E, double _totalError)
+    : imSize1(_imSize1),
+      K1(_K1),
+      R1(_R1),
+      T1(_T1),
+      delta1(_delta1),
+      error1(_error1),
+      imSize2(_imSize2),
+      K2(_K2),
+      R2(_R2),
+      T2(_T2),
+      delta2(_delta2),
+      error2(_error2),
+      Rs(_Rs),
+      Ts(_Ts),
+      F(_F),
+      E(_E),
+      totalError(_totalError)
+{
+}
 
 }  // namespace calib
 }  // namespace cam

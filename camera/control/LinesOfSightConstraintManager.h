@@ -45,19 +45,7 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
   sofa::helper::vector<SlidingConstraint> m_components;
 
  public:
-  LOSConstraintManager()
-      : l_cam(initLink("cam", "camera to use for lines of sight projections")),
-        l_slavePoints(initLink("slaveMO",
-                               "MechanicalObject containing the position to "
-                               "constrain on the lines of sight")),
-        l_masterPoints(initLink(
-            "masterMO",
-            "MechanicalObject containing the position of the lines of sight")),
-        d_indices(initData(
-            &d_indices, "indices",
-            "indices of the master points sorted by their matching slave"))
-  {
-  }
+  LOSConstraintManager();
 
   virtual ~LOSConstraintManager() {}
 
@@ -69,12 +57,7 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
   /// Since input sources are links, update is not performed with standard
   /// handleEvent
   /// TODO: use positions vector only..?
-  virtual void handleEvent(sofa::core::objectmodel::Event* /*e*/)
-  {
-    cleanInputs();
-    update();
-    setDirtyOutputs();
-  }
+  virtual void handleEvent(sofa::core::objectmodel::Event* /*e*/);
 };
 
 }  // namespace processor
