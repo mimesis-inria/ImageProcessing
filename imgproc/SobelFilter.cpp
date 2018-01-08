@@ -21,6 +21,7 @@
  ******************************************************************************/
 
 #include "SobelFilter.h"
+#include <opencv2/imgproc.hpp>
 
 sofaor::processor::imgproc::SobelFilter::SobelFilter()
     : d_ddepth(initData(&d_ddepth, -1, "ddepth",

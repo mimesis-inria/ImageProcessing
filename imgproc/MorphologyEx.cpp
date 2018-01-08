@@ -21,6 +21,7 @@
  ******************************************************************************/
 
 #include "MorphologyEx.h"
+#include <opencv2/imgproc.hpp>
 
 sofaor::processor::imgproc::MorphologyEx::MorphologyEx()
     : d_ksize(initData(&d_ksize, 5, "ksize", "kernel size (3 5 7 ...)")),

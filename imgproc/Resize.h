@@ -23,7 +23,6 @@
 #ifndef SOFA_OR_PROCESSOR_RESIZE_H
 #define SOFA_OR_PROCESSOR_RESIZE_H
 
-#include <opencv2/imgproc.hpp>
 #include "common/ImageFilter.h"
 
 namespace sofaor

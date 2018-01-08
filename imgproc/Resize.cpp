@@ -21,11 +21,13 @@
  ******************************************************************************/
 
 #include "Resize.h"
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 
 sofaor::processor::imgproc::Resize::Resize()
     : d_size(initData(&d_size, "size", "pixel resolution of the output image")),
-      d_fx(initData(&d_fx, "fx", "scale factor on the X axis")),
-      d_fy(initData(&d_fy, "fy", "scale factori on the Y axis")),
+      d_fx(initData(&d_fx, 0.0, "fx", "scale factor on the X axis")),
+      d_fy(initData(&d_fy, 0.0, "fy", "scale factori on the Y axis")),
       d_interp(initData(&d_interp, "interpolation", "interpolation method"))
 {
   sofa::helper::OptionsGroup *opt = d_interp.beginEdit();
