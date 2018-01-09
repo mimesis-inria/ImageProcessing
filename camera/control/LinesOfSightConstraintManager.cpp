@@ -27,7 +27,10 @@ LOSConstraintManager<DataTypes>::LOSConstraintManager()
                          "MechanicalObject containing the position of the lines of sight")),
       d_indices(initData(
                     &d_indices, "indices",
-                    "indices of the master points sorted by their matching slave"))
+                    "indices of the master points sorted by their matching slave")),
+    d_maxConstraints(initData(
+                  &d_maxConstraints, "maxConstraints",
+                  "if >0 picks [maxConstraints] random indices to use for constraints"))
 {
 }
 

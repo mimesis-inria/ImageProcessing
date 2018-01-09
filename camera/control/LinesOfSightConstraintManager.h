@@ -41,6 +41,7 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
   MechanicalObject l_slavePoints;
   MechanicalObject l_masterPoints;
   sofa::Data<sofa::helper::vector<int> > d_indices;
+  sofa::Data<int> d_maxConstraints;
 
   sofa::helper::vector<SlidingConstraint> m_components;
 
