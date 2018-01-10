@@ -1,10 +1,10 @@
 #ifndef SOFAOR_PROCESSOR_CAMERA_CONTROL_LINESOFSIGHTCONSTRAINT_INL
 #define SOFAOR_PROCESSOR_CAMERA_CONTROL_LINESOFSIGHTCONSTRAINT_INL
 
-#include "LinesOfSightConstraintManager.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "LinesOfSightConstraintManager.h"
 
 namespace sofaor
 {
@@ -13,6 +13,7 @@ namespace processor
 template <class DataTypes>
 void LOSConstraintManager<DataTypes>::init()
 {
+  srand(time(NULL));
   if (!l_cam) msg_error(getName() + "::init()") << "No Camera link set!";
   if (!l_slavePoints.get())
     msg_error(getName() + "::init()") << "No MState provided for slave points!";
@@ -28,56 +29,62 @@ void LOSConstraintManager<DataTypes>::init()
 template <class DataTypes>
 void LOSConstraintManager<DataTypes>::update()
 {
-//  if (m_components.size() == 0)
+  //  if (m_components.size() == 0)
 
-    std::vector<sofa::component::constraintset::SlidingConstraint<DataTypes>* > engines;
-    sofa::core::objectmodel::BaseContext* ctx = this->getContext();
-    ctx->get<sofa::component::constraintset::SlidingConstraint<DataTypes> >(&engines);
-    for (sofa::component::constraintset::SlidingConstraint<DataTypes>*& c : engines)
-    {
-        std::cout << c->getName() << std::endl;
-        c->reset();
-        c->cleanup();
-        ctx->removeObject(c);
-    }
-    std::cout << std::endl;
+  std::vector<sofa::component::constraintset::SlidingConstraint<DataTypes>*>
+      engines;
+  sofa::core::objectmodel::BaseContext* ctx = this->getContext();
+  ctx->get<sofa::component::constraintset::SlidingConstraint<DataTypes> >(
+      &engines);
+  for (sofa::component::constraintset::SlidingConstraint<DataTypes>*& c :
+       engines)
+  {
+    std::cout << c->getName() << std::endl;
+    c->reset();
+    c->cleanup();
+    ctx->removeObject(c);
+  }
+  std::cout << std::endl;
 
-    srand (time(NULL));
-    std::vector<int> KeptIndices(d_maxConstraints.getValue());
+  std::vector<int> KeptIndices;
+  m_components.clear();
+  for (int i = d_maxConstraints.getValue(); i >= 0; --i)
+  {
     KeptIndices.push_back(rand() % d_indices.getValue().size());
-
-    m_components.clear();
-    for (int i = d_maxConstraints.getValue() ; i > 0 ; --i) m_components.push_back(nullptr);
-
-  if (l_masterPoints.get() == nullptr)
-      return;
+    m_components.push_back(nullptr);
+  }
+  if (l_masterPoints.get() == nullptr) return;
 
   for (const auto& i : KeptIndices)
   {
-//    if (d_indices.getValue()[i] == -1)
-//    {
-//      if (m_components[i] != nullptr)
-//      {
-//        m_components[i].get()->cleanup();
-//        this->getContext()->removeObject(m_components[i].get());
-//        m_components[i] = nullptr;
-//      }
-//      continue;
-//    }
+    //    if (d_indices.getValue()[i] == -1)
+    //    {
+    //      if (m_components[i] != nullptr)
+    //      {
+    //        m_components[i].get()->cleanup();
+    //        this->getContext()->removeObject(m_components[i].get());
+    //        m_components[i] = nullptr;
+    //      }
+    //      continue;
+    //    }
 
+    std::cout << "creating constraint for " << i << std::endl;
     sofa::core::objectmodel::BaseObjectDescription desc(
         (std::string("SlidingConstraint_") + std::to_string(i)).c_str(),
         "SlidingConstraint");
-    desc.setAttribute("name", (std::string("SlidingConstraint_") + std::to_string(i)).c_str());
+    desc.setAttribute(
+        "name",
+        (std::string("SlidingConstraint_") + std::to_string(i)).c_str());
     desc.setAttribute("object1", l_slavePoints.getPath().c_str());
     desc.setAttribute("object2", l_masterPoints.getPath().c_str());
     desc.setAttribute("sliding_point", std::to_string(i).c_str());
     desc.setAttribute("axis_1",
                       std::to_string(d_indices.getValue()[i]).c_str());
 
-    desc.setAttribute("axis_2",
-                      std::to_string(l_masterPoints->xfree.getValue().size() - 1)
-                          .c_str());  // l_cam->position's index in masterPoints
+    desc.setAttribute(
+        "axis_2",
+        std::to_string(l_masterPoints->xfree.getValue().size() - 1)
+            .c_str());  // l_cam->position's index in masterPoints
 
     if (m_components[i].get() == nullptr)
     {
@@ -87,6 +94,7 @@ void LOSConstraintManager<DataTypes>::update()
     }
     m_components[i]->parse(&desc);
     m_components[i]->init();
+    std::cout << m_components[i]->getName() << std::endl;
   }
 }
 
