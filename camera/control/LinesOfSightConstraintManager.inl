@@ -29,8 +29,6 @@ void LOSConstraintManager<DataTypes>::init()
 template <class DataTypes>
 void LOSConstraintManager<DataTypes>::update()
 {
-  //  if (m_components.size() == 0)
-
   std::vector<sofa::component::constraintset::SlidingConstraint<DataTypes>*>
       engines;
   sofa::core::objectmodel::BaseContext* ctx = this->getContext();
@@ -39,36 +37,30 @@ void LOSConstraintManager<DataTypes>::update()
   for (sofa::component::constraintset::SlidingConstraint<DataTypes>*& c :
        engines)
   {
-    std::cout << c->getName() << std::endl;
-    c->reset();
     c->cleanup();
     ctx->removeObject(c);
   }
-  std::cout << std::endl;
 
   std::vector<int> KeptIndices;
   m_components.clear();
-  for (int i = d_maxConstraints.getValue(); i >= 0; --i)
-  {
-    KeptIndices.push_back(rand() % d_indices.getValue().size());
-    m_components.push_back(nullptr);
-  }
+
+  // downsampling according to d_maxConstraints
+
+  for (int i = 0; i < d_indices.getValue().size(); ++i)
+    if (!d_maxConstraints.getValue() || i % d_maxConstraints.getValue() == 0)
+    {
+      KeptIndices.push_back(i);
+      m_components.push_back(nullptr);
+    }
+
   if (l_masterPoints.get() == nullptr) return;
+
+  // Before creating the constraints, reinit the Barycentric mapper:
+  l_mapping->reinit();
+  l_mapping->bwdInit();
 
   for (const auto& i : KeptIndices)
   {
-    //    if (d_indices.getValue()[i] == -1)
-    //    {
-    //      if (m_components[i] != nullptr)
-    //      {
-    //        m_components[i].get()->cleanup();
-    //        this->getContext()->removeObject(m_components[i].get());
-    //        m_components[i] = nullptr;
-    //      }
-    //      continue;
-    //    }
-
-    std::cout << "creating constraint for " << i << std::endl;
     sofa::core::objectmodel::BaseObjectDescription desc(
         (std::string("SlidingConstraint_") + std::to_string(i)).c_str(),
         "SlidingConstraint");
@@ -94,7 +86,6 @@ void LOSConstraintManager<DataTypes>::update()
     }
     m_components[i]->parse(&desc);
     m_components[i]->init();
-    std::cout << m_components[i]->getName() << std::endl;
   }
 }
 

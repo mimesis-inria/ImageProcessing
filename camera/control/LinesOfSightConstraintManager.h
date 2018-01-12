@@ -5,11 +5,13 @@
 #include "initPlugin.h"
 
 #include <SofaBaseMechanics/MechanicalObject.h>
+#include <SofaBaseMechanics/BarycentricMapping.h>
 #include <SofaConstraint/SlidingConstraint.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/core/objectmodel/BaseContext.h>
 #include <sofa/core/objectmodel/BaseObjectDescription.h>
 #include <sofa/defaulttype/VecTypes.h>
+
 
 namespace sofaor
 {
@@ -32,6 +34,13 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
       sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
       MechanicalObject;
 
+    typedef sofa::core::objectmodel::SingleLink<
+        LOSConstraintManager,
+        sofa::core::objectmodel::BaseObject,
+        sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
+        BarycentricMapping;
+
+
  public:
   SOFA_CLASS(SOFA_TEMPLATE(LOSConstraintManager, DataTypes),
              sofaor::common::ImplicitDataEngine);
@@ -40,6 +49,7 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
   CamSettings l_cam;
   MechanicalObject l_slavePoints;
   MechanicalObject l_masterPoints;
+  BarycentricMapping l_mapping;
   sofa::Data<sofa::helper::vector<int> > d_indices;
   sofa::Data<int> d_maxConstraints;
 

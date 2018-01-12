@@ -23,6 +23,7 @@ LOSConstraintManager<DataTypes>::LOSConstraintManager()
       l_masterPoints(initLink(
           "masterMO",
           "MechanicalObject containing the position of the lines of sight")),
+      l_mapping(initLink("slaveBM", "BarycentricMapping used to map the slave MO")),
       d_indices(initData(
           &d_indices, "indices",
           "indices of the master points sorted by their matching slave")),
