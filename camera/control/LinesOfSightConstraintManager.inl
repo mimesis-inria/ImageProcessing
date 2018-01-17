@@ -46,8 +46,9 @@ void LOSConstraintManager<DataTypes>::update()
 
   // downsampling according to d_maxConstraints
 
-  for (int i = 0; i < d_indices.getValue().size(); ++i)
-    if (!d_maxConstraints.getValue() || i % d_maxConstraints.getValue() == 0)
+  for (size_t i = 0; i < d_indices.getValue().size(); ++i)
+    if (!d_maxConstraints.getValue() ||
+        i % (d_indices.getValue().size() / d_maxConstraints.getValue()) == 0)
     {
       KeptIndices.push_back(i);
       m_components.push_back(nullptr);
@@ -69,21 +70,18 @@ void LOSConstraintManager<DataTypes>::update()
         (std::string("SlidingConstraint_") + std::to_string(i)).c_str());
     desc.setAttribute("object1", l_slavePoints.getPath().c_str());
     desc.setAttribute("object2", l_masterPoints.getPath().c_str());
-    desc.setAttribute("sliding_point", std::to_string(i).c_str());
-    desc.setAttribute("axis_1",
+    desc.setAttribute("sliding_point",
                       std::to_string(d_indices.getValue()[i]).c_str());
+    desc.setAttribute("axis_1", std::to_string(i).c_str());
 
     desc.setAttribute(
         "axis_2",
         std::to_string(l_masterPoints->xfree.getValue().size() - 1)
             .c_str());  // l_cam->position's index in masterPoints
 
-    if (m_components[i].get() == nullptr)
-    {
-      m_components[i] = sofa::core::objectmodel::New<
-          sofa::component::constraintset::SlidingConstraint<DataTypes> >();
-      this->getContext()->addObject(m_components[i]);
-    }
+    m_components[i] = sofa::core::objectmodel::New<
+        sofa::component::constraintset::SlidingConstraint<DataTypes> >();
+    this->getContext()->addObject(m_components[i]);
     m_components[i]->parse(&desc);
     m_components[i]->init();
   }
