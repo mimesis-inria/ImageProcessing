@@ -41,18 +41,7 @@ void LOSConstraintManager<DataTypes>::update()
     ctx->removeObject(c);
   }
 
-  std::vector<int> KeptIndices;
   m_components.clear();
-
-  // downsampling according to d_maxConstraints
-
-  for (size_t i = 0; i < d_indices.getValue().size(); ++i)
-    if (!d_maxConstraints.getValue() ||
-        i % (d_indices.getValue().size() / d_maxConstraints.getValue()) == 0)
-    {
-      KeptIndices.push_back(i);
-      m_components.push_back(nullptr);
-    }
 
   if (l_masterPoints.get() == nullptr) return;
 
@@ -60,8 +49,9 @@ void LOSConstraintManager<DataTypes>::update()
   l_mapping->reinit();
   l_mapping->bwdInit();
 
-  for (const auto& i : KeptIndices)
+  for (const auto& i : d_indices.getValue())
   {
+    m_components.push_back(nullptr);
     sofa::core::objectmodel::BaseObjectDescription desc(
         (std::string("SlidingConstraint_") + std::to_string(i)).c_str(),
         "SlidingConstraint");

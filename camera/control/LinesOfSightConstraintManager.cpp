@@ -26,10 +26,7 @@ LOSConstraintManager<DataTypes>::LOSConstraintManager()
       l_mapping(initLink("slaveBM", "BarycentricMapping used to map the slave MO")),
       d_indices(initData(
           &d_indices, "indices",
-          "indices of the master points sorted by their matching slave")),
-      d_maxConstraints(initData(
-          &d_maxConstraints, "maxConstraints",
-          "if >0 picks [maxConstraints] random indices to use for constraints"))
+          "indices of the master points sorted by their matching slave"))
 {
 }
 
