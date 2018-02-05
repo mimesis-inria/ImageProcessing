@@ -65,6 +65,7 @@ CalibLoader::CalibLoader()
       m_isStereo(true)
 {
   f_listening.setValue(true);
+  m_isInitialized = false;
 }
 
 CalibLoader::~CalibLoader() {}
@@ -104,6 +105,7 @@ bool CalibLoader::canLoad(const std::string& calibfile) const
 
 void CalibLoader::setCurrentCalib(CalibData& d)
 {
+  if (!m_isInitialized) return;
   d_K1.setValue(d.K1);
   d_K2.setValue(d.K2);
   d_R1.setValue(d.R1);
@@ -270,11 +272,12 @@ void CalibLoader::getAllCalibFiles(const std::string& calibFolder, std::vector<s
 
 void CalibLoader::parse(sofa::core::objectmodel::BaseObjectDescription *arg)
 {
-    if (arg->getAttribute("calibDir"))
-    {
-        std::string dir = arg->getAttribute("calibDir");
-        setOptionsGroupToFolder(dir, std::string(""));
-    }
+  if (arg->getAttribute("calibDir"))
+  {
+    std::string dir = arg->getAttribute("calibDir");
+    setOptionsGroupToFolder(dir, std::string(""));
+  }
+  ImplicitDataEngine::parse(arg);
 }
 
 
@@ -303,9 +306,12 @@ void CalibLoader::init()
     msg_error(getName() + "::init()") << "Error: No camera link set. "
                                          "Please use attribute 'cam' "
                                          "to define one";
+  else
+      std::cout << "lol" << std::endl;
   if (!l_sCam.get()) m_isStereo = false;
 
-//  calibFolderChanged(NULL);
+  m_isInitialized = true;
+    calibFolderChanged(NULL);
 }
 
 void CalibLoader::calibChanged(sofa::core::objectmodel::BaseData*)

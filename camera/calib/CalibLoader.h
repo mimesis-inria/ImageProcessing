@@ -136,6 +136,7 @@ class CalibLoader : public common::ImplicitDataEngine
   sofa::core::objectmodel::DataFileName d_calibFolder;
   sofa::Data<sofa::helper::OptionsGroup> d_calibNames;
   bool m_isStereo;
+  bool m_isInitialized;
 
   sofa::Data<sofa::defaulttype::Vec2i> d_imSize1;
   sofa::Data<sofa::defaulttype::Matrix3> d_K1;
