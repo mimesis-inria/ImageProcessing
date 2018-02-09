@@ -62,6 +62,11 @@ sofaor::processor::ImageFilter* ImageFilterModel::imageFilter() const
   return m_imageFilter;
 }
 
+void ImageFilterModel::setImageFilter(ImageFilter* imageFilter)
+{
+  m_imageFilter = imageFilter;
+}
+
 void ImageFilterModel::display()
 {
   if (this->imageFilter()) this->imageFilter()->drawFullFrame();

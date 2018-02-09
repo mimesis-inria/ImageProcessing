@@ -11,8 +11,10 @@ include_directories( . )
 set (SOFAOR_ENABLE_OPENCV_CONTRIB OFF CACHE BOOL "Enables OpenCV's non-free features hosted in opencv_contrib")
 
 if (SOFAOR_ENABLE_OPENCV_CONTRIB)
-    add_definitions("-DSOFAOR_OPENCV_CONTRIB_ENABLED")
+  add_definitions("-DSOFAOR_OPENCV_CONTRIB_ENABLED")
 endif ()
+
+find_package(Boost COMPONENTS system filesystem serialization REQUIRED)
 
 set(HEADER_FILES
   initPlugin.h
@@ -33,6 +35,9 @@ set(HEADER_FILES
   camera/control/TrajectoryAround.h
   camera/control/LinesOfSightConstraintManager.h
   camera/control/LinesOfSightConstraintManager.inl
+#  camera/control/CameraController.h
+#  camera/control/serialization.h
+#  camera/control/RenderCommunication.h
 
   camera/calib/CalibrateCamera.h
   camera/calib/SolvePnP.h
@@ -103,6 +108,8 @@ set(SOURCE_FILES
   camera/control/CameraTrajectory.cpp
   camera/control/TrajectoryAround.cpp
   camera/control/LinesOfSightConstraintManager.cpp
+#  camera/control/CameraController.cpp
+#  camera/control/RenderCommunication.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp

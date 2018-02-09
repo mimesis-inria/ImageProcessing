@@ -5,11 +5,13 @@
 #include "initPlugin.h"
 
 #include <SofaBaseMechanics/MechanicalObject.h>
+#include <SofaBaseMechanics/BarycentricMapping.h>
 #include <SofaConstraint/SlidingConstraint.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/core/objectmodel/BaseContext.h>
 #include <sofa/core/objectmodel/BaseObjectDescription.h>
 #include <sofa/defaulttype/VecTypes.h>
+
 
 namespace sofaor
 {
@@ -32,6 +34,13 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
       sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
       MechanicalObject;
 
+    typedef sofa::core::objectmodel::SingleLink<
+        LOSConstraintManager,
+        sofa::core::objectmodel::BaseObject,
+        sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
+        BarycentricMapping;
+
+
  public:
   SOFA_CLASS(SOFA_TEMPLATE(LOSConstraintManager, DataTypes),
              sofaor::common::ImplicitDataEngine);
@@ -40,24 +49,13 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
   CamSettings l_cam;
   MechanicalObject l_slavePoints;
   MechanicalObject l_masterPoints;
+  BarycentricMapping l_mapping;
   sofa::Data<sofa::helper::vector<int> > d_indices;
 
   sofa::helper::vector<SlidingConstraint> m_components;
 
  public:
-  LOSConstraintManager()
-      : l_cam(initLink("cam", "camera to use for lines of sight projections")),
-        l_slavePoints(initLink("slaveMO",
-                               "MechanicalObject containing the position to "
-                               "constrain on the lines of sight")),
-        l_masterPoints(initLink(
-            "masterMO",
-            "MechanicalObject containing the position of the lines of sight")),
-        d_indices(initData(
-            &d_indices, "indices",
-            "indices of the master points sorted by their matching slave"))
-  {
-  }
+  LOSConstraintManager();
 
   virtual ~LOSConstraintManager() {}
 
@@ -69,12 +67,7 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
   /// Since input sources are links, update is not performed with standard
   /// handleEvent
   /// TODO: use positions vector only..?
-  virtual void handleEvent(sofa::core::objectmodel::Event* /*e*/)
-  {
-    cleanInputs();
-    update();
-    setDirtyOutputs();
-  }
+  virtual void handleEvent(sofa::core::objectmodel::Event* /*e*/);
 };
 
 }  // namespace processor

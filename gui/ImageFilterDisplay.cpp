@@ -1,10 +1,9 @@
-#include <GL/glew.h>
 #include "ImageFilterDisplay.h"
+#include <GL/glew.h>
 
 #include <SofaQtQuickGUI/SofaScene.h>
 
 #include <QtGui/QOpenGLFramebufferObject>
-
 
 namespace sofaor
 {
@@ -44,7 +43,17 @@ QQuickFramebufferObject::Renderer *ImageFilterDisplay::createRenderer() const
   return new FilterRenderer(this);
 }
 
+ImageFilterModel *ImageFilterDisplay::imageFilterModel() const
+{
+  return m_imageFilterModel;
+}
+
 void ImageFilterDisplay::update() {}
+
+void ImageFilterDisplay::setImageFilterModel(ImageFilterModel *imageFilterModel)
+{
+  m_imageFilterModel = imageFilterModel;
+}
 
 }  // namespace processor
 }  // namespace sofaor

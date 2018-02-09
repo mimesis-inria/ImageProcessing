@@ -1,24 +1,24 @@
 /******************************************************************************
-*       SOFAOR, SOFA plugin for the Operating Room, development version       *
-*                        (c) 2017 INRIA, MIMESIS Team                         *
-*                                                                             *
-* This program is a free software; you can redistribute it and/or modify it   *
-* under the terms of the GNU Lesser General Public License as published by    *
-* the Free Software Foundation; either version 1.0 of the License, or (at     *
-* your option) any later version.                                             *
-*                                                                             *
-* This program is distributed in the hope that it will be useful, but WITHOUT *
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
-* for more details.                                                           *
-*                                                                             *
-* You should have received a copy of the GNU Lesser General Public License    *
-* along with this program. If not, see <http://www.gnu.org/licenses/>.        *
-*******************************************************************************
-* Authors: Bruno Marques and external contributors (see Authors.txt)          *
-*                                                                             *
-* Contact information: contact-mimesis@inria.fr                               *
-******************************************************************************/
+ *       SOFAOR, SOFA plugin for the Operating Room, development version       *
+ *                        (c) 2017 INRIA, MIMESIS Team                         *
+ *                                                                             *
+ * This program is a free software; you can redistribute it and/or modify it   *
+ * under the terms of the GNU Lesser General Public License as published by    *
+ * the Free Software Foundation; either version 1.0 of the License, or (at     *
+ * your option) any later version.                                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful, but WITHOUT *
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License *
+ * for more details.                                                           *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.        *
+ *******************************************************************************
+ * Authors: Bruno Marques and external contributors (see Authors.txt)          *
+ *                                                                             *
+ * Contact information: contact-mimesis@inria.fr                               *
+ ******************************************************************************/
 
 #include "StereoSettings.h"
 #include <SofaORCommon/cvMatUtils.h>
@@ -32,159 +32,172 @@ namespace cam
 SOFA_DECL_CLASS(StereoSettings)
 
 int StereoSettingsClass =
-		sofa::core::RegisterObject(
-				"Stereo camera settings component whose task is to store and maintain "
-				"stereoscopic camera parameters up to date")
-				.add<StereoSettings>();
+    sofa::core::RegisterObject(
+        "Stereo camera settings component whose task is to store and maintain "
+        "stereoscopic camera parameters up to date")
+        .add<StereoSettings>();
 
 cv::Mat_<double> StereoSettings::iterativeLinearLSTriangulation(cv::Point3d u,
-																																cv::Point3d u1)
+                                                                cv::Point3d u1)
 {
-	double wi = 1, wi1 = 1;
-	cv::Mat_<double> X(4, 1);
+  double wi = 1, wi1 = 1;
+  cv::Mat_<double> X(4, 1);
 
-	cv::Mat_<double> X_ = linearLSTriangulation(u, u1);
-	X(0) = X_(0);
-	X(1) = X_(1);
-	X(2) = X_(2);
-	X(3) = 1.0;
+  cv::Mat_<double> X_ = linearLSTriangulation(u, u1);
+  X(0) = X_(0);
+  X(1) = X_(1);
+  X(2) = X_(2);
+  X(3) = 1.0;
 
-	for (int i = 0; i < 10; i++)
-	{  // Hartley suggests 10 iterations at most
-		// recalculate weights
-		double p2x = cv::Mat_<double>(cv::Mat_<double>(P1).row(2) * X)(0);
-		double p2x1 = cv::Mat_<double>(cv::Mat_<double>(P2).row(2) * X)(0);
+  for (int i = 0; i < 10; i++)
+  {  // Hartley suggests 10 iterations at most
+    // recalculate weights
+    double p2x = cv::Mat_<double>(cv::Mat_<double>(P1).row(2) * X)(0);
+    double p2x1 = cv::Mat_<double>(cv::Mat_<double>(P2).row(2) * X)(0);
 
-		// breaking point
-		// if(fabsf(wi - p2x) <= EPSILON && fabsf(wi1 - p2x1) <= EPSILON) break;
+    // breaking point
+    // if(fabsf(wi - p2x) <= EPSILON && fabsf(wi1 - p2x1) <= EPSILON) break;
 
-		wi = p2x;
-		wi1 = p2x1;
+    wi = p2x;
+    wi1 = p2x1;
 
-		// reweight equations and solve
-		cv::Matx43d A(
-				(u.x * P1(2, 0) - P1(0, 0)) / wi, (u.x * P1(2, 1) - P1(0, 1)) / wi,
-				(u.x * P1(2, 2) - P1(0, 2)) / wi, (u.y * P1(2, 0) - P1(1, 0)) / wi,
-				(u.y * P1(2, 1) - P1(1, 1)) / wi, (u.y * P1(2, 2) - P1(1, 2)) / wi,
-				(u1.x * P2(2, 0) - P2(0, 0)) / wi1, (u1.x * P2(2, 1) - P2(0, 1)) / wi1,
-				(u1.x * P2(2, 2) - P2(0, 2)) / wi1, (u1.y * P2(2, 0) - P2(1, 0)) / wi1,
-				(u1.y * P2(2, 1) - P2(1, 1)) / wi1, (u1.y * P2(2, 2) - P2(1, 2)) / wi1);
+    // reweight equations and solve
+    cv::Matx43d A(
+        (u.x * P1(2, 0) - P1(0, 0)) / wi, (u.x * P1(2, 1) - P1(0, 1)) / wi,
+        (u.x * P1(2, 2) - P1(0, 2)) / wi, (u.y * P1(2, 0) - P1(1, 0)) / wi,
+        (u.y * P1(2, 1) - P1(1, 1)) / wi, (u.y * P1(2, 2) - P1(1, 2)) / wi,
+        (u1.x * P2(2, 0) - P2(0, 0)) / wi1, (u1.x * P2(2, 1) - P2(0, 1)) / wi1,
+        (u1.x * P2(2, 2) - P2(0, 2)) / wi1, (u1.y * P2(2, 0) - P2(1, 0)) / wi1,
+        (u1.y * P2(2, 1) - P2(1, 1)) / wi1, (u1.y * P2(2, 2) - P2(1, 2)) / wi1);
 
-		cv::Mat_<double> B =
-				(cv::Mat_<double>(4, 1) << -(u.x * P1(2, 3) - P1(0, 3)) / wi,
-				 -(u.y * P1(2, 3) - P1(1, 3)) / wi, -(u1.x * P2(2, 3) - P2(0, 3)) / wi1,
-				 -(u1.y * P2(2, 3) - P2(1, 3)) / wi1);
+    cv::Mat_<double> B =
+        (cv::Mat_<double>(4, 1) << -(u.x * P1(2, 3) - P1(0, 3)) / wi,
+         -(u.y * P1(2, 3) - P1(1, 3)) / wi, -(u1.x * P2(2, 3) - P2(0, 3)) / wi1,
+         -(u1.y * P2(2, 3) - P2(1, 3)) / wi1);
 
-		cv::solve(A, B, X_, cv::DECOMP_SVD);
-		X(0) = X_(0);
-		X(1) = X_(1);
-		X(2) = X_(2);
-		X(3) = 1.0;
-	}
+    cv::solve(A, B, X_, cv::DECOMP_SVD);
+    X(0) = X_(0);
+    X(1) = X_(1);
+    X(2) = X_(2);
+    X(3) = 1.0;
+  }
 
-	return X;
+  return X;
 }
 
 cv::Mat_<double> StereoSettings::linearLSTriangulation(cv::Point3d u,
-																											 cv::Point3d u1)
+                                                       cv::Point3d u1)
 {
-	/**
-	From "Triangulation", Hartley, R.I. and Sturm, P., Computer vision and image
-	understanding, 1997
-	*/
-	cv::Matx43d A(u.x * P1(2, 0) - P1(0, 0), u.x * P1(2, 1) - P1(0, 1),
-								u.x * P1(2, 2) - P1(0, 2), u.y * P1(2, 0) - P1(1, 0),
-								u.y * P1(2, 1) - P1(1, 1), u.y * P1(2, 2) - P1(1, 2),
-								u1.x * P2(2, 0) - P2(0, 0), u1.x * P2(2, 1) - P2(0, 1),
-								u1.x * P2(2, 2) - P2(0, 2), u1.y * P2(2, 0) - P2(1, 0),
-								u1.y * P2(2, 1) - P2(1, 1), u1.y * P2(2, 2) - P2(1, 2));
+  /**
+  From "Triangulation", Hartley, R.I. and Sturm, P., Computer vision and image
+  understanding, 1997
+  */
+  cv::Matx43d A(u.x * P1(2, 0) - P1(0, 0), u.x * P1(2, 1) - P1(0, 1),
+                u.x * P1(2, 2) - P1(0, 2), u.y * P1(2, 0) - P1(1, 0),
+                u.y * P1(2, 1) - P1(1, 1), u.y * P1(2, 2) - P1(1, 2),
+                u1.x * P2(2, 0) - P2(0, 0), u1.x * P2(2, 1) - P2(0, 1),
+                u1.x * P2(2, 2) - P2(0, 2), u1.y * P2(2, 0) - P2(1, 0),
+                u1.y * P2(2, 1) - P2(1, 1), u1.y * P2(2, 2) - P2(1, 2));
 
-	cv::Matx41d B(-(u.x * P1(2, 3) - P1(0, 3)), -(u.y * P1(2, 3) - P1(1, 3)),
-								-(u1.x * P2(2, 3) - P2(0, 3)), -(u1.y * P2(2, 3) - P2(1, 3)));
+  cv::Matx41d B(-(u.x * P1(2, 3) - P1(0, 3)), -(u.y * P1(2, 3) - P1(1, 3)),
+                -(u1.x * P2(2, 3) - P2(0, 3)), -(u1.y * P2(2, 3) - P2(1, 3)));
 
-	cv::Mat_<double> X;
-	cv::solve(A, B, X, cv::DECOMP_SVD);
+  cv::Mat_<double> X;
+  cv::solve(A, B, X, cv::DECOMP_SVD);
 
-	return X;
+  return X;
+}
+
+StereoSettings::StereoSettings()
+    : l_cam1(
+          initLink("cam1", "link to the reference CameraSettings component")),
+      l_cam2(initLink("cam2", "link to the second CameraSettings component")),
+      d_F(initData(&d_F, "F", "Fundamental matrix")),
+      d_E(initData(&d_E, "E", "Essential matrix"))
+{
 }
 
 void StereoSettings::init()
 {
-	if (l_cam1.get() && l_cam2.get() && !d_F.isSet() && !d_E.isSet())
-		recomputeFromCameras();
+  if (l_cam1.get() && l_cam2.get() && !d_F.isSet() && !d_E.isSet())
+    recomputeFromCameras();
 }
 
 // returns the 3D position of a pair of 2D matches 'X, Y'
 sofa::defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
-																								 const Vector2& x2)
+                                                       const Vector2& x2)
 {
-	common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
-	common::matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
+  common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
+  common::matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
 
-	cv::Point3d u(x1.x(), x2.y(), 1.0);
-	cv::Point3d u1(x2.x(), x2.y(), 1.0);
+  cv::Point3d u(x1.x(), x2.y(), 1.0);
+  cv::Point3d u1(x2.x(), x2.y(), 1.0);
 
-	//	// multiply the point by the inverse of the K matrix
-	//	cv::Mat_<double> um = cm1.inv() * cv::Mat_<double>(u);
-	//	cv::Mat_<double> um1 = cm2.inv() * cv::Mat_<double>(u1);
+  //	// multiply the point by the inverse of the K matrix
+  //	cv::Mat_<double> um = cm1.inv() * cv::Mat_<double>(u);
+  //	cv::Mat_<double> um1 = cm2.inv() * cv::Mat_<double>(u1);
 
-	//	u.x = um(0);
-	//	u.y = um(1);
-	//	u1.x = um1(0);
-	//	u1.y = um1(1);
-	//	u.z = um(2);
-	//	u1.z = um1(2);
+  //	u.x = um(0);
+  //	u.y = um(1);
+  //	u1.x = um1(0);
+  //	u1.y = um1(1);
+  //	u.z = um(2);
+  //	u1.z = um1(2);
 
-	cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
+  cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
 
-	return Vector3(X(0), X(1), X(2));
+  return Vector3(X(0), X(1), X(2));
 }
 
 sofa::defaulttype::Vector3 StereoSettings::triangulate(const cv::Point2d& x1,
-																				const cv::Point2d& x2)
+                                                       const cv::Point2d& x2)
 {
-	common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
-	common::matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
-	cv::Point3d u(x1.x, x2.y, 1.0);
-	cv::Point3d u1(x2.x, x2.y, 1.0);
-	cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
-	return Vector3(X(0), X(1), X(2));
+  common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
+  common::matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
+  cv::Point3d u(x1.x, x2.y, 1.0);
+  cv::Point3d u1(x2.x, x2.y, 1.0);
+  cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
+  return Vector3(X(0), X(1), X(2));
 }
 
 // returns the 3D position of a pair of 2D matches 'X, Y'
 void StereoSettings::triangulate(const Vector2& x1, const Vector2& x2,
-																 Vector3& w)
+                                 Vector3& w)
 {
-	w = triangulate(x1, x2);
+  w = triangulate(x1, x2);
 }
 void StereoSettings::triangulate(const cv::Point2d& x1, const cv::Point2d& x2,
-																 Vector3& w)
+                                 Vector3& w)
 {
-	w = triangulate(x1, x2);
+  w = triangulate(x1, x2);
 }
 
 // Getters & setters for the private Data (also used as callbacks when
 // modifying values in the GUI
 const sofa::defaulttype::Matrix3& StereoSettings::getFundamentalMatrix()
 {
-	return d_F.getValue();
+  return d_F.getValue();
 }
 
 void StereoSettings::setFundamentalMatrix(const Matrix3& F) { d_F.setValue(F); }
 const sofa::defaulttype::Matrix3& StereoSettings::getEssentialMatrix()
 {
-	return d_E.getValue();
+  return d_E.getValue();
 }
 void StereoSettings::setEssentialMatrix(const Matrix3& E) { d_E.setValue(E); }
+
+CameraSettings& StereoSettings::getCamera1() { return *l_cam1.get(); }
+
+CameraSettings& StereoSettings::getCamera2() { return *l_cam2.get(); }
 // void StereoSettings::updateRt()
 //{
 //	const Vector3& t = d_t.getValue();
 //	const Matrix3& R = d_R.getValue();
 //	P1 = cv::Matx34d::eye();
 //	P2 = cv::Matx34d(R[0][0], R[0][1], R[0][2], t[0], R[1][0], R[1][1],
-//R[1][2],
-//									 t[1], R[2][0], R[2][1],
-//R[2][2], t[2]);
+// R[1][2],
+//									 t[1], R[2][0],
+//R[2][1],  R[2][2], t[2]);
 //}
 
 // const defaulttype::Matrix3& StereoSettings::getRotationMatrix()
@@ -209,51 +222,64 @@ void StereoSettings::setEssentialMatrix(const Matrix3& E) { d_E.setValue(E); }
 
 void StereoSettings::recomputeFromCameras()
 {
-	if (!l_cam1.get() || !l_cam2.get()) return;
+  if (!l_cam1.get() || !l_cam2.get()) return;
 
-	Matrix3 K1 = l_cam1->getIntrinsicCameraMatrix();
-	Matrix3 K2 = l_cam2->getIntrinsicCameraMatrix();
-	Matrix3 R1 = l_cam1->getRotationMatrix();
-	Matrix3 R2 = l_cam2->getRotationMatrix();
-	Vector3 T1 = l_cam1->getPosition();
-	Vector3 T2 = l_cam2->getPosition();
+  Matrix3 K1 = l_cam1->getIntrinsicCameraMatrix();
+  Matrix3 K2 = l_cam2->getIntrinsicCameraMatrix();
+  Matrix3 R1 = l_cam1->getRotationMatrix();
+  Matrix3 R2 = l_cam2->getRotationMatrix();
+  Vector3 T1 = l_cam1->getPosition();
+  Vector3 T2 = l_cam2->getPosition();
 
-	if (K1 == Matrix3() || K2 == Matrix3()) return;
+  if (K1 == Matrix3() || K2 == Matrix3()) return;
 
-	// Camera 2 in Cam1 coord system
-	//	Vector3 Ts = R1 * (T2 - T1);
-	Vector3 Ts = T2 - T1;
+  // Camera 2 in Cam1 coord system
+  //	Vector3 Ts = R1 * (T2 - T1);
+  Vector3 Ts = T2 - T1;
 
-	// Rotation matrix from R1 to R2
-	Matrix3 K2R2 = K2 * R2;
-	K2R2.invert(K2R2.transposed());
+  // Rotation matrix from R1 to R2
+  Matrix3 K2R2 = K2 * R2;
+  K2R2.invert(K2R2.transposed());
 
-	// Skew symetric matrix of Ts
-	Matrix3 T(Vector3(0, -Ts[2], Ts[1]), Vector3(Ts[2], 0, -Ts[0]),
-						Vector3(-Ts[1], Ts[0], 0));
+  // Skew symetric matrix of Ts
+  Matrix3 T(Vector3(0, -Ts[2], Ts[1]), Vector3(Ts[2], 0, -Ts[0]),
+            Vector3(-Ts[1], Ts[0], 0));
 
-	/// E = R * [T]x
-	Matrix3 E;
+  /// E = R * [T]x
+  Matrix3 E;
 
-	/// F = inv(K2') * R * [T]x * inv(K1)
-	Matrix3 KTmp = K1;
-	K1.invert(KTmp);
+  /// F = inv(K2') * R * [T]x * inv(K1)
+  Matrix3 KTmp = K1;
+  K1.invert(KTmp);
 
-	Matrix3 K1R1 = R1.transposed() * K1;
+  Matrix3 K1R1 = R1.transposed() * K1;
 
-	Matrix3 F = K2R2 * T * K1R1;
+  Matrix3 F = K2R2 * T * K1R1;
 
-	// "Normalize matrix
-	for (int i = 0; i < 3; ++i)
-	{
-		for (int j = 0; j < 3; ++j)
-		{
-			F[i][j] /= F[2][2];
-		}
-	}
+  // "Normalize matrix
+  for (int i = 0; i < 3; ++i)
+  {
+    for (int j = 0; j < 3; ++j)
+    {
+      F[i][j] /= F[2][2];
+    }
+  }
 
-	this->setFundamentalMatrix(F);
-	this->setEssentialMatrix(E);
+  this->setFundamentalMatrix(F);
+  this->setEssentialMatrix(E);
+}
+
+void StereoSettings::FundamentalMatrixChanged(
+    sofa::core::objectmodel::BaseData*)
+{
+  setFundamentalMatrix(d_F.getValue());
+  this->cleanTrackers(false);
+}
+
+void StereoSettings::EssentialMatrixChanged(sofa::core::objectmodel::BaseData*)
+{
+  setEssentialMatrix(d_E.getValue());
+  this->cleanTrackers(false);
 }
 
 }  // namespace cam
