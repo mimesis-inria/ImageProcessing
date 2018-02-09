@@ -24,7 +24,7 @@
 #define SOFA_OR_PROCESSOR_STEREOSETTINGS_H
 
 #include "CameraSettings.h"
-#include "initPlugin.h"
+#include "ProcessOR/initPlugin.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 

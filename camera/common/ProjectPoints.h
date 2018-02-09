@@ -23,7 +23,7 @@
 #ifndef SOFA_OR_PROCESSOR_PROJECTPOINTS_H
 #define SOFA_OR_PROCESSOR_PROJECTPOINTS_H
 
-#include "initPlugin.h"
+#include "ProcessOR/initPlugin.h"
 
 #include <SofaORCommon/ImplicitDataEngine.h>
 #include "CameraSettings.h"
