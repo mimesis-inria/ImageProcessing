@@ -116,8 +116,10 @@ void ImageFilter::reinitDebugWindow()
 {
   if (!d_displayDebugWindow.getValue())
   {
-    if (m_isMouseCallbackActive) cv::setMouseCallback(m_win_name, NULL, NULL);
-    cv::destroyWindow(m_win_name);
+    if (cvGetWindowHandle(m_win_name.c_str()) && m_isMouseCallbackActive)
+        cv::setMouseCallback(m_win_name, NULL, NULL);
+    if (cvGetWindowHandle(m_win_name.c_str()))
+        cv::destroyWindow(m_win_name);
     return;
   }
 
@@ -126,14 +128,14 @@ void ImageFilter::reinitDebugWindow()
                     CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
 //  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
   for (DSM* dmgr : m_params) dmgr->createSlider(m_win_name);
-  if (m_isMouseCallbackActive)
+  if (m_isMouseCallbackActive && cvGetWindowHandle(m_win_name.c_str()))
     cv::setMouseCallback(m_win_name, &ImageFilter::_mouseCallback, this);
 }
 
 void ImageFilter::refreshDebugWindow()
 {
   reinitDebugWindow();
-  if (!d_displayDebugWindow.getValue()) return;
+  if (!d_displayDebugWindow.getValue() || !cvGetWindowHandle(m_win_name.c_str())) return;
   applyFilter(d_img.getValue(), m_debugImage, true);
   if (m_debugImage.empty()) return;
 
