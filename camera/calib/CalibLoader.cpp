@@ -306,8 +306,6 @@ void CalibLoader::init()
     msg_error(getName() + "::init()") << "Error: No camera link set. "
                                          "Please use attribute 'cam' "
                                          "to define one";
-  else
-      std::cout << "lol" << std::endl;
   if (!l_sCam.get()) m_isStereo = false;
 
   m_isInitialized = true;

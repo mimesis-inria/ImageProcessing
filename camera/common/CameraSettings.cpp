@@ -752,6 +752,8 @@ void CameraSettings::buildFromOpenGLContext()
   glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
   d_glProjection.setValue(p);
   d_glModelview.setValue(m);
+  std::cout << d_glProjection << std::endl;
+  std::cout << d_glModelview << std::endl;
   decomposeGL();
   composeM();
 }
