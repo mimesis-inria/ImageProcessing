@@ -46,10 +46,13 @@ void LOSConstraintManager<DataTypes>::update()
   if (l_masterPoints.get() == nullptr) return;
 
   // Before creating the constraints, reinit the Barycentric mapper:
-  l_mapping->reinit();
-  l_mapping->bwdInit();
+//  l_mapping->reinit();
+//  l_mapping->bwdInit();
 
-  for (const auto& i : d_indices.getValue())
+  std::cout << d_indices.getValue().size() << std::endl;
+  std::cout << l_masterPoints->xfree.getValue().size() << std::endl;
+  std::cout << l_slavePoints->xfree.getValue().size() << std::endl;
+  for (int i = 0 ; i < d_indices.getValue().size() ; ++i)
   {
     m_components.push_back(nullptr);
     sofa::core::objectmodel::BaseObjectDescription desc(
@@ -75,6 +78,7 @@ void LOSConstraintManager<DataTypes>::update()
     m_components[i]->parse(&desc);
     m_components[i]->init();
   }
+
 }
 
 }  // namespace processor
