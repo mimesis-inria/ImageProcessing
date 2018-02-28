@@ -31,9 +31,9 @@ namespace imgproc
 
 template <class T>
 ConvertTo<T>::ConvertTo()
-    : d_alpha(initData(&d_alpha, "scale", "[OPTIONAL] scale factor")),
-      d_beta(initData(&d_beta, "delta",
-                      "[OPTIONAL] delta added to the scaled values"))
+    : d_alpha(initData(&d_alpha, 1.0, "scale", "scale factor (default 1.0)")),
+      d_beta(initData(&d_beta, 0.0, "delta",
+                      "[OPTIONAL] delta added to the scaled values (default 0.0)"))
 {
 }
 
@@ -95,6 +95,14 @@ int ConvertTo<double>::getCVType(double)
 {
   return CV_64F;
 }
+
+template <class T>
+std::string ConvertTo<T>::templateName(
+       const ConvertTo<T>* /*ptr*/)
+{
+    return std::string(sofa::defaulttype::DataTypeName<T>::name());
+}
+
 
 }  // namespace imgproc
 }  // namespace processor
