@@ -60,8 +60,8 @@ void ImageFilter::init()
   if (getClassName() == "ImageFilter")
     msg_error(getName())
         << "Cannot instantiate an abstract component of type ImageFilter";
-  addInput(&d_isActive);
-  addInput(&d_outputImage);
+  addInput(&d_isActive, true);
+  addInput(&d_outputImage, true);
   addInput(&d_img);
   addOutput(&d_img_out);
 }
