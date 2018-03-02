@@ -33,8 +33,6 @@ namespace imgproc
 {
 class Fill : public ImageFilter
 {
-  SOFAOR_CALLBACK_SYSTEM(Fill);
-
  public:
   SOFA_CLASS(Fill, ImageFilter);
 

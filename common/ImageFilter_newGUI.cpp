@@ -36,10 +36,6 @@ namespace processor
 {
 SOFA_DECL_CLASS(ImageFilter)
 
-int ImageFilterClass =
-    sofa::core::RegisterObject("Abstract mother class for introspection")
-        .add<ImageFilter>();
-
 unsigned ImageFilter::m_window_uid = 0;
 
 ImageFilter::ImageFilter()
@@ -70,6 +66,7 @@ void ImageFilter::init()
 
 void ImageFilter::update()
 {
+  std::cout << getName() << " update()" << std::endl;
   sofa::helper::AdvancedTimer::stepBegin("Image Filters");
 
   if (!d_isActive.getValue())
@@ -94,12 +91,12 @@ void ImageFilter::update()
   sofa::helper::AdvancedTimer::stepEnd(("Image Filters"));
 }
 
-void ImageFilter::reinit()
+void ImageFilter::Reinit()
 {
-  if (d_isActive.getValue()) refreshDebugWindow();
-
-  // to set needsRefresh to true
-  ImplicitDataEngine::reinit();
+  std::cout << getName() << " Reinit()" << std::endl;
+  updateIfDirty(); // always call update when a data is dirty
+  if (d_isActive.getValue()) m_debugImage = d_img_out.getValue().clone();
+  setDirtyOutputs();
 }
 
 void ImageFilter::bindGlTexture(const std::string& imageString)
@@ -201,12 +198,6 @@ void ImageFilter::drawFullFrame()
                              // glDepthMask (GL_TRUE);		// enable zBuffer
   glDisable(GL_BLEND);
   glDepthMask(GL_TRUE);
-}
-
-void ImageFilter::refreshDebugWindow()
-{
-  applyFilter(d_img.getValue(), m_debugImage, true);
-  if (m_debugImage.empty()) return;
 }
 
 void ImageFilter::activateMouseCallback()

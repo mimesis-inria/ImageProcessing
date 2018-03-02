@@ -33,8 +33,6 @@ namespace imgproc
 {
 class SimpleThreshold : public ImageFilter
 {
-  SOFAOR_CALLBACK_SYSTEM(SimpleThreshold);
-
  public:
   SOFA_CLASS(SimpleThreshold, ImageFilter);
 

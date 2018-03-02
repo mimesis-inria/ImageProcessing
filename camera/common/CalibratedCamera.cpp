@@ -62,6 +62,11 @@ void CalibratedCamera::init()
                                          "to define one";
 }
 
+void CalibratedCamera::update()
+{
+
+}
+
 void CalibratedCamera::preDrawScene(sofa::core::visual::VisualParams *vparams)
 {
   if (!d_freeProj.getValue())

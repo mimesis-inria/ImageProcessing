@@ -61,8 +61,6 @@ namespace cam
  */
 class CameraSettings : public common::ImplicitDataEngine
 {
-  SOFAOR_CALLBACK_SYSTEM(CameraSettings);
-
  public:
   typedef sofa::defaulttype::RigidTypes::Coord Rigid;
   typedef sofa::defaulttype::Vector2 Vector2;
@@ -117,15 +115,9 @@ class CameraSettings : public common::ImplicitDataEngine
   /// computes all camera settings from opengl's current context
   void buildFromOpenGLContext();
 
-  void init();
-  void update() {}
-  virtual void reinit()
-  {
-    std::cout << "reinit" << std::endl;
-    std::cout << d_glProjection << std::endl;
-    ImplicitDataEngine::reinit();
-  }
-
+  void init() override;
+  void update() override;
+  void Reinit() override;
   /// returns the 2D pixel position of a given 3D point
   Vector2 get2DFrom3DPosition(const Vector3& p);
 
@@ -275,20 +267,20 @@ class CameraSettings : public common::ImplicitDataEngine
   void decomposeK(const Matrix3& K);
 
  public:
-  void ProjectionMatrixChanged(sofa::core::objectmodel::BaseData*);
-  void IntrinsicCameraMatrixChanged(sofa::core::objectmodel::BaseData*);
-  void DistortionCoefficientsChanged(sofa::core::objectmodel::BaseData*);
-  void RotationMatrixChanged(sofa::core::objectmodel::BaseData*);
-  void TranslationVectorChanged(sofa::core::objectmodel::BaseData*);
-  void ImageSizeChanged(sofa::core::objectmodel::BaseData*);
-  void GLProjectionChanged(sofa::core::objectmodel::BaseData*);
-  void GLModelviewChanged(sofa::core::objectmodel::BaseData*);
-  void GLViewportChanged(sofa::core::objectmodel::BaseData*);
-  void GLZClipChanged(sofa::core::objectmodel::BaseData*);
-  void OrientationChanged(sofa::core::objectmodel::BaseData*);
-  void Scale2DChanged(sofa::core::objectmodel::BaseData*);
-  void FocalDistanceChanged(sofa::core::objectmodel::BaseData*);
-  void Translation2DChanged(sofa::core::objectmodel::BaseData*);
+  void ProjectionMatrixChanged();
+  void IntrinsicCameraMatrixChanged();
+  void DistortionCoefficientsChanged();
+  void RotationMatrixChanged();
+  void TranslationVectorChanged();
+  void ImageSizeChanged();
+  void GLProjectionChanged();
+  void GLModelviewChanged();
+  void GLViewportChanged();
+  void GLZClipChanged();
+  void OrientationChanged();
+  void Scale2DChanged();
+  void FocalDistanceChanged();
+  void Translation2DChanged();
 
   void recalculate3DCorners();
 };

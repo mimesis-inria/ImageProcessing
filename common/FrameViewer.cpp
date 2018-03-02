@@ -67,8 +67,11 @@ void FrameViewer::init()
 
 void FrameViewer::update()
 {
+  std::cout << getName() << " update()" << std::endl;
   drawImpl();
 }
+
+void FrameViewer::Reinit() {}
 
 void FrameViewer::bindGlTexture(const std::string &imageString)
 {
@@ -226,7 +229,12 @@ void FrameViewer::drawImpl()
   sofa::helper::AdvancedTimer::stepEnd("FrameViewer");
 }
 
-void FrameViewer::draw(const sofa::core::visual::VisualParams *) { drawImpl(); }
+void FrameViewer::draw(const sofa::core::visual::VisualParams *)
+{
+  std::cout << getName() << " draw()" << std::endl;
+  drawImpl();
+  cleanDirty();
+}
 
 void FrameViewer::computeBBox(const sofa::core::ExecParams *params, bool)
 {

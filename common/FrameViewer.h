@@ -48,10 +48,11 @@ class FrameViewer : virtual public common::ImplicitDataEngine
   FrameViewer();
   virtual ~FrameViewer();
 
-	void init();
-  void update();
-	void draw(const sofa::core::visual::VisualParams*);
-	void computeBBox(const sofa::core::ExecParams* params, bool);
+  void init() override;
+  void Reinit() override;
+  void update() override;
+  void draw(const sofa::core::visual::VisualParams*) override;
+  void computeBBox(const sofa::core::ExecParams* params, bool) override;
 
 	sofa::Data<common::cvMat> d_frame;
 	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> > d_corners;

@@ -61,9 +61,9 @@ class ImageFilter : public common::ImplicitDataEngine
   ImageFilter();
   virtual ~ImageFilter();
 
-  virtual void init();
-  virtual void update();
-  virtual void reinit();
+  void init() override;
+  void Reinit() final;
+  virtual void update() final;
   void bindGlTexture(const std::string& imageString);
   virtual void drawFullFrame();
 
@@ -75,13 +75,8 @@ class ImageFilter : public common::ImplicitDataEngine
    * a modified slider in the Debug UI
    */
   virtual void applyFilter(const cv::Mat& /*in*/, cv::Mat& /*out*/,
-                           bool /*debug*/ = false)
-  {
-  }
+                           bool /*debug*/ = false) = 0;
 
-  /// Creates the Debug UI window if not created yet, sets its registered
-  /// trackbars, and activates the necessary callbacks
-  void refreshDebugWindow();
 
   sofa::Data<common::cvMat> d_img;      ///< [INPUT] image to process
   sofa::Data<common::cvMat> d_img_out;  ///< [OUTPUT] processed image

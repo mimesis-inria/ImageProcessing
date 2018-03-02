@@ -62,11 +62,13 @@ class FrameExporter : public common::ImplicitDataEngine
   FrameExporter();
 
   ~FrameExporter() {}
-  void init();
+  void init() override;
 
-  void update();
+  void Reinit() override {}
 
-  void cleanup();
+  void update() override;
+
+  void cleanup() override;
 
  private:
   unsigned m_stepCounter;

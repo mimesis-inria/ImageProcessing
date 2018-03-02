@@ -68,21 +68,23 @@ class CalibratedCamera : public common::ImplicitDataEngine,
   CalibratedCamera();
 
   ~CalibratedCamera() {}
-  void init();
+  void init() override;
+  void Reinit() override {}
+  void update() override;
 
   /// sets the correct GL params for drawing and displays the camera gizmo if
   /// drawGizmo=true
-  void preDrawScene(sofa::core::visual::VisualParams* vparams);
+  void preDrawScene(sofa::core::visual::VisualParams* vparams) override;
 
   /// Restores initial GL parameters
-  void postDrawScene(sofa::core::visual::VisualParams* /*vp*/);
+  void postDrawScene(sofa::core::visual::VisualParams* /*vp*/) override;
 
   /// Overriden implementation of ImplicitDataEngine's handleEvent
   /// Adds a hook on the C-u keyboard shortcut to set GL params in
   /// CameraSettings
-  virtual void handleEvent(sofa::core::objectmodel::Event* e);
+  virtual void handleEvent(sofa::core::objectmodel::Event* e) override;
 
-  void computeBBox(const sofa::core::ExecParams* params, bool);
+  void computeBBox(const sofa::core::ExecParams* params, bool) override;
 
   CamSettings l_cam;           ///< The linked CameraSettings component
   sofa::Data<bool> d_freeCam;  ///< locks / unlocks the modelview in OpenGL
