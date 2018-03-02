@@ -38,9 +38,13 @@ sofaor::processor::imgproc::CannyFilter::CannyFilter()
 
 void sofaor::processor::imgproc::CannyFilter::init()
 {
+  addInput(&d_minThreshold, true);
   registerData(&d_minThreshold, 0.0, 255.0, 1.0);
+  addInput(&d_maxThreshold, true);
   registerData(&d_maxThreshold, 0.0, 255.0, 1.0);
+  addInput(&d_apertureSize, true);
   registerData(&d_apertureSize, 3, 7, 2);
+  addInput(&d_l2gradient, true);
   registerData(&d_l2gradient);
   ImageFilter::init();
 }

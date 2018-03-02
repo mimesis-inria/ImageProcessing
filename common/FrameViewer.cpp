@@ -212,6 +212,7 @@ void FrameViewer::orthoDraw()
 void FrameViewer::drawImpl()
 {
   sofa::helper::AdvancedTimer::stepBegin("FrameViewer");
+  std::cout << "Accessing the value" << std::endl;
   if (d_frame.getValue().data)
   {
     switch (d_mode.getValue().getSelectedId())
@@ -227,13 +228,13 @@ void FrameViewer::drawImpl()
     }
   }
   sofa::helper::AdvancedTimer::stepEnd("FrameViewer");
+  std::cout << "Done Accessing the value" << std::endl;
 }
 
 void FrameViewer::draw(const sofa::core::visual::VisualParams *)
 {
   std::cout << getName() << " draw()" << std::endl;
   drawImpl();
-  cleanDirty();
 }
 
 void FrameViewer::computeBBox(const sofa::core::ExecParams *params, bool)

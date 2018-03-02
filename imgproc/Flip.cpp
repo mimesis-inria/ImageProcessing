@@ -30,6 +30,7 @@ sofaor::processor::imgproc::Flip::Flip()
 
 void sofaor::processor::imgproc::Flip::init()
 {
+  addInput(&d_flipCode, true);
   registerData(&d_flipCode, -1, 1, 1);
   ImageFilter::init();
 }

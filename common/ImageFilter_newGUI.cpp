@@ -60,6 +60,8 @@ void ImageFilter::init()
   if (getClassName() == "ImageFilter")
     msg_error(getName())
         << "Cannot instantiate an abstract component of type ImageFilter";
+  addInput(&d_isActive);
+  addInput(&d_outputImage);
   addInput(&d_img);
   addOutput(&d_img_out);
 }
@@ -94,9 +96,8 @@ void ImageFilter::update()
 void ImageFilter::Reinit()
 {
   std::cout << getName() << " Reinit()" << std::endl;
-  updateIfDirty(); // always call update when a data is dirty
-  if (d_isActive.getValue()) m_debugImage = d_img_out.getValue().clone();
-  setDirtyOutputs();
+//  updateIfDirty(); // always call update when a data is dirty
+//  if (d_isActive.getValue()) m_debugImage = d_img_out.getValue().clone();
 }
 
 void ImageFilter::bindGlTexture(const std::string& imageString)
