@@ -52,7 +52,7 @@ void LOSConstraintManager<DataTypes>::Update()
   std::cout << d_indices.getValue().size() << std::endl;
   std::cout << l_masterPoints->xfree.getValue().size() << std::endl;
   std::cout << l_slavePoints->xfree.getValue().size() << std::endl;
-  for (int i = 0 ; i < d_indices.getValue().size() ; ++i)
+  for (size_t i = 0 ; i < d_indices.getValue().size() ; ++i)
   {
     m_components.push_back(nullptr);
     sofa::core::objectmodel::BaseObjectDescription desc(

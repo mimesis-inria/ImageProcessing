@@ -113,6 +113,7 @@ void FeatureDetector::Update()
     detectTypeChanged();
 
   sofa::helper::AdvancedTimer::stepBegin("FeatureDetection");
+  cleanDirty();
   ImageFilter::Update();
 
   switch (d_detectMode.getValue().getSelectedId())
