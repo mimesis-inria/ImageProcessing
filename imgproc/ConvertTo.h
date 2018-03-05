@@ -59,6 +59,11 @@ class ConvertTo : public ImageFilter
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
 
   int getCVType(T type);
+
+  virtual std::string getTemplateName() const { return templateName(this); }
+  static std::string templateName(
+          const ConvertTo<T>* = NULL);
+
 };
 
 }  // namespace imgproc
