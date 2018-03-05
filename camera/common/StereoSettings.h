@@ -63,7 +63,7 @@ class StereoSettings : public common::ImplicitDataEngine
 
   ~StereoSettings() {}
   void init();
-  void update() {}
+  virtual void Update() override {}
   /// returns the 3D position of a pair of 2D matches 'X, Y'
   Vector3 triangulate(const Vector2& x1, const Vector2& x2);
   /// returns the 3D position of a pair of 2D matches 'X, Y'
@@ -102,8 +102,8 @@ class StereoSettings : public common::ImplicitDataEngine
 
  public:
   // Data callbacks for GUI
-  void FundamentalMatrixChanged(sofa::core::objectmodel::BaseData*);
-  void EssentialMatrixChanged(sofa::core::objectmodel::BaseData*);
+  void FundamentalMatrixChanged();
+  void EssentialMatrixChanged();
 
  private:
   cv::Mat_<double> iterativeLinearLSTriangulation(cv::Point3d u,

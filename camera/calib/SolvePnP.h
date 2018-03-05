@@ -65,7 +65,7 @@ class SolvePnP : public common::ImplicitDataEngine
 	~SolvePnP() {}
     void init();
 
-	void update();
+  virtual void Update() override;
 
 	CamSettings l_cam;  ///< Camera settings to update
 

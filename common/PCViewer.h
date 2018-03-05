@@ -43,11 +43,11 @@ class PCViewer : public common::ImplicitDataEngine
   PCViewer();
   virtual ~PCViewer();
 
-  void init();
-  void update();
+  virtual void init() override;
+  virtual void Update() override;
 	void computeBBox(const sofa::core::ExecParams*, bool);
-	void draw(const sofa::core::visual::VisualParams*);
-  void reinit();
+  virtual void draw(const sofa::core::visual::VisualParams*) override;
+  virtual void reinit();
 
 	sofa::Data<double> d_size;
 	// INPUTS

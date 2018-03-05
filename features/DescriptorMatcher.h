@@ -64,8 +64,8 @@ class DescriptorMatcher : public ImageFilter
   DescriptorMatcher();
   virtual ~DescriptorMatcher();
 
-  void init();
-  void update();
+  virtual void init() override;
+  virtual void Update() override;
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
 
   sofa::Data<sofa::helper::OptionsGroup> d_matcherType;
@@ -93,7 +93,7 @@ class DescriptorMatcher : public ImageFilter
                    float maxDistance);
 
  protected:
-  void matcherTypeChanged(sofa::core::objectmodel::BaseData*);
+  void matcherTypeChanged();
 
  private:
   BaseMatcher* m_matchers[MatcherType_COUNT];

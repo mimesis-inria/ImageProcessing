@@ -44,8 +44,6 @@ class CameraController : public common::ImplicitDataEngine
   typedef typename sofa::defaulttype::Vector3 Vector3;
   typedef typename sofa::defaulttype::Quat Quat;
 
-  SOFAOR_CALLBACK_SYSTEM(CameraController);
-
  public:
   SOFA_CLASS(CameraController, common::ImplicitDataEngine);
 
@@ -83,19 +81,6 @@ class CameraController : public common::ImplicitDataEngine
   ~CameraController() {}
   void init()
   {
-    SOFAOR_ADD_CALLBACK(&d_R00, &CameraController::RotationMatrixDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_R01, &CameraController::RotationMatrixDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_R02, &CameraController::RotationMatrixDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_R10, &CameraController::RotationMatrixDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_R11, &CameraController::RotationMatrixDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_R12, &CameraController::RotationMatrixDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_R20, &CameraController::RotationMatrixDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_R21, &CameraController::RotationMatrixDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_R22, &CameraController::RotationMatrixDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_tx, &CameraController::TranslationVectorDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_ty, &CameraController::TranslationVectorDataChanged);
-    SOFAOR_ADD_CALLBACK(&d_tz, &CameraController::TranslationVectorDataChanged);
-
     addInput(&d_tx);
     addInput(&d_ty);
     addInput(&d_tz);
@@ -118,8 +103,35 @@ class CameraController : public common::ImplicitDataEngine
     update();
   }
 
-  void update()
+  void Update()
   {
+    if (m_dataTracker.isDirty(d_R00))
+      RotationMatrixDataChanged();
+    if (m_dataTracker.isDirty(d_R01))
+      RotationMatrixDataChanged();
+    if (m_dataTracker.isDirty(d_R02))
+      RotationMatrixDataChanged();
+    if (m_dataTracker.isDirty(d_R10))
+      RotationMatrixDataChanged();
+    if (m_dataTracker.isDirty(d_R11))
+      RotationMatrixDataChanged();
+    if (m_dataTracker.isDirty(d_R12))
+      RotationMatrixDataChanged();
+    if (m_dataTracker.isDirty(d_R20))
+      RotationMatrixDataChanged();
+    if (m_dataTracker.isDirty(d_R21))
+      RotationMatrixDataChanged();
+    if (m_dataTracker.isDirty(d_R22))
+      RotationMatrixDataChanged();
+    if (m_dataTracker.isDirty(d_tx))
+      TranslationVectorDataChanged();
+    if (m_dataTracker.isDirty(d_ty))
+      TranslationVectorDataChanged();
+    if (m_dataTracker.isDirty(d_tz))
+      TranslationVectorDataChanged();
+
+
+
     Matrix3 R;
       R[0][0] = d_R00.getValue();
       R[0][1] = d_R01.getValue();
@@ -145,7 +157,6 @@ class CameraController : public common::ImplicitDataEngine
   {
     if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
     {
-      cleanInputs();
       update();
     }
   }
@@ -182,11 +193,11 @@ class CameraController : public common::ImplicitDataEngine
 
 
  private:
-  void TranslationVectorDataChanged(sofa::core::objectmodel::BaseData*)
+  void TranslationVectorDataChanged()
   {
     //setPositionData(d_tx.getValue(),d_ty.getValue(),d_tz.getValue());
   }
-  void RotationMatrixDataChanged(sofa::core::objectmodel::BaseData*)
+  void RotationMatrixDataChanged()
   {
     //setRotationMatrixData(d_R00.getValue(),d_R01.getValue(),d_R02.getValue(),d_R10.getValue(),d_R11.getValue(),d_R12.getValue(),d_R20.getValue(),d_R21.getValue(),d_R22.getValue());
   }

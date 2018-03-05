@@ -42,7 +42,6 @@ namespace features
 {
 class FeatureDetector : public ImageFilter
 {
-    SOFAOR_CALLBACK_SYSTEM(FeatureDetector);
   enum DetectorMode
   {
     DETECT_ONLY,
@@ -75,9 +74,9 @@ class FeatureDetector : public ImageFilter
   FeatureDetector();
   virtual ~FeatureDetector();
 
-  void init();
-  virtual void update();
-  virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
+  virtual void init() override;
+  virtual void Update() override;
+  virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug) override;
 
 	sofa::Data<sofa::helper::OptionsGroup> d_detectMode;
 	sofa::Data<common::cvMat> d_mask;
@@ -86,8 +85,8 @@ class FeatureDetector : public ImageFilter
 	sofa::Data<common::cvMat> d_descriptors;
 
  protected:
-	void detectTypeChanged(sofa::core::objectmodel::BaseData*);
-	void detectModeChanged(sofa::core::objectmodel::BaseData*);
+  void detectTypeChanged();
+  void detectModeChanged();
 
  private:
   BaseDetector* m_detectors[DetectorType_COUNT];

@@ -69,7 +69,7 @@ class CalibratedCamera : public common::ImplicitDataEngine,
 
   ~CalibratedCamera() {}
   void init() override;
-  void Reinit() override {}
+  void reinit() override {}
   void Update() override;
 
   /// sets the correct GL params for drawing and displays the camera gizmo if

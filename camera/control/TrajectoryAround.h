@@ -43,8 +43,6 @@ class TrajectoryAround : public common::ImplicitDataEngine
   typedef typename sofa::defaulttype::Vector3 Vector3;
   typedef typename sofa::defaulttype::Quat Quat;
 
-  SOFAOR_CALLBACK_SYSTEM(TrajectoryAround);
-
  public:
   SOFA_CLASS(TrajectoryAround, common::ImplicitDataEngine);
 
@@ -69,11 +67,6 @@ class TrajectoryAround : public common::ImplicitDataEngine
   ~TrajectoryAround() {}
   void init()
   {
-    SOFAOR_ADD_CALLBACK(&d_center, &TrajectoryAround::centerChanged);
-    SOFAOR_ADD_CALLBACK(&d_theta, &TrajectoryAround::thetaChanged);
-    SOFAOR_ADD_CALLBACK(&d_phi, &TrajectoryAround::phiChanged);
-    SOFAOR_ADD_CALLBACK(&d_rho, &TrajectoryAround::rhoChanged);
-
     addInput(&d_center);
     addInput(&d_theta);
     addInput(&d_phi);
@@ -120,7 +113,7 @@ class TrajectoryAround : public common::ImplicitDataEngine
     p.z() = sphCoord.x() * std::cos(sphCoord.y());
 
     Quat q1 = Quat(Vector3(1.0, 0.0, 0.0), M_PI);
-    Quat q2 = Quat::fromEuler(0, -sphCoord.y()+ M_PI, 0);
+    Quat q2 = Quat::fromEuler(0, -sphCoord.y() + M_PI, 0);
     Quat q3 = Quat::fromEuler(0, 0, -sphCoord.z());
     Quat q4 = Quat(Vector3(0.0, 0.0, 1.0), -M_PI / 2);
     Quat q5 = Quat(Vector3(1.0, 0.0, 0.0), -M_PI / 2);
@@ -134,15 +127,23 @@ class TrajectoryAround : public common::ImplicitDataEngine
 
     p = Vector3(p.x(), -p.z(), p.y());
     p += d_center.getValue();
-    Matrix3 R =    R4 * R2 * R3* R5 ;
+    Matrix3 R = R4 * R2 * R3 * R5;
 
     l_cam->setPosition(p, false);
     l_cam->setRotationMatrix(R, false);
     l_cam->buildFromKRT();
   }
 
-  void update()
+  void Update()
   {
+    if (m_dataTracker.isDirty(d_center))
+      centerChanged();
+    if (m_dataTracker.isDirty(d_theta))
+      thetaChanged();
+    if (m_dataTracker.isDirty(d_phi))
+      phiChanged();
+    if (m_dataTracker.isDirty(d_rho))
+      rhoChanged();
     rotate(d_rho.getValue(), d_theta.getValue(), d_phi.getValue());
   }
 
@@ -150,7 +151,6 @@ class TrajectoryAround : public common::ImplicitDataEngine
   {
     if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
     {
-      cleanInputs();
       update();
     }
   }
@@ -171,29 +171,29 @@ class TrajectoryAround : public common::ImplicitDataEngine
   double m_rho;
 
  private:
-  void centerChanged(sofa::core::objectmodel::BaseData*) {}
-  void thetaChanged(sofa::core::objectmodel::BaseData*)
+  void centerChanged() {}
+  void thetaChanged()
   {
     //      m_theta = d_theta.getValue();
   }
-  void phiChanged(sofa::core::objectmodel::BaseData*)
+  void phiChanged()
   {
     //      m_phi = d_phi.getValue();
   }
-  void rhoChanged(sofa::core::objectmodel::BaseData*)
+  void rhoChanged()
   {
     //      m_rho = d_rho.getValue();
   }
 
-  void thetaInitChanged(sofa::core::objectmodel::BaseData*)
+  void thetaInitChanged()
   {
     rotate(0, 0, 0, true);
   }
-  void phiInitChanged(sofa::core::objectmodel::BaseData*)
+  void phiInitChanged()
   {
     rotate(0, 0, 0, true);
   }
-  void rhoInitChanged(sofa::core::objectmodel::BaseData*)
+  void rhoInitChanged()
   {
     rotate(0, 0, 0, true);
   }

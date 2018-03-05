@@ -50,14 +50,14 @@ class NegateVector : public common::ImplicitDataEngine
   }
 
   ~NegateVector() {}
-  void init()
+  void init() override
   {
     addInput(&d_src);
 //    addInput(&d_srcRot);
     addOutput(&d_dst);
   }
 
-  void update()
+  void Update() override
   {
     d_dst.setValue(-d_src.getValue());
 //    sofa::defaulttype::Matrix3 rev;

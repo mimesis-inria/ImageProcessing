@@ -29,8 +29,6 @@ class RenderCommunication : public common::ImplicitDataEngine
   typedef typename sofa::defaulttype::Vector3 Vector3;
   typedef typename sofa::defaulttype::Quat Quat;
 
-  SOFAOR_CALLBACK_SYSTEM(RenderCommunication);
-
  public:
   SOFA_CLASS(RenderCommunication, common::ImplicitDataEngine);
 
@@ -39,7 +37,7 @@ class RenderCommunication : public common::ImplicitDataEngine
   }
 
   ~RenderCommunication() {}
-  void init()
+  virtual void init() override
   {
     m_socket =new zmq::socket_t(m_context, ZMQ_PUB);
     m_socket->bind("tcp://127.0.0.1:6667");
@@ -56,7 +54,7 @@ class RenderCommunication : public common::ImplicitDataEngine
       return oss.str();
   }
 
-  void update()
+  virtual void Update() override
   {
     int wdth = 764;
     int hght = 800;

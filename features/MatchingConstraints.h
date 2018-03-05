@@ -58,7 +58,7 @@ class MatchingConstraints : public ImageFilter
   virtual ~MatchingConstraints();
 
   void init();
-  void update();
+  virtual void Update() override;
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
 
   // INPUTS

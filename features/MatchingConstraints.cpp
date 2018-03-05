@@ -180,7 +180,7 @@ float distancePointLine(const cv::Point2f point, const cv::Vec3f& line)
          std::sqrt(line(0) * line(0) + line(1) * line(1));
 }
 
-void MatchingConstraints::update()
+void MatchingConstraints::Update()
 {
   std::cout << getName() << std::endl;
   // All precomputations for the filters, only done once per new batch of

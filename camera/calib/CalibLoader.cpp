@@ -283,8 +283,8 @@ void CalibLoader::parse(sofa::core::objectmodel::BaseObjectDescription* arg)
 
 void CalibLoader::init()
 {
-  SOFAOR_ADD_CALLBACK(&d_calibNames, &CalibLoader::calibChanged);
-  SOFAOR_ADD_CALLBACK(&d_calibFolder, &CalibLoader::calibFolderChanged);
+  trackData(&d_calibNames);
+  trackData(&d_calibFolder);
 
   addOutput(&d_delta1);
   addOutput(&d_delta2);
@@ -309,10 +309,10 @@ void CalibLoader::init()
   if (!l_sCam.get()) m_isStereo = false;
 
   m_isInitialized = true;
-    calibFolderChanged(NULL);
+    calibFolderChanged();
 }
 
-void CalibLoader::calibChanged(sofa::core::objectmodel::BaseData*)
+void CalibLoader::calibChanged()
 {
   setCurrentCalib(d_calibNames.getValue().getSelectedItem());
 }
@@ -358,7 +358,7 @@ void CalibLoader::setOptionsGroupToFolder(std::string calibFolder,
   }
 }
 
-void CalibLoader::calibFolderChanged(sofa::core::objectmodel::BaseData*)
+void CalibLoader::calibFolderChanged()
 {
   std::string calibname = d_calibNames.getValue().getSelectedItem();
   m_calibs.clear();
@@ -371,7 +371,13 @@ void CalibLoader::calibFolderChanged(sofa::core::objectmodel::BaseData*)
   setOptionsGroupToFolder(calibFolder, calibname);
 }
 
-void CalibLoader::update() {}
+void CalibLoader::Update()
+{
+  if (m_dataTracker.isDirty(d_calibNames))
+    calibChanged();
+  if (m_dataTracker.isDirty(d_calibFolder))
+    calibFolderChanged();
+}
 
 CalibLoader::CalibData::CalibData(
     const sofa::defaulttype::Matrix3& _K1,

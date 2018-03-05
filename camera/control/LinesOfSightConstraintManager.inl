@@ -27,7 +27,7 @@ void LOSConstraintManager<DataTypes>::init()
 }
 
 template <class DataTypes>
-void LOSConstraintManager<DataTypes>::update()
+void LOSConstraintManager<DataTypes>::Update()
 {
   std::vector<sofa::component::constraintset::SlidingConstraint<DataTypes>*>
       engines;

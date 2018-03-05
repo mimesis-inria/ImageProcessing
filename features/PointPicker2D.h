@@ -57,7 +57,7 @@ class PointPicker2D : public ImageFilter
 
   void init();
 
-  void update();
+  virtual void Update() override;
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
 

@@ -269,17 +269,14 @@ void StereoSettings::recomputeFromCameras()
   this->setEssentialMatrix(E);
 }
 
-void StereoSettings::FundamentalMatrixChanged(
-    sofa::core::objectmodel::BaseData*)
+void StereoSettings::FundamentalMatrixChanged()
 {
   setFundamentalMatrix(d_F.getValue());
-  this->cleanTrackers(false);
 }
 
-void StereoSettings::EssentialMatrixChanged(sofa::core::objectmodel::BaseData*)
+void StereoSettings::EssentialMatrixChanged()
 {
   setEssentialMatrix(d_E.getValue());
-  this->cleanTrackers(false);
 }
 
 }  // namespace cam

@@ -40,7 +40,6 @@ class CameraTrajectory : public common::ImplicitDataEngine
       sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
       CamSettings;
   typedef typename sofa::defaulttype::Vector3 Vector3;
-  SOFAOR_CALLBACK_SYSTEM(CameraTrajectory);
   enum Plane
   {
     PLANE_XY = 0,
@@ -55,9 +54,9 @@ class CameraTrajectory : public common::ImplicitDataEngine
   CameraTrajectory();
 
   ~CameraTrajectory() {}
-  void init();
+  virtual void init() override;
 
-  void update();
+  virtual void Update() override;
 
   virtual void handleEvent(sofa::core::objectmodel::Event* e);
 
@@ -69,9 +68,9 @@ class CameraTrajectory : public common::ImplicitDataEngine
   double m_radius;
 
  private:
-  void centerChanged(sofa::core::objectmodel::BaseData*) {}
-  void angleChanged(sofa::core::objectmodel::BaseData*) {}
-  void planeChanged(sofa::core::objectmodel::BaseData*) {}
+  void centerChanged() {}
+  void angleChanged() {}
+  void planeChanged() {}
 };
 
 SOFA_DECL_CLASS(CameraTrajectory)

@@ -117,7 +117,7 @@ class CameraSettings : public common::ImplicitDataEngine
 
   void init() override;
   void Update() override;
-  void Reinit() override;
+  void reinit() override;
   /// returns the 2D pixel position of a given 3D point
   Vector2 get2DFrom3DPosition(const Vector3& p);
 

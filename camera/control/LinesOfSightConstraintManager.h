@@ -59,9 +59,9 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
 
   virtual ~LOSConstraintManager() {}
 
-  virtual void init();
+  virtual void init() override;
 
-  virtual void update();
+  virtual void Update() override;
 
   /// specific handleEvent behavior:
   /// Since input sources are links, update is not performed with standard

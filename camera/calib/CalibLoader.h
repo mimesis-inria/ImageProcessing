@@ -51,7 +51,6 @@ namespace calib
 {
 class CalibLoader : public common::ImplicitDataEngine
 {
-  SOFAOR_CALLBACK_SYSTEM(CalibLoader);
   typedef sofa::core::objectmodel::SingleLink<
       CalibLoader, StereoSettings,
       sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
@@ -108,8 +107,8 @@ class CalibLoader : public common::ImplicitDataEngine
   virtual ~CalibLoader();
 
   void parse(sofa::core::objectmodel::BaseObjectDescription *arg);
-  void init();
-  void update();
+  virtual void init() override;
+  virtual void Update() override;
 
   StereoCam l_sCam;
   CamSettings l_cam1;
@@ -142,8 +141,8 @@ class CalibLoader : public common::ImplicitDataEngine
  protected:
   std::map<std::string, CalibData> m_calibs;
 
-  void calibChanged(sofa::core::objectmodel::BaseData*);
-  void calibFolderChanged(sofa::core::objectmodel::BaseData*);
+  void calibChanged();
+  void calibFolderChanged();
 
  private:
   void load(const std::string& calibfile);

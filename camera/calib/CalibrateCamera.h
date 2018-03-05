@@ -57,7 +57,7 @@ class CalibrateCamera : public common::ImplicitDataEngine
   ~CalibrateCamera() {}
   void init();
 
-  void update();
+  virtual void Update() override;
   void calibrate();
 
   CamSettings l_cam;

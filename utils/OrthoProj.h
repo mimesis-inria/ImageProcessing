@@ -96,7 +96,7 @@ class OrthoProj : public common::ImplicitDataEngine
     n = d1.cross(d1.cross(d2));
   }
 
-  void update()
+  void Update()
   {
     Vec3d C = l_cam->getPosition();
     const vector<Vec3d>& S = d_S.getValue();

@@ -67,7 +67,7 @@ void ProjectPoints::init()
   update();
 }
 
-void ProjectPoints::update()
+void ProjectPoints::Update()
 {
   if (d_2Dto3D.getValue())
   {

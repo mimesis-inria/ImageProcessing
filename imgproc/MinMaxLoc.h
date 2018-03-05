@@ -33,7 +33,6 @@ namespace imgproc
 {
 class MinMaxLoc : public ImageFilter
 {
-  SOFAOR_CALLBACK_SYSTEM(MinMaxLoc);
 
  public:
   SOFA_CLASS(MinMaxLoc, ImageFilter);

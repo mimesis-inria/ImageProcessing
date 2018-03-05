@@ -64,9 +64,9 @@ class CalibExporter : public common::ImplicitDataEngine
   CalibExporter();
   virtual ~CalibExporter();
 
-  void init();
-  void update();
-  void cleanup();
+  virtual void init() override;
+  virtual void Update() override;
+  virtual void cleanup();
 
   StereoCam l_sCam;
   CamSettings l_cam1;

@@ -93,7 +93,7 @@ void SolvePnP::init()
   update();
 }
 
-void SolvePnP::update()
+void SolvePnP::Update()
 {
   std::vector<cv::Point2d> imgPts;
   std::vector<cv::Point3d> objPts;

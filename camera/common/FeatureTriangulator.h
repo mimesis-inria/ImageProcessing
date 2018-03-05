@@ -64,7 +64,7 @@ class FeatureTriangulator : public common::ImplicitDataEngine
   virtual ~FeatureTriangulator();
 
   void init();
-  void update();
+  virtual void Update() override;
 
 	// INPUTS
 	StereoCamSettings l_cam;  ///< StereoSettings component holding the two camera

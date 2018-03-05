@@ -14,7 +14,7 @@ std::string Vector2SSVector<T>::templateName(
 }
 
 template <class T>
-void Vector2SSVector<T>::update()
+void Vector2SSVector<T>::Update()
 {
 	sofa::helper::SVector<sofa::helper::SVector<T> >& dst = *(d_dst.beginWriteOnly());
 	dst.clear();

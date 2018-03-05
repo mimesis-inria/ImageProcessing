@@ -740,7 +740,7 @@ void CameraSettings::buildFromOpenGLContext()
   composeM();
 }
 
-void CameraSettings::Reinit()
+void CameraSettings::reinit()
 {
   if (m_dataTracker.isDirty(d_M))
       ProjectionMatrixChanged();

@@ -64,7 +64,7 @@ class FrameExporter : public common::ImplicitDataEngine
   ~FrameExporter() {}
   void init() override;
 
-  void Reinit() override {}
+  void reinit() override {}
 
   void Update() override;
 

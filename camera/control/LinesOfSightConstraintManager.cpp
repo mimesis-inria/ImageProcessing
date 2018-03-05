@@ -36,9 +36,7 @@ void LOSConstraintManager<DataTypes>::handleEvent(
 {
   if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
   {
-    cleanInputs();
     update();
-    setDirtyOutputs();
   }
 }
 

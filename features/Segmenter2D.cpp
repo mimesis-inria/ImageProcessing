@@ -67,9 +67,9 @@ void Segmenter2D::init()
   update();
 }
 
-void Segmenter2D::update()
+void Segmenter2D::Update()
 {
-  ImageFilter::update();
+  ImageFilter::Update();
 
   if (d_regionPoly.getValue().size() <= 2)
   {

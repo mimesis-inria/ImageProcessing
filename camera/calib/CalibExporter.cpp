@@ -96,7 +96,7 @@ void CalibExporter::init()
   exportCalib(d_calibName.getValue());
 }
 
-void CalibExporter::update()
+void CalibExporter::Update()
 {
   ++m_stepCounter;
   switch (d_exportType.getValue().getSelectedId())

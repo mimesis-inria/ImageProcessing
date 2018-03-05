@@ -34,130 +34,130 @@ set(HEADER_FILES
   initPlugin.h
 
   common/FrameViewer.h
-#  common/PCViewer.h
+  common/PCViewer.h
   common/ImageFilter.h
   common/FrameExporter.h
 
   camera/common/CameraSettings.h
-#  camera/common/StereoSettings.h
+  camera/common/StereoSettings.h
   camera/common/CalibratedCamera.h
-#  camera/common/ImageRectifier.h
-#  camera/common/ProjectPoints.h
-#  camera/common/FeatureTriangulator.h
+  camera/common/ImageRectifier.h
+  camera/common/ProjectPoints.h
+  camera/common/FeatureTriangulator.h
 
-#  camera/control/CameraTrajectory.h
-#  camera/control/TrajectoryAround.h
-#  camera/control/LinesOfSightConstraintManager.h
-#  camera/control/LinesOfSightConstraintManager.inl
-#  camera/control/CameraController.h
-#  camera/control/serialization.h
-#  camera/control/RenderCommunication.h
+  camera/control/CameraTrajectory.h
+  camera/control/TrajectoryAround.h
+  camera/control/LinesOfSightConstraintManager.h
+  camera/control/LinesOfSightConstraintManager.inl
+  camera/control/CameraController.h
+  camera/control/serialization.h
+  camera/control/RenderCommunication.h
 
-#  camera/calib/CalibrateCamera.h
-#  camera/calib/SolvePnP.h
-#  camera/calib/CalibrateStereo.h
-#  camera/calib/CalibLoader.h
-#  camera/calib/CalibExporter.h
-#  camera/calib/FindChessboardCorners.h
+  camera/calib/CalibrateCamera.h
+  camera/calib/SolvePnP.h
+  camera/calib/CalibrateStereo.h
+  camera/calib/CalibLoader.h
+  camera/calib/CalibExporter.h
+  camera/calib/FindChessboardCorners.h
 
   imgproc/CannyFilter.h
   imgproc/SobelFilter.h
-#  imgproc/AdaptiveThreshold.h
+  imgproc/AdaptiveThreshold.h
   imgproc/SimpleThreshold.h
-#  imgproc/MorphologyEx.h
-#  imgproc/ConvertTo.h
-#  imgproc/ConvertTo.inl
-#  imgproc/CvtColor.h
-#  imgproc/ImageMask.h
-#  imgproc/TemplateMatcher.h
+  imgproc/MorphologyEx.h
+  imgproc/ConvertTo.h
+  imgproc/ConvertTo.inl
+  imgproc/CvtColor.h
+  imgproc/ImageMask.h
+  imgproc/TemplateMatcher.h
   imgproc/AddWeighted.h
   imgproc/Flip.h
-#  imgproc/InRange.h
-#  imgproc/CopyTo.h
+  imgproc/InRange.h
+  imgproc/CopyTo.h
   imgproc/Resize.h
   imgproc/Crop.h
   imgproc/Fill.h
-#  imgproc/MinMaxLoc.h
+  imgproc/MinMaxLoc.h
 
-#  features/Detectors.h
-#  features/Matchers.h
-#  features/FeatureDetector.h
-#  features/DescriptorMatcher.h
-#  features/MatchingConstraints.h
-#  features/PointPicker2D.h
-#  features/Segmenter2D.h
-#  features/OpticalFlow.h
-#  features/FeatureColorExtractor.cpp
+  features/Detectors.h
+  features/Matchers.h
+  features/FeatureDetector.h
+  features/DescriptorMatcher.h
+  features/MatchingConstraints.h
+  features/PointPicker2D.h
+  features/Segmenter2D.h
+  features/OpticalFlow.h
+  features/FeatureColorExtractor.cpp
 
-#  utils/PointVectorConverter.h
-#  utils/PointVectorConverter.inl
-#  utils/PointVec2Keypoint.h
-#  utils/Vector2SSVector.h
-#  utils/Vector2SSVector.inl
-#  utils/NegateVector.h
-#  utils/OrthoProj.h
+  utils/PointVectorConverter.h
+  utils/PointVectorConverter.inl
+  utils/PointVec2Keypoint.h
+  utils/Vector2SSVector.h
+  utils/Vector2SSVector.inl
+  utils/NegateVector.h
+  utils/OrthoProj.h
   )
 
 set(SOURCE_FILES
   initPlugin.cpp
 
   common/FrameViewer.cpp
-#  common/PCViewer.cpp
+  common/PCViewer.cpp
   common/FrameExporter.cpp
 
   camera/common/CameraSettings.cpp
-#  camera/common/StereoSettings.cpp
+  camera/common/StereoSettings.cpp
   camera/common/CalibratedCamera.cpp
-#  camera/common/ImageRectifier.cpp
-#  camera/common/ProjectPoints.cpp
-#  camera/common/FeatureTriangulator.cpp
+  camera/common/ImageRectifier.cpp
+  camera/common/ProjectPoints.cpp
+  camera/common/FeatureTriangulator.cpp
 
-#  camera/calib/CalibrateCamera.cpp
-#  camera/calib/SolvePnP.cpp
-#  camera/calib/CalibrateStereo.cpp
-#  camera/calib/CalibLoader.cpp
-#  camera/calib/CalibExporter.cpp
-#  camera/calib/FindChessboardCorners.cpp
+  camera/calib/CalibrateCamera.cpp
+  camera/calib/SolvePnP.cpp
+  camera/calib/CalibrateStereo.cpp
+  camera/calib/CalibLoader.cpp
+  camera/calib/CalibExporter.cpp
+  camera/calib/FindChessboardCorners.cpp
 
-#  camera/control/CameraTrajectory.cpp
-#  camera/control/TrajectoryAround.cpp
-#  camera/control/LinesOfSightConstraintManager.cpp
-#  camera/control/CameraController.cpp
-#  camera/control/RenderCommunication.cpp
+  camera/control/CameraTrajectory.cpp
+  camera/control/TrajectoryAround.cpp
+  camera/control/LinesOfSightConstraintManager.cpp
+  camera/control/CameraController.cpp
+  camera/control/RenderCommunication.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
-#  imgproc/AdaptiveThreshold.cpp
+  imgproc/AdaptiveThreshold.cpp
   imgproc/SimpleThreshold.cpp
-#  imgproc/MorphologyEx.cpp
-#  imgproc/ConvertTo.cpp
-#  imgproc/CvtColor.cpp
-#  imgproc/ImageMask.cpp
-#  imgproc/TemplateMatcher.cpp
+  imgproc/MorphologyEx.cpp
+  imgproc/ConvertTo.cpp
+  imgproc/CvtColor.cpp
+  imgproc/ImageMask.cpp
+  imgproc/TemplateMatcher.cpp
   imgproc/AddWeighted.cpp
   imgproc/Flip.cpp
-#  imgproc/InRange.cpp
-#  imgproc/CopyTo.cpp
+  imgproc/InRange.cpp
+  imgproc/CopyTo.cpp
   imgproc/Resize.cpp
   imgproc/Crop.cpp
   imgproc/Fill.cpp
-#  imgproc/MinMaxLoc.cpp
+  imgproc/MinMaxLoc.cpp
 
-#  features/Detectors.cpp
-#  features/Matchers.cpp
-#  features/FeatureDetector.cpp
-#  features/DescriptorMatcher.cpp
-#  features/MatchingConstraints.cpp
-#  features/PointPicker2D.cpp
-#  features/Segmenter2D.cpp
-#  features/OpticalFlow.cpp
-#  features/FeatureColorExtractor.cpp
+  features/Detectors.cpp
+  features/Matchers.cpp
+  features/FeatureDetector.cpp
+  features/DescriptorMatcher.cpp
+  features/MatchingConstraints.cpp
+  features/PointPicker2D.cpp
+  features/Segmenter2D.cpp
+  features/OpticalFlow.cpp
+  features/FeatureColorExtractor.cpp
 
-#  utils/PointVectorConverter.cpp
-#  utils/PointVec2Keypoint.cpp
-#  utils/Vector2SSVector.cpp
-#  utils/NegateVector.cpp
-#  utils/OrthoProj.cpp
+  utils/PointVectorConverter.cpp
+  utils/PointVec2Keypoint.cpp
+  utils/Vector2SSVector.cpp
+  utils/NegateVector.cpp
+  utils/OrthoProj.cpp
   )
 
 set(ProcessOR_LIBRARIES SofaCore SofaSimulationCommon SofaORCommon ${OpenCV_LIBRARIES} -lzmq ${Boost_LIBRARIES})

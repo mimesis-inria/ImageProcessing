@@ -14,10 +14,6 @@ sofaor::processor::CameraTrajectory::CameraTrajectory()
 
 void sofaor::processor::CameraTrajectory::init()
 {
-    SOFAOR_ADD_CALLBACK(&d_center, &CameraTrajectory::centerChanged);
-    SOFAOR_ADD_CALLBACK(&d_angle, &CameraTrajectory::angleChanged);
-    SOFAOR_ADD_CALLBACK(&d_plane, &CameraTrajectory::planeChanged);
-
     addInput(&d_center);
     addInput(&d_angle);
     addInput(&d_plane);
@@ -26,8 +22,15 @@ void sofaor::processor::CameraTrajectory::init()
         msg_error(getName() + "::init()") << "Error: No camera link set. ";
 }
 
-void sofaor::processor::CameraTrajectory::update()
+void sofaor::processor::CameraTrajectory::Update()
 {
+  if (m_dataTracker.isDirty(d_center))
+    centerChanged();
+  if (m_dataTracker.isDirty(d_angle))
+    angleChanged();
+  if (m_dataTracker.isDirty(d_plane))
+    planeChanged();
+
     Vector3 p = l_cam->getPosition();
     Vector3 c = d_center.getValue();
 
@@ -78,7 +81,6 @@ void sofaor::processor::CameraTrajectory::handleEvent(sofa::core::objectmodel::E
 {
     if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
     {
-        cleanInputs();
         update();
     }
 }

@@ -51,7 +51,7 @@ class PointVec2Keypoint : public common::ImplicitDataEngine
     addOutput(&d_dst);
   }
 
-  void update()
+  void Update()
   {
 		sofa::helper::vector<common::cvKeypoint>& dst = *(d_dst.beginWriteOnly());
     dst.clear();

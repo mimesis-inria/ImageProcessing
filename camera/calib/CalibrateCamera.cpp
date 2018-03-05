@@ -170,7 +170,7 @@ void CalibrateCamera::init()
   update();
 }
 
-void CalibrateCamera::update()
+void CalibrateCamera::Update()
 {
   calibrate();
 

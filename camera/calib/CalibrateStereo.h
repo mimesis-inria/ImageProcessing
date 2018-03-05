@@ -57,7 +57,7 @@ class CalibrateStereo : public common::ImplicitDataEngine
   ~CalibrateStereo() {}
   void init();
 
-  void update();
+  virtual void Update() override;
   void calibrate();
 
   Settings l_cam;

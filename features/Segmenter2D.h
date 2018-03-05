@@ -48,9 +48,9 @@ class Segmenter2D : public ImageFilter
 
   Segmenter2D();
 
-  void init();
+  virtual void init() override;
 
-  void update();
+  virtual void Update() override;
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
 

@@ -60,7 +60,7 @@ class ProjectPoints : public common::ImplicitDataEngine
   ~ProjectPoints() {}
   void init();
 
-  void update();
+  virtual void Update() override;
 
   CamSettings l_cam;           ///< Linked CameraSettings
   sofa::Data<bool> d_2Dto3D;   ///< projection direction (2Dto3D or 3Dto2D)

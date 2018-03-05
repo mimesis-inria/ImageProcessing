@@ -75,7 +75,7 @@ void FeatureTriangulator::init()
   update();
 }
 
-void FeatureTriangulator::update()
+void FeatureTriangulator::Update()
 {
   std::cout << getName() << std::endl;
 

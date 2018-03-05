@@ -85,9 +85,9 @@ void PointPicker2D::init()
            "If you want to visualize the epipolar lines, this is necessary";
 }
 
-void PointPicker2D::update()
+void PointPicker2D::Update()
 {
-  ImageFilter::update();
+  ImageFilter::Update();
   sofa::helper::vector<sofa::defaulttype::Vec2i>* points =
       d_points.beginWriteOnly();
   points->clear();

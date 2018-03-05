@@ -55,7 +55,7 @@ class Vector2SSVector : public common::ImplicitDataEngine
 		update();
 	}
 
-	void update();
+  virtual void Update() override;
 
 	virtual std::string getTemplateName() const { return templateName(this); }
 	static std::string templateName(

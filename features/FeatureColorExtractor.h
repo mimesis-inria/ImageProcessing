@@ -50,7 +50,7 @@ class FeatureColorExtractor: public ImageFilter
 	virtual ~FeatureColorExtractor();
 
 	void init();
-	void update();
+    void Update();
 	virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug = false);
 
 	// INPUTS

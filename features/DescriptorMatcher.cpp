@@ -33,7 +33,6 @@ namespace processor
 namespace features
 {
 SOFA_DECL_CLASS(DescriptorMatcher)
-SOFAOR_CALLBACK_SYSTEM(DescriptorMatcher);
 
 int DescriptorMatcherClass =
     sofa::core::RegisterObject("OpenCV component matching descriptors")
@@ -92,8 +91,8 @@ void DescriptorMatcher::init()
   std::cout << "Matcher type: " << d_matcherType.getValue().getSelectedItem()
             << std::endl;
 
-  matcherTypeChanged(NULL);
-  SOFAOR_ADD_CALLBACK(&d_matcherType, &DescriptorMatcher::matcherTypeChanged);
+  matcherTypeChanged();
+  trackData(&d_matcherType);
 
   addInput(&d_queryDescriptors);
   addInput(&d_trainDescriptors);
@@ -107,9 +106,11 @@ void DescriptorMatcher::init()
   addOutput(&d_matches);
   ImageFilter::init();
 }
-void DescriptorMatcher::update()
+void DescriptorMatcher::Update()
 {
-  std::cout << getName() << std::endl;
+  if (m_dataTracker.isDirty(d_matcherType))
+      matcherTypeChanged();
+
   msg_warning_when(!d_queryDescriptors.getValue().rows ||
                        !d_trainDescriptors.getValue().rows,
                    "DescriptorMatcher::update()")
@@ -194,7 +195,7 @@ void DescriptorMatcher::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   }
 }
 
-void DescriptorMatcher::matcherTypeChanged(sofa::core::objectmodel::BaseData*)
+void DescriptorMatcher::matcherTypeChanged()
 {
   for (size_t i = 0; i < MatcherType_COUNT; ++i)
   {

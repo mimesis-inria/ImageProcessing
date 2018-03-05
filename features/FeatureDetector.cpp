@@ -95,20 +95,25 @@ FeatureDetector::FeatureDetector()
 FeatureDetector::~FeatureDetector() {}
 void FeatureDetector::init()
 {
-  detectTypeChanged(NULL);
-  detectModeChanged(NULL);
+  detectTypeChanged();
+  detectModeChanged();
 
-  SOFAOR_ADD_CALLBACK(&d_detectMode, &FeatureDetector::detectModeChanged);
-  SOFAOR_ADD_CALLBACK(&d_detectorType, &FeatureDetector::detectTypeChanged);
+  trackData(&d_detectMode);
+  trackData(&d_detectorType);
 
   ImageFilter::init();
   update();
 }
 
-void FeatureDetector::update()
+void FeatureDetector::Update()
 {
+  if (m_dataTracker.isDirty(d_detectMode))
+    detectModeChanged();
+  if (m_dataTracker.isDirty(d_detectorType))
+    detectTypeChanged();
+
   sofa::helper::AdvancedTimer::stepBegin("FeatureDetection");
-  ImageFilter::update();
+  ImageFilter::Update();
 
   switch (d_detectMode.getValue().getSelectedId())
   {
@@ -219,15 +224,15 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     in.copyTo(out);
 }
 
-void FeatureDetector::detectModeChanged(sofa::core::objectmodel::BaseData*)
+void FeatureDetector::detectModeChanged()
 {
   switch (d_detectMode.getValue().getSelectedId())
   {
     case DETECT_ONLY:
       d_descriptors.setDisplayed(false);
       addInput(&d_mask, true);
-      removeInput(&d_keypoints);
-      removeOutput(&d_descriptors);
+      delInput(&d_keypoints);
+      delOutput(&d_descriptors);
       addOutput(&d_keypoints);
       break;
     case COMPUTE_ONLY:
@@ -239,14 +244,14 @@ void FeatureDetector::detectModeChanged(sofa::core::objectmodel::BaseData*)
     case DETECT_AND_COMPUTE:
       d_descriptors.setDisplayed(true);
       addInput(&d_mask, true);
-      removeInput(&d_keypoints);
+      delInput(&d_keypoints);
       addOutput(&d_keypoints);
       addOutput(&d_descriptors);
       break;
   }
 }
 
-void FeatureDetector::detectTypeChanged(sofa::core::objectmodel::BaseData*)
+void FeatureDetector::detectTypeChanged()
 {
   std::cout << "Detector type changed to "
             << d_detectorType.getValue().getSelectedItem() << std::endl;

@@ -71,7 +71,7 @@ void FrameViewer::Update()
   drawImpl();
 }
 
-void FrameViewer::Reinit() {}
+void FrameViewer::reinit() {}
 
 void FrameViewer::bindGlTexture(const std::string &imageString)
 {
