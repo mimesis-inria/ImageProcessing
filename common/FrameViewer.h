@@ -50,7 +50,7 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 
   void init() override;
   void Reinit() override;
-  void update() override;
+  void Update() override;
   void draw(const sofa::core::visual::VisualParams*) override;
   void computeBBox(const sofa::core::ExecParams* params, bool) override;
 

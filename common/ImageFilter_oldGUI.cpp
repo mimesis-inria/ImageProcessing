@@ -67,7 +67,7 @@ void ImageFilter::init()
   addOutput(&d_img_out);
 }
 
-void ImageFilter::update()
+void ImageFilter::Update()
 {
   sofa::helper::AdvancedTimer::stepBegin("Image Filters");
 
@@ -103,13 +103,13 @@ void ImageFilter::update()
   sofa::helper::AdvancedTimer::stepEnd(("Image Filters"));
 }
 
-void ImageFilter::reinit()
+void ImageFilter::Reinit()
 {
   if (m_displayDebugDataTracker.isDirty() && d_isActive.getValue())
     refreshDebugWindow();
 
-  // to set needsRefresh to true
-  ImplicitDataEngine::reinit();
+//  // to set needsRefresh to true
+//  ImplicitDataEngine::reinit();
 }
 
 void ImageFilter::reinitDebugWindow()

@@ -100,7 +100,7 @@ class ImageFilter : public common::ImplicitDataEngine
   virtual ~ImageFilter();
 
   virtual void init() override;
-  virtual void update() override;
+  virtual void Update() override;
   virtual void Reinit() override;
 
   /**

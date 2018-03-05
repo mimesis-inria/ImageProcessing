@@ -65,7 +65,7 @@ void FrameViewer::init()
   update();
 }
 
-void FrameViewer::update()
+void FrameViewer::Update()
 {
   std::cout << getName() << " update()" << std::endl;
   drawImpl();

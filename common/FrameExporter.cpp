@@ -49,7 +49,7 @@ void sofaor::processor::FrameExporter::init()
   update();
 }
 
-void sofaor::processor::FrameExporter::update()
+void sofaor::processor::FrameExporter::Update()
 {
   ++m_stepCounter;
 

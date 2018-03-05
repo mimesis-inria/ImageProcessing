@@ -772,7 +772,7 @@ void CameraSettings::Reinit()
       FocalDistanceChanged();
 }
 
-void CameraSettings::update()
+void CameraSettings::Update()
 {
 }
 

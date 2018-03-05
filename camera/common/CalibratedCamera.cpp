@@ -62,7 +62,7 @@ void CalibratedCamera::init()
                                          "to define one";
 }
 
-void CalibratedCamera::update()
+void CalibratedCamera::Update()
 {
 
 }
