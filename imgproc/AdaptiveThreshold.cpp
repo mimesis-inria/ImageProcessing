@@ -85,7 +85,6 @@ void sofaor::processor::imgproc::AdaptiveThreshold::applyFilter(
     img = in;
   try
   {
-    std::cout << d_max.getValue() << std::endl;
     cv::adaptiveThreshold(img, out, d_max.getValue() * 255,
                           d_adaptiveMethod.getValue().getSelectedId(),
                           d_thresholdType.getValue().getSelectedId(),

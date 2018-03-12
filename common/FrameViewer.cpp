@@ -97,7 +97,7 @@ void FrameViewer::bindGlTexture(const std::string &imageString)
       format = GL_BGRA_EXT;
       break;
   }
-  switch (d_frame.getValue().type())
+  switch (d_frame.getValue().depth())
   {
     case CV_8U:
       type = GL_UNSIGNED_BYTE;
