@@ -24,7 +24,7 @@
 #include <opencv2/imgproc.hpp>
 
 sofaor::processor::imgproc::MorphologyEx::MorphologyEx()
-    : d_ksize(initData(&d_ksize, 5, "ksize", "kernel size (3 5 7 ...)")),
+    : d_ksize(initData(&d_ksize, 7, "ksize", "kernel size (3 5 7 ...)")),
       d_operator(initData(&d_operator, "operator",
                           "kind of morphology operation to be performed "
                           "(OPEN, CLOSE, GRADIENT, TOPHAT, BLACKHAT")),
@@ -34,12 +34,12 @@ sofaor::processor::imgproc::MorphologyEx::MorphologyEx()
 {
   sofa::helper::OptionsGroup* t = d_operator.beginEdit();
   t->setNames(5, "OPEN", "CLOSE", "GRADIENT", "TOPHAT", "BLACKHAT");
-  t->setSelectedItem("OPEN");
+  t->setSelectedItem("TOPHAT");
   d_operator.endEdit();
 
   t = d_element.beginEdit();
   t->setNames(3, "RECT", "CROSS", "ELLIPSE");
-  t->setSelectedItem("RECT");
+  t->setSelectedItem("ELLIPSE");
   d_element.endEdit();
 }
 
