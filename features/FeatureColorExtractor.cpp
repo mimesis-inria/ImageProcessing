@@ -55,7 +55,7 @@ void FeatureColorExtractor::init()
 
 	addOutput(&d_colors);
 
-	update();
+  ImageFilter::init();
 }
 
 void FeatureColorExtractor::update()

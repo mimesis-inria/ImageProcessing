@@ -64,7 +64,6 @@ void Segmenter2D::init()
   ImageFilter::activateMouseCallback();
   setMouseState(&Segmenter2D::freeMove);
   ImageFilter::init();
-  update();
 }
 
 void Segmenter2D::update()
@@ -97,7 +96,7 @@ void Segmenter2D::update()
   d_regionPoints.endEdit();
 }
 
-void Segmenter2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
+void Segmenter2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
   in.copyTo(out);
@@ -204,7 +203,6 @@ void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
   {
     case cv::EVENT_LBUTTONUP:
     {
-      std::cout << "STOPPED" << std::endl;
       sofa::helper::vector<sofa::defaulttype::Vec2i>* regionsPoly =
           d_regionPoly.beginEdit();
       regionsPoly->clear();

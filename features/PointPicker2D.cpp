@@ -72,7 +72,6 @@ void PointPicker2D::init()
   addOutput(&d_points);
   ImageFilter::activateMouseCallback();
   setMouseState(&PointPicker2D::freeMove);
-  ImageFilter::init();
   m_picker =
       this->getContext()->get<PointPicker2D>(d_getEpilinesFrom.getValue());
   if (!d_points.getValue().empty())
@@ -83,6 +82,7 @@ void PointPicker2D::init()
     msg_advice(getName() + "::init()")
         << "No Stereo camera settings link set. "
            "If you want to visualize the epipolar lines, this is necessary";
+  ImageFilter::init();
 }
 
 void PointPicker2D::update()
@@ -104,7 +104,7 @@ void PointPicker2D::update()
   d_points.endEdit();
 }
 
-void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
+void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
   if (in.channels() == 1)
@@ -125,7 +125,7 @@ void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
   }
   cv::Scalar color(0, 255, 0, 255);
 
-  if (m_pointList.empty() && debug)
+  if (m_pointList.empty())
   {
     cv::putText(out, "- LeftClick: add point",
                 cv::Point(15, out.rows - 55), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,

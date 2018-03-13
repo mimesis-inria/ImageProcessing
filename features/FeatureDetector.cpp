@@ -102,7 +102,6 @@ void FeatureDetector::init()
   SOFAOR_ADD_CALLBACK(&d_detectorType, &FeatureDetector::detectTypeChanged);
 
   ImageFilter::init();
-  update();
 }
 
 void FeatureDetector::update()

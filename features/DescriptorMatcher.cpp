@@ -107,6 +107,7 @@ void DescriptorMatcher::init()
   addOutput(&d_matches);
   ImageFilter::init();
 }
+
 void DescriptorMatcher::update()
 {
   std::cout << getName() << std::endl;
