@@ -65,6 +65,7 @@ void ImageFilter::init()
   m_displayDebugDataTracker.trackData(d_displayDebugWindow);
   addInput(&d_img);
   addOutput(&d_img_out);
+  update();
 }
 
 void ImageFilter::update()

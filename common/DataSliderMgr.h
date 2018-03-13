@@ -34,63 +34,63 @@ namespace processor
 {
 struct DSM
 {
-	virtual void createSlider(const std::string& winName) = 0;
+  virtual void createSlider(const std::string& winName) = 0;
 };
 
 template <class T>
 struct ScalarSliderManager : DSM
 {
-	ScalarSliderManager(sofa::Data<T>* d, T min = T(0), T max = T(255), T step = T(1));
-	~ScalarSliderManager() {}
+  ScalarSliderManager(sofa::Data<T>* d, T min = T(0), T max = T(255),
+                      T step = T(1));
+  ~ScalarSliderManager() {}
 
-	sofa::Data<T>* m_data;
-	T m_min, m_max, m_step;
+  sofa::Data<T>* m_data;
+  T m_min, m_max, m_step;
 
-	void createSlider(const std::string& winName);
-	int getTrackbarMaxValue();
-	int getTrackbarRangedValue();
-	static void callback(int, void*);
+  void createSlider(const std::string& winName);
+  int getTrackbarMaxValue();
+  int getTrackbarRangedValue();
+  static void callback(int, void*);
 };
-
-
 
 template <class T, class U>
 struct CustomSliderManager : DSM
 {
-	CustomSliderManager(sofa::Data<T>* d, U min = U(0), U max = U(255), U step = U(1));
-	~CustomSliderManager() {}
+  CustomSliderManager(sofa::Data<T>* d, U min = U(0), U max = U(255),
+                      U step = U(1));
+  ~CustomSliderManager() {}
 
-	sofa::Data<T>* m_data;
-	U m_min, m_max, m_step;
+  sofa::Data<T>* m_data;
+  U m_min, m_max, m_step;
 
-	void createSlider(const std::string& winName);
-	int getTrackbarMaxValue();
-	int getTrackbarRangedValue();
-	static void callback(int, void*);
+  void createSlider(const std::string& winName);
+  int getTrackbarMaxValue();
+  int getTrackbarRangedValue();
+  static void callback(int, void*);
 };
 
 template <unsigned int N, class U>
 struct VecSliderManager : DSM
 {
-	VecSliderManager(sofa::Data<sofa::defaulttype::Vec<N, U> >* d, U min, U max,
-									 U step);
-	~VecSliderManager() {}
+  VecSliderManager(sofa::Data<sofa::defaulttype::Vec<N, U> >* d, U min = U(0),
+                   U max = U(255), U step = U(1));
+  ~VecSliderManager() {}
 
-	void createSlider(const std::string& winName);
+  void createSlider(const std::string& winName);
 
-	int getTrackbarMaxValue();
-	int getTrackbarRangedValueX();
-	int getTrackbarRangedValueY();
-	int getTrackbarRangedValueZ();
-	int getTrackbarRangedValueW();
+  int getTrackbarMaxValue();
+  int getTrackbarRangedValueX();
+  int getTrackbarRangedValueY();
+  int getTrackbarRangedValueZ();
+  int getTrackbarRangedValueW();
 
-	static void callback_x(int val, void* mgr);
-	static void callback_y(int val, void* mgr);
-	static void callback_z(int val, void* mgr);
-	static void callback_w(int val, void* mgr);
+  static void callback_x(int val, void* mgr);
+  static void callback_y(int val, void* mgr);
+  static void callback_z(int val, void* mgr);
+  static void callback_w(int val, void* mgr);
 
-	sofa::Data<sofa::defaulttype::Vec<N, U> >* m_data;
-	U m_min, m_max, m_step;
+  sofa::Data<sofa::defaulttype::Vec<N, U> >* m_data;
+  U m_min, m_max, m_step;
 };
 
 }  // namespace processor

@@ -99,29 +99,29 @@ template <unsigned int N, class U>
 void VecSliderManager<N, U>::createSlider(const std::string& winName)
 {
 	int value = getTrackbarRangedValueX();
-	cv::createTrackbar(m_data->getName(), winName, &value, getTrackbarMaxValue(),
+  cv::createTrackbar(m_data->getName() + ".x", winName, &value, getTrackbarMaxValue(),
 										 &VecSliderManager<N, U>::callback_x, this);
-	cv::setTrackbarPos(m_data->getName() + ".x", winName, value);
+  cv::setTrackbarPos(m_data->getName() + ".x", winName, value);
 
-	value = getTrackbarRangedValueY();
-	cv::createTrackbar(m_data->getName(), winName, &value, getTrackbarMaxValue(),
+  value = getTrackbarRangedValueY();
+  cv::createTrackbar(m_data->getName() + ".y", winName, &value, getTrackbarMaxValue(),
 										 &VecSliderManager<N, U>::callback_y, this);
-	cv::setTrackbarPos(m_data->getName() + ".y", winName, value);
-	if (N > 2)
+  cv::setTrackbarPos(m_data->getName() + ".y", winName, value);
+  if (N > 2)
 	{
 		value = getTrackbarRangedValueZ();
-		cv::createTrackbar(m_data->getName(), winName, &value,
+    cv::createTrackbar(m_data->getName() + ".z", winName, &value,
 											 getTrackbarMaxValue(),
 											 &VecSliderManager<N, U>::callback_z, this);
 		cv::setTrackbarPos(m_data->getName() + ".z", winName, value);
 	}
-	if (N > 3)
+  if (N > 3)
 	{
 		value = getTrackbarRangedValueW();
-		cv::createTrackbar(m_data->getName(), winName, &value,
+    cv::createTrackbar(m_data->getName() + ".w", winName, &value,
 											 getTrackbarMaxValue(),
 											 &VecSliderManager<N, U>::callback_w, this);
-		cv::setTrackbarPos(m_data->getName() + ".w", winName, value);
+    cv::setTrackbarPos(m_data->getName() + ".w", winName, value);
 	}
 }
 
@@ -177,21 +177,21 @@ int CustomSliderManager<sofa::helper::OptionsGroup, int>::getTrackbarRangedValue
 template <unsigned int N, class U>
 int VecSliderManager<N, U>::getTrackbarRangedValueX()
 {
-	assert(N >= 2);
-	return int((m_data->getValue().x() - m_min) / m_step);
+  assert(N >= 1);
+  return int((m_data->getValue().x() - m_min) / m_step);
 }
 
 template <unsigned int N, class U>
 int VecSliderManager<N, U>::getTrackbarRangedValueY()
 {
-	assert(N >= 2);
+  assert(N >= 2);
 	return int((m_data->getValue().y() - m_min) / m_step);
 }
 
 template <unsigned int N, class U>
 int VecSliderManager<N, U>::getTrackbarRangedValueZ()
 {
-	assert(N >= 3);
+  assert(N >= 3);
 	return int(
 			(reinterpret_cast<VecSliderManager<3, U>*>(this)->m_data->getValue().z() -
 			 m_min) /
@@ -201,7 +201,7 @@ int VecSliderManager<N, U>::getTrackbarRangedValueZ()
 template <unsigned int N, class U>
 int VecSliderManager<N, U>::getTrackbarRangedValueW()
 {
-	assert(N >= 4);
+  assert(N >= 4);
 	return int(
 			(reinterpret_cast<VecSliderManager<4, U>*>(this)->m_data->getValue().w() -
 			 m_min) /
