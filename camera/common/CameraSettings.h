@@ -117,14 +117,7 @@ class CameraSettings : public common::ImplicitDataEngine
   /// computes all camera settings from opengl's current context
   void buildFromOpenGLContext();
 
-  void init();
-  void update() {}
-  virtual void reinit()
-  {
-    std::cout << "reinit" << std::endl;
-    std::cout << d_glProjection << std::endl;
-    ImplicitDataEngine::reinit();
-  }
+  void init() override;
 
   /// returns the 2D pixel position of a given 3D point
   Vector2 get2DFrom3DPosition(const Vector3& p);

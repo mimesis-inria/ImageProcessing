@@ -93,7 +93,7 @@ void CalibExporter::init()
                                          "Please use attribute 'cam' "
                                          "to define one";
   if (!l_sCam.get()) m_isStereo = false;
-  exportCalib(d_calibName.getValue());
+  update();
 }
 
 void CalibExporter::update()
@@ -144,9 +144,9 @@ void CalibExporter::export_cam(cv::Mat KL, cv::Mat TL, cv::Mat RL,
 
 void CalibExporter::exportCalib(const std::string& calibFile)
 {
-  if (!canExport(d_calibFolder.getValue(), calibFile)) return;
+  if (!canExport(d_calibFolder.getFullPath(), calibFile)) return;
 
-  cv::FileStorage fs(d_calibFolder.getValue() + "/" + calibFile,
+  cv::FileStorage fs(d_calibFolder.getFullPath() + "/" + calibFile,
                      cv::FileStorage::WRITE);
   if (m_isStereo)
   {
@@ -216,7 +216,6 @@ void CalibExporter::exportCalib(const std::string& calibFile)
   }
 
   fs.release();
-  std::cout << "Write Done." << std::endl;
 }
 
 bool CalibExporter::canExport(const std::string& fileDir,
@@ -224,18 +223,17 @@ bool CalibExporter::canExport(const std::string& fileDir,
 {
   if (fileName.empty())
   {
-    msg_error("CalibExporter::canLoad()")
+    msg_error("CalibExporter::canExport()")
         << "Error: CalibExporter was given an empty calibName";
     return false;
   }
 
-  std::ifstream f(std::string(fileDir + "/" + fileName).c_str(),
-                  std::ios::out | std::ios::trunc);
+  std::ofstream f(std::string(fileDir + "/" + fileName).c_str());
 
   // -- Check if file is readable:
-  if (!f.good())
+  if (!f.is_open())
   {
-    msg_error("CalibExporter::canLoad()")
+    msg_error("CalibExporter::canExport()")
         << "Error: Cannot read file '" << fileDir + "/" + fileName << "'.";
     return false;
   }
