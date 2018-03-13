@@ -104,13 +104,14 @@ void PointPicker2D::update()
   d_points.endEdit();
 }
 
-void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
+void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 {
   if (in.empty()) return;
   if (in.channels() == 1)
     cv::cvtColor(in, out, CV_GRAY2BGR);
   else
     in.copyTo(out);
+
 
   if (m_picker != NULL)
   {
@@ -124,7 +125,19 @@ void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   }
   cv::Scalar color(0, 255, 0, 255);
 
-  if (m_pointList.empty()) return;
+  if (m_pointList.empty() && debug)
+  {
+    cv::putText(out, "- LeftClick: add point",
+                cv::Point(15, out.rows - 55), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,
+                CV_RGB(0, 255, 0));
+    cv::putText(out, "- Ctrl + LeftClick: remove point",
+                cv::Point(15, out.rows - 35), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,
+                CV_RGB(0, 255, 0));
+    cv::putText(out, "- MiddleClick: clear all points",
+                cv::Point(15, out.rows - 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,
+                CV_RGB(0, 255, 0));
+    return;
+  }
   for (const cv::Point2i& pt : m_pointList)
     cv::circle(out, pt, 3, color, 1, cv::LINE_AA);
 }
