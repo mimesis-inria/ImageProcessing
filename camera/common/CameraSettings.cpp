@@ -25,6 +25,7 @@
 
 #include <SofaBaseVisual/BaseCamera.h>
 #include <iomanip>
+#include <limits>
 
 namespace sofaor
 {
@@ -746,10 +747,24 @@ void CameraSettings::buildFromOpenGLContext()
   std::cout << "initializing from Opengl's default settings" << std::endl;
   glGetDoublev(GL_PROJECTION_MATRIX, p.ptr());
   glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
-  d_glProjection.setValue(p);
-  d_glModelview.setValue(m);
-  decomposeGL();
-  composeM();
+
+  bool hasGLContext = false;
+  for (int i = 0 ; i < 16 ; ++i)
+  {
+    if (std::fabs(p.ptr()[0]) > std::numeric_limits<double>::epsilon())
+      hasGLContext = true;
+  }
+  if (hasGLContext)
+  {
+    d_glProjection.setValue(p);
+    d_glModelview.setValue(m);
+  }
+  else
+  {
+    d_glProjection.setValue(Matrix4::s_identity);
+    d_glModelview.setValue(Matrix4::s_identity);
+  }
+  buildFromOpenGL();
 }
 
 void CameraSettings::init()
