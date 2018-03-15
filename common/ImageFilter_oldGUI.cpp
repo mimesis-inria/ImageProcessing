@@ -28,7 +28,6 @@
 #include <sofa/helper/AdvancedTimer.h>
 #include <sofa/helper/gl/RAII.h>
 #include <sofa/helper/system/gl.h>
-#include <sofa/helper/system/glut.h>
 
 #include <opencv2/highgui.hpp>
 
