@@ -47,15 +47,20 @@ CalibratedCamera::CalibratedCamera()
                           "when true, camera's projection matrix is not set. "
                           "when false, OpenGL's "
                           "camera is overriden by the new params")),
-      d_drawGizmo(
-          initData(&d_drawGizmo, false, "drawGizmo",
-                   "displays the camera's reference frame and projection cone"))
+      d_drawGizmo(initData(
+          &d_drawGizmo, false, "drawGizmo",
+          "displays the camera's reference frame and projection cone")),
+      d_captureFrame(initData(&d_captureFrame, false, "captureFrame",
+                              "captures the camera frame")),
+      d_img(initData(&d_img, "img_out", "The captured camera frame"))
 {
   m_storeMatrices = false;
 }
 
 void CalibratedCamera::init()
 {
+  addOutput(&d_img);
+  addInput(&d_captureFrame);
   if (!l_cam.get())
     msg_error(getName() + "::init()") << "Error: No camera link set. "
                                          "Please use attribute 'cam' "
@@ -143,13 +148,13 @@ void CalibratedCamera::preDrawScene(sofa::core::visual::VisualParams *vparams)
     glEnable(GL_LIGHTING);
 
     vparams->drawTool()->drawArrow(
-        camPos, camPos + camera_X * 0.01, 0.001,
+        camPos, camPos + camera_X * 0.01, 0.001f,
         sofa::defaulttype::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
     vparams->drawTool()->drawArrow(
-        camPos, camPos + camera_Y * 0.01, 0.001,
+        camPos, camPos + camera_Y * 0.01, 0.001f,
         sofa::defaulttype::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
     vparams->drawTool()->drawArrow(
-        camPos, camPos + camera_Z * 0.01, 0.001,
+        camPos, camPos + camera_Z * 0.01, 0.001f,
         sofa::defaulttype::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
   }
   if (!d_freeCam.getValue() && !d_freeProj.getValue())
@@ -163,6 +168,22 @@ void CalibratedCamera::preDrawScene(sofa::core::visual::VisualParams *vparams)
 
 void CalibratedCamera::postDrawScene(sofa::core::visual::VisualParams *)
 {
+  if (d_captureFrame.getValue())
+  {
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    common::cvMat &img = *d_img.beginEdit();
+    img.release();
+    img = common::cvMat(viewport[3], viewport[2], CV_8UC3);
+
+    glReadBuffer(GL_FRONT);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(viewport[0], viewport[1], viewport[2], viewport[3], GL_RGB,
+                 GL_UNSIGNED_BYTE, img.data);
+    glReadBuffer(GL_BACK);
+    d_img.endEdit();
+  }
   if (!d_freeProj.getValue())
   {
     glMatrixMode(GL_PROJECTION);
