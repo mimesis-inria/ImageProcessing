@@ -91,6 +91,8 @@ class CalibratedCamera : public common::ImplicitDataEngine,
   sofa::Data<bool>
       d_freeProj;  ///< set / unset CameraSettings intrinsic params in OpenGL
   sofa::Data<bool> d_drawGizmo;  ///< draws / hides the camera gizmo
+  sofa::Data<bool> d_captureFrame;  ///< captures camera's viewport as cvMat
+  sofa::Data<common::cvMat> d_img;  ///< captured camera frame
 
  private:
   bool m_storeMatrices;

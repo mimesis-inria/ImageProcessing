@@ -124,19 +124,16 @@ void CalibLoader::setCurrentCalib(CalibData& d)
   d_F.setValue(d.E);
   d_totalError.setValue(d.totalError);
 
-  std::cout << "loading camera data from file" << std::endl;
+  msg_info(getName()) << "loading camera data from " << d_calibNames.getValue().getSelectedItem();
   if (m_isStereo)
   {
     l_sCam->setFundamentalMatrix(d.F);
     l_sCam->setEssentialMatrix(d.E);
-    //		l_sCam->setRotationMatrix(d.Rs);
-    //		l_sCam->setTranslationVector(d.Ts);
-
     l_sCam->getCamera2().setImageSize(d.imSize2, false);
-    l_sCam->getCamera2().setIntrinsicCameraMatrix(d.K2, false);
     l_sCam->getCamera2().setRotationMatrix(d.R2, false);
-    l_sCam->getCamera2().setPosition(d.T2, true);
+    l_sCam->getCamera2().setPosition(d.T2, false);
     l_sCam->getCamera2().setDistortionCoefficients(d.delta2);
+    l_sCam->getCamera2().setIntrinsicCameraMatrix(d.K2, true);
   }
   CameraSettings* cam1;
   if (l_cam1.get())
@@ -144,10 +141,10 @@ void CalibLoader::setCurrentCalib(CalibData& d)
   else
     cam1 = &l_sCam->getCamera1();
   cam1->setImageSize(d.imSize1, false);
-  cam1->setIntrinsicCameraMatrix(d.K1, false);
   cam1->setRotationMatrix(d.R1, false);
-  cam1->setPosition(d.T1, true);
+  cam1->setPosition(d.T1, false);
   cam1->setDistortionCoefficients(d.delta1);
+  cam1->setIntrinsicCameraMatrix(d.K1, true);
 }
 
 void CalibLoader::setCurrentCalib(const std::string& calibName)
@@ -248,26 +245,11 @@ void CalibLoader::load(const std::string& filename)
   fs->release();
 }
 
-std::string CalibLoader::getPathToCalibs(const std::string& calibFolder)
-{
-  std::string currentDir = sofa::helper::system::SetDirectory::GetCurrentDir();
-  // If exists, add calibFolder to current dir
-  if (d_calibFolder.getValue() != "")
-  {
-    std::string path = calibFolder;
-
-    if (!path.empty())
-      currentDir = sofa::helper::system::SetDirectory::GetRelativeFromDir(
-          path.c_str(), currentDir.c_str());
-  }
-  return currentDir;
-}
-
 void CalibLoader::getAllCalibFiles(const std::string& calibFolder,
                                    std::vector<std::string>& calibFiles)
 {
   // Retrieve all calib files (files ending in ".yml" in calibFolder)
-  sofa::helper::system::FileSystem::listDirectory(getPathToCalibs(calibFolder),
+  sofa::helper::system::FileSystem::listDirectory(calibFolder,
                                                   calibFiles, "yml");
 }
 
@@ -275,8 +257,10 @@ void CalibLoader::parse(sofa::core::objectmodel::BaseObjectDescription* arg)
 {
   if (arg->getAttribute("calibDir"))
   {
-    std::string dir = arg->getAttribute("calibDir");
-    setOptionsGroupToFolder(dir, std::string(""));
+    sofa::core::objectmodel::DataFileName folder;
+    folder.setValue(arg->getAttribute("calibDir"));
+    setOptionsGroupToFolder(folder.getFullPath(),
+                            arg->getAttribute("calibName"));
   }
   ImplicitDataEngine::parse(arg);
 }
@@ -309,7 +293,7 @@ void CalibLoader::init()
   if (!l_sCam.get()) m_isStereo = false;
 
   m_isInitialized = true;
-    calibFolderChanged();
+  calibFolderChanged();
 }
 
 void CalibLoader::calibChanged()
@@ -320,7 +304,6 @@ void CalibLoader::calibChanged()
 void CalibLoader::setOptionsGroupToFolder(std::string calibFolder,
                                           std::string calibname)
 {
-  std::string currentDir = getPathToCalibs(calibFolder);
   std::vector<std::string> calibFiles;
   getAllCalibFiles(calibFolder, calibFiles);
 
@@ -353,7 +336,7 @@ void CalibLoader::setOptionsGroupToFolder(std::string calibFolder,
 
     // Load calibration files
     for (std::string& f : calibFiles)
-      if (canLoad(currentDir + "/" + f)) load(currentDir + "/" + f);
+      if (canLoad(calibFolder + "/" + f)) load(calibFolder + "/" + f);
     this->setCurrentCalib(calibname);
   }
 }
@@ -366,7 +349,7 @@ void CalibLoader::calibFolderChanged()
   t->setNames(0);
   d_calibNames.endEdit();
 
-  const std::string& calibFolder = d_calibFolder.getValue();
+  const std::string& calibFolder = d_calibFolder.getFullPath();
 
   setOptionsGroupToFolder(calibFolder, calibname);
 }

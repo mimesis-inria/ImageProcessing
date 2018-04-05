@@ -102,7 +102,6 @@ void FeatureDetector::init()
   trackData(&d_detectorType);
 
   ImageFilter::init();
-  update();
 }
 
 void FeatureDetector::Update()

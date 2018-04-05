@@ -28,7 +28,6 @@
 #include <sofa/helper/AdvancedTimer.h>
 #include <sofa/helper/gl/RAII.h>
 #include <sofa/helper/system/gl.h>
-#include <sofa/helper/system/glut.h>
 
 #include <opencv2/highgui.hpp>
 
@@ -65,6 +64,7 @@ void ImageFilter::init()
   m_displayDebugDataTracker.trackData(d_displayDebugWindow);
   addInput(&d_img);
   addOutput(&d_img_out);
+  update();
 }
 
 void ImageFilter::Update()
@@ -98,7 +98,6 @@ void ImageFilter::Update()
   if (d_displayDebugWindow.getValue() && !m_debugImage.empty())
   {
     cv::imshow(m_win_name, m_debugImage);
-//    cv::waitKey(1);
   }
   sofa::helper::AdvancedTimer::stepEnd(("Image Filters"));
 }
@@ -125,8 +124,7 @@ void ImageFilter::reinitDebugWindow()
 
   // WITH QT:
     cv::namedWindow(m_win_name,
-                    CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
-//  cv::namedWindow(m_win_name, CV_WINDOW_AUTOSIZE);
+                    CV_WINDOW_NORMAL | CV_WINDOW_AUTOSIZE | CV_GUI_EXPANDED);
   for (DSM* dmgr : m_params) dmgr->createSlider(m_win_name);
   if (m_isMouseCallbackActive && cvGetWindowHandle(m_win_name.c_str()))
     cv::setMouseCallback(m_win_name, &ImageFilter::_mouseCallback, this);

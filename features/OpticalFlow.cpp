@@ -57,7 +57,6 @@ void sofaor::processor::features::OpticalFlow::init()
   addInput(&d_points_in);
   addOutput(&d_points_out);
   ImageFilter::init();
-  update();
 }
 
 void sofaor::processor::features::OpticalFlow::applyFilter(const cv::Mat& in,

@@ -64,7 +64,6 @@ void Segmenter2D::init()
   ImageFilter::activateMouseCallback();
   setMouseState(&Segmenter2D::freeMove);
   ImageFilter::init();
-  update();
 }
 
 void Segmenter2D::Update()
@@ -101,10 +100,26 @@ void Segmenter2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
   in.copyTo(out);
+
   std::vector<std::vector<cv::Point2i> > polygon(1);
   if (m_activeState == &Segmenter2D::freeMove)
   {
-    if (d_regionPoly.getValue().empty()) return;
+    if (d_regionPoly.getValue().empty())
+    {
+      cv::putText(out, "- LClick: add point", cv::Point(15, out.rows - 95),
+                  cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
+      cv::putText(out, "- Left + move: draw", cv::Point(15, out.rows - 75),
+                  cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
+      cv::putText(out, "- Ctrl + LClick: del point",
+                  cv::Point(15, out.rows - 55), cv::FONT_HERSHEY_COMPLEX_SMALL,
+                  1.0, CV_RGB(0, 255, 0));
+      cv::putText(out, "- Ctrl + move: undraw", cv::Point(15, out.rows - 35),
+                  cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
+      cv::putText(out, "- MClick: delete all", cv::Point(15, out.rows - 15),
+                  cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
+      return;
+    }
+
     for (const sofa::defaulttype::Vec2i& pt : d_regionPoly.getValue())
     {
       polygon[0].push_back(cv::Point2i(pt.x(), pt.y()));
@@ -112,7 +127,6 @@ void Segmenter2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   }
   else
   {
-    if (m_poly.size() < 2) return;
     polygon[0] = std::vector<cv::Point2i>(m_poly.begin(), m_poly.end());
   }
   cv::Scalar color(255, 255, 255, 50);
@@ -189,7 +203,6 @@ void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
   {
     case cv::EVENT_LBUTTONUP:
     {
-      std::cout << "STOPPED" << std::endl;
       sofa::helper::vector<sofa::defaulttype::Vec2i>* regionsPoly =
           d_regionPoly.beginEdit();
       regionsPoly->clear();

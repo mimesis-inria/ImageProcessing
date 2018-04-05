@@ -25,6 +25,7 @@
 
 #include <SofaBaseVisual/BaseCamera.h>
 #include <iomanip>
+#include <limits>
 
 namespace sofaor
 {
@@ -522,13 +523,9 @@ void CameraSettings::composeM()
   const Matrix3& R = d_R.getValue();
   const Matrix3& K = d_K.getValue();
 
-  std::cout << " d_t " << d_t.getValue() << " " << R << std::endl;
-
   // gets the camera position from the position of the world's reference frame
   // in camera coordinates
   t = -R * t;
-
-  std::cout << " d_tT " << t << " " << R << std::endl;
 
   double ptr2[12] = {R[0][0], R[0][1], R[0][2], t[0],    R[1][0], R[1][1],
                      R[1][2], t[1],    R[2][0], R[2][1], R[2][2], t[2]};
@@ -732,12 +729,24 @@ void CameraSettings::buildFromOpenGLContext()
   std::cout << "initializing from Opengl's default settings" << std::endl;
   glGetDoublev(GL_PROJECTION_MATRIX, p.ptr());
   glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
-  d_glProjection.setValue(p);
-  d_glModelview.setValue(m);
-  std::cout << d_glProjection << std::endl;
-  std::cout << d_glModelview << std::endl;
-  decomposeGL();
-  composeM();
+
+  bool hasGLContext = false;
+  for (int i = 0 ; i < 16 ; ++i)
+  {
+    if (std::fabs(p.ptr()[0]) > std::numeric_limits<double>::epsilon())
+      hasGLContext = true;
+  }
+  if (hasGLContext)
+  {
+    d_glProjection.setValue(p);
+    d_glModelview.setValue(m);
+  }
+  else
+  {
+    d_glProjection.setValue(Matrix4::s_identity);
+    d_glModelview.setValue(Matrix4::s_identity);
+  }
+  buildFromOpenGL();
 }
 
 void CameraSettings::reinit()

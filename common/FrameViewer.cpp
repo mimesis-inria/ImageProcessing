@@ -28,7 +28,6 @@
 #include <sofa/helper/AdvancedTimer.h>
 #include <sofa/helper/gl/RAII.h>
 #include <sofa/helper/system/gl.h>
-#include <sofa/helper/system/glut.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
 namespace sofaor
@@ -99,7 +98,7 @@ void FrameViewer::bindGlTexture(const std::string &imageString)
       format = GL_BGRA_EXT;
       break;
   }
-  switch (d_frame.getValue().type())
+  switch (d_frame.getValue().depth())
   {
     case CV_8U:
       type = GL_UNSIGNED_BYTE;
@@ -173,7 +172,7 @@ void FrameViewer::orthoDraw()
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glDepthMask(GL_FALSE);
+//  glDepthMask(GL_FALSE);
 
   glMatrixMode(GL_PROJECTION);  // init the projection matrix
   glPushMatrix();
@@ -200,7 +199,7 @@ void FrameViewer::orthoDraw()
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
-  glEnable(GL_DEPTH_TEST);
+//  glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);     // enable light
   glDisable(GL_TEXTURE_2D);  // disable texture 2D
                              // glDepthMask (GL_TRUE);		// enable zBuffer

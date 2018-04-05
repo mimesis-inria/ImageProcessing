@@ -30,7 +30,12 @@ sofaor::processor::imgproc::InRange::InRange()
 {
 }
 
-void sofaor::processor::imgproc::InRange::init() { ImageFilter::init(); }
+void sofaor::processor::imgproc::InRange::init()
+{
+  registerData(&d_minRange, 0, 255, 1);
+  registerData(&d_maxRange, 0, 255, 1);
+  ImageFilter::init();
+}
 
 void sofaor::processor::imgproc::InRange::applyFilter(const cv::Mat &in,
                                                       cv::Mat &out, bool)

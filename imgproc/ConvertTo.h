@@ -36,7 +36,7 @@ namespace imgproc
 /**
  * @brief The ConvertTo class
  *
- * Converts a cvMat to another with different data type and optional scaling of
+ * Converts a cvMat to another with differento data type and optional scaling of
  * the values. (equivalent of the cv::Mat::convertTo() method) This is used to,
  * for instance, convert a CV_32F to a CV_8U by scaling every values from
  * 0 < val < 1 to 0 < val < 256 for instance.

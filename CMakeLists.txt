@@ -68,7 +68,6 @@ set(HEADER_FILES
   imgproc/ConvertTo.h
   imgproc/ConvertTo.inl
   imgproc/CvtColor.h
-  imgproc/ImageMask.h
   imgproc/TemplateMatcher.h
   imgproc/AddWeighted.h
   imgproc/Flip.h
@@ -132,7 +131,6 @@ set(SOURCE_FILES
   imgproc/MorphologyEx.cpp
   imgproc/ConvertTo.cpp
   imgproc/CvtColor.cpp
-  imgproc/ImageMask.cpp
   imgproc/TemplateMatcher.cpp
   imgproc/AddWeighted.cpp
   imgproc/Flip.cpp

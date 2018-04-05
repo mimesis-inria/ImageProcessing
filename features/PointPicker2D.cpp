@@ -72,7 +72,6 @@ void PointPicker2D::init()
   addOutput(&d_points);
   ImageFilter::activateMouseCallback();
   setMouseState(&PointPicker2D::freeMove);
-  ImageFilter::init();
   m_picker =
       this->getContext()->get<PointPicker2D>(d_getEpilinesFrom.getValue());
   if (!d_points.getValue().empty())
@@ -83,6 +82,7 @@ void PointPicker2D::init()
     msg_advice(getName() + "::init()")
         << "No Stereo camera settings link set. "
            "If you want to visualize the epipolar lines, this is necessary";
+  ImageFilter::init();
 }
 
 void PointPicker2D::Update()
@@ -112,6 +112,7 @@ void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   else
     in.copyTo(out);
 
+
   if (m_picker != NULL)
   {
     cv::Scalar color(0, 255, 0, 255);
@@ -124,7 +125,19 @@ void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   }
   cv::Scalar color(0, 255, 0, 255);
 
-  if (m_pointList.empty()) return;
+  if (m_pointList.empty())
+  {
+    cv::putText(out, "- LeftClick: add point",
+                cv::Point(15, out.rows - 55), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,
+                CV_RGB(0, 255, 0));
+    cv::putText(out, "- Ctrl + LeftClick: remove point",
+                cv::Point(15, out.rows - 35), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,
+                CV_RGB(0, 255, 0));
+    cv::putText(out, "- MiddleClick: clear all points",
+                cv::Point(15, out.rows - 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,
+                CV_RGB(0, 255, 0));
+    return;
+  }
   for (const cv::Point2i& pt : m_pointList)
     cv::circle(out, pt, 3, color, 1, cv::LINE_AA);
 }
