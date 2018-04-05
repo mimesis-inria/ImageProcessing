@@ -75,6 +75,7 @@ class FeatureDetector : public ImageFilter
   virtual ~FeatureDetector();
 
   virtual void init() override;
+  virtual void reinit() override;
   virtual void Update() override;
   virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug) override;
 

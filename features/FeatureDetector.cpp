@@ -40,7 +40,8 @@ int FeatureDetectorClass =
         .add<FeatureDetector>();
 
 FeatureDetector::FeatureDetector()
-    : d_detectMode(initData(&d_detectMode, "detectorMode",
+    : ImageFilter(),
+      d_detectMode(initData(&d_detectMode, "detectorMode",
                             "if true, does not compute the descriptors")),
       d_mask(initData(&d_mask, common::cvMat(), "mask",
                       "Mask specifying where to look for keypoints "
@@ -85,7 +86,7 @@ FeatureDetector::FeatureDetector()
   m_detectors[AKAZE] = new AKAZEDetector(this);
   m_detectors[BLOB] = new SimpleBlobDetector(this);
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
-  m_detectors[BRIEF] = new BRIEFDetector(this); 
+  m_detectors[BRIEF] = new BRIEFDetector(this);
   m_detectors[SIFT] = new SIFTDetector(this);
   m_detectors[SURF] = new SURFDetector(this);
   m_detectors[DAISY] = new DAISYDetector(this);
@@ -95,31 +96,36 @@ FeatureDetector::FeatureDetector()
 FeatureDetector::~FeatureDetector() {}
 void FeatureDetector::init()
 {
+  addInput(&d_detectMode);
+  addInput(&d_detectorType);
+
+  for (auto detector : m_detectors) detector->init();
+
   detectTypeChanged();
   detectModeChanged();
-
-  trackData(&d_detectMode);
-  trackData(&d_detectorType);
 
   ImageFilter::init();
 }
 
+void FeatureDetector::reinit()
+{
+  if (m_dataTracker.isDirty(d_detectMode)) detectModeChanged();
+  if (m_dataTracker.isDirty(d_detectorType)) detectTypeChanged();
+
+  update();
+}
+
 void FeatureDetector::Update()
 {
-  if (m_dataTracker.isDirty(d_detectMode))
-    detectModeChanged();
-  if (m_dataTracker.isDirty(d_detectorType))
-    detectTypeChanged();
-
   sofa::helper::AdvancedTimer::stepBegin("FeatureDetection");
-  cleanDirty();
   ImageFilter::Update();
-
+  cleanDirty();
   switch (d_detectMode.getValue().getSelectedId())
   {
     case DETECT_ONLY:
     {
       sofa::helper::vector<common::cvKeypoint>* vec = d_keypoints.beginEdit();
+      std::cout << getName() << " updateEnd()" << std::endl;
       vec->clear();
       for (cv::KeyPoint& kp : _v) vec->push_back(common::cvKeypoint(kp));
       d_keypoints.endEdit();
@@ -226,6 +232,8 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
 
 void FeatureDetector::detectModeChanged()
 {
+  std::cout << "Detector MODE changed to "
+            << d_detectMode.getValue().getSelectedItem() << std::endl;
   switch (d_detectMode.getValue().getSelectedId())
   {
     case DETECT_ONLY:
@@ -259,13 +267,12 @@ void FeatureDetector::detectTypeChanged()
   {
     if (i == d_detectorType.getValue().getSelectedId())
     {
-      m_detectors[i]->toggleVisible(true);
-      m_detectors[i]->init();
+      m_detectors[i]->enable(true);
       unregisterAllData();
       m_detectors[i]->registerData(this);
     }
     else
-      m_detectors[i]->toggleVisible(false);
+      m_detectors[i]->enable(false);
   }
 }
 

@@ -40,9 +40,14 @@ namespace features
 {
 struct BaseDetector
 {
+  BaseDetector(sofa::core::DataEngine* c)
+  {
+    m_obj = c;
+  }
+
   virtual ~BaseDetector();
 
-  virtual void toggleVisible(bool) = 0;
+  virtual void enable(bool) = 0;
 
   virtual void init() = 0;
 
@@ -57,12 +62,13 @@ struct BaseDetector
 
  protected:
   cv::Ptr<cv::Feature2D> m_detector;
+  sofa::core::DataEngine* m_obj;
 };
 
 struct SimpleBlobDetector : BaseDetector
 {
-  SimpleBlobDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  SimpleBlobDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
 
   virtual void registerData(ImageFilter* parent);
@@ -91,8 +97,8 @@ struct SimpleBlobDetector : BaseDetector
 
 struct ShiTomasiDetector : BaseDetector
 {
-  ShiTomasiDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  ShiTomasiDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter* parent);
 
@@ -114,8 +120,8 @@ struct ShiTomasiDetector : BaseDetector
 
 struct FASTDetector : BaseDetector
 {
-  FASTDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  FASTDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter* parent);
   virtual void compute(const common::cvMat&, std::vector<cv::KeyPoint>&,
@@ -131,8 +137,8 @@ struct FASTDetector : BaseDetector
 };
 struct MSERDetector : BaseDetector
 {
-  MSERDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  MSERDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter* parent);
 
@@ -155,8 +161,8 @@ struct MSERDetector : BaseDetector
 };
 struct ORBDetector : BaseDetector
 {
-  ORBDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  ORBDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
 
   virtual void registerData(ImageFilter*);
@@ -173,8 +179,8 @@ struct ORBDetector : BaseDetector
 };
 struct BRISKDetector : BaseDetector
 {
-  BRISKDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  BRISKDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter*);
 
@@ -184,8 +190,8 @@ struct BRISKDetector : BaseDetector
 };
 struct KAZEDetector : BaseDetector
 {
-  KAZEDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  KAZEDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter*);
 
@@ -198,8 +204,8 @@ struct KAZEDetector : BaseDetector
 };
 struct AKAZEDetector : BaseDetector
 {
-  AKAZEDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  AKAZEDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter*);
 
@@ -216,8 +222,8 @@ struct AKAZEDetector : BaseDetector
 
 struct BRIEFDetector : BaseDetector
 {
-  BRIEFDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  BRIEFDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter*);
 
@@ -232,8 +238,8 @@ struct BRIEFDetector : BaseDetector
 
 struct SIFTDetector : BaseDetector
 {
-  SIFTDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  SIFTDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter*);
 
@@ -246,8 +252,8 @@ struct SIFTDetector : BaseDetector
 
 struct SURFDetector : BaseDetector
 {
-  SURFDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  SURFDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter*);
 
@@ -260,8 +266,8 @@ struct SURFDetector : BaseDetector
 
 struct DAISYDetector : BaseDetector
 {
-  DAISYDetector(sofa::core::objectmodel::BaseObject* c);
-  void toggleVisible(bool);
+  DAISYDetector(sofa::core::DataEngine* c);
+  void enable(bool);
   void init();
   virtual void registerData(ImageFilter*);
 
