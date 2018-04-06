@@ -125,7 +125,6 @@ void FeatureDetector::Update()
     case DETECT_ONLY:
     {
       sofa::helper::vector<common::cvKeypoint>* vec = d_keypoints.beginEdit();
-      std::cout << getName() << " updateEnd()" << std::endl;
       vec->clear();
       for (cv::KeyPoint& kp : _v) vec->push_back(common::cvKeypoint(kp));
       d_keypoints.endEdit();
