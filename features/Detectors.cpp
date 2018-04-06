@@ -114,16 +114,6 @@ void SimpleBlobDetector::enable(bool show)
 
 void SimpleBlobDetector::init()
 {
-  //  m_obj->addInput(&minThreshold);
-  //  m_obj->addInput(&maxThreshold);
-  //  m_obj->addInput(&filterByArea);
-  //  m_obj->addInput(&minArea);
-  //  m_obj->addInput(&filterByCircularity);
-  //  m_obj->addInput(&minCircularity);
-  //  m_obj->addInput(&filterByConvexity);
-  //  m_obj->addInput(&minConvexity);
-  //  m_obj->addInput(&filterByInertia);
-  //  m_obj->addInput(&minInertiaRatio);
 }
 
 void SimpleBlobDetector::registerData(ImageFilter *parent)
@@ -367,12 +357,34 @@ MSERDetector::MSERDetector(sofa::core::DataEngine *c)
 void MSERDetector::enable(bool show)
 {
   if (show)
+  {
     m_detector = cv::MSER::create(
         delta.getValue(), minArea.getValue(), maxArea.getValue(),
         maxVariation.getValue(), minDiversity.getValue(),
         maxEvolution.getValue(), areaThreshold.getValue(), minMargin.getValue(),
         edgeBlurSize.getValue());
-
+    m_obj->addInput(&delta);
+    m_obj->addInput(&minArea);
+    m_obj->addInput(&maxArea);
+    m_obj->addInput(&maxVariation);
+    m_obj->addInput(&minDiversity);
+    m_obj->addInput(&maxEvolution);
+    m_obj->addInput(&areaThreshold);
+    m_obj->addInput(&minMargin);
+    m_obj->addInput(&edgeBlurSize);
+  }
+  else
+  {
+    m_obj->delInput(&delta);
+    m_obj->delInput(&minArea);
+    m_obj->delInput(&maxArea);
+    m_obj->delInput(&maxVariation);
+    m_obj->delInput(&minDiversity);
+    m_obj->delInput(&maxEvolution);
+    m_obj->delInput(&areaThreshold);
+    m_obj->delInput(&minMargin);
+    m_obj->delInput(&edgeBlurSize);
+  }
   delta.setDisplayed(show);
   minArea.setDisplayed(show);
   maxArea.setDisplayed(show);

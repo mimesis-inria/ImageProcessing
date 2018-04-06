@@ -98,6 +98,7 @@ void FeatureDetector::init()
 {
   addInput(&d_detectMode);
   addInput(&d_detectorType);
+  addInput(&d_mask, true);
 
   for (auto detector : m_detectors) detector->init();
 
@@ -119,7 +120,6 @@ void FeatureDetector::Update()
 {
   sofa::helper::AdvancedTimer::stepBegin("FeatureDetection");
   ImageFilter::Update();
-  cleanDirty();
   switch (d_detectMode.getValue().getSelectedId())
   {
     case DETECT_ONLY:
@@ -167,7 +167,6 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     if (d_mask.getValue().channels() != 1)
       cv::cvtColor(d_mask.getValue(), m, cv::COLOR_BGR2GRAY);
 
-    m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->detect(in, m, _v);
     msg_warning_when(_v.empty(), "FeatureDetector::update()")
         << "No Features detected";
@@ -185,7 +184,6 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     msg_warning_when(_v.empty(), "FeatureDetector::update()")
         << "No Features to describe";
     _d = cv::Mat();
-    m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->compute(in, _v, _d);
     msg_warning_when(!_d.rows, "FeatureDetector::update()")
         << "Couldn't describe features...";
@@ -202,7 +200,6 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
       _v.assign(arr, arr + d_keypoints.getValue().size());
     }
     _d = cv::Mat();
-    m_detectors[d_detectorType.getValue().getSelectedId()]->init();
     m_detectors[d_detectorType.getValue().getSelectedId()]->detectAndCompute(
         in, d_mask.getValue(), _v, _d);
     msg_warning_when(_v.empty(), "FeatureDetector::update()")
@@ -237,20 +234,17 @@ void FeatureDetector::detectModeChanged()
   {
     case DETECT_ONLY:
       d_descriptors.setDisplayed(false);
-      addInput(&d_mask, true);
       delInput(&d_keypoints);
       delOutput(&d_descriptors);
       addOutput(&d_keypoints);
       break;
     case COMPUTE_ONLY:
       d_descriptors.setDisplayed(true);
-      addInput(&d_mask, true);
       addInput(&d_keypoints);
       addOutput(&d_descriptors);
       break;
     case DETECT_AND_COMPUTE:
       d_descriptors.setDisplayed(true);
-      addInput(&d_mask, true);
       delInput(&d_keypoints);
       addOutput(&d_keypoints);
       addOutput(&d_descriptors);
