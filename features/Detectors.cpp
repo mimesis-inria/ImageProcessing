@@ -74,6 +74,32 @@ SimpleBlobDetector::SimpleBlobDetector(sofa::core::DataEngine *c)
 
 void SimpleBlobDetector::enable(bool show)
 {
+  if (show)
+  {
+    m_obj->addInput(&minThreshold);
+    m_obj->addInput(&maxThreshold);
+    m_obj->addInput(&filterByArea);
+    m_obj->addInput(&minArea);
+    m_obj->addInput(&filterByCircularity);
+    m_obj->addInput(&minCircularity);
+    m_obj->addInput(&filterByConvexity);
+    m_obj->addInput(&minConvexity);
+    m_obj->addInput(&filterByInertia);
+    m_obj->addInput(&minInertiaRatio);
+  }
+  else
+  {
+    m_obj->delInput(&minThreshold);
+    m_obj->delInput(&maxThreshold);
+    m_obj->delInput(&filterByArea);
+    m_obj->delInput(&minArea);
+    m_obj->delInput(&filterByCircularity);
+    m_obj->delInput(&minCircularity);
+    m_obj->delInput(&filterByConvexity);
+    m_obj->delInput(&minConvexity);
+    m_obj->delInput(&filterByInertia);
+    m_obj->delInput(&minInertiaRatio);
+  }
   minThreshold.setDisplayed(show);
   maxThreshold.setDisplayed(show);
   filterByArea.setDisplayed(show);
@@ -88,16 +114,16 @@ void SimpleBlobDetector::enable(bool show)
 
 void SimpleBlobDetector::init()
 {
-  m_obj->addInput(&minThreshold);
-  m_obj->addInput(&maxThreshold);
-  m_obj->addInput(&filterByArea);
-  m_obj->addInput(&minArea);
-  m_obj->addInput(&filterByCircularity);
-  m_obj->addInput(&minCircularity);
-  m_obj->addInput(&filterByConvexity);
-  m_obj->addInput(&minConvexity);
-  m_obj->addInput(&filterByInertia);
-  m_obj->addInput(&minInertiaRatio);
+  //  m_obj->addInput(&minThreshold);
+  //  m_obj->addInput(&maxThreshold);
+  //  m_obj->addInput(&filterByArea);
+  //  m_obj->addInput(&minArea);
+  //  m_obj->addInput(&filterByCircularity);
+  //  m_obj->addInput(&minCircularity);
+  //  m_obj->addInput(&filterByConvexity);
+  //  m_obj->addInput(&minConvexity);
+  //  m_obj->addInput(&filterByInertia);
+  //  m_obj->addInput(&minInertiaRatio);
 }
 
 void SimpleBlobDetector::registerData(ImageFilter *parent)
@@ -189,13 +215,7 @@ ShiTomasiDetector::ShiTomasiDetector(sofa::core::DataEngine *c)
 {
 }
 
-void ShiTomasiDetector::init()
-{
-  m_obj->addInput(&maxCorners);
-  m_obj->addInput(&qualityLevel);
-  m_obj->addInput(&minDistance);
-  m_obj->addInput(&blockSize);
-}
+void ShiTomasiDetector::init() {}
 
 void ShiTomasiDetector::registerData(ImageFilter *parent)
 {
@@ -229,6 +249,20 @@ void ShiTomasiDetector::detectAndCompute(const common::cvMat &img,
 }
 void ShiTomasiDetector::enable(bool show)
 {
+  if (show)
+  {
+    m_obj->addInput(&maxCorners);
+    m_obj->addInput(&qualityLevel);
+    m_obj->addInput(&minDistance);
+    m_obj->addInput(&blockSize);
+  }
+  else
+  {
+    m_obj->delInput(&maxCorners);
+    m_obj->delInput(&qualityLevel);
+    m_obj->delInput(&minDistance);
+    m_obj->delInput(&blockSize);
+  }
   maxCorners.setDisplayed(show);
   qualityLevel.setDisplayed(show);
   minDistance.setDisplayed(show);
@@ -255,12 +289,7 @@ FASTDetector::FASTDetector(sofa::core::DataEngine *c)
   type.endEdit();
 }
 
-void FASTDetector::init()
-{
-  m_obj->addInput(&threshold);
-  m_obj->addInput(&nonmaxsuppression);
-  m_obj->addInput(&type);
-}
+void FASTDetector::init() {}
 
 void FASTDetector::registerData(ImageFilter *parent)
 {
@@ -289,10 +318,20 @@ void FASTDetector::detectAndCompute(const common::cvMat &img,
 void FASTDetector::enable(bool show)
 {
   if (show)
+  {
     m_detector = cv::FastFeatureDetector::create(
         threshold.getValue(), nonmaxsuppression.getValue(),
         int(type.getValue().getSelectedId()));
-
+    m_obj->addInput(&threshold);
+    m_obj->addInput(&nonmaxsuppression);
+    m_obj->addInput(&type);
+  }
+  else
+  {
+    m_obj->delInput(&threshold);
+    m_obj->delInput(&nonmaxsuppression);
+    m_obj->delInput(&type);
+  }
   threshold.setDisplayed(show);
   nonmaxsuppression.setDisplayed(show);
   type.setDisplayed(show);
@@ -345,18 +384,7 @@ void MSERDetector::enable(bool show)
   edgeBlurSize.setDisplayed(show);
 }
 
-void MSERDetector::init()
-{
-  m_obj->addInput(&delta);
-  m_obj->addInput(&minArea);
-  m_obj->addInput(&maxArea);
-  m_obj->addInput(&maxVariation);
-  m_obj->addInput(&minDiversity);
-  m_obj->addInput(&maxEvolution);
-  m_obj->addInput(&areaThreshold);
-  m_obj->addInput(&minMargin);
-  m_obj->addInput(&edgeBlurSize);
-}
+void MSERDetector::init() {}
 
 void MSERDetector::registerData(ImageFilter *parent)
 {
@@ -421,18 +449,7 @@ ORBDetector::ORBDetector(sofa::core::DataEngine *c)
   scoreType.endEdit();
 }
 
-void ORBDetector::init()
-{
-  m_obj->addInput(&nFeatures);
-  m_obj->addInput(&scaleFactor);
-  m_obj->addInput(&nLevels);
-  m_obj->addInput(&edgeThreshold);
-  m_obj->addInput(&firstLevel);
-  m_obj->addInput(&WTA_K);
-  m_obj->addInput(&scoreType);
-  m_obj->addInput(&patchSize);
-  m_obj->addInput(&fastThreshold);
-}
+void ORBDetector::init() {}
 
 void ORBDetector::registerData(ImageFilter *)
 {
@@ -442,12 +459,34 @@ void ORBDetector::registerData(ImageFilter *)
 void ORBDetector::enable(bool show)
 {
   if (show)
+  {
     m_detector = cv::ORB::create(
         nFeatures.getValue(), scaleFactor.getValue(), nLevels.getValue(),
         edgeThreshold.getValue(), firstLevel.getValue(), WTA_K.getValue(),
         int(scoreType.getValue().getSelectedId()), patchSize.getValue(),
         fastThreshold.getValue());
-
+    m_obj->addInput(&nFeatures);
+    m_obj->addInput(&scaleFactor);
+    m_obj->addInput(&nLevels);
+    m_obj->addInput(&edgeThreshold);
+    m_obj->addInput(&firstLevel);
+    m_obj->addInput(&WTA_K);
+    m_obj->addInput(&scoreType);
+    m_obj->addInput(&patchSize);
+    m_obj->addInput(&fastThreshold);
+  }
+  else
+  {
+    m_obj->delInput(&nFeatures);
+    m_obj->delInput(&scaleFactor);
+    m_obj->delInput(&nLevels);
+    m_obj->delInput(&edgeThreshold);
+    m_obj->delInput(&firstLevel);
+    m_obj->delInput(&WTA_K);
+    m_obj->delInput(&scoreType);
+    m_obj->delInput(&patchSize);
+    m_obj->delInput(&fastThreshold);
+  }
   nFeatures.setDisplayed(show);
   scaleFactor.setDisplayed(show);
   nLevels.setDisplayed(show);
@@ -470,12 +509,7 @@ BRISKDetector::BRISKDetector(sofa::core::DataEngine *c)
                                 "sampling the neighbourhood of a keypoint."))
 {
 }
-void BRISKDetector::init()
-{
-  m_obj->addInput(&threshold);
-  m_obj->addInput(&octaves);
-  m_obj->addInput(&npatternScale);
-}
+void BRISKDetector::init() {}
 
 void BRISKDetector::registerData(ImageFilter *)
 {
@@ -485,9 +519,19 @@ void BRISKDetector::registerData(ImageFilter *)
 void BRISKDetector::enable(bool show)
 {
   if (show)
+  {
     m_detector = cv::BRISK::create(threshold.getValue(), octaves.getValue(),
                                    npatternScale.getValue());
-
+    m_obj->addInput(&threshold);
+    m_obj->addInput(&octaves);
+    m_obj->addInput(&npatternScale);
+  }
+  else
+  {
+    m_obj->delInput(&threshold);
+    m_obj->delInput(&octaves);
+    m_obj->delInput(&npatternScale);
+  }
   threshold.setDisplayed(show);
   octaves.setDisplayed(show);
   npatternScale.setDisplayed(show);
@@ -518,15 +562,7 @@ KAZEDetector::KAZEDetector(sofa::core::DataEngine *c)
   diffusivity.endEdit();
 }
 
-void KAZEDetector::init()
-{
-  m_obj->addInput(&extended);
-  m_obj->addInput(&upright);
-  m_obj->addInput(&threshold);
-  m_obj->addInput(&octaves);
-  m_obj->addInput(&sublevels);
-  m_obj->addInput(&diffusivity);
-}
+void KAZEDetector::init() {}
 
 void KAZEDetector::registerData(ImageFilter *)
 {
@@ -535,10 +571,27 @@ void KAZEDetector::registerData(ImageFilter *)
 void KAZEDetector::enable(bool show)
 {
   if (show)
+  {
     m_detector = cv::KAZE::create(extended.getValue(), upright.getValue(),
                                   threshold.getValue(), octaves.getValue(),
                                   sublevels.getValue(),
                                   int(diffusivity.getValue().getSelectedId()));
+    m_obj->addInput(&extended);
+    m_obj->addInput(&upright);
+    m_obj->addInput(&threshold);
+    m_obj->addInput(&octaves);
+    m_obj->addInput(&sublevels);
+    m_obj->addInput(&diffusivity);
+  }
+  else
+  {
+    m_obj->delInput(&extended);
+    m_obj->delInput(&upright);
+    m_obj->delInput(&threshold);
+    m_obj->delInput(&octaves);
+    m_obj->delInput(&sublevels);
+    m_obj->delInput(&diffusivity);
+  }
 
   extended.setDisplayed(show);
   upright.setDisplayed(show);
@@ -584,16 +637,7 @@ AKAZEDetector::AKAZEDetector(sofa::core::DataEngine *c)
   diffusivity.endEdit();
 }
 
-void AKAZEDetector::init()
-{
-  m_obj->addInput(&descriptorType);
-  m_obj->addInput(&descriptorSize);
-  m_obj->addInput(&descriptorChannels);
-  m_obj->addInput(&threshold);
-  m_obj->addInput(&octaves);
-  m_obj->addInput(&sublevels);
-  m_obj->addInput(&diffusivity);
-}
+void AKAZEDetector::init() {}
 
 void AKAZEDetector::registerData(ImageFilter *)
 {
@@ -602,13 +646,30 @@ void AKAZEDetector::registerData(ImageFilter *)
 void AKAZEDetector::enable(bool show)
 {
   if (show)
-
+  {
     m_detector = cv::AKAZE::create(
         int(descriptorType.getValue().getSelectedId()),
         descriptorSize.getValue(), descriptorChannels.getValue(),
         threshold.getValue(), octaves.getValue(), sublevels.getValue(),
         int(diffusivity.getValue().getSelectedId()));
-
+    m_obj->addInput(&descriptorType);
+    m_obj->addInput(&descriptorSize);
+    m_obj->addInput(&descriptorChannels);
+    m_obj->addInput(&threshold);
+    m_obj->addInput(&octaves);
+    m_obj->addInput(&sublevels);
+    m_obj->addInput(&diffusivity);
+  }
+  else
+  {
+    m_obj->delInput(&descriptorType);
+    m_obj->delInput(&descriptorSize);
+    m_obj->delInput(&descriptorChannels);
+    m_obj->delInput(&threshold);
+    m_obj->delInput(&octaves);
+    m_obj->delInput(&sublevels);
+    m_obj->delInput(&diffusivity);
+  }
   descriptorType.setDisplayed(show);
   descriptorSize.setDisplayed(show);
   descriptorChannels.setDisplayed(show);
@@ -632,11 +693,7 @@ BRIEFDetector::BRIEFDetector(sofa::core::DataEngine *c)
 {
 }
 
-void BRIEFDetector::init()
-{
-  m_obj->addInput(&bytes);
-  m_obj->addInput(&use_orientation);
-}
+void BRIEFDetector::init() {}
 
 void BRIEFDetector::registerData(ImageFilter *)
 {
@@ -662,9 +719,17 @@ void BRIEFDetector::detectAndCompute(const common::cvMat &,
 void BRIEFDetector::enable(bool show)
 {
   if (show)
+  {
     m_detector = cv::xfeatures2d::BriefDescriptorExtractor::create(
         bytes.getValue(), use_orientation.getValue());
-
+    m_obj->addInput(&bytes);
+    m_obj->addInput(&use_orientation);
+  }
+  else
+  {
+    m_obj->delInput(&bytes);
+    m_obj->delInput(&use_orientation);
+  }
   bytes.setDisplayed(show);
   use_orientation.setDisplayed(show);
 }
@@ -699,14 +764,7 @@ SIFTDetector::SIFTDetector(sofa::core::DataEngine *c)
 {
 }
 
-void SIFTDetector::init()
-{
-  m_obj->addInput(&nFeatures);
-  m_obj->addInput(&nOctaveLayers);
-  m_obj->addInput(&contrastThreshold);
-  m_obj->addInput(&edgeThreshold);
-  m_obj->addInput(&sigma);
-}
+void SIFTDetector::init() {}
 
 void SIFTDetector::registerData(ImageFilter *)
 {
@@ -715,11 +773,25 @@ void SIFTDetector::registerData(ImageFilter *)
 void SIFTDetector::enable(bool show)
 {
   if (show)
+  {
     m_detector = cv::xfeatures2d::SIFT::create(
         nFeatures.getValue(), nOctaveLayers.getValue(),
         contrastThreshold.getValue(), edgeThreshold.getValue(),
         sigma.getValue());
-
+    m_obj->addInput(&nFeatures);
+    m_obj->addInput(&nOctaveLayers);
+    m_obj->addInput(&contrastThreshold);
+    m_obj->addInput(&edgeThreshold);
+    m_obj->addInput(&sigma);
+  }
+  else
+  {
+    m_obj->delInput(&nFeatures);
+    m_obj->delInput(&nOctaveLayers);
+    m_obj->delInput(&contrastThreshold);
+    m_obj->delInput(&edgeThreshold);
+    m_obj->delInput(&sigma);
+  }
   nFeatures.setDisplayed(show);
   nOctaveLayers.setDisplayed(show);
   contrastThreshold.setDisplayed(show);
@@ -766,14 +838,7 @@ SURFDetector::SURFDetector(sofa::core::DataEngine *c)
 {
 }
 
-void SURFDetector::init()
-{
-  m_obj->addInput(&threshold);
-  m_obj->addInput(&nOctaves);
-  m_obj->addInput(&nOctaveLayers);
-  m_obj->addInput(&extended);
-  m_obj->addInput(&upright);
-}
+void SURFDetector::init() {}
 
 void SURFDetector::registerData(ImageFilter *)
 {
@@ -782,10 +847,24 @@ void SURFDetector::registerData(ImageFilter *)
 void SURFDetector::enable(bool show)
 {
   if (show)
+  {
     m_detector = cv::xfeatures2d::SURF::create(
         threshold.getValue(), nOctaves.getValue(), nOctaveLayers.getValue(),
         extended.getValue(), upright.getValue());
-
+    m_obj->addInput(&threshold);
+    m_obj->addInput(&nOctaves);
+    m_obj->addInput(&nOctaveLayers);
+    m_obj->addInput(&extended);
+    m_obj->addInput(&upright);
+  }
+  else
+  {
+    m_obj->delInput(&threshold);
+    m_obj->delInput(&nOctaves);
+    m_obj->delInput(&nOctaveLayers);
+    m_obj->delInput(&extended);
+    m_obj->delInput(&upright);
+  }
   threshold.setDisplayed(show);
   nOctaves.setDisplayed(show);
   nOctaveLayers.setDisplayed(show);
@@ -832,17 +911,7 @@ DAISYDetector::DAISYDetector(sofa::core::DataEngine *c)
   norm.endEdit();
 }
 
-void DAISYDetector::init()
-{
-  m_obj->addInput(&radius);
-  m_obj->addInput(&q_radius);
-  m_obj->addInput(&q_theta);
-  m_obj->addInput(&q_hist);
-  m_obj->addInput(&norm);
-  m_obj->addInput(&H);
-  m_obj->addInput(&interpolation);
-  m_obj->addInput(&use_orientation);
-}
+void DAISYDetector::init() {}
 
 void DAISYDetector::registerData(ImageFilter *)
 {
@@ -869,11 +938,31 @@ void DAISYDetector::detectAndCompute(const common::cvMat &,
 void DAISYDetector::enable(bool show)
 {
   if (show)
+  {
     m_detector = cv::xfeatures2d::DAISY::create(
         radius.getValue(), q_radius.getValue(), q_theta.getValue(),
         q_hist.getValue(), int(norm.getValue().getSelectedId()), H.getValue(),
         interpolation.getValue(), use_orientation.getValue());
-
+    m_obj->addInput(&radius);
+    m_obj->addInput(&q_radius);
+    m_obj->addInput(&q_theta);
+    m_obj->addInput(&q_hist);
+    m_obj->addInput(&norm);
+    m_obj->addInput(&H);
+    m_obj->addInput(&interpolation);
+    m_obj->addInput(&use_orientation);
+  }
+  else
+  {
+    m_obj->delInput(&radius);
+    m_obj->delInput(&q_radius);
+    m_obj->delInput(&q_theta);
+    m_obj->delInput(&q_hist);
+    m_obj->delInput(&norm);
+    m_obj->delInput(&H);
+    m_obj->delInput(&interpolation);
+    m_obj->delInput(&use_orientation);
+  }
   radius.setDisplayed(show);
   q_radius.setDisplayed(show);
   q_theta.setDisplayed(show);
