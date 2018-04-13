@@ -70,6 +70,18 @@ class FrameExporter : public common::ImplicitDataEngine
 
   void cleanup() override;
 
+  virtual void handleEvent(sofa::core::objectmodel::Event* e)
+  {
+    if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
+    {
+//      cleanDirty();
+      update(); /// always call update() for grabbers. It's
+                /// decided internally whether or not they should do something
+      return;
+    }
+    ImplicitDataEngine::handleEvent(e);
+  }
+
  private:
   unsigned m_stepCounter;
 };
