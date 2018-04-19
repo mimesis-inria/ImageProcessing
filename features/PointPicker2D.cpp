@@ -157,7 +157,9 @@ void PointPicker2D::computeEpipolarLines()
     for (const cv::Vec3f& pt : lines)
       epilines.push_back(sofa::defaulttype::Vec3f(pt.val));
   }
+#ifndef SOFAOR_NEW_GUI_ENABLED
   m_picker->refreshDebugWindow();
+#endif
 }
 
 void PointPicker2D::freeMove(int event, int /*x*/, int /*y*/, int /*flags*/)

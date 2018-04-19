@@ -28,7 +28,7 @@
 #include <sofa/helper/AdvancedTimer.h>
 #include <sofa/helper/gl/RAII.h>
 #include <sofa/helper/system/gl.h>
-#include <sofa/helper/system/glut.h>
+//#include <sofa/helper/system/glut.h>
 
 namespace sofaor
 {
@@ -66,9 +66,8 @@ void ImageFilter::init()
   addOutput(&d_img_out);
 }
 
-void ImageFilter::update()
+void ImageFilter::Update()
 {
-  std::cout << getName() << " update()" << std::endl;
   sofa::helper::AdvancedTimer::stepBegin("Image Filters");
 
   if (!d_isActive.getValue())
@@ -93,7 +92,7 @@ void ImageFilter::update()
   sofa::helper::AdvancedTimer::stepEnd(("Image Filters"));
 }
 
-void ImageFilter::Reinit()
+void ImageFilter::reinit()
 {
   std::cout << getName() << " Reinit()" << std::endl;
 //  updateIfDirty(); // always call update when a data is dirty

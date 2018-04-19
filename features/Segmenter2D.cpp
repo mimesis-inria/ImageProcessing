@@ -99,27 +99,25 @@ void Segmenter2D::Update()
 void Segmenter2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
-  in.copyTo(out);
-
+  cv::Mat tmp;
+  in.copyTo(tmp);
   std::vector<std::vector<cv::Point2i> > polygon(1);
+  if (m_poly.empty())
+  {
+    cv::putText(tmp, "- LClick: add point", cv::Point(15, out.rows - 95),
+                cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
+    cv::putText(tmp, "- Left + move: draw", cv::Point(15, out.rows - 75),
+                cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
+    cv::putText(tmp, "- Ctrl + LClick: del point", cv::Point(15, out.rows - 55),
+                cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
+    cv::putText(tmp, "- Ctrl + move: undraw", cv::Point(15, out.rows - 35),
+                cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
+    cv::putText(tmp, "- MClick: delete all", cv::Point(15, out.rows - 15),
+                cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
+  }
+
   if (m_activeState == &Segmenter2D::freeMove)
   {
-    if (d_regionPoly.getValue().empty())
-    {
-      cv::putText(out, "- LClick: add point", cv::Point(15, out.rows - 95),
-                  cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
-      cv::putText(out, "- Left + move: draw", cv::Point(15, out.rows - 75),
-                  cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
-      cv::putText(out, "- Ctrl + LClick: del point",
-                  cv::Point(15, out.rows - 55), cv::FONT_HERSHEY_COMPLEX_SMALL,
-                  1.0, CV_RGB(0, 255, 0));
-      cv::putText(out, "- Ctrl + move: undraw", cv::Point(15, out.rows - 35),
-                  cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
-      cv::putText(out, "- MClick: delete all", cv::Point(15, out.rows - 15),
-                  cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, CV_RGB(0, 255, 0));
-      return;
-    }
-
     for (const sofa::defaulttype::Vec2i& pt : d_regionPoly.getValue())
     {
       polygon[0].push_back(cv::Point2i(pt.x(), pt.y()));
@@ -130,8 +128,13 @@ void Segmenter2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     polygon[0] = std::vector<cv::Point2i>(m_poly.begin(), m_poly.end());
   }
   cv::Scalar color(255, 255, 255, 50);
+  if (polygon[0].empty())
+  {
+    tmp.copyTo(out);
+    return;
+  }
   cv::fillPoly(out, polygon, color);
-  cv::addWeighted(in, 0.8, out, 0.2, 0.0, out);
+  cv::addWeighted(tmp, 0.8, out, 0.2, 0.0, out);
 }
 
 void Segmenter2D::freeMove(int event, int /*x*/, int /*y*/, int /*flags*/)

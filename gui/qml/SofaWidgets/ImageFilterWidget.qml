@@ -60,7 +60,9 @@ Item {
             height: 500
             imageFilterModel: imagemodel
 
-            Component.onCompleted: update();
+            Component.onCompleted: {
+                update();
+            }
 
             Connections {
                 //target: root.imagemodel.sofaComponent ? root.sofaComponent.sofaScene() : null
@@ -69,20 +71,74 @@ Item {
 
             MouseArea {
                 anchors.fill: imageFilter
-                acceptedButtons: Qt.LeftButton
+                acceptedButtons: Qt.AllButtons
                 propagateComposedEvents: true
+                hoverEnabled: true
+                property int buttonFlags: 0
+                property int modifierFlags: 0
 
-                onClicked: {
-                    //imageFilter.imageFilterModel.updateViewer() 
-                    // console.log(imageFilter.width);
-                    // console.log(root.comboList.count);
-                    // imageFilter.update();
+                onPositionChanged: {
+                    buttonFlags = 0
+                    if (mouse.buttons & Qt.LeftButton)
+                        buttonFlags += 1
+                    if (mouse.buttons & Qt.RightButton)
+                        buttonFlags += 2
+                    if (mouse.buttons & Qt.MidButton)
+                        buttonFlags += 4
+
+                    modifierFlags = 0
+                    if (mouse.modifiers & Qt.ShiftModifier)
+                        modifierFlags += 1
+                    if (mouse.modifiers & Qt.ControlModifier)
+                        modifierFlags += 2
+                    if (mouse.modifiers & Qt.AltModifier)
+                        modifierFlags += 4
+
+                    imageFilter.sendMouseEvent(0, buttonFlags, modifierFlags, mouse.x, mouse.y)
                 }
 
-                onWheel: {
+                onPressed: {
+                    buttonFlags = 0
+                    if (mouse.buttons & Qt.LeftButton)
+                        buttonFlags += 1
+                    if (mouse.buttons & Qt.RightButton)
+                        buttonFlags += 2
+                    if (mouse.buttons & Qt.MidButton)
+                        buttonFlags += 4
+
+                    modifierFlags = 0
+                    if (mouse.modifiers & Qt.ShiftModifier)
+                        modifierFlags += 1
+                    if (mouse.modifiers & Qt.ControlModifier)
+                        modifierFlags += 2
+                    if (mouse.modifiers & Qt.AltModifier)
+                        modifierFlags += 4
+
+                    imageFilter.sendMouseEvent(1, buttonFlags, modifierFlags, mouse.x, mouse.y)
+                }
+
+                onReleased: {
+                    buttonFlags = 0
+                    if (mouse.buttons & Qt.LeftButton)
+                        buttonFlags += 1
+                    if (mouse.buttons & Qt.RightButton)
+                        buttonFlags += 2
+                    if (mouse.buttons & Qt.MidButton)
+                        buttonFlags += 4
+
+                    modifierFlags = 0
+                    if (mouse.modifiers & Qt.ShiftModifier)
+                        modifierFlags += 1
+                    if (mouse.modifiers & Qt.ControlModifier)
+                        modifierFlags += 2
+                    if (mouse.modifiers & Qt.AltModifier)
+                        modifierFlags += 4
+
+                    imageFilter.sendMouseEvent(2, buttonFlags, modifierFlags, mouse.x, mouse.y)
                 }
             }
         }
+
     }
 
     // ////Tool panel
@@ -166,7 +222,7 @@ Item {
                                         onCurrentIndexChanged : switchImageFilter();
 
                                         function switchImageFilter() {
-                                            console.log("Change to " + indexViewerComboBox.currentIndex);
+                                            console.info("Change to " + indexViewerComboBox.currentIndex);
                                             root.updateIndex(indexViewerComboBox.currentIndex);
                                             //root.imagemodel.update()
                                         }

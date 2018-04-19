@@ -29,4 +29,7 @@
 #include "ImageFilter_oldGUI.h"
 #endif  // SOFAOR_NEW_GUI_ENABLED
 
+//int ImageFilterClass = sofa::core::RegisterObject("Base class for SofaOR's image processing filters")
+//        .add<sofaor::processor::ImageFilter>();
+
 #endif  // SOFA_OR_PROCESSOR_IMAGEFILTER_H

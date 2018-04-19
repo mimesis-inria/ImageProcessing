@@ -6,6 +6,7 @@
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
+#include <opencv2/highgui.hpp>
 
 namespace sofaor
 {
@@ -62,8 +63,8 @@ class ImageFilter : public common::ImplicitDataEngine
   virtual ~ImageFilter();
 
   void init() override;
-  void Reinit() final;
-  virtual void update() final;
+  virtual void Update() override;
+  void reinit() override;
   void bindGlTexture(const std::string& imageString);
   virtual void drawFullFrame();
 
@@ -76,7 +77,6 @@ class ImageFilter : public common::ImplicitDataEngine
    */
   virtual void applyFilter(const cv::Mat& /*in*/, cv::Mat& /*out*/,
                            bool /*debug*/ = false) = 0;
-
 
   sofa::Data<common::cvMat> d_img;      ///< [INPUT] image to process
   sofa::Data<common::cvMat> d_img_out;  ///< [OUTPUT] processed image
@@ -182,8 +182,66 @@ class ImageFilter : public common::ImplicitDataEngine
   /// unregisters all data passed through @see registerData() for the Debug UI
   void unregisterAllData();
 
- protected:
   /// mouse callback (if activated through @see activateMouseCallback()
+
+  bool hasMouseCallback() { return m_isMouseCallbackActive; }
+  void call_MouseCallback(int et, int b, int m, int x, int y)
+  {
+    switch (et)
+    {
+      case 0:
+        et = cv::EVENT_MOUSEMOVE;
+        break;
+      case 1:
+      {
+        switch (b)
+        {
+          case 1:
+            et = cv::EVENT_LBUTTONDOWN;
+            break;
+          case 2:
+            et = cv::EVENT_RBUTTONDOWN;
+            break;
+          case 4:
+            et = cv::EVENT_MBUTTONDOWN;
+            break;
+          default:
+            et = cv::EVENT_LBUTTONDOWN;
+        }
+      }
+      break;
+      case 2:
+      {
+        switch (b)
+        {
+          case 1:
+            et = cv::EVENT_LBUTTONUP;
+            break;
+          case 2:
+            et = cv::EVENT_RBUTTONUP;
+            break;
+          case 4:
+            et = cv::EVENT_MBUTTONUP;
+            break;
+          default:
+            et = cv::EVENT_LBUTTONUP;
+        }
+      }
+      break;
+    }
+
+    int modifier = 0;
+    if (m & 1)
+        modifier += cv::EVENT_FLAG_SHIFTKEY;
+    if (m & 2)
+        modifier += cv::EVENT_FLAG_CTRLKEY;
+    if (m & 4)
+        modifier += cv::EVENT_FLAG_ALTKEY;
+
+    mouseCallback(et, x, y, modifier);
+  }
+
+ protected:
   virtual void mouseCallback(int, int, int, int) {}
 
  private:

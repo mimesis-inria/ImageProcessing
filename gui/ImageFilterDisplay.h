@@ -32,8 +32,7 @@ class SOFA_PROCESSOR_API FilterRenderer
   const sofaor::processor::ImageFilterDisplay* m_imageFilterDisplay;
 };
 
-class SOFA_PROCESSOR_API ImageFilterDisplay
-    : public QQuickFramebufferObject
+class SOFA_PROCESSOR_API ImageFilterDisplay : public QQuickFramebufferObject
 {
   Q_OBJECT
 
@@ -42,10 +41,11 @@ class SOFA_PROCESSOR_API ImageFilterDisplay
  public:
   Renderer* createRenderer() const;
 
-  ImageFilterModel *imageFilterModel() const;
+  ImageFilterModel* imageFilterModel() const;
 
  public slots:
-  void update();
+  void sendMouseEvent(int eventType, int buttonFlags, int modifierFlags,
+                      int mousex, int mousey);
 
  protected:
   void setImageFilterModel(ImageFilterModel* imageFilterModel);

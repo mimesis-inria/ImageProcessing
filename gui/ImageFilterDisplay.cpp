@@ -34,6 +34,7 @@ QOpenGLFramebufferObject *FilterRenderer::createFramebufferObject(
   QOpenGLFramebufferObjectFormat format;
   format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
   format.setSamples(4);
+
   return new QOpenGLFramebufferObject(size, format);
 }
 
@@ -48,7 +49,21 @@ ImageFilterModel *ImageFilterDisplay::imageFilterModel() const
   return m_imageFilterModel;
 }
 
-void ImageFilterDisplay::update() {}
+void ImageFilterDisplay::sendMouseEvent(int eventType, int buttonFlags,
+                                        int modifierFlags, int mousex,
+                                        int mousey)
+{
+  double ry =
+      imageFilterModel()->imageFilter()->d_img.getValue().rows / this->height();
+  double rx =
+      imageFilterModel()->imageFilter()->d_img.getValue().cols / this->width();
+
+  if (this->imageFilterModel()->imageFilter()->hasMouseCallback())
+  {
+    this->imageFilterModel()->imageFilter()->call_MouseCallback(
+        eventType, buttonFlags, modifierFlags, int(mousex * rx), int(mousey * ry));
+  }
+}
 
 void ImageFilterDisplay::setImageFilterModel(ImageFilterModel *imageFilterModel)
 {
