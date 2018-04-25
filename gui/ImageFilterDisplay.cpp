@@ -53,6 +53,8 @@ void ImageFilterDisplay::sendMouseEvent(int eventType, int buttonFlags,
                                         int modifierFlags, int mousex,
                                         int mousey)
 {
+    if (!imageFilterModel() || !imageFilterModel()->imageFilter())
+        return;
   double ry =
       imageFilterModel()->imageFilter()->d_img.getValue().rows / this->height();
   double rx =
