@@ -20,20 +20,19 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_ScalarSliderManager_H
-#define SOFA_OR_PROCESSOR_ScalarSliderManager_H
+#ifndef SOFACV_COMMON_DATASLIDERMGR_H
+#define SOFACV_COMMON_DATASLIDERMGR_H
 
-#include <SofaORCommon/cvMat.h>
+#include <SofaCV/SofaCV.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 struct DSM
 {
+  virtual ~DSM() {}
   virtual void createSlider(const std::string& winName) = 0;
 };
 
@@ -93,6 +92,5 @@ struct VecSliderManager : DSM
   U m_min, m_max, m_step;
 };
 
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_ScalarSliderManager_H
+}  // namespace sofacv
+#endif  // SOFACV_COMMON_DATASLIDERMGR_H

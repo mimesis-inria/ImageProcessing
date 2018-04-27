@@ -12,7 +12,7 @@ find_package(SofaQtQuickGUI QUIET)
 find_package(OpenCV 3.0 REQUIRED)
 find_package(SofaCV REQUIRED)
 
-include_directories(src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
@@ -250,3 +250,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADER_FILES}"
 
 sofa_create_package(${PROJECT_NAME} ${${PROJECT_NAME}_VERSION} ${PROJECT_NAME} ${PROJECT_NAME})
 
+if(SOFA_BUILD_TESTS)
+    find_package(SofaTest QUIET)
+    if(SofaTest_FOUND)
+        add_subdirectory(ImageProcessing_test)
+    endif()
+endif()

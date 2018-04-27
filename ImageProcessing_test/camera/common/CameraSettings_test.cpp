@@ -34,8 +34,8 @@ using sofa::simulation::Node;
 using sofa::simulation::SceneLoaderXML;
 using sofa::core::ExecParams;
 
-#include "ProcessOR/camera/common/CameraSettings.h"
-using sofaor::processor::cam::CameraSettings;
+#include <ImageProcessing/camera/common/CameraSettings.h>
+using sofacv::cam::CameraSettings;
 using sofa::defaulttype::Vec2i;
 using sofa::defaulttype::Vector3;
 using sofa::defaulttype::Matrix3;

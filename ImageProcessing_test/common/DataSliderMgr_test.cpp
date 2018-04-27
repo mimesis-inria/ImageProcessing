@@ -20,8 +20,10 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#include <ProcessOR/common/DataSliderMgr.inl>
+#include "ImageProcessing/common/DataSliderMgr.h"
 #include <SofaTest/Sofa_test.h>
+#include <opencv2/opencv.hpp>
+
 
 namespace sofa
 {
