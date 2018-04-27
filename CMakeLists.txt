@@ -20,13 +20,11 @@ link_directories(${OpenCV_LIBRARY_DIRS})
 
 add_definitions("-std=c++11")
 
-set (SOFAOR_ENABLE_OPENCV_CONTRIB OFF CACHE BOOL "Enables OpenCV's non-free features hosted in opencv_contrib")
+set (SOFACV_ENABLE_OPENCV_CONTRIB OFF CACHE BOOL "Enables OpenCV's non-free features hosted in opencv_contrib")
 
-if (SOFAOR_ENABLE_OPENCV_CONTRIB)
-  add_definitions("-DSOFAOR_OPENCV_CONTRIB_ENABLED")
+if (SOFACV_ENABLE_OPENCV_CONTRIB)
+  add_definitions("-DSOFACV_OPENCV_CONTRIB_ENABLED")
 endif ()
-
-# find_package(Boost COMPONENTS system filesystem serialization REQUIRED)
 
 set(HEADER_FILES
   ImageProcessingPlugin.h
@@ -240,6 +238,8 @@ endif()
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBRARIES})
+
+target_compile_options(${PROJECT_NAME} PUBLIC -D${PROJECT_NAME}_VERSION=\"${${PROJECT_NAME}_VERSION}\")
 
 target_include_directories(${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>")
 target_include_directories(${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>")

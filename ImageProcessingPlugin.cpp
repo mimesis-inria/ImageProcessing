@@ -91,14 +91,14 @@ void initExternalModule()
 }
 
 const char* getModuleName() { return "ImageProcessing"; }
-const char* getModuleVersion() { return "0.1"; }
+const char* getModuleVersion() { return ImageProcessing_VERSION; }
 const char* getModuleLicense() { return ""; }
-const char* getModuleDescription() { return "SofaCV's Image processing module"; }
-
-const char* getModuleComponentList()
+const char* getModuleDescription()
 {
-    return "";
+  return "SofaCV's Image processing module";
 }
+
+const char* getModuleComponentList() { return ""; }
 
 }  // namespace sofacv
 ////////// BEGIN CLASS LIST //////////
