@@ -24,25 +24,23 @@
 
 #include <opencv2/features2d.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
 BaseMatcher::~BaseMatcher() {}
-void BaseMatcher::knnMatch(const common::cvMat& queryDescriptors,
-                           const common::cvMat& trainDescriptors,
+void BaseMatcher::knnMatch(const cvMat& queryDescriptors,
+                           const cvMat& trainDescriptors,
                            std::vector<std::vector<cv::DMatch> >& matches,
-                           int k, const common::cvMat& mask)
+                           int k, const cvMat& mask)
 {
   m_matcher->knnMatch(queryDescriptors, trainDescriptors, matches, k, mask);
 }
 
-void BaseMatcher::radiusMatch(const common::cvMat& queryDescriptors,
-                              const common::cvMat& trainDescriptors,
+void BaseMatcher::radiusMatch(const cvMat& queryDescriptors,
+                              const cvMat& trainDescriptors,
                               std::vector<std::vector<cv::DMatch> >& matches,
-                              float maxDistance, const common::cvMat& mask)
+                              float maxDistance, const cvMat& mask)
 {
   m_matcher->radiusMatch(queryDescriptors, trainDescriptors, matches,
                          maxDistance, mask);
@@ -357,5 +355,4 @@ void FlannMatcher::SearchParams::toggleVisible(bool show)
 }
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

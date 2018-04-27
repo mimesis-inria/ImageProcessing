@@ -23,7 +23,12 @@
 #include "MorphologyEx.h"
 #include <opencv2/imgproc.hpp>
 
-sofaor::processor::imgproc::MorphologyEx::MorphologyEx()
+namespace sofacv
+{
+namespace imgproc
+{
+
+MorphologyEx::MorphologyEx()
     : d_ksize(initData(&d_ksize, 7, "ksize", "kernel size (3 5 7 ...)")),
       d_operator(initData(&d_operator, "operator",
                           "kind of morphology operation to be performed "
@@ -43,7 +48,7 @@ sofaor::processor::imgproc::MorphologyEx::MorphologyEx()
   d_element.endEdit();
 }
 
-void sofaor::processor::imgproc::MorphologyEx::init()
+void MorphologyEx::init()
 {
   registerData(&d_operator);
   registerData(&d_element);
@@ -51,16 +56,16 @@ void sofaor::processor::imgproc::MorphologyEx::init()
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::MorphologyEx::applyFilter(const cv::Mat& in,
+void MorphologyEx::applyFilter(const cv::Mat& in,
                                                            cv::Mat& out, bool)
 {
   if (in.empty()) return;
 
   try
   {
-    int operation = d_operator.getValue().getSelectedId() + 2;
+    int operation = int(d_operator.getValue().getSelectedId() + 2);
     cv::Mat element = cv::getStructuringElement(
-        d_element.getValue().getSelectedId(),
+        int(d_element.getValue().getSelectedId()),
         cv::Size(d_ksize.getValue() * 2 + 1, d_ksize.getValue() * 2 + 1),
         cv::Point(d_ksize.getValue(), d_ksize.getValue()));
     cv::morphologyEx(in, out, operation, element);
@@ -71,3 +76,14 @@ void sofaor::processor::imgproc::MorphologyEx::applyFilter(const cv::Mat& in,
     return;
   }
 }
+
+SOFA_DECL_CLASS(MorphologyEx)
+
+int MorphologyExClass =
+    sofa::core::RegisterObject(
+        "OpenCV's implementation of a opencv's morphology operators")
+        .add<MorphologyEx>();
+
+}  // namespace imgproc
+}  // namespace sofacv
+

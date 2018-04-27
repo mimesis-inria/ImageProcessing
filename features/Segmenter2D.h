@@ -20,22 +20,20 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_SEGMENTER2D_H
-#define SOFA_OR_PROCESSOR_SEGMENTER2D_H
+#ifndef SOFACV_FEATURES_SEGMENTER2D_H
+#define SOFACV_FEATURES_SEGMENTER2D_H
 
 #include "common/ImageFilter.h"
 #include <sofa/helper/SVector.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
-class Segmenter2D : public ImageFilter
+class SOFA_IMAGEPROCESSING_API Segmenter2D : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(Segmenter2D, ImageFilter);
+  SOFA_CLASS(Segmenter2D, common::ImageFilter);
 
   sofa::Data<std::string> d_regionLabel;
 
@@ -52,7 +50,7 @@ class Segmenter2D : public ImageFilter
 
   virtual void Update() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 
   // Mouse controls
   typedef void (Segmenter2D::*StateFunction)(int, int, int, int);
@@ -66,7 +64,7 @@ class Segmenter2D : public ImageFilter
 
   StateFunction m_activeState;
   void setMouseState(StateFunction f) { m_activeState = f; }
-  void mouseCallback(int event, int x, int y, int flags);
+  void mouseCallback(int event, int x, int y, int flags) override;
 
   std::list<cv::Point2i> m_poly;
 };
@@ -78,6 +76,5 @@ int Segmenter2DClass =
         .add<Segmenter2D>();
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_SEGMENTER2D_H
+}  // namespace sofacv
+#endif  // SOFACV_FEATURES_SEGMENTER2D_H

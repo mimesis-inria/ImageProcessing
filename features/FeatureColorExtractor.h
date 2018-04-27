@@ -23,38 +23,34 @@
 #ifndef SOFA_OR_PROCESSOR_FEATURECOLOREXTRACTOR_H
 #define SOFA_OR_PROCESSOR_FEATURECOLOREXTRACTOR_H
 
-#include <ProcessOR/common/ImageFilter.h>
-#include <SofaORCommon/cvKeypoint.h>
-#include <SofaORCommon/cvMat.h>
-#include <SofaORCommon/cvMatUtils.h>
+#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/SVector.h>
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
-class FeatureColorExtractor: public ImageFilter
+class SOFA_IMAGEPROCESSING_API FeatureColorExtractor: public common::ImageFilter
 {
         typedef sofa::defaulttype::Vec<3, uint8_t> Vec3b;
 
  public:
-	SOFA_CLASS(FeatureColorExtractor, ImageFilter);
+    SOFA_CLASS(FeatureColorExtractor, common::ImageFilter);
 
  public:
 	FeatureColorExtractor();
-	virtual ~FeatureColorExtractor();
+    virtual ~FeatureColorExtractor() override;
 
-	void init();
-    void Update();
-	virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug = false);
+    void init() override;
+    void Update() override;
+    virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug = false) override;
 
 	// INPUTS
-	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
+    sofa::Data<sofa::helper::vector<cvKeypoint> > d_keypoints;
 
 	// OUTPUTS
 	sofa::Data<sofa::helper::vector<Vec3b> > d_colors;
@@ -63,6 +59,5 @@ class FeatureColorExtractor: public ImageFilter
 };
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_FEATURECOLOREXTRACTOR_H
+}  // namespace sofacv
+#endif  // SOFACV_FEATURES_FEATURECOLOREXTRACTOR_H

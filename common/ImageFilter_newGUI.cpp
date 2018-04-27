@@ -30,9 +30,9 @@
 #include <sofa/helper/system/gl.h>
 //#include <sofa/helper/system/glut.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
 SOFA_DECL_CLASS(ImageFilter)
 
@@ -40,7 +40,7 @@ unsigned ImageFilter::m_window_uid = 0;
 
 ImageFilter::ImageFilter()
     : d_img(initData(
-          &d_img, common::cvMat(), "img",
+          &d_img, cvMat(), "img",
           "Input image, that will undergo changes through the filter.", false)),
       d_img_out(initData(&d_img_out, "img_out",
                          "Output image, holding the filter's result", false)),
@@ -282,5 +282,5 @@ void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4d>* /*data*/,
 {
 }
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace common
+}  // namespace sofacv

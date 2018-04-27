@@ -20,38 +20,31 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_COPYTO_H
-#define SOFA_OR_PROCESSOR_COPYTO_H
+#ifndef SOFACV_IMGPROC_COPYTO_H
+#define SOFACV_IMGPROC_COPYTO_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class CopyTo : public ImageFilter
+class SOFA_IMAGEPROCESSING_API CopyTo : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(CopyTo, ImageFilter);
+  SOFA_CLASS(CopyTo, common::ImageFilter);
 
-  sofa::Data<common::cvMat> d_mask;
+  sofa::Data<cvMat> d_mask;
   sofa::Data<bool> d_useMask;
 
   CopyTo();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(CopyTo)
-
-int CopyToClass =
-    sofa::core::RegisterObject("OpenCV's CopyTo function").add<CopyTo>();
-
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_COPYTO_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_COPYTO_H

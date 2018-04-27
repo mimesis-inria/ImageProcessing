@@ -1,6 +1,11 @@
 #include "MinMaxLoc.h"
 
-sofaor::processor::imgproc::MinMaxLoc::MinMaxLoc()
+namespace sofacv
+{
+namespace imgproc
+{
+
+MinMaxLoc::MinMaxLoc()
     : d_min(initData(&d_min, "min", "min score", true, true)),
       d_max(initData(&d_max, "max", "max score", true, true)),
       d_minLoc(initData(&d_minLoc, "minLoc",
@@ -11,9 +16,9 @@ sofaor::processor::imgproc::MinMaxLoc::MinMaxLoc()
 {
 }
 
-void sofaor::processor::imgproc::MinMaxLoc::init() { ImageFilter::init(); }
+void MinMaxLoc::init() { ImageFilter::init(); }
 
-void sofaor::processor::imgproc::MinMaxLoc::applyFilter(const cv::Mat &in,
+void MinMaxLoc::applyFilter(const cv::Mat &in,
                                                         cv::Mat &, bool)
 {
   if (in.empty()) return;
@@ -40,3 +45,12 @@ void sofaor::processor::imgproc::MinMaxLoc::applyFilter(const cv::Mat &in,
     return;
   }
 }
+
+SOFA_DECL_CLASS(MinMaxLoc)
+
+int MinMaxLocClass =
+    sofa::core::RegisterObject("OpenCV's implementation of cv::MinMaxLoc")
+        .add<MinMaxLoc>();
+
+}  // namespace imgproc
+}  // namespace sofacv

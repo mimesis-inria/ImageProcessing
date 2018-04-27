@@ -20,14 +20,12 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_ACQUISITOR_FRAMEVIEWER_H
-#define SOFA_OR_ACQUISITOR_FRAMEVIEWER_H
+#ifndef SOFACV_COMMON_FRAMEVIEWER_H
+#define SOFACV_COMMON_FRAMEVIEWER_H
 
-#include "initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/cvMat.h>
-
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 
 #include <SofaBaseVisual/VisualModelImpl.h>
 #include <sofa/helper/OptionsGroup.h>
@@ -35,14 +33,14 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
-class FrameViewer : virtual public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API FrameViewer : virtual public ImplicitDataEngine
 {
  public:
-	SOFA_CLASS(FrameViewer, common::ImplicitDataEngine);
+    SOFA_CLASS(FrameViewer, ImplicitDataEngine);
 
  public:
   FrameViewer();
@@ -54,7 +52,7 @@ class FrameViewer : virtual public common::ImplicitDataEngine
   void draw(const sofa::core::visual::VisualParams*) override;
   void computeBBox(const sofa::core::ExecParams* params, bool) override;
 
-	sofa::Data<common::cvMat> d_frame;
+    sofa::Data<cvMat> d_frame;
 	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> > d_corners;
 	sofa::Data<sofa::helper::OptionsGroup> d_mode;
 	sofa::Data<float> d_alpha;
@@ -68,4 +66,4 @@ class FrameViewer : virtual public common::ImplicitDataEngine
 
 }  // namespace processor
 }  // namespace sofaor
-#endif  // SOFA_OR_ACQUISITOR_FRAMEVIEWER_H
+#endif  // SOFACV_COMMON_FRAMEVIEWER_H

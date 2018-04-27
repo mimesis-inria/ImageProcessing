@@ -20,21 +20,20 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_SIMPLETHRESHOLD_H
-#define SOFA_OR_PROCESSOR_SIMPLETHRESHOLD_H
+#ifndef SOFACV_IMGPROC_SIMPLETHRESHOLD_H
+#define SOFACV_IMGPROC_SIMPLETHRESHOLD_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class SimpleThreshold : public ImageFilter
+class SOFA_IMAGEPROCESSING_API SimpleThreshold : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(SimpleThreshold, ImageFilter);
+  SOFA_CLASS(SimpleThreshold, common::ImageFilter);
 
   sofa::Data<double> d_threshold;
   sofa::Data<double> d_max;
@@ -42,19 +41,12 @@ class SimpleThreshold : public ImageFilter
 
   SimpleThreshold();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(SimpleThreshold)
-
-int SimpleThresholdClass =
-    sofa::core::RegisterObject(
-        "OpenCV's implementation of a simple image thresholding filter")
-        .add<SimpleThreshold>();
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_SIMPLETHRESHOLD_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_SIMPLETHRESHOLD_H

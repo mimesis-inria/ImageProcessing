@@ -20,79 +20,75 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H
-#define SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H
+#ifndef SOFACV_UTILS_POINTVECTORCONVERTER_H
+#define SOFACV_UTILS_POINTVECTORCONVERTER_H
 
+#include "ImageProcessingPlugin.h"
 #include "camera/common/CameraSettings.h"
-#include "initPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
-#include <SofaORCommon/cvKeypoint.h>
+#include <SofaCV/SofaCV.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace utils
 {
 template <class SrcType, class DstType>
-class PointVectorConverter : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API PointVectorConverter : public ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<
-			PointVectorConverter, cam::CameraSettings,
-			sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
-			CamSettings;
+  typedef sofa::core::objectmodel::SingleLink<
+      PointVectorConverter, cam::CameraSettings,
+      sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
+      CamSettings;
 
  public:
-	SOFA_CLASS(SOFA_TEMPLATE2(PointVectorConverter, SrcType, DstType),
-						 common::ImplicitDataEngine);
+  SOFA_CLASS(SOFA_TEMPLATE2(PointVectorConverter, SrcType, DstType),
+             ImplicitDataEngine);
 
-	PointVectorConverter()
-			: l_cam(initLink("cam",
-											 "link to CameraSettings component to reproject 2D "
-											 "points in 3D n vice versa")),
-				d_src(initData(&d_src, "points", "input vector to convert")),
-				d_dst(initData(&d_dst, "points_out", "converted output vector")),
-				d_depth(initData(
-						&d_depth, "depth",
-						"depth at which you want to see your image's points projected"))
-	{
-	}
+  PointVectorConverter()
+      : l_cam(initLink("cam",
+                       "link to CameraSettings component to reproject 2D "
+                       "points in 3D n vice versa")),
+        d_src(initData(&d_src, "points", "input vector to convert")),
+        d_dst(initData(&d_dst, "points_out", "converted output vector")),
+        d_depth(initData(
+            &d_depth, "depth",
+            "depth at which you want to see your image's points projected"))
+  {
+  }
 
-	~PointVectorConverter() {}
-	void init()
-	{
-		addInput(&d_src);
-		addInput(&d_depth);
+  ~PointVectorConverter() override {}
+  void init() override
+  {
+    addInput(&d_src);
+    addInput(&d_depth);
 
-		addOutput(&d_dst);
+    addOutput(&d_dst);
 
-		if (!l_cam.get())
-			msg_warning(getName() + "::init()") << "Warning: No camera link set. "
-																					 "Please use attribute 'cam' "
-																					 "to define one";
+    if (!l_cam.get())
+      msg_warning(getName() + "::init()") << "Warning: No camera link set. "
+                                             "Please use attribute 'cam' "
+                                             "to define one";
 
-		update();
-	}
+    update();
+  }
 
   virtual void Update() override;
 
-	virtual std::string getTemplateName() const { return templateName(this); }
-	static std::string templateName(
-			const PointVectorConverter<SrcType, DstType>* = NULL);
+  virtual std::string getTemplateName() const { return templateName(this); }
+  static std::string templateName(
+      const PointVectorConverter<SrcType, DstType>* = NULL);
 
-	CamSettings l_cam;
+  CamSettings l_cam;
 
-	// INPUTS
-	sofa::Data<sofa::helper::vector<SrcType> > d_src;
-	// OUTPUTS
-	sofa::Data<sofa::helper::vector<DstType> > d_dst;
+  // INPUTS
+  sofa::Data<sofa::helper::vector<SrcType> > d_src;
+  // OUTPUTS
+  sofa::Data<sofa::helper::vector<DstType> > d_dst;
 
-	sofa::Data<double> d_depth;
+  sofa::Data<double> d_depth;
 };
 
 }  // namespace utils
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv
 
-#endif  // SOFA_OR_PROCESSOR_POINTVECTORCONVERTER_H
+#endif  // SOFACV_UTILS_POINTVECTORCONVERTER_H

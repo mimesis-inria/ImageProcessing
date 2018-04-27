@@ -1,18 +1,23 @@
 #include "Fill.h"
 
-sofaor::processor::imgproc::Fill::Fill()
+namespace sofacv
+{
+namespace imgproc
+{
+
+Fill::Fill()
     : d_color(initData(&d_color, sofa::defaulttype::Vec4d(1.0, 1.0, 1.0, 1.0),
                        "scalar", "pixel color value."))
 {
 }
 
-void sofaor::processor::imgproc::Fill::init()
+void Fill::init()
 {
   registerData(&d_color, 0.0, 1.0, 0.0001);
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::Fill::applyFilter(const cv::Mat &in,
+void Fill::applyFilter(const cv::Mat &in,
                                                    cv::Mat &out, bool)
 {
   if (in.empty()) return;
@@ -37,3 +42,13 @@ void sofaor::processor::imgproc::Fill::applyFilter(const cv::Mat &in,
     return;
   }
 }
+
+SOFA_DECL_CLASS(Fill)
+
+int FillClass =
+    sofa::core::RegisterObject("OpenCV's implementation of cv::Mat::setTo()")
+        .add<Fill>();
+
+}  // namespace imgproc
+}  // namespace sofacv
+

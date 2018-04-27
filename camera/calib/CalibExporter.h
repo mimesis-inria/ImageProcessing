@@ -20,16 +20,15 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CALIBEXPORTER_H
-#define SOFA_OR_PROCESSOR_CALIBEXPORTER_H
+#ifndef SOFACV_CAM_CALIB_CALIBEXPORTER_H
+#define SOFACV_CAM_CALIB_CALIBEXPORTER_H
+
+#include "ImageProcessingPlugin.h"
 
 #include "camera/common/CameraSettings.h"
 #include "camera/common/StereoSettings.h"
-#include "initPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
-#include <SofaORCommon/cvMat.h>
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/core/objectmodel/DataFileName.h>
 #include <sofa/helper/OptionsGroup.h>
@@ -38,15 +37,13 @@
 
 #include <map>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
 namespace calib
 {
-class CalibExporter : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API CalibExporter : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
       CalibExporter, StereoSettings,
@@ -59,14 +56,14 @@ class CalibExporter : public common::ImplicitDataEngine
       CamSettings;
 
  public:
-  SOFA_CLASS(CalibExporter, common::ImplicitDataEngine);
+  SOFA_CLASS(CalibExporter, ImplicitDataEngine);
 
   CalibExporter();
   virtual ~CalibExporter();
 
   virtual void init() override;
   virtual void Update() override;
-  virtual void cleanup();
+  virtual void cleanup() override;
 
   StereoCam l_sCam;
   CamSettings l_cam1;
@@ -92,6 +89,5 @@ class CalibExporter : public common::ImplicitDataEngine
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CALIBEXPORTER_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_CALIB_CALIBEXPORTER_H

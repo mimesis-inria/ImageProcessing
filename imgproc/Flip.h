@@ -20,37 +20,32 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_FLIP_H
-#define SOFA_OR_PROCESSOR_FLIP_H
+#ifndef SOFACV_IMGPROC_FLIP_H
+#define SOFACV_IMGPROC_FLIP_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class Flip : public ImageFilter
+
+class SOFA_IMAGEPROCESSING_API Flip : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(Flip, ImageFilter);
+  SOFA_CLASS(Flip, common::ImageFilter);
 
   sofa::Data<int> d_flipCode;
 
   Flip();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(Flip)
-
-int FlipClass =
-    sofa::core::RegisterObject("OpenCV's Flip function").add<Flip>();
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_FLIP_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_FLIP_H

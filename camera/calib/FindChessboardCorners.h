@@ -20,27 +20,25 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_FINDPATTERNCORNERS_H
-#define SOFA_OR_PROCESSOR_FINDPATTERNCORNERS_H
+#ifndef SOFACV_CAM_CALIB_FINDPATTERNCORNERS_H
+#define SOFACV_CAM_CALIB_FINDPATTERNCORNERS_H
 
-#include <SofaORCommon/cvMatUtils.h>
-#include "ProcessOR/camera/common/CameraSettings.h"
-#include "ProcessOR/common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
+#include "camera/common/CameraSettings.h"
+#include "common/ImageFilter.h"
 
 #include <opencv2/imgproc.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
 namespace calib
 {
-class FindPatternCorners : public ImageFilter
+class SOFA_IMAGEPROCESSING_API FindPatternCorners : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(FindPatternCorners, ImageFilter);
+  SOFA_CLASS(FindPatternCorners, common::ImageFilter);
 
   sofa::Data < sofa::helper::vector<sofa::defaulttype::Vec2i> > d_imagePoints;
   sofa::Data<sofa::helper::OptionsGroup> d_patternType;
@@ -51,8 +49,8 @@ class FindPatternCorners : public ImageFilter
 
   FindPatternCorners();
 
-  void init();
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void init() override;
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
 SOFA_DECL_CLASS(FindPatternCorners)
@@ -63,6 +61,5 @@ int FindPatternCornersClass =
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_FINDPATTERNCORNERS_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_CALIB_FINDPATTERNCORNERS_H

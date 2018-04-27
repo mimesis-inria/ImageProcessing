@@ -20,30 +20,25 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_MATCHINGCONSTRAINTS_H
-#define SOFA_OR_PROCESSOR_MATCHINGCONSTRAINTS_H
+#ifndef SOFACV_FEATURES_MATCHINGCONSTRAINTS_H
+#define SOFACV_FEATURES_MATCHINGCONSTRAINTS_H
 
 #include "Detectors.h"
 #include "camera/common/StereoSettings.h"
 #include "common/ImageFilter.h"
 
-#include <SofaORCommon/cvDMatch.h>
-#include <SofaORCommon/cvKeypoint.h>
-#include <SofaORCommon/cvMat.h>
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/SVector.h>
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
-class MatchingConstraints : public ImageFilter
+class SOFA_IMAGEPROCESSING_API MatchingConstraints : public common::ImageFilter
 {
   typedef sofa::core::objectmodel::SingleLink<
       MatchingConstraints, cam::StereoSettings,
@@ -55,11 +50,11 @@ class MatchingConstraints : public ImageFilter
 
  public:
   MatchingConstraints();
-  virtual ~MatchingConstraints();
+  virtual ~MatchingConstraints() override;
 
-  void init();
+  void init() override;
   virtual void Update() override;
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 
   // INPUTS
   CamSettings l_cam;
@@ -69,25 +64,25 @@ class MatchingConstraints : public ImageFilter
   sofa::Data<float> d_mdfRadius;
   sofa::Data<bool> d_useKNNFilter;
   sofa::Data<float> d_knnLambda;
-  sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_in;
-  sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_in;
-  sofa::Data<common::cvMat> d_descriptorsL_in;
-  sofa::Data<common::cvMat> d_descriptorsR_in;
-  sofa::Data<sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> > >
+  sofa::Data<sofa::helper::vector<cvKeypoint> > d_keypointsL_in;
+  sofa::Data<sofa::helper::vector<cvKeypoint> > d_keypointsR_in;
+  sofa::Data<cvMat> d_descriptorsL_in;
+  sofa::Data<cvMat> d_descriptorsR_in;
+  sofa::Data<sofa::helper::SVector<sofa::helper::SVector<cvDMatch> > >
       d_matches_in;
 
   // OUTPUTS
-  sofa::Data<sofa::helper::vector<common::cvDMatch> > d_matches_out;
+  sofa::Data<sofa::helper::vector<cvDMatch> > d_matches_out;
   sofa::Data<sofa::helper::vector<size_t> > d_outliers_out;
-  sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsL_out;
-  sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypointsR_out;
-  sofa::Data<common::cvMat> d_descriptorsL_out;
-  sofa::Data<common::cvMat> d_descriptorsR_out;
+  sofa::Data<sofa::helper::vector<cvKeypoint> > d_keypointsL_out;
+  sofa::Data<sofa::helper::vector<cvKeypoint> > d_keypointsR_out;
+  sofa::Data<cvMat> d_descriptorsL_out;
+  sofa::Data<cvMat> d_descriptorsR_out;
 
  private:
-  sofa::helper::vector<common::cvDMatch> m_matches;
-  sofa::helper::vector<common::cvKeypoint> m_kpL, m_kpR;
-  common::cvMat m_descL, m_descR;
+  sofa::helper::vector<cvDMatch> m_matches;
+  sofa::helper::vector<cvKeypoint> m_kpL, m_kpR;
+  cvMat m_descL, m_descR;
   sofa::helper::vector<size_t> m_outliers_out;
 
   std::vector<cv::Vec3f> m_epilines;
@@ -115,14 +110,13 @@ class MatchingConstraints : public ImageFilter
                               unsigned& filteredByKNN);
   bool MinimalDistanceFilter(MatchVector& ms, unsigned& filteredByMDF,
                              unsigned i, float mdfDist);
-  void PushInlier(const common::cvMat& descL, unsigned i,
-                  const sofa::helper::vector<common::cvKeypoint>& PointsL,
-                  const common::cvMat& descR, MatchVector& ms,
-                  const sofa::helper::vector<common::cvKeypoint>& PointsR);
+  void PushInlier(const cvMat& descL, unsigned i,
+                  const sofa::helper::vector<cvKeypoint>& PointsL,
+                  const cvMat& descR, MatchVector& ms,
+                  const sofa::helper::vector<cvKeypoint>& PointsR);
   void ClearOutputVectors();
 };
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_MATCHINGCONSTRAINTS_H
+}  // namespace sofacv
+#endif  // SOFACV_FEATURES_MATCHINGCONSTRAINTS_H

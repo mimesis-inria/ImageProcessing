@@ -20,12 +20,12 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_SOLVEPNP_H
-#define SOFA_OR_PROCESSOR_SOLVEPNP_H
+#ifndef SOFACV_CAM_CALIB_SOLVEPNP_H
+#define SOFACV_CAM_CALIB_SOLVEPNP_H
 
-#include "initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 #include "camera/common/CameraSettings.h"
 
 #include <sofa/core/objectmodel/Link.h>
@@ -33,9 +33,7 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -50,7 +48,7 @@ namespace calib
  * (see SolvePnP in http://docs.opencv.org/3.2.0/d9/d0c/group__calib3d.html
  * for details)
  */
-class SolvePnP : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API SolvePnP : public ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<
 			SolvePnP, CameraSettings,
@@ -58,12 +56,12 @@ class SolvePnP : public common::ImplicitDataEngine
 			CamSettings;
 
  public:
-	SOFA_CLASS(SolvePnP, common::ImplicitDataEngine);
+    SOFA_CLASS(SolvePnP, ImplicitDataEngine);
 
     SolvePnP();
 
-	~SolvePnP() {}
-    void init();
+    virtual ~SolvePnP() override {}
+    void init() override;
 
   virtual void Update() override;
 
@@ -85,7 +83,6 @@ class SolvePnP : public common::ImplicitDataEngine
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv
 
-#endif  // SOFA_OR_PROCESSOR_SOLVEPNP_H
+#endif  // SOFACV_CAM_CALIB_SOLVEPNP_H

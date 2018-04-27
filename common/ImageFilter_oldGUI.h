@@ -20,18 +20,17 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_IMAGEFILTER_OLDGUI_H
-#define SOFA_OR_PROCESSOR_IMAGEFILTER_OLDGUI_H
+#ifndef SOFACV_IMAGEPROCESSING_COMMON_IMAGEFILTER_OLDGUI_H
+#define SOFACV_IMAGEPROCESSING_COMMON_IMAGEFILTER_OLDGUI_H
 
-#include <SofaORCommon/ImplicitDataEngine.h>
-#include <SofaORCommon/cvMat.h>
+#include <SofaCV/SofaCV.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
 template <class T>
 class ScalarSliderManager;
@@ -77,7 +76,7 @@ class DSM;
  * }
  *
  */
-class ImageFilter : public common::ImplicitDataEngine
+class ImageFilter : public ImplicitDataEngine
 {
   static void _mouseCallback(int e, int x, int y, int f, void* d)
   {
@@ -85,7 +84,7 @@ class ImageFilter : public common::ImplicitDataEngine
   }
 
  public:
-  SOFA_CLASS(ImageFilter, common::ImplicitDataEngine);
+  SOFA_CLASS(ImageFilter, ImplicitDataEngine);
 
   /**
    * @brief ImageFilter
@@ -117,8 +116,8 @@ class ImageFilter : public common::ImplicitDataEngine
   /// trackbars, and activates the necessary callbacks
   void refreshDebugWindow();
 
-  sofa::Data<common::cvMat> d_img;        ///< [INPUT] image to process
-  sofa::Data<common::cvMat> d_img_out;    ///< [OUTPUT] processed image
+  sofa::Data<cvMat> d_img;        ///< [INPUT] image to process
+  sofa::Data<cvMat> d_img_out;    ///< [OUTPUT] processed image
   sofa::Data<bool> d_displayDebugWindow;  ///< toggles the Debug UI
   sofa::Data<bool> d_isActive;  ///< Whether the filter is performed or not
   sofa::Data<bool> d_outputImage;
@@ -237,6 +236,6 @@ class ImageFilter : public common::ImplicitDataEngine
   const std::string m_win_name;
 };
 
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_IMAGEFILTER_OLDGUI_H
+}  // namespace common
+}  // namespace sofacv
+#endif  // SOFACV_IMAGEPROCESSING_COMMON_IMAGEFILTER_OLDGUI_H

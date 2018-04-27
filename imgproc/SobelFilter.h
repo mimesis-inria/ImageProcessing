@@ -20,21 +20,20 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_SOBELFILTER_H
-#define SOFA_OR_PROCESSOR_SOBELFILTER_H
+#ifndef SOFACV_IMGPROC_SOBELFILTER_H
+#define SOFACV_IMGPROC_SOBELFILTER_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class SobelFilter : public ImageFilter
+class SOFA_IMAGEPROCESSING_API SobelFilter : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(SobelFilter, ImageFilter);
+  SOFA_CLASS(SobelFilter, common::ImageFilter);
 
   sofa::Data<int> d_ddepth;
   sofa::Data<int> d_xorder;
@@ -46,18 +45,11 @@ class SobelFilter : public ImageFilter
 
   SobelFilter();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(SobelFilter)
-
-int SobelFilterClass =
-    sofa::core::RegisterObject("OpenCV's implementation of the Sobel operator")
-        .add<SobelFilter>();
-
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_SOBELFILTER_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_SOBELFILTER_H

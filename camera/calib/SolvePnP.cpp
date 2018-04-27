@@ -21,11 +21,9 @@
  ******************************************************************************/
 
 #include "SolvePnP.h"
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -110,10 +108,10 @@ void SolvePnP::Update()
   try
   {
     if (d_K.isSet())
-      common::matrix::sofaMat2cvMat(d_K.getValue(), camMatrix);
+      matrix::sofaMat2cvMat(d_K.getValue(), camMatrix);
     else if (l_cam->getIntrinsicCameraMatrix() ==
              sofa::defaulttype::Matrix3::Identity())
-      common::matrix::sofaMat2cvMat(l_cam->getIntrinsicCameraMatrix(),
+      matrix::sofaMat2cvMat(l_cam->getIntrinsicCameraMatrix(),
                                     camMatrix);
     else
     {
@@ -127,9 +125,9 @@ void SolvePnP::Update()
                    max_d, imsize.y() / 2.0, 0, 0, 1.0);
     }
     if (d_distCoefs.isSet())
-      common::matrix::sofaVector2cvMat(d_distCoefs.getValue(), dc);
+      matrix::sofaVector2cvMat(d_distCoefs.getValue(), dc);
     else
-      common::matrix::sofaVector2cvMat(l_cam->getDistortionCoefficients(), dc);
+      matrix::sofaVector2cvMat(l_cam->getDistortionCoefficients(), dc);
 
     cv::solvePnP(objPts, imgPts, camMatrix, dc, rvec, tvec, false,
                  d_pnpFlags.getValue());
@@ -160,7 +158,7 @@ void SolvePnP::Update()
   }
 
   sofa::helper::vector<double> distCoefs;
-  common::matrix::cvMat2sofaVector(dc, distCoefs);
+  matrix::cvMat2sofaVector(dc, distCoefs);
 
   if (l_cam->getImageSize() != imsize)
     l_cam->setImageSize(d_imgSize.getValue());
@@ -170,5 +168,4 @@ void SolvePnP::Update()
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

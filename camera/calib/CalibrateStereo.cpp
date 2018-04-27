@@ -21,11 +21,9 @@
  ******************************************************************************/
 
 #include "CalibrateStereo.h"
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -43,9 +41,9 @@ int CalibrateStereoClass =
 
 void CalibrateStereo::calibrate()
 {
-  std::vector<std::vector<cv::Point3f> > objectPoints;
-  std::vector<std::vector<cv::Point2f> > imagePoints1;
-  std::vector<std::vector<cv::Point2f> > imagePoints2;
+  std::vector<std::vector<cv::Point3d> > objectPoints;
+  std::vector<std::vector<cv::Point2d> > imagePoints1;
+  std::vector<std::vector<cv::Point2d> > imagePoints2;
 
   if (d_imagePoints1.getValue().size() != d_imagePoints2.getValue().size() ||
       d_imagePoints1.getValue().size() < 1 ||
@@ -59,28 +57,28 @@ void CalibrateStereo::calibrate()
 
   for (auto pts : d_objectPoints.getValue())
   {
-    std::vector<cv::Point3f> objPts;
+    std::vector<cv::Point3d> objPts;
     for (auto pt : pts)
     {
-      objPts.push_back(cv::Point3f(pt.x(), pt.y(), pt.z()));
+      objPts.push_back(cv::Point3d(pt.x(), pt.y(), pt.z()));
     }
     objectPoints.push_back(objPts);
   }
   for (auto pts : d_imagePoints1.getValue())
   {
-    std::vector<cv::Point2f> imgPts;
+    std::vector<cv::Point2d> imgPts;
     for (auto pt : pts)
     {
-      imgPts.push_back(cv::Point2f(pt.x(), pt.y()));
+      imgPts.push_back(cv::Point2d(pt.x(), pt.y()));
     }
     imagePoints1.push_back(imgPts);
   }
   for (auto pts : d_imagePoints2.getValue())
   {
-    std::vector<cv::Point2f> imgPts;
+    std::vector<cv::Point2d> imgPts;
     for (auto pt : pts)
     {
-      imgPts.push_back(cv::Point2f(pt.x(), pt.y()));
+      imgPts.push_back(cv::Point2d(pt.x(), pt.y()));
     }
     imagePoints2.push_back(imgPts);
   }
@@ -93,14 +91,14 @@ void CalibrateStereo::calibrate()
   cv::Mat F;
 
   cv::Mat_<double> cam1, cam2;
-  common::matrix::sofaMat2cvMat(l_cam->getCamera1().getIntrinsicCameraMatrix(),
+  matrix::sofaMat2cvMat(l_cam->getCamera1().getIntrinsicCameraMatrix(),
                                 cam1);
-  common::matrix::sofaMat2cvMat(l_cam->getCamera2().getIntrinsicCameraMatrix(),
+  matrix::sofaMat2cvMat(l_cam->getCamera2().getIntrinsicCameraMatrix(),
                                 cam2);
 
-  common::matrix::sofaVector2cvMat(
+  matrix::sofaVector2cvMat(
       l_cam->getCamera1().getDistortionCoefficients(), distCoeffs1);
-  common::matrix::sofaVector2cvMat(
+  matrix::sofaVector2cvMat(
       l_cam->getCamera2().getDistortionCoefficients(), distCoeffs2);
 
   std::cout << "reprojectionError: "
@@ -185,5 +183,4 @@ void CalibrateStereo::Update()
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

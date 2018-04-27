@@ -20,21 +20,20 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CANNYFILTER_H
-#define SOFA_OR_PROCESSOR_CANNYFILTER_H
+#ifndef SOFACV_IMGPROC_CANNYFILTER_H
+#define SOFACV_IMGPROC_CANNYFILTER_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class CannyFilter : public ImageFilter
+class SOFA_IMAGEPROCESSING_API CannyFilter : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(CannyFilter, ImageFilter);
+  SOFA_CLASS(CannyFilter, common::ImageFilter);
 
   sofa::Data<double> d_minThreshold;
   sofa::Data<double> d_maxThreshold;
@@ -43,18 +42,12 @@ class CannyFilter : public ImageFilter
 
   CannyFilter();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(CannyFilter)
-
-int CannyFilterClass =
-    sofa::core::RegisterObject("Canny edge detection filter from OpenCV")
-        .add<CannyFilter>();
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CANNYFILTER_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_CANNYFILTER_H

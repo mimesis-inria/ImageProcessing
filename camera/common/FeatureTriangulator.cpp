@@ -21,13 +21,11 @@
  ******************************************************************************/
 
 #include "FeatureTriangulator.h"
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/core/ObjectFactory.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -77,15 +75,13 @@ void FeatureTriangulator::init()
 
 void FeatureTriangulator::Update()
 {
-  std::cout << getName() << std::endl;
-
   //	common::matrix::sofaMat2cvMat(l_cam->getRotationMatrix(), R);
   //	common::matrix::sofaVector2cvMat(l_cam->getTranslationVector(), T);
-  common::matrix::sofaMat2cvMat(l_cam->getCamera1().getProjectionMatrix(), cmL);
-  common::matrix::sofaMat2cvMat(l_cam->getCamera2().getProjectionMatrix(), cmR);
-  common::matrix::sofaVector2cvMat(
+  matrix::sofaMat2cvMat(l_cam->getCamera1().getProjectionMatrix(), cmL);
+  matrix::sofaMat2cvMat(l_cam->getCamera2().getProjectionMatrix(), cmR);
+  matrix::sofaVector2cvMat(
       l_cam->getCamera1().getDistortionCoefficients(), dvL);
-  common::matrix::sofaVector2cvMat(
+  matrix::sofaVector2cvMat(
       l_cam->getCamera2().getDistortionCoefficients(), dvR);
 
   PL = cmL;
@@ -93,15 +89,15 @@ void FeatureTriangulator::Update()
 
   sofa::helper::vector<Vec3d>& pts = *(d_pointCloud.beginWriteOnly());
 
-  const sofa::helper::vector<common::cvKeypoint>& kL = d_keypointsL.getValue();
-  const sofa::helper::vector<common::cvKeypoint>& kR = d_keypointsR.getValue();
+  const sofa::helper::vector<cvKeypoint>& kL = d_keypointsL.getValue();
+  const sofa::helper::vector<cvKeypoint>& kR = d_keypointsR.getValue();
   pts.resize(kL.size());
-  unsigned sizePts = 0;
+  size_t sizePts = 0;
   (kL.size() > kR.size()) ? (sizePts = kR.size()) : (sizePts = kL.size());
 
   if (d_matches.isSet())
   {
-    const sofa::helper::vector<common::cvDMatch>& m = d_matches.getValue();
+    const sofa::helper::vector<cvDMatch>& m = d_matches.getValue();
     for (size_t i = 0; i < m.size(); ++i)
       pts[i] = l_cam->triangulate(kL[m[i].queryIdx].pt, kR[m[i].trainIdx].pt);
   }
@@ -112,5 +108,4 @@ void FeatureTriangulator::Update()
 }
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

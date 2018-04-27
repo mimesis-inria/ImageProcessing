@@ -20,27 +20,24 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
-#define SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
+#ifndef SOFACV_FEATURES_FEATUREDETECTOR_H
+#define SOFACV_FEATURES_FEATUREDETECTOR_H
 
 #include "Detectors.h"
 #include "common/ImageFilter.h"
 
-#include <SofaORCommon/cvKeypoint.h>
-#include <SofaORCommon/cvMat.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/core/DataTracker.h>
 #include <sofa/helper/OptionsGroup.h>
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
-class FeatureDetector : public ImageFilter
+class SOFA_IMAGEPROCESSING_API FeatureDetector : public common::ImageFilter
 {
   enum DetectorMode
   {
@@ -68,11 +65,11 @@ class FeatureDetector : public ImageFilter
   };
 
  public:
-  SOFA_CLASS(FeatureDetector, ImageFilter);
+  SOFA_CLASS(FeatureDetector, common::ImageFilter);
 
  public:
   FeatureDetector();
-  virtual ~FeatureDetector();
+  virtual ~FeatureDetector() override;
 
   virtual void init() override;
   virtual void reinit() override;
@@ -80,10 +77,10 @@ class FeatureDetector : public ImageFilter
   virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug) override;
 
 	sofa::Data<sofa::helper::OptionsGroup> d_detectMode;
-	sofa::Data<common::cvMat> d_mask;
+    sofa::Data<cvMat> d_mask;
 	sofa::Data<sofa::helper::OptionsGroup> d_detectorType;
-	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_keypoints;
-	sofa::Data<common::cvMat> d_descriptors;
+    sofa::Data<sofa::helper::vector<cvKeypoint> > d_keypoints;
+    sofa::Data<cvMat> d_descriptors;
 
  protected:
   void detectTypeChanged();
@@ -91,13 +88,11 @@ class FeatureDetector : public ImageFilter
 
  private:
   BaseDetector* m_detectors[DetectorType_COUNT];
-	sofa::core::DataTracker m_dataTracker;
 
   std::vector<cv::KeyPoint> _v;
-  common::cvMat _d;
+  cvMat _d;
 };
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_FEATUREDETECTOR_H
+}  // namespace sofacv
+#endif  // SOFACV_FEATURES_FEATUREDETECTOR_H

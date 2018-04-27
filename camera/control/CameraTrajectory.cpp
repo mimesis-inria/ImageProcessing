@@ -1,6 +1,13 @@
 #include "CameraTrajectory.h"
 
-sofaor::processor::CameraTrajectory::CameraTrajectory()
+namespace sofacv
+{
+namespace cam
+{
+namespace control
+{
+
+CameraTrajectory::CameraTrajectory()
     : l_cam(initLink("cam", "camera to control")),
       d_center(
           initData(&d_center, "center", "Point in space to rotate around")),
@@ -12,7 +19,7 @@ sofaor::processor::CameraTrajectory::CameraTrajectory()
   d_plane.setValue(plane);
 }
 
-void sofaor::processor::CameraTrajectory::init()
+void CameraTrajectory::init()
 {
   addInput(&d_center);
   addInput(&d_angle);
@@ -22,7 +29,7 @@ void sofaor::processor::CameraTrajectory::init()
     msg_error(getName() + "::init()") << "Error: No camera link set. ";
 }
 
-void sofaor::processor::CameraTrajectory::Update()
+void CameraTrajectory::Update()
 {
   if (m_dataTracker.isDirty(d_center)) centerChanged();
   if (m_dataTracker.isDirty(d_angle)) angleChanged();
@@ -43,7 +50,7 @@ void sofaor::processor::CameraTrajectory::Update()
   double sinvalue = sin(angle) * radius;
 
   p = center;
-  const int plane = d_plane.getValue().getSelectedId();
+  const unsigned int plane = d_plane.getValue().getSelectedId();
   Vector3 up;
   switch (plane)
   {
@@ -74,7 +81,7 @@ void sofaor::processor::CameraTrajectory::Update()
   d_angle.setValue(d_angle.getValue() + 1);
 }
 
-void sofaor::processor::CameraTrajectory::handleEvent(
+void CameraTrajectory::handleEvent(
     sofa::core::objectmodel::Event* e)
 {
   if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
@@ -82,3 +89,7 @@ void sofaor::processor::CameraTrajectory::handleEvent(
     update();
   }
 }
+
+} // namespace control
+} // namespace cam
+} // namespace sofacv

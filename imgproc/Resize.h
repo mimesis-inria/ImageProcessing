@@ -20,21 +20,20 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_RESIZE_H
-#define SOFA_OR_PROCESSOR_RESIZE_H
+#ifndef SOFACV_IMGPROC_RESIZE_H
+#define SOFACV_IMGPROC_RESIZE_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class Resize : public ImageFilter
+class SOFA_IMAGEPROCESSING_API Resize : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(Resize, ImageFilter);
+  SOFA_CLASS(Resize, common::ImageFilter);
 
   sofa::Data<sofa::defaulttype::Vec2i> d_size;
   sofa::Data<double> d_fx;
@@ -43,17 +42,12 @@ class Resize : public ImageFilter
 
   Resize();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(Resize)
-
-int ResizeClass =
-    sofa::core::RegisterObject("OpenCV's Resize function").add<Resize>();
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_RESIZE_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_RESIZE_H

@@ -23,7 +23,13 @@
 #include "CannyFilter.h"
 #include <opencv2/imgproc.hpp>
 
-sofaor::processor::imgproc::CannyFilter::CannyFilter()
+namespace sofacv
+{
+namespace imgproc
+{
+
+
+CannyFilter::CannyFilter()
     : d_minThreshold(initData(&d_minThreshold, 0.0, "min",
                               "first threshold for the hysteresis procedure.")),
       d_maxThreshold(
@@ -36,7 +42,7 @@ sofaor::processor::imgproc::CannyFilter::CannyFilter()
 {
 }
 
-void sofaor::processor::imgproc::CannyFilter::init()
+void CannyFilter::init()
 {
   addInput(&d_minThreshold, true);
   registerData(&d_minThreshold, 0.0, 255.0, 1.0);
@@ -49,7 +55,7 @@ void sofaor::processor::imgproc::CannyFilter::init()
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::CannyFilter::applyFilter(const cv::Mat &in,
+void CannyFilter::applyFilter(const cv::Mat &in,
                                                           cv::Mat &out, bool)
 {
   if (in.empty()) return;
@@ -83,3 +89,14 @@ void sofaor::processor::imgproc::CannyFilter::applyFilter(const cv::Mat &in,
 
   out = img_gray;
 }
+
+SOFA_DECL_CLASS(CannyFilter)
+
+int CannyFilterClass =
+    sofa::core::RegisterObject("Canny edge detection filter from OpenCV")
+        .add<CannyFilter>();
+
+}  // namespace imgproc
+}  // namespace sofacv
+
+

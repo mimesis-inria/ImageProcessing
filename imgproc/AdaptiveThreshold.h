@@ -20,21 +20,20 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_ADAPTIVETHRESHOLD_H
-#define SOFA_OR_PROCESSOR_ADAPTIVETHRESHOLD_H
+#ifndef SOFACV_IMGPROC_ADAPTIVETHRESHOLD_H
+#define SOFACV_IMGPROC_ADAPTIVETHRESHOLD_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class AdaptiveThreshold : public ImageFilter
+class SOFA_IMAGEPROCESSING_API AdaptiveThreshold : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(AdaptiveThreshold, ImageFilter);
+  SOFA_CLASS(AdaptiveThreshold, common::ImageFilter);
 
   sofa::Data<double> d_max;
   sofa::Data<sofa::helper::OptionsGroup> d_adaptiveMethod;
@@ -44,19 +43,11 @@ class AdaptiveThreshold : public ImageFilter
 
   AdaptiveThreshold();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(AdaptiveThreshold)
-
-int AdaptiveThresholdClass =
-    sofa::core::RegisterObject(
-        "OpenCV's implementation of an adaptive image thresholding filter")
-        .add<AdaptiveThreshold>();
-
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_ADAPTIVETHRESHOLD_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_ADAPTIVETHRESHOLD_H

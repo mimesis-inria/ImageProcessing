@@ -20,19 +20,17 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_STEREOSETTINGS_H
-#define SOFA_OR_PROCESSOR_STEREOSETTINGS_H
+#ifndef SOFACV_CAM_STEREOSETTINGS_H
+#define SOFACV_CAM_STEREOSETTINGS_H
 
 #include "CameraSettings.h"
-#include "ProcessOR/initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -42,7 +40,7 @@ namespace cam
  * Stores the links to the Two CameraSettings used for Stereoscopy and the
  * camera's Essential and Fundamental matrix
  */
-class StereoSettings : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API StereoSettings : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
       StereoSettings, CameraSettings,
@@ -55,14 +53,14 @@ class StereoSettings : public common::ImplicitDataEngine
   typedef sofa::defaulttype::Matrix3 Matrix3;
 
  public:
-  SOFA_CLASS(StereoSettings, common::ImplicitDataEngine);
+  SOFA_CLASS(StereoSettings, ImplicitDataEngine);
 
   /// StereoSettings ctor. All parameters are optional and can be set using
   /// calibration components or file loaders
   StereoSettings();
 
   ~StereoSettings() {}
-  void init();
+  void init() override;
   virtual void Update() override {}
   /// returns the 3D position of a pair of 2D matches 'X, Y'
   Vector3 triangulate(const Vector2& x1, const Vector2& x2);
@@ -113,6 +111,5 @@ class StereoSettings : public common::ImplicitDataEngine
 };
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_STEREOSETTINGS_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_STEREOSETTINGS_H

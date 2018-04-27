@@ -24,7 +24,12 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
-sofaor::processor::imgproc::Resize::Resize()
+namespace sofacv
+{
+namespace imgproc
+{
+
+Resize::Resize()
     : d_size(initData(&d_size, "size", "pixel resolution of the output image")),
       d_fx(initData(&d_fx, 0.0, "fx", "scale factor on the X axis")),
       d_fy(initData(&d_fy, 0.0, "fy", "scale factori on the Y axis")),
@@ -36,13 +41,13 @@ sofaor::processor::imgproc::Resize::Resize()
   d_interp.endEdit();
 }
 
-void sofaor::processor::imgproc::Resize::init()
+void Resize::init()
 {
   registerData(&d_interp);
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::Resize::applyFilter(const cv::Mat &in,
+void Resize::applyFilter(const cv::Mat &in,
                                                      cv::Mat &out, bool)
 {
   if (in.empty())
@@ -59,5 +64,14 @@ void sofaor::processor::imgproc::Resize::applyFilter(const cv::Mat &in,
     s.height = d_size.getValue().y();
   }
   cv::resize(in, out, s, d_fx.getValue(), d_fy.getValue(),
-             d_interp.getValue().getSelectedId());
+             int(d_interp.getValue().getSelectedId()));
 }
+
+SOFA_DECL_CLASS(Resize)
+
+int ResizeClass =
+    sofa::core::RegisterObject("OpenCV's Resize function").add<Resize>();
+
+
+} // namespace imgproc
+} // namespace sofacv

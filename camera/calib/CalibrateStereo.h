@@ -20,12 +20,12 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CALIBRATESTEREO_H
-#define SOFA_OR_PROCESSOR_CALIBRATESTEREO_H
+#ifndef SOFACV_CAM_CALIB_CALIBRATESTEREO_H
+#define SOFACV_CAM_CALIB_CALIBRATESTEREO_H
 
-#include "initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 #include "camera/common/StereoSettings.h"
 
 #include <sofa/core/objectmodel/Link.h>
@@ -34,15 +34,13 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
 namespace calib
 {
-class CalibrateStereo : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API CalibrateStereo : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
       CalibrateStereo, StereoSettings,
@@ -50,12 +48,12 @@ class CalibrateStereo : public common::ImplicitDataEngine
       Settings;
 
  public:
-  SOFA_CLASS(CalibrateStereo, common::ImplicitDataEngine);
+  SOFA_CLASS(CalibrateStereo, ImplicitDataEngine);
 
   CalibrateStereo();
 
   ~CalibrateStereo() {}
-  void init();
+  void init() override;
 
   virtual void Update() override;
   void calibrate();
@@ -80,6 +78,5 @@ class CalibrateStereo : public common::ImplicitDataEngine
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CALIBRATESTEREO_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_CALIB_CALIBRATESTEREO_H

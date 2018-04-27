@@ -20,38 +20,30 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_ADDWEIGHTED_H
-#define SOFA_OR_PROCESSOR_ADDWEIGHTED_H
+#ifndef SOFACV_IMGPROC_ADDWEIGHTED_H
+#define SOFACV_IMGPROC_ADDWEIGHTED_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class AddWeighted : public ImageFilter
+class SOFA_IMAGEPROCESSING_API AddWeighted : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(AddWeighted, ImageFilter);
+  SOFA_CLASS(AddWeighted, common::ImageFilter);
 
-  sofa::Data<common::cvMat> d_img2;
+  sofa::Data<cvMat> d_img2;
 
   AddWeighted();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(AddWeighted)
-
-int AddWeightedClass =
-    sofa::core::RegisterObject("OpenCV's AddWeighted function")
-        .add<AddWeighted>();
-
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_ADDWEIGHTED_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_ADDWEIGHTED_H

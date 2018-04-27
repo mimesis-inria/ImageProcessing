@@ -20,23 +20,21 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_POINTVEC2KEYPOINT_H
-#define SOFA_OR_PROCESSOR_POINTVEC2KEYPOINT_H
+#ifndef SOFACV_UTILS_POINTVEC2KEYPOINT_H
+#define SOFACV_UTILS_POINTVEC2KEYPOINT_H
 
-#include "initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace utils
 {
-class PointVec2Keypoint : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API PointVec2Keypoint : public ImplicitDataEngine
 {
  public:
-  SOFA_CLASS(PointVec2Keypoint, common::ImplicitDataEngine);
+  SOFA_CLASS(PointVec2Keypoint, ImplicitDataEngine);
 
   PointVec2Keypoint()
       : d_src(initData(&d_src, "points", "input vector to convert")),
@@ -44,37 +42,18 @@ class PointVec2Keypoint : public common::ImplicitDataEngine
   {
   }
 
-  ~PointVec2Keypoint() {}
-  void init()
-  {
-    addInput(&d_src);
-    addOutput(&d_dst);
-  }
-
-  void Update()
-  {
-		sofa::helper::vector<common::cvKeypoint>& dst = *(d_dst.beginWriteOnly());
-    dst.clear();
-		const sofa::helper::vector<sofa::defaulttype::Vec2i>& src = d_src.getValue();
-    for (auto pt : src)
-      dst.push_back(common::cvKeypoint(cv::Point2f(pt.x(), pt.y()), 0));
-  }
+  virtual ~PointVec2Keypoint() override {}
+  void init() override;
+  void Update() override;
 
   // INPUTS
 	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_src;
   // OUTPUTS
-	sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_dst;
+    sofa::Data<sofa::helper::vector<cvKeypoint> > d_dst;
 };
 
-SOFA_DECL_CLASS(PointVec2Keypoint)
-
-int PointVec2KeypointClass =
-		sofa::core::RegisterObject(
-        "component to convert defaulttype::vec2i to common::cvKeypoint")
-        .add<PointVec2Keypoint>();
 
 }  // namespace utils
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv
 
-#endif  // SOFA_OR_PROCESSOR_POINTVEC2KEYPOINT_H
+#endif  // SOFACV_UTILS_POINTVEC2KEYPOINT_H

@@ -1,20 +1,20 @@
-#ifndef IMAGEFILTERMODEL_H
-#define IMAGEFILTERMODEL_H
+#ifndef SOFACV_GUI_IMAGEFILTERMODEL_H
+#define SOFACV_GUI_IMAGEFILTERMODEL_H
 
 #include <QObject>
 
-#include "ProcessOR/initPlugin.h"
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
 #include <SofaQtQuickGUI/SofaComponent.h>
 #include <SofaQtQuickGUI/SofaComponentList.h>
 #include <SofaQtQuickGUI/SofaQtQuickGUI.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace gui
 {
-class SOFA_PROCESSOR_API ImageFilterModel : public QObject
+class SOFA_IMAGEPROCESSING_API ImageFilterModel : public QObject
 {
   Q_OBJECT
 
@@ -28,8 +28,8 @@ class SOFA_PROCESSOR_API ImageFilterModel : public QObject
   sofa::qtquick::SofaComponent* sofaComponent() const;
   void setSofaComponent(sofa::qtquick::SofaComponent* sofaComponent);
 
-  sofaor::processor::ImageFilter* imageFilter() const;
-  void setImageFilter(sofaor::processor::ImageFilter* imageFilter);
+  sofacv::common::ImageFilter* imageFilter() const;
+  void setImageFilter(sofacv::common::ImageFilter* imageFilter);
 
   void display();
 
@@ -41,11 +41,11 @@ class SOFA_PROCESSOR_API ImageFilterModel : public QObject
 
  private:
   sofa::qtquick::SofaComponent* m_sofaComponent;
-  mutable sofaor::processor::ImageFilter*
+  mutable sofacv::common::ImageFilter*
       m_imageFilter;  // make it more abstract
 };
 
-class SOFA_PROCESSOR_API ImageFilterModelList : public QObject
+class SOFA_IMAGEPROCESSING_API ImageFilterModelList : public QObject
 {
   Q_OBJECT
 
@@ -70,10 +70,10 @@ class SOFA_PROCESSOR_API ImageFilterModelList : public QObject
 
  private:
   sofa::qtquick::SofaComponentList m_sofaComponentList;
-  QList<sofaor::processor::ImageFilterModel*> m_imageFilterModelList;
+  QList<sofacv::gui::ImageFilterModel*> m_imageFilterModelList;
 };
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace gui
+}  // namespace sofacv
 
-#endif  // IMAGEFILTERMODEL_H
+#endif  // SOFACV_GUI_IMAGEFILTERMODEL_H

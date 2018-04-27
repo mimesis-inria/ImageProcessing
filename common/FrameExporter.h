@@ -20,19 +20,19 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_FRAMEEXPORTER_H
-#define SOFA_OR_PROCESSOR_FRAMEEXPORTER_H
+#ifndef SOFACV_COMMON_FRAMEEXPORTER_H
+#define SOFACV_COMMON_FRAMEEXPORTER_H
 
-#include <SofaORCommon/ImplicitDataEngine.h>
-#include <SofaORCommon/cvMat.h>
-#include <sofa/core/ObjectFactory.h>
+#include "ImageProcessingPlugin.h"
+
+#include <SofaCV/SofaCV.h>
 #include <sofa/helper/OptionsGroup.h>
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
 /**
  * @brief The FrameExporter class
@@ -41,10 +41,10 @@ namespace processor
  * specific frequency of the simulation (STEP).
  * Can be activated / deactivated manually with [active]
  */
-class FrameExporter : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API FrameExporter : public ImplicitDataEngine
 {
   sofa::Data<std::string> d_fileName;  ///< name of the file to write into
-  sofa::Data<common::cvMat> d_img;     ///< [INPUT] image to write in fileName
+  sofa::Data<cvMat> d_img;     ///< [INPUT] image to write in fileName
   sofa::Data<unsigned>
       d_nSteps;  ///< if exportType == STEP, frequency at which to export
   sofa::Data<sofa::helper::OptionsGroup> d_exportType;  ///< whether the image
@@ -57,11 +57,11 @@ class FrameExporter : public common::ImplicitDataEngine
       d_activate;  ///< set to false to manually activate through GUI
 
  public:
-  SOFA_CLASS(FrameExporter, common::ImplicitDataEngine);
+  SOFA_CLASS(FrameExporter, ImplicitDataEngine);
 
   FrameExporter();
 
-  ~FrameExporter() {}
+  virtual ~FrameExporter() override {}
   void init() override;
 
   void reinit() override {}
@@ -70,7 +70,7 @@ class FrameExporter : public common::ImplicitDataEngine
 
   void cleanup() override;
 
-  virtual void handleEvent(sofa::core::objectmodel::Event* e)
+  virtual void handleEvent(sofa::core::objectmodel::Event* e) override
   {
     if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
     {
@@ -93,6 +93,6 @@ int FrameExporterClass =
         "component to export Opencv images as a file on your system")
         .add<FrameExporter>();
 
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_FRAMEEXPORTER_H
+}  // namespace common
+}  // namespace sofacv
+#endif  // SOFACV_COMMON_FRAMEEXPORTER_H

@@ -20,16 +20,14 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CALIBLOADER_H
-#define SOFA_OR_PROCESSOR_CALIBLOADER_H
+#ifndef SOFACV_CAM_CALIB_CALIBLOADER_H
+#define SOFACV_CAM_CALIB_CALIBLOADER_H
 
+#include "ImageProcessingPlugin.h"
 #include "camera/common/CameraSettings.h"
 #include "camera/common/StereoSettings.h"
-#include "initPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
-#include <SofaORCommon/cvMat.h>
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/core/objectmodel/DataFileName.h>
 #include <sofa/helper/OptionsGroup.h>
@@ -38,9 +36,7 @@
 
 #include <map>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -49,7 +45,7 @@ namespace cam
  */
 namespace calib
 {
-class CalibLoader : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API CalibLoader : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
       CalibLoader, StereoSettings,
@@ -101,12 +97,12 @@ class CalibLoader : public common::ImplicitDataEngine
   };
 
  public:
-  SOFA_CLASS(CalibLoader, common::ImplicitDataEngine);
+  SOFA_CLASS(CalibLoader, ImplicitDataEngine);
 
   CalibLoader();
-  virtual ~CalibLoader();
+  virtual ~CalibLoader() override;
 
-  void parse(sofa::core::objectmodel::BaseObjectDescription *arg);
+  void parse(sofa::core::objectmodel::BaseObjectDescription *arg) override;
   virtual void init() override;
   virtual void Update() override;
 
@@ -156,6 +152,5 @@ class CalibLoader : public common::ImplicitDataEngine
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CALIBLOADER_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_CALIB_CALIBLOADER_H

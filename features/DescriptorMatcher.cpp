@@ -26,9 +26,7 @@
 #include <sofa/simulation/AnimateBeginEvent.h>
 #include <opencv2/features2d.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
@@ -54,7 +52,7 @@ DescriptorMatcher::DescriptorMatcher()
           "maxDistance Threshold for the distance between matched descriptors. "
           "Distance means here metric distance (e.g. Hamming distance), not "
           "the distance between coordinates (which is measured in Pixels)!")),
-      d_mask(initData(&d_mask, common::cvMat(), "mask",
+      d_mask(initData(&d_mask, cvMat(), "mask",
                       "Mask specifying permissible matches between an input "
                       "query and train matrices of descriptors.")),
       d_queryDescriptors(initData(&d_queryDescriptors, "descriptors1",
@@ -118,16 +116,16 @@ void DescriptorMatcher::Update()
       << "Error: Empty descriptor matrix!";
   ImageFilter::update();
 
-  sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> >* vec =
+  sofa::helper::SVector<sofa::helper::SVector<cvDMatch> >* vec =
       d_matches.beginWriteOnly();
   vec->clear();
   if (!m_matches.empty() && !m_matches[0].empty())
   {
     for (std::vector<cv::DMatch>& matchVec : m_matches)
     {
-      vec->push_back(sofa::helper::SVector<common::cvDMatch>());
+      vec->push_back(sofa::helper::SVector<cvDMatch>());
       for (cv::DMatch& match : matchVec)
-        vec->back().push_back(common::cvDMatch(match));
+        vec->back().push_back(cvDMatch(match));
     }
   }
   d_matches.endEdit();
@@ -211,5 +209,4 @@ void DescriptorMatcher::matcherTypeChanged()
 }
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

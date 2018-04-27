@@ -1,7 +1,7 @@
-#ifndef IMAGEFILTERDISPLAY_H
-#define IMAGEFILTERDISPLAY_H
+#ifndef SOFACV_GUI_IMAGEFILTERDISPLAY_H
+#define SOFACV_GUI_IMAGEFILTERDISPLAY_H
 
-#include "ProcessOR/initPlugin.h"
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 #include "gui/ImageFilterModel.h"
 
@@ -13,26 +13,26 @@
 
 #include <math.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace gui
 {
 class ImageFilterDisplay;
 
-class SOFA_PROCESSOR_API FilterRenderer
+class SOFA_IMAGEPROCESSING_API FilterRenderer
     : public QQuickFramebufferObject::Renderer
 {
  public:
   FilterRenderer(
-      const sofaor::processor::ImageFilterDisplay* imageFilterDisplay);
+      const ImageFilterDisplay* imageFilterDisplay);
   void render();
   QOpenGLFramebufferObject* createFramebufferObject(const QSize& size);
 
  private:
-  const sofaor::processor::ImageFilterDisplay* m_imageFilterDisplay;
+  const ImageFilterDisplay* m_imageFilterDisplay;
 };
 
-class SOFA_PROCESSOR_API ImageFilterDisplay : public QQuickFramebufferObject
+class SOFA_IMAGEPROCESSING_API ImageFilterDisplay : public QQuickFramebufferObject
 {
   Q_OBJECT
 
@@ -54,7 +54,7 @@ class SOFA_PROCESSOR_API ImageFilterDisplay : public QQuickFramebufferObject
   ImageFilterModel* m_imageFilterModel;
 };
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace gui
+}  // namespace sofacv
 
-#endif  // IMAGEFILTERDISPLAY_H
+#endif  // SOFACV_GUI_IMAGEFILTERDISPLAY_H

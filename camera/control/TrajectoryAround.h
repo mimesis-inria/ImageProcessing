@@ -20,20 +20,23 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_ROTATEAROUNDENGINE_H
-#define SOFA_OR_PROCESSOR_ROTATEAROUNDENGINE_H
+#ifndef SOFACV_CAM_CONTROL_ROTATEAROUNDENGINE_H
+#define SOFACV_CAM_CONTROL_ROTATEAROUNDENGINE_H
 
+#include "ImageProcessingPlugin.h"
 #include "camera/common/CameraSettings.h"
-#include "initPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 #include <sofa/helper/OptionsGroup.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace cam
 {
-class TrajectoryAround : public common::ImplicitDataEngine
+namespace control
+{
+
+class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
       TrajectoryAround, cam::CameraSettings,
@@ -44,7 +47,7 @@ class TrajectoryAround : public common::ImplicitDataEngine
   typedef typename sofa::defaulttype::Quat Quat;
 
  public:
-  SOFA_CLASS(TrajectoryAround, common::ImplicitDataEngine);
+  SOFA_CLASS(TrajectoryAround, ImplicitDataEngine);
 
   TrajectoryAround()
       : l_cam(initLink("cam", "camera to control")),
@@ -64,8 +67,8 @@ class TrajectoryAround : public common::ImplicitDataEngine
   {
   }
 
-  ~TrajectoryAround() {}
-  void init()
+  virtual ~TrajectoryAround() override{}
+  void init() override
   {
     addInput(&d_center);
     addInput(&d_theta);
@@ -134,7 +137,7 @@ class TrajectoryAround : public common::ImplicitDataEngine
     l_cam->buildFromKRT();
   }
 
-  void Update()
+  void Update() override
   {
     if (m_dataTracker.isDirty(d_center))
       centerChanged();
@@ -147,7 +150,7 @@ class TrajectoryAround : public common::ImplicitDataEngine
     rotate(d_rho.getValue(), d_theta.getValue(), d_phi.getValue());
   }
 
-  virtual void handleEvent(sofa::core::objectmodel::Event* e)
+  virtual void handleEvent(sofa::core::objectmodel::Event* e) override
   {
     if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
     {
@@ -207,6 +210,7 @@ int TrajectoryAroundClass =
         "around a point. Init sets the correct camera orientation if necessary")
         .add<TrajectoryAround>();
 
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_ROTATEAROUNDENGINE_H
+}  // namespace control
+}  // namespace cam
+}  // namespace sofacv
+#endif  // SOFACV_CAM_CONTROL_ROTATEAROUNDENGINE_H

@@ -25,7 +25,12 @@
 #include <opencv2/tracking.hpp>
 #include <opencv2/video.hpp>
 
-sofaor::processor::features::OpticalFlow::OpticalFlow()
+namespace sofacv
+{
+namespace features
+{
+
+OpticalFlow::OpticalFlow()
     : d_winSize(initData(&d_winSize, sofa::defaulttype::Vec2i(21, 21),
                          "win_size", "")),
       d_maxLevel(initData(&d_maxLevel, 3, "max_level", "")),
@@ -47,7 +52,7 @@ sofaor::processor::features::OpticalFlow::OpticalFlow()
 {
 }
 
-void sofaor::processor::features::OpticalFlow::init()
+void OpticalFlow::init()
 {
   registerData(&d_maxLevel, 0, 10, 1);
   registerData(&d_maxCount, 0, 100, 1);
@@ -59,7 +64,7 @@ void sofaor::processor::features::OpticalFlow::init()
   ImageFilter::init();
 }
 
-void sofaor::processor::features::OpticalFlow::applyFilter(const cv::Mat& in,
+void OpticalFlow::applyFilter(const cv::Mat& in,
                                                            cv::Mat& out, bool)
 {
   cv::Mat gray;
@@ -128,8 +133,8 @@ void sofaor::processor::features::OpticalFlow::applyFilter(const cv::Mat& in,
     cv::Point2f ptPrev, ptNext;
     ptPrev = m_pts_in[i];
     ptNext = m_pts_out[i];
-    points_out->push_back(sofa::defaulttype::Vec2d(ptNext.x, ptNext.y));
-    points_in->push_back(sofa::defaulttype::Vec2d(ptPrev.x, ptPrev.y));
+    points_out->push_back(sofa::defaulttype::Vec2d(double(ptNext.x), double(ptNext.y)));
+    points_in->push_back(sofa::defaulttype::Vec2d(double(ptPrev.x), double(ptPrev.y)));
   }
   d_status_out.setValue(status);
   d_error_out.setValue(error);
@@ -152,3 +157,7 @@ void sofaor::processor::features::OpticalFlow::applyFilter(const cv::Mat& in,
     }
   }
 }
+
+} // namespace features
+} // namespace sofacv
+

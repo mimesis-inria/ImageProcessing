@@ -27,9 +27,7 @@
 
 #include <opencv2/calib3d.hpp>
 #include <opencv2/imgproc.hpp>
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
@@ -161,7 +159,7 @@ bool MatchingConstraints::computeEpipolarLines()
   if (!l_cam.get() || !l_cam->getFundamentalMatrix().empty())
   {
     cv::Mat F;
-    common::matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), F);
+    matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), F);
     cv::computeCorrespondEpilines(ptsL, 1, F, m_epilines);
   }
   else
@@ -218,7 +216,7 @@ void MatchingConstraints::Update()
     for (auto match : matchVector) mvec.push_back(match);
     matches.push_back(mvec);
   }
-  const sofa::helper::vector<common::cvKeypoint>& PointsR =
+  const sofa::helper::vector<cvKeypoint>& PointsR =
       d_keypointsR_in.getValue();
 
   /// Fill matchVector with all the necessary info:
@@ -226,7 +224,7 @@ void MatchingConstraints::Update()
 
   /// Precompute all epipolar lines for left keypoints
   cv::Mat F;
-  common::matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), F);
+  matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), F);
   if (d_useEpipolarFilter.getValue()) computeEpipolarLines();
 
   for (auto matchVector : matches)
@@ -236,7 +234,7 @@ void MatchingConstraints::Update()
       m_maxDist = matchVector[0].distance;
 
     MatchVector mv;
-    mv.idxL = matchVector[0].queryIdx;
+    mv.idxL = unsigned(matchVector[0].queryIdx);
     for (const cv::DMatch& match : matchVector)
     {
       /// IF you want to filter distance according to EVERY match, including 2nd
@@ -247,10 +245,10 @@ void MatchingConstraints::Update()
       /// and
       /// distance to the epipolar line
       MatchStruct ms;
-      ms.distance = match.distance;
-      ms.idxR = match.trainIdx;
+      ms.distance = unsigned(match.distance);
+      ms.idxR = unsigned(match.trainIdx);
       ms.distanceToEpiline =
-          distancePointLine(PointsR[ms.idxR].pt, m_epilines[mv.idxL]);
+          unsigned(distancePointLine(PointsR[ms.idxR].pt, m_epilines[mv.idxL]));
 
       mv.matches.push_back(ms);
     }
@@ -321,19 +319,19 @@ bool MatchingConstraints::MinimalDistanceFilter(MatchVector& ms,
 }
 
 void MatchingConstraints::PushInlier(
-    const common::cvMat& descL, unsigned i,
-    const sofa::helper::vector<common::cvKeypoint>& PointsL,
-    const common::cvMat& descR, MatchVector& ms,
-    const sofa::helper::vector<common::cvKeypoint>& PointsR)
+    const cvMat& descL, unsigned i,
+    const sofa::helper::vector<cvKeypoint>& PointsL,
+    const cvMat& descR, MatchVector& ms,
+    const sofa::helper::vector<cvKeypoint>& PointsR)
 {
-  unsigned inliersIdx = i - m_outliers_out.size();
+  ulong inliersIdx = i - m_outliers_out.size();
   m_matches.push_back(
-      common::cvDMatch(ms.idxL, ms.matches[0].idxR, ms.matches[0].distance));
+      cvDMatch(int(ms.idxL), int(ms.matches[0].idxR), ms.matches[0].distance));
   m_kpL.push_back(PointsL[ms.idxL]);
   m_kpR.push_back(PointsR[ms.matches[0].idxR]);
 
-  descL.row(ms.idxL).copyTo(m_descL.row(int(inliersIdx)));
-  descR.row(ms.matches[0].idxR).copyTo(m_descR.row(int(inliersIdx)));
+  descL.row(int(ms.idxL)).copyTo(m_descL.row(int(inliersIdx)));
+  descR.row(int(ms.matches[0].idxR)).copyTo(m_descR.row(int(inliersIdx)));
 }
 
 void MatchingConstraints::ClearOutputVectors()
@@ -342,8 +340,8 @@ void MatchingConstraints::ClearOutputVectors()
   m_kpL.clear();
   m_kpR.clear();
   m_outliers_out.clear();
-  m_descL = common::cvMat();
-  m_descR = common::cvMat();
+  m_descL = cvMat();
+  m_descR = cvMat();
 
   // preallocating space for structures based on the number of keypoints on the
   // reference image (Left)
@@ -351,10 +349,10 @@ void MatchingConstraints::ClearOutputVectors()
   m_kpL.reserve(d_keypointsL_in.getValue().size());
   m_kpR.reserve(d_keypointsL_in.getValue().size());
   m_outliers_out.reserve(d_keypointsL_in.getValue().size());
-  m_descL = common::cvMat(d_keypointsL_in.getValue().size(),
+  m_descL = cvMat(int(d_keypointsL_in.getValue().size()),
                           d_descriptorsL_in.getValue().cols,
                           d_descriptorsL_in.getValue().type());
-  m_descR = common::cvMat(d_keypointsL_in.getValue().size(),
+  m_descR = cvMat(int(d_keypointsL_in.getValue().size()),
                           d_descriptorsL_in.getValue().cols,
                           d_descriptorsL_in.getValue().type());
 }
@@ -369,7 +367,7 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   float mdfDist = d_mdfRadius.getValue();
 
   bool knn = d_useKNNFilter.getValue();
-  double lambda = d_knnLambda.getValue();
+  double lambda = double(d_knnLambda.getValue());
 
   // ensuring that initial output matches, keypoints and descriptors are empty
   ClearOutputVectors();
@@ -390,13 +388,13 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     }
   }
 
-  const sofa::helper::vector<common::cvKeypoint>& PointsL =
+  const sofa::helper::vector<cvKeypoint>& PointsL =
       d_keypointsL_in.getValue();
-  const sofa::helper::vector<common::cvKeypoint>& PointsR =
+  const sofa::helper::vector<cvKeypoint>& PointsR =
       d_keypointsR_in.getValue();
 
-  const common::cvMat& descL = d_descriptorsL_in.getValue();
-  const common::cvMat& descR = d_descriptorsR_in.getValue();
+  const cvMat& descL = d_descriptorsL_in.getValue();
+  const cvMat& descR = d_descriptorsR_in.getValue();
 
   unsigned filteredByEpipolar = 0;
   unsigned filteredByKNN = 0;
@@ -440,5 +438,4 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 }
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

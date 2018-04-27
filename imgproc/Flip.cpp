@@ -22,20 +22,26 @@
 
 #include "Flip.h"
 
-sofaor::processor::imgproc::Flip::Flip()
+namespace sofacv
+{
+namespace imgproc
+{
+
+
+Flip::Flip()
     : d_flipCode(initData(&d_flipCode, 1, "flipCode",
                           "0 for X axis flip, 1 for Y, and -1 for both"))
 {
 }
 
-void sofaor::processor::imgproc::Flip::init()
+void Flip::init()
 {
   addInput(&d_flipCode, true);
   registerData(&d_flipCode, -1, 1, 1);
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::Flip::applyFilter(const cv::Mat &in,
+void Flip::applyFilter(const cv::Mat &in,
                                                    cv::Mat &out, bool)
 {
   if (in.empty())
@@ -47,3 +53,12 @@ void sofaor::processor::imgproc::Flip::applyFilter(const cv::Mat &in,
 
   cv::flip(in, out, d_flipCode.getValue());
 }
+
+SOFA_DECL_CLASS(Flip)
+
+int FlipClass =
+    sofa::core::RegisterObject("OpenCV's Flip function").add<Flip>();
+
+}  // namespace imgproc
+}  // namespace sofacv
+

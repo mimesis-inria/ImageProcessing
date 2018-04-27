@@ -21,14 +21,12 @@
  ******************************************************************************/
 
 #include "PointPicker2D.h"
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
@@ -151,13 +149,13 @@ void PointPicker2D::computeEpipolarLines()
   if (!m_pointList.empty())
   {
     cv::Mat_<double> F;
-    common::matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), F);
+    matrix::sofaMat2cvMat(l_cam->getFundamentalMatrix(), F);
     std::vector<cv::Point2f> points(m_pointList.begin(), m_pointList.end());
     cv::computeCorrespondEpilines(points, d_whichImage.getValue(), F, lines);
     for (const cv::Vec3f& pt : lines)
       epilines.push_back(sofa::defaulttype::Vec3f(pt.val));
   }
-#ifndef SOFAOR_NEW_GUI_ENABLED
+#ifndef SOFACV_NEW_GUI_ENABLED
   m_picker->refreshDebugWindow();
 #endif
 }
@@ -213,5 +211,4 @@ void PointPicker2D::mouseCallback(int event, int x, int y, int flags)
 }
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

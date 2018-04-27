@@ -26,9 +26,9 @@
 #include <sofa/core/visual/DrawToolGL.h>
 #include <sofa/helper/system/gl.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
 SOFA_DECL_CLASS(PCViewer)
 
@@ -135,5 +135,5 @@ void PCViewer::draw(const sofa::core::visual::VisualParams*)
 }
 
 void PCViewer::reinit() { update(); }
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace common
+}  // namespace sofacv

@@ -20,7 +20,7 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#include "initPlugin.h"
+#include "ImageProcessingPlugin.h"
 #include <sofa/helper/system/config.h>
 
 #ifdef QT_PLUGIN
@@ -33,24 +33,17 @@
 const int versionMajor = 1;
 const int versionMinor = 0;
 
-static void initResources() { Q_INIT_RESOURCE(ProcessOR_qml); }
+static void initResources() { Q_INIT_RESOURCE(ImageProcessing_qml); }
 #endif  // QT_PLUGIN
 
-namespace sofaor
+namespace sofacv
 {
 /**
  * \brief Data processing library
  *  provides 2D / volumic image, point cloud and sensors data processing
  * algorithms to extract simulation-relevant data.
  */
-namespace processor
-{
-/**
- * \brief Feature detection & matching
- *
- * provides 2D feature detection, extraction and matching algorithms, mainly
- * from OpenCV's feature2D and xfeature2D modules.
- */
+
 namespace features
 {
 }  // namespace features
@@ -69,12 +62,12 @@ namespace imgproc
 // the plugin
 
 extern "C" {
-SOFA_PROCESSOR_API void initExternalModule();
-SOFA_PROCESSOR_API const char* getModuleName();
-SOFA_PROCESSOR_API const char* getModuleVersion();
-SOFA_PROCESSOR_API const char* getModuleLicense();
-SOFA_PROCESSOR_API const char* getModuleDescription();
-SOFA_PROCESSOR_API const char* getModuleComponentList();
+SOFA_IMAGEPROCESSING_API void initExternalModule();
+SOFA_IMAGEPROCESSING_API const char* getModuleName();
+SOFA_IMAGEPROCESSING_API const char* getModuleVersion();
+SOFA_IMAGEPROCESSING_API const char* getModuleLicense();
+SOFA_IMAGEPROCESSING_API const char* getModuleDescription();
+SOFA_IMAGEPROCESSING_API const char* getModuleComponentList();
 }
 
 void initExternalModule()
@@ -86,27 +79,26 @@ void initExternalModule()
 #ifdef QT_PLUGIN
     initResources();
 
-    qmlRegisterType<sofaor::processor::ImageFilterDisplay>(
+    qmlRegisterType<sofacv::gui::ImageFilterDisplay>(
         "ImageFilterDisplay", versionMajor, versionMinor, "ImageFilterDisplay");
-    qmlRegisterType<sofaor::processor::ImageFilterModel>(
+    qmlRegisterType<sofacv::gui::ImageFilterModel>(
         "ImageFilterModel", versionMajor, versionMinor, "ImageFilterModel");
-    qmlRegisterType<sofaor::processor::ImageFilterModelList>(
+    qmlRegisterType<sofacv::gui::ImageFilterModelList>(
         "ImageFilterModelList", versionMajor, versionMinor,
         "ImageFilterModelList");
 #endif  // QT_PLUGIN
   }
 }
 
-const char* getModuleName() { return "ProcessOR"; }
+const char* getModuleName() { return "ImageProcessing"; }
 const char* getModuleVersion() { return "0.1"; }
 const char* getModuleLicense() { return ""; }
-const char* getModuleDescription() { return "ProcessOR's Base module"; }
+const char* getModuleDescription() { return "SofaCV's Image processing module"; }
 
 const char* getModuleComponentList()
 {
     return "";
 }
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv
 ////////// BEGIN CLASS LIST //////////

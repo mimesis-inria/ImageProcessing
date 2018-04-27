@@ -20,38 +20,31 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_FILL_H
-#define SOFA_OR_PROCESSOR_FILL_H
+#ifndef SOFACV_IMGPROC_FILL_H
+#define SOFACV_IMGPROC_FILL_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class Fill : public ImageFilter
+class SOFA_IMAGEPROCESSING_API Fill : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(Fill, ImageFilter);
+  SOFA_CLASS(Fill, common::ImageFilter);
 
   sofa::Data<sofa::defaulttype::Vec4d> d_color;
 
   Fill();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(Fill)
-
-int FillClass =
-    sofa::core::RegisterObject("OpenCV's implementation of cv::Mat::setTo()")
-        .add<Fill>();
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_FILL_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_FILL_H

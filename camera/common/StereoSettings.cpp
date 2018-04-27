@@ -21,11 +21,9 @@
  ******************************************************************************/
 
 #include "StereoSettings.h"
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -127,8 +125,8 @@ void StereoSettings::init()
 sofa::defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
                                                        const Vector2& x2)
 {
-  common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
-  common::matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
+  matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
+  matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
 
   cv::Point3d u(x1.x(), x2.y(), 1.0);
   cv::Point3d u1(x2.x(), x2.y(), 1.0);
@@ -152,8 +150,8 @@ sofa::defaulttype::Vector3 StereoSettings::triangulate(const Vector2& x1,
 sofa::defaulttype::Vector3 StereoSettings::triangulate(const cv::Point2d& x1,
                                                        const cv::Point2d& x2)
 {
-  common::matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
-  common::matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
+  matrix::sofaMat2cvMat(l_cam1->getProjectionMatrix(), P1);
+  matrix::sofaMat2cvMat(l_cam2->getProjectionMatrix(), P2);
   cv::Point3d u(x1.x, x2.y, 1.0);
   cv::Point3d u1(x2.x, x2.y, 1.0);
   cv::Mat_<double> X = iterativeLinearLSTriangulation(u, u1);
@@ -280,5 +278,4 @@ void StereoSettings::EssentialMatrixChanged()
 }
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

@@ -22,9 +22,7 @@
 
 #include "ProjectPoints.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -86,5 +84,4 @@ void ProjectPoints::Update()
 }
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

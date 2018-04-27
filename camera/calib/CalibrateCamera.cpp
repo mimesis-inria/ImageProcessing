@@ -21,11 +21,9 @@
  ******************************************************************************/
 
 #include "CalibrateCamera.h"
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -70,9 +68,9 @@ void CalibrateCamera::calibrate()
   std::vector<cv::Mat> tvecs;
   try
   {
-    if (d_K.isSet()) common::matrix::sofaMat2cvMat(d_K.getValue(), camMatrix);
+    if (d_K.isSet()) matrix::sofaMat2cvMat(d_K.getValue(), camMatrix);
     if (d_distCoefs.isSet())
-      common::matrix::sofaVector2cvMat(d_distCoefs.getValue(), dc);
+      matrix::sofaVector2cvMat(d_distCoefs.getValue(), dc);
 
     std::cout << cv::calibrateCamera(objPts, imgPts,
                                      cv::Size(d_imgSize.getValue().x(),
@@ -86,9 +84,9 @@ void CalibrateCamera::calibrate()
     msg_error(getName() + "::calibrate()") << e.what();
   }
 
-  common::matrix::cvMat2sofaVector(dc, m_distCoefs);
+  matrix::cvMat2sofaVector(dc, m_distCoefs);
 
-  common::matrix::cvMat2sofaMat(camMatrix, m_K);
+  matrix::cvMat2sofaMat(camMatrix, m_K);
   sofa::helper::vector<sofa::defaulttype::Mat3x4d>& RTs = *d_Rts.beginEdit();
   for (unsigned i = 0; i < rvecs.size(); ++i)
   {
@@ -104,7 +102,7 @@ void CalibrateCamera::calibrate()
     cv::Mat P = camMatrix * rotMT.t();
 
     sofa::defaulttype::Mat3x4d ProjMat;
-    common::matrix::cvMat2sofaMat(P, ProjMat);
+    matrix::cvMat2sofaMat(P, ProjMat);
 
     RTs.push_back(ProjMat);
   }
@@ -187,5 +185,4 @@ void CalibrateCamera::Update()
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

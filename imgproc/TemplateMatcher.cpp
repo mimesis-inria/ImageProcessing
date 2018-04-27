@@ -22,7 +22,11 @@
 
 #include "TemplateMatcher.h"
 
-sofaor::processor::imgproc::TemplateMatcher::TemplateMatcher()
+namespace sofacv
+{
+namespace imgproc
+{
+TemplateMatcher::TemplateMatcher()
     : d_template(initData(&d_template, "template_img",
                           "template image to search for in the input img.")),
       d_method(initData(&d_method, "method",
@@ -35,16 +39,14 @@ sofaor::processor::imgproc::TemplateMatcher::TemplateMatcher()
   d_method.endEdit();
 }
 
-void sofaor::processor::imgproc::TemplateMatcher::init()
+void TemplateMatcher::init()
 {
   addInput(&d_template);
   registerData(&d_method);
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::TemplateMatcher::applyFilter(const cv::Mat &in,
-                                                              cv::Mat &out,
-                                                              bool)
+void TemplateMatcher::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty()) return;
 
@@ -58,7 +60,7 @@ void sofaor::processor::imgproc::TemplateMatcher::applyFilter(const cv::Mat &in,
   out = in.clone();
 
   cv::matchTemplate(in, d_template.getValue(), out,
-                    d_method.getValue().getSelectedId());
+                    int(d_method.getValue().getSelectedId()));
 
   /// Localizing the best match with minMaxLoc
   double minVal;
@@ -96,3 +98,13 @@ void sofaor::processor::imgproc::TemplateMatcher::applyFilter(const cv::Mat &in,
                 cv::Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows),
                 cv::Scalar::all(0), 2, 8, 0);
 }
+
+SOFA_DECL_CLASS(TemplateMatcher)
+
+int TemplateMatcherClass = sofa::core::RegisterObject(
+                               "the 6 Template matching algorithms from "
+                               "OpenCV's cv::matchTemplate() method")
+                               .add<TemplateMatcher>();
+
+}  // namespace imgproc
+}  // namespace sofacv

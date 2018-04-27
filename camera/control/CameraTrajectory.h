@@ -20,20 +20,22 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_ROTATEAROUNDENGINE_H
-#define SOFA_OR_PROCESSOR_ROTATEAROUNDENGINE_H
+#ifndef SOFACV_CAM_CONTROL_ROTATEAROUNDENGINE_H
+#define SOFACV_CAM_CONTROL_ROTATEAROUNDENGINE_H
 
+#include "ImageProcessingPlugin.h"
 #include "camera/common/CameraSettings.h"
-#include "initPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 #include <sofa/helper/OptionsGroup.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace cam
 {
-class CameraTrajectory : public common::ImplicitDataEngine
+namespace control
+{
+class SOFA_IMAGEPROCESSING_API CameraTrajectory : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
       CameraTrajectory, cam::CameraSettings,
@@ -49,16 +51,16 @@ class CameraTrajectory : public common::ImplicitDataEngine
   };
 
  public:
-  SOFA_CLASS(CameraTrajectory, common::ImplicitDataEngine);
+  SOFA_CLASS(CameraTrajectory, ImplicitDataEngine);
 
   CameraTrajectory();
 
-  ~CameraTrajectory() {}
+  virtual ~CameraTrajectory() override {}
   virtual void init() override;
 
   virtual void Update() override;
 
-  virtual void handleEvent(sofa::core::objectmodel::Event* e);
+  virtual void handleEvent(sofa::core::objectmodel::Event* e) override;
 
   CamSettings l_cam;
   sofa::Data<Vector3> d_center;
@@ -80,6 +82,7 @@ int CameraTrajectoryClass = sofa::core::RegisterObject(
                                 "trajectory on a plane, around a point")
                                 .add<CameraTrajectory>();
 
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_ROTATEAROUNDENGINE_H
+}  // namespace control
+}  // namespace cam
+}  // namespace sofacv
+#endif  // SOFACV_CAM_CONTROL_ROTATEAROUNDENGINE_H

@@ -2,9 +2,9 @@
 
 #include <SofaQtQuickGUI/SofaScene.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace gui
 {
 using namespace sofa;
 ImageFilterModel::ImageFilterModel(QObject* parent)
@@ -40,14 +40,13 @@ void ImageFilterModel::handleSofaDataChange()
   // Here, list all potential renderer
   const core::objectmodel::BaseClass* bc = baseComponent->getClass();
   if (bc->hasParent("ImageFilter"))
-    setImageFilter(
-        dynamic_cast<sofaor::processor::ImageFilter*>(baseComponent));
+    setImageFilter(dynamic_cast<common::ImageFilter*>(baseComponent));
   else
     msg_error("ImageFilterModel")
         << "Component Type " << baseComponent->getClassName() << " unknown";
 }
 
-sofaor::processor::ImageFilter* ImageFilterModel::imageFilter() const
+common::ImageFilter* ImageFilterModel::imageFilter() const
 {
   if (!m_sofaComponent)
   {
@@ -62,7 +61,7 @@ sofaor::processor::ImageFilter* ImageFilterModel::imageFilter() const
   return m_imageFilter;
 }
 
-void ImageFilterModel::setImageFilter(ImageFilter* imageFilter)
+void ImageFilterModel::setImageFilter(common::ImageFilter* imageFilter)
 {
   m_imageFilter = imageFilter;
 }
@@ -98,8 +97,7 @@ void ImageFilterModelList::handleSofaDataChange()
 {
   if (m_sofaComponentList.size() < 1) return;
 
-  for (sofaor::processor::ImageFilterModel* imageFilterModel :
-       m_imageFilterModelList)
+  for (sofacv::gui::ImageFilterModel* imageFilterModel : m_imageFilterModelList)
     delete imageFilterModel;
 
   m_imageFilterModelList.clear();
@@ -115,11 +113,11 @@ void ImageFilterModelList::handleSofaDataChange()
       const core::objectmodel::BaseClass* bc = baseComponent->getClass();
       if (bc->hasParent("ImageFilter"))
       {
-        sofaor::processor::ImageFilterModel* imageFilterModel =
-            new sofaor::processor::ImageFilterModel();
+        sofacv::gui::ImageFilterModel* imageFilterModel =
+            new sofacv::gui::ImageFilterModel();
         m_imageFilterModelList.push_back(imageFilterModel);
         imageFilterModel->setImageFilter(
-            dynamic_cast<sofaor::processor::ImageFilter*>(baseComponent));
+            dynamic_cast<common::ImageFilter*>(baseComponent));
       }
       else
         msg_error("ImageFilterModelList") << "Type unknown";
@@ -131,11 +129,11 @@ void ImageFilterModelList::display(int index)
 {
   if (m_sofaComponentList.size() <= index) return;
 
-  sofaor::processor::ImageFilterModel* imageFilterModel =
+  ImageFilterModel* imageFilterModel =
       m_imageFilterModelList[index];
 
   if (imageFilterModel) imageFilterModel->display();
 }
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace gui
+}  // namespace sofacv

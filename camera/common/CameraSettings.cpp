@@ -21,15 +21,13 @@
  ******************************************************************************/
 
 #include "CameraSettings.h"
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
 #include <SofaBaseVisual/BaseCamera.h>
 #include <iomanip>
 #include <limits>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -390,7 +388,7 @@ void CameraSettings::Translation2DChanged()
 void CameraSettings::decomposeM()
 {
   cv::Mat_<double> M, K, R, t;
-  common::matrix::sofaMat2cvMat(d_M.getValue(), M);
+  matrix::sofaMat2cvMat(d_M.getValue(), M);
 
   cv::decomposeProjectionMatrix(M, K, R, t);
 
@@ -399,8 +397,8 @@ void CameraSettings::decomposeM()
       1.0 / t.at<double>(3, 0);
 
   Matrix3 _K, _R;
-  common::matrix::cvMat2sofaMat(K, _K);
-  common::matrix::cvMat2sofaMat(R, _R);
+  matrix::cvMat2sofaMat(K, _K);
+  matrix::cvMat2sofaMat(R, _R);
   decomposeK(_K);
   d_R.setValue(_R);
   d_t.setValue(_t);
@@ -839,5 +837,4 @@ void CameraSettings::init()
 }
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

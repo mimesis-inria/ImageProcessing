@@ -20,16 +20,16 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_IMAGEFILTER_H
-#define SOFA_OR_PROCESSOR_IMAGEFILTER_H
+#ifndef SOFACV_COMMON_IMAGEFILTER_H
+#define SOFACV_COMMON_IMAGEFILTER_H
 
-#ifdef SOFAOR_NEW_GUI_ENABLED
+#ifdef SOFACV_NEW_GUI_ENABLED
 #include "ImageFilter_newGUI.h"
 #else
 #include "ImageFilter_oldGUI.h"
-#endif  // SOFAOR_NEW_GUI_ENABLED
+#endif  // SOFACV_NEW_GUI_ENABLED
 
 //int ImageFilterClass = sofa::core::RegisterObject("Base class for SofaOR's image processing filters")
 //        .add<sofaor::processor::ImageFilter>();
 
-#endif  // SOFA_OR_PROCESSOR_IMAGEFILTER_H
+#endif  // SOFACV_COMMON_IMAGEFILTER_H

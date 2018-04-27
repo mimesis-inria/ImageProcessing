@@ -20,12 +20,12 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CAMERASETTINGS_H
-#define SOFA_OR_PROCESSOR_CAMERASETTINGS_H
+#ifndef SOFACV_CAM_CAMERASETTINGS_H
+#define SOFACV_CAM_CAMERASETTINGS_H
 
-#include "ProcessOR/initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/core/visual/DrawToolGL.h>
 #include <sofa/core/visual/VisualManager.h>
@@ -39,9 +39,7 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 /**
  * \brief Camera-related stuff
@@ -59,7 +57,7 @@ namespace cam
  * - "Decomposed" representation: 2D scale, skew and translation matrix,
  *    camera position, orientation etc.
  */
-class CameraSettings : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API CameraSettings : public ImplicitDataEngine
 {
  public:
   typedef sofa::defaulttype::RigidTypes::Coord Rigid;
@@ -74,7 +72,7 @@ class CameraSettings : public common::ImplicitDataEngine
   typedef sofa::defaulttype::Quat Quat;
 
  public:
-  SOFA_CLASS(CameraSettings, common::ImplicitDataEngine);
+  SOFA_CLASS(CameraSettings, ImplicitDataEngine);
 
   /**
    * There are multiple ways of initializing this component, but the imageSize
@@ -287,6 +285,5 @@ class CameraSettings : public common::ImplicitDataEngine
 };
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CAMERASETTINGS_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_CAMERASETTINGS_H

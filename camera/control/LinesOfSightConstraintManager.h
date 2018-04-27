@@ -1,24 +1,25 @@
-#ifndef SOFAOR_PROCESSOR_CAMERA_CONTROL_LINESOFSIGHTCONSTRAINT_H
-#define SOFAOR_PROCESSOR_CAMERA_CONTROL_LINESOFSIGHTCONSTRAINT_H
+#ifndef SOFACV_CAM_CONTROL_LINESOFSIGHTCONSTRAINT_H
+#define SOFACV_CAM_CONTROL_LINESOFSIGHTCONSTRAINT_H
 
+#include "ImageProcessingPlugin.h"
 #include "camera/common/CameraSettings.h"
-#include "initPlugin.h"
 
-#include <SofaBaseMechanics/MechanicalObject.h>
 #include <SofaBaseMechanics/BarycentricMapping.h>
+#include <SofaBaseMechanics/MechanicalObject.h>
 #include <SofaConstraint/SlidingConstraint.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/core/objectmodel/BaseContext.h>
 #include <sofa/core/objectmodel/BaseObjectDescription.h>
 #include <sofa/defaulttype/VecTypes.h>
 
-
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace cam
+{
+namespace control
 {
 template <class DataTypes>
-class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API LOSConstraintManager : public ImplicitDataEngine
 {
   typedef typename sofa::component::constraintset::SlidingConstraint<
       DataTypes>::SPtr SlidingConstraint;
@@ -34,16 +35,14 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
       sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
       MechanicalObject;
 
-    typedef sofa::core::objectmodel::SingleLink<
-        LOSConstraintManager,
-        sofa::core::objectmodel::BaseObject,
-        sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
-        BarycentricMapping;
-
+  typedef sofa::core::objectmodel::SingleLink<
+      LOSConstraintManager, sofa::core::objectmodel::BaseObject,
+      sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
+      BarycentricMapping;
 
  public:
   SOFA_CLASS(SOFA_TEMPLATE(LOSConstraintManager, DataTypes),
-             sofaor::common::ImplicitDataEngine);
+             ImplicitDataEngine);
 
  protected:
   CamSettings l_cam;
@@ -57,7 +56,7 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
  public:
   LOSConstraintManager();
 
-  virtual ~LOSConstraintManager() {}
+  virtual ~LOSConstraintManager() override {}
 
   virtual void init() override;
 
@@ -67,10 +66,11 @@ class LOSConstraintManager : public sofaor::common::ImplicitDataEngine
   /// Since input sources are links, update is not performed with standard
   /// handleEvent
   /// TODO: use positions vector only..?
-  virtual void handleEvent(sofa::core::objectmodel::Event* /*e*/);
+  virtual void handleEvent(sofa::core::objectmodel::Event* /*e*/) override;
 };
 
-}  // namespace processor
+}  // namespace control
+}  // namespace cam
 }  // namespace sofaor
 
-#endif  // SOFAOR_PROCESSOR_CAMERA_CONTROL_LINESOFSIGHTCONSTRAINT_H
+#endif  // SOFACV_CAM_CONTROL_LINESOFSIGHTCONSTRAINT_H

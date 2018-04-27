@@ -20,24 +20,22 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_OPTICALFLOW_H
-#define SOFA_OR_PROCESSOR_OPTICALFLOW_H
+#ifndef SOFACV_FEATURES_OPTICALFLOW_H
+#define SOFACV_FEATURES_OPTICALFLOW_H
 
 #include "common/ImageFilter.h"
 
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/helper/vector.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
-class OpticalFlow : public ImageFilter
+class SOFA_IMAGEPROCESSING_API OpticalFlow : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(OpticalFlow, ImageFilter);
+  SOFA_CLASS(OpticalFlow, common::ImageFilter);
 
   sofa::Data<sofa::defaulttype::Vec2i> d_winSize;
   sofa::Data<int> d_maxLevel;
@@ -72,6 +70,5 @@ int OpticalFlowClass =
         .add<OpticalFlow>();
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_OPTICALFLOW_H
+}  // namespace sofacv
+#endif  // SOFACV_FEATURES_OPTICALFLOW_H

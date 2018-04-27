@@ -33,9 +33,7 @@
 
 #include <opencv2/core/persistence.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -63,7 +61,7 @@ CalibExporter::CalibExporter()
       d_calibName(
           initData(&d_calibName, "fileName",
                    "Calibration file name (timestamp if not specified")),
-      d_nSteps(initData(&d_nSteps, (unsigned)0, "nSteps",
+      d_nSteps(initData(&d_nSteps, unsigned(0), "nSteps",
                         "number of steps between each export (0 means no "
                         "export during animation")),
       d_exportType(initData(&d_exportType, "exportType",
@@ -154,26 +152,26 @@ void CalibExporter::exportCalib(const std::string& calibFile)
     double e1, e2, es;
     e1 = e2 = es = 0.0;
 
-    common::matrix::sofaMat2cvMat(
+    matrix::sofaMat2cvMat(
         l_sCam->getCamera1().getIntrinsicCameraMatrix(), KL);
-    common::matrix::sofaMat2cvMat(l_sCam->getCamera1().getRotationMatrix(), RL);
-    common::matrix::sofaVector2cvMat(l_sCam->getCamera1().getPosition(), TL);
-    common::matrix::sofaVector2cvMat(
+    matrix::sofaMat2cvMat(l_sCam->getCamera1().getRotationMatrix(), RL);
+    matrix::sofaVector2cvMat(l_sCam->getCamera1().getPosition(), TL);
+    matrix::sofaVector2cvMat(
         l_sCam->getCamera1().getDistortionCoefficients(), dvL);
-    common::matrix::sofaVector2cvMat(l_sCam->getCamera1().getImageSize(), resL);
+    matrix::sofaVector2cvMat(l_sCam->getCamera1().getImageSize(), resL);
 
-    common::matrix::sofaMat2cvMat(
+    matrix::sofaMat2cvMat(
         l_sCam->getCamera2().getIntrinsicCameraMatrix(), KR);
-    common::matrix::sofaMat2cvMat(l_sCam->getCamera2().getRotationMatrix(), RR);
-    common::matrix::sofaVector2cvMat(l_sCam->getCamera2().getPosition(), TR);
-    common::matrix::sofaVector2cvMat(
+    matrix::sofaMat2cvMat(l_sCam->getCamera2().getRotationMatrix(), RR);
+    matrix::sofaVector2cvMat(l_sCam->getCamera2().getPosition(), TR);
+    matrix::sofaVector2cvMat(
         l_sCam->getCamera2().getDistortionCoefficients(), dvR);
-    common::matrix::sofaVector2cvMat(l_sCam->getCamera2().getImageSize(), resR);
+    matrix::sofaVector2cvMat(l_sCam->getCamera2().getImageSize(), resR);
 
-    common::matrix::sofaMat2cvMat(l_sCam->getEssentialMatrix(), E);
-    common::matrix::sofaMat2cvMat(l_sCam->getFundamentalMatrix(), F);
-    //		common::matrix::sofaMat2cvMat(l_sCam->getRotationMatrix(), Rs);
-    //		common::matrix::sofaVector2cvMat(l_sCam->getTranslationVector(),
+    matrix::sofaMat2cvMat(l_sCam->getEssentialMatrix(), E);
+    matrix::sofaMat2cvMat(l_sCam->getFundamentalMatrix(), F);
+    //		matrix::sofaMat2cvMat(l_sCam->getRotationMatrix(), Rs);
+    //		matrix::sofaVector2cvMat(l_sCam->getTranslationVector(),
     //ts);
 
     export_cam(KL, TL, RL, fs, e1, dvL, resL);
@@ -205,12 +203,12 @@ void CalibExporter::exportCalib(const std::string& calibFile)
     cv::Mat R, t, dvL, KL, res;
     double e = 0.0;
 
-    common::matrix::sofaMat2cvMat(l_cam1->getRotationMatrix(), R);
-    common::matrix::sofaVector2cvMat(l_cam1->getPosition(), t);
+    matrix::sofaMat2cvMat(l_cam1->getRotationMatrix(), R);
+    matrix::sofaVector2cvMat(l_cam1->getPosition(), t);
 
-    common::matrix::sofaMat2cvMat(l_cam1->getIntrinsicCameraMatrix(), KL);
-    common::matrix::sofaVector2cvMat(l_cam1->getDistortionCoefficients(), dvL);
-    common::matrix::sofaVector2cvMat(l_cam1->getImageSize(), res);
+    matrix::sofaMat2cvMat(l_cam1->getIntrinsicCameraMatrix(), KL);
+    matrix::sofaVector2cvMat(l_cam1->getDistortionCoefficients(), dvL);
+    matrix::sofaVector2cvMat(l_cam1->getImageSize(), res);
 
     export_cam(KL, t, R, fs, e, dvL, res);
   }
@@ -243,5 +241,4 @@ bool CalibExporter::canExport(const std::string& fileDir,
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

@@ -24,9 +24,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
@@ -61,14 +59,14 @@ void Segmenter2D::init()
   addInput(&d_points);
   addInput(&d_regionPoly);
   addOutput(&d_regionPoints);
-  ImageFilter::activateMouseCallback();
+  common::ImageFilter::activateMouseCallback();
   setMouseState(&Segmenter2D::freeMove);
-  ImageFilter::init();
+  common::ImageFilter::init();
 }
 
 void Segmenter2D::Update()
 {
-  ImageFilter::Update();
+  common::ImageFilter::Update();
 
   if (d_regionPoly.getValue().size() <= 2)
   {
@@ -147,7 +145,7 @@ void Segmenter2D::freeMove(int event, int /*x*/, int /*y*/, int /*flags*/)
     d_regionLabel.beginWriteOnly()->clear();
     d_regionPoly.endEdit();
     d_regionLabel.endEdit();
-    ImageFilter::update();
+    common::ImageFilter::update();
   }
 }
 void Segmenter2D::capture(int event, int x, int y, int flags)
@@ -219,7 +217,7 @@ void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
       d_regionPoly.endEdit();
       m_poly.clear();
       setMouseState(&Segmenter2D::freeMove);
-      ImageFilter::update();
+      common::ImageFilter::update();
     }
     break;
     default:
@@ -234,5 +232,4 @@ void Segmenter2D::mouseCallback(int event, int x, int y, int flags)
 }
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

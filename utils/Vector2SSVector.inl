@@ -1,8 +1,6 @@
 #include "Vector2SSVector.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace utils
 {
@@ -26,5 +24,4 @@ void Vector2SSVector<T>::Update()
 }
 
 }  // namespace utils
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

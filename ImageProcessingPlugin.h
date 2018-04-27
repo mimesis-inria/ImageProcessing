@@ -20,15 +20,15 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef PROCESSORPLUGIN_H
-#define PROCESSORPLUGIN_H
+#ifndef IMAGEPROCESSSINGPLUGIN_H
+#define IMAGEPROCESSSINGPLUGIN_H
 
 #include <sofa/helper/system/config.h>
 
-#ifdef SOFA_BUILD_PROCESSOR_PLUGIN
-#define SOFA_PROCESSOR_API SOFA_EXPORT_DYNAMIC_LIBRARY
+#ifdef SOFA_BUILD_IMAGEPROCESSING_PLUGIN
+#define SOFA_IMAGEPROCESSING_API SOFA_EXPORT_DYNAMIC_LIBRARY
 #else
-#define SOFA_PROCESSOR_API SOFA_IMPORT_DYNAMIC_LIBRARY
+#define SOFA_IMAGEPROCESSING_API SOFA_IMPORT_DYNAMIC_LIBRARY
 #endif
 
-#endif  // PROCESSORPLUGIN_H
+#endif  // IMAGEPROCESSSINGPLUGIN_H

@@ -20,24 +20,24 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_ACQUISITOR_PCVIEWER_H
-#define SOFA_OR_ACQUISITOR_PCVIEWER_H
+#ifndef SOFACV_COMMON_PCVIEWER_H
+#define SOFACV_COMMON_PCVIEWER_H
 
-#include "initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
-class PCViewer : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API PCViewer : public ImplicitDataEngine
 {
 	typedef sofa::defaulttype::Vector3 Vector3;
 	typedef sofa::defaulttype::Vec<3, uint8_t> Vec3b;
 
  public:
-	SOFA_CLASS(PCViewer, common::ImplicitDataEngine);
+    SOFA_CLASS(PCViewer, ImplicitDataEngine);
 
  public:
   PCViewer();
@@ -60,6 +60,6 @@ class PCViewer : public common::ImplicitDataEngine
 	std::vector<Vector3> m_positions;
 };
 
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_ACQUISITOR_PCVIEWER_H
+}  // namespace common
+}  // namespace sofacv
+#endif  // SOFACV_COMMON_PCVIEWER_H

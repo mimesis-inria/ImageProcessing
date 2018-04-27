@@ -22,9 +22,7 @@
 
 #include "CalibratedCamera.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -178,9 +176,9 @@ void CalibratedCamera::postDrawScene(sofa::core::visual::VisualParams *)
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
 
-    common::cvMat &img = *d_img.beginEdit();
+    cvMat &img = *d_img.beginEdit();
     img.release();
-    img = common::cvMat(viewport[3], viewport[2], CV_8UC3);
+    img = cvMat(viewport[3], viewport[2], CV_8UC3);
 
     glReadBuffer(GL_FRONT);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -241,5 +239,4 @@ void CalibratedCamera::computeBBox(const sofa::core::ExecParams *params, bool)
 }
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

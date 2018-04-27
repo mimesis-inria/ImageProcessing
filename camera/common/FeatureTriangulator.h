@@ -20,25 +20,19 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
-#define SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
+#ifndef SOFACV_CAM_FEATURETRIANGULATOR_H
+#define SOFACV_CAM_FEATURETRIANGULATOR_H
 
 #include "StereoSettings.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
-#include <SofaORCommon/cvDMatch.h>
-#include <SofaORCommon/cvKeypoint.h>
-#include <SofaORCommon/cvMat.h>
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/SVector.h>
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -47,7 +41,7 @@ namespace cam
  *
  * Triangulates a set of two 2D point matches to get their 3D position.
  */
-class FeatureTriangulator : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API FeatureTriangulator : public ImplicitDataEngine
 {
 	typedef sofa::core::objectmodel::SingleLink<
 			FeatureTriangulator, StereoSettings,
@@ -57,7 +51,7 @@ class FeatureTriangulator : public common::ImplicitDataEngine
 	typedef sofa::defaulttype::Vec3d Vec3d;
 
  public:
-  SOFA_CLASS(FeatureTriangulator, common::ImplicitDataEngine);
+  SOFA_CLASS(FeatureTriangulator, ImplicitDataEngine);
 
  public:
   FeatureTriangulator();
@@ -69,11 +63,11 @@ class FeatureTriangulator : public common::ImplicitDataEngine
 	// INPUTS
 	StereoCamSettings l_cam;  ///< StereoSettings component holding the two camera
 														/// settings and the fundamental matrix
-	sofa::Data<sofa::helper::vector<common::cvKeypoint> >
+    sofa::Data<sofa::helper::vector<cvKeypoint> >
 			d_keypointsL;  ///< [INPUT] reference camera's keypoints
-	sofa::Data<sofa::helper::vector<common::cvKeypoint> >
+    sofa::Data<sofa::helper::vector<cvKeypoint> >
 			d_keypointsR;  ///< [INPUT] second camera's keypoints
-	sofa::Data<sofa::helper::vector<common::cvDMatch> >
+    sofa::Data<sofa::helper::vector<cvDMatch> >
 			d_matches;  ///< [INPUT] matches between the keypoints, if not ordered
 
 	sofa::Data<sofa::helper::vector<Vec3d> >
@@ -91,6 +85,5 @@ class FeatureTriangulator : public common::ImplicitDataEngine
 };
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_FEATURETRIANGULATOR_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_FEATURETRIANGULATOR_H

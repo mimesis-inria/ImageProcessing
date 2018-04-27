@@ -22,12 +22,17 @@
 
 #include "Crop.h"
 
-sofaor::processor::imgproc::Crop::Crop()
+namespace sofacv
+{
+namespace imgproc
+{
+
+Crop::Crop()
     : d_roi(initData(&d_roi, "ROI", "x, y, w, h values of the ROI"))
 {
 }
 
-void sofaor::processor::imgproc::Crop::applyFilter(const cv::Mat &in,
+void Crop::applyFilter(const cv::Mat &in,
                                                    cv::Mat &out, bool)
 {
   if (in.empty())
@@ -46,8 +51,17 @@ void sofaor::processor::imgproc::Crop::applyFilter(const cv::Mat &in,
   out = in(roi).clone();
 }
 
-void sofaor::processor::imgproc::Crop::init()
+void Crop::init()
 {
   registerData(&d_roi, 0, 2000, 1);
   ImageFilter::init();
 }
+
+SOFA_DECL_CLASS(Crop)
+
+int CropClass =
+    sofa::core::RegisterObject("OpenCV's Crop function").add<Crop>();
+
+}  // namespace imgproc
+}  // namespace sofacv
+

@@ -20,12 +20,12 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CALIBRATECAMERA_H
-#define SOFA_OR_PROCESSOR_CALIBRATECAMERA_H
+#ifndef SOFACV_CAM_CALIB_CALIBRATECAMERA_H
+#define SOFACV_CAM_CALIB_CALIBRATECAMERA_H
 
-#include "initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 #include "camera/common/CameraSettings.h"
 
 #include <sofa/core/objectmodel/Link.h>
@@ -34,15 +34,13 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
 namespace calib
 {
-class CalibrateCamera : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API CalibrateCamera : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
       CalibrateCamera, CameraSettings,
@@ -50,12 +48,12 @@ class CalibrateCamera : public common::ImplicitDataEngine
       CamSettings;
 
  public:
-  SOFA_CLASS(CalibrateCamera, common::ImplicitDataEngine);
+  SOFA_CLASS(CalibrateCamera, ImplicitDataEngine);
 
   CalibrateCamera();
 
   ~CalibrateCamera() {}
-  void init();
+  void init() override;
 
   virtual void Update() override;
   void calibrate();
@@ -88,6 +86,5 @@ class CalibrateCamera : public common::ImplicitDataEngine
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CALIBRATECAMERA_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_CALIB_CALIBRATECAMERA_H

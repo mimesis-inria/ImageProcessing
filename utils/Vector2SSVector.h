@@ -20,26 +20,25 @@
 * Contact information: contact-mimesis@inria.fr                               *
 ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_VECTOR2SSVECTOR_H
-#define SOFA_OR_PROCESSOR_VECTOR2SSVECTOR_H
+#ifndef SOFACV_UTILS_VECTOR2SSVECTOR_H
+#define SOFACV_UTILS_VECTOR2SSVECTOR_H
+
+#include "ImageProcessingPlugin.h"
 
 #include "camera/common/CameraSettings.h"
-#include "initPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 #include <sofa/helper/SVector.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace utils
 {
 template <class T>
-class Vector2SSVector : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API Vector2SSVector : public ImplicitDataEngine
 {
  public:
-	SOFA_CLASS(SOFA_TEMPLATE(Vector2SSVector, T), common::ImplicitDataEngine);
+    SOFA_CLASS(SOFA_TEMPLATE(Vector2SSVector, T), ImplicitDataEngine);
 
 	Vector2SSVector()
 			: d_src(initData(&d_src, "srcType", "input vector to convert")),
@@ -47,8 +46,8 @@ class Vector2SSVector : public common::ImplicitDataEngine
 	{
 	}
 
-	~Vector2SSVector() {}
-	void init()
+    ~Vector2SSVector() override {}
+    void init() override
 	{
 		addInput(&d_src);
 		addOutput(&d_dst);
@@ -68,7 +67,6 @@ class Vector2SSVector : public common::ImplicitDataEngine
 };
 
 }  // namespace utils
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv
 
-#endif  // SOFA_OR_PROCESSOR_VECTOR2SSVECTOR_H
+#endif  // SOFACV_UTILS_VECTOR2SSVECTOR_H

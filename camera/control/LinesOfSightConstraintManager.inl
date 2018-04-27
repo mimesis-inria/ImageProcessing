@@ -1,19 +1,21 @@
-#ifndef SOFAOR_PROCESSOR_CAMERA_CONTROL_LINESOFSIGHTCONSTRAINT_INL
-#define SOFAOR_PROCESSOR_CAMERA_CONTROL_LINESOFSIGHTCONSTRAINT_INL
+#ifndef SOFACV_CAM_CONTROL_LINESOFSIGHTCONSTRAINT_INL
+#define SOFACV_CAM_CONTROL_LINESOFSIGHTCONSTRAINT_INL
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include "LinesOfSightConstraintManager.h"
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace cam
+{
+namespace control
 {
 template <class DataTypes>
 void LOSConstraintManager<DataTypes>::init()
 {
-  srand(time(NULL));
+  srand(time(0));
   if (!l_cam) msg_error(getName() + "::init()") << "No Camera link set!";
   if (!l_slavePoints.get())
     msg_error(getName() + "::init()") << "No MState provided for slave points!";
@@ -81,7 +83,8 @@ void LOSConstraintManager<DataTypes>::Update()
 
 }
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace control
+}  // namespace cam
+}  // namespace sofacv
 
-#endif  // SOFAOR_PROCESSOR_CAMERA_CONTROL_LINESOFSIGHTCONSTRAINT_INL
+#endif  // SOFACV_CAM_CONTROL_LINESOFSIGHTCONSTRAINT_INL

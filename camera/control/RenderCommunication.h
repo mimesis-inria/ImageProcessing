@@ -1,8 +1,9 @@
 #ifndef SOFA_OR_PROCESSOR_RENDERCOMMUNICATION_H
 #define SOFA_OR_PROCESSOR_RENDERCOMMUNICATION_H
 
+#include "ImageProcessingPlugin.h"
+
 #include "camera/common/CameraSettings.h"
-#include "initPlugin.h"
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <fstream>
@@ -10,12 +11,12 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 #include <sofa/helper/OptionsGroup.h>
 
 #include <zmq.hpp>
 
-namespace sofaor
+namespace sofacv
 {
 namespace processor
 {

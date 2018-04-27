@@ -24,9 +24,7 @@
 
 #include <sofa/core/ObjectFactory.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
@@ -45,5 +43,4 @@ int ConvertToClass = sofa::core::RegisterObject(
 
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

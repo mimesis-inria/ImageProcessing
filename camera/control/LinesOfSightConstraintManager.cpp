@@ -3,9 +3,11 @@
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/defaulttype/Vec3Types.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace cam
+{
+namespace control
 {
 SOFA_DECL_CLASS(LOSConstraintManager)
 
@@ -43,5 +45,6 @@ void LOSConstraintManager<DataTypes>::handleEvent(
   }
 }
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace control
+}  // namespace cam
+}  // namespace sofacv

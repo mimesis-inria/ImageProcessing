@@ -20,43 +20,35 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_MINMAXLOC_H
-#define SOFA_OR_PROCESSOR_MINMAXLOC_H
+#ifndef SOFACV_IMGPROC_MINMAXLOC_H
+#define SOFACV_IMGPROC_MINMAXLOC_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class MinMaxLoc : public ImageFilter
+class SOFA_IMAGEPROCESSING_API MinMaxLoc : public common::ImageFilter
 {
 
  public:
-  SOFA_CLASS(MinMaxLoc, ImageFilter);
+  SOFA_CLASS(MinMaxLoc, common::ImageFilter);
 
   sofa::Data<double> d_min;
   sofa::Data<double> d_max;
   sofa::Data<sofa::defaulttype::Vec2i> d_minLoc;
   sofa::Data<sofa::defaulttype::Vec2i> d_maxLoc;
-  sofa::Data<common::cvMat> d_mask;
+  sofa::Data<cvMat> d_mask;
 
   MinMaxLoc();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& /*out*/, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& /*out*/, bool) override;
 };
 
-SOFA_DECL_CLASS(MinMaxLoc)
-
-int MinMaxLocClass =
-    sofa::core::RegisterObject("OpenCV's implementation of cv::MinMaxLoc")
-        .add<MinMaxLoc>();
-
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_MINMAXLOC_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_MINMAXLOC_H

@@ -1,6 +1,13 @@
 #include "FindChessboardCorners.h"
 
-sofaor::processor::cam::calib::FindPatternCorners::FindPatternCorners()
+namespace sofacv
+{
+namespace cam
+{
+namespace calib
+{
+
+FindPatternCorners::FindPatternCorners()
     : d_imagePoints(initData(&d_imagePoints, "imagePoints",
                              "output vector of image points")),
       d_patternType(initData(
@@ -28,7 +35,7 @@ sofaor::processor::cam::calib::FindPatternCorners::FindPatternCorners()
   d_patternType.endEdit();
 }
 
-void sofaor::processor::cam::calib::FindPatternCorners::applyFilter(
+void FindPatternCorners::applyFilter(
     const cv::Mat& in, cv::Mat& out, bool)
 {
   bool found = false;
@@ -55,11 +62,15 @@ void sofaor::processor::cam::calib::FindPatternCorners::applyFilter(
 
   sofa::helper::vector<sofa::defaulttype::Vec2i>& pts = *d_imagePoints.beginEdit();
   pts.clear();
-  for (auto pt : corners) pts.push_back(sofa::defaulttype::Vec2i(pt.x, pt.y));
+  for (auto pt : corners) pts.push_back(sofa::defaulttype::Vec2i(int(pt.x), int(pt.y)));
   d_imagePoints.endEdit();
 }
 
-void sofaor::processor::cam::calib::FindPatternCorners::init()
+void FindPatternCorners::init()
 {
   ImageFilter::init();
 }
+
+} // namespace calib
+} // namespace cam
+} // namespace sofacv

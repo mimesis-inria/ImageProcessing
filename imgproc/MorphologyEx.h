@@ -20,21 +20,20 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_MORPHOLOGYEX_H
-#define SOFA_OR_PROCESSOR_MORPHOLOGYEX_H
+#ifndef SOFACV_IMGPROC_MORPHOLOGYEX_H
+#define SOFACV_IMGPROC_MORPHOLOGYEX_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class MorphologyEx : public ImageFilter
+class SOFA_IMAGEPROCESSING_API MorphologyEx : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(MorphologyEx, ImageFilter);
+  SOFA_CLASS(MorphologyEx, common::ImageFilter);
 
   sofa::Data<int> d_ksize;
   sofa::Data<sofa::helper::OptionsGroup> d_operator;
@@ -42,19 +41,12 @@ class MorphologyEx : public ImageFilter
 
   MorphologyEx();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(MorphologyEx)
-
-int MorphologyExClass =
-    sofa::core::RegisterObject(
-        "OpenCV's implementation of a opencv's morphology operators")
-        .add<MorphologyEx>();
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_MORPHOLOGYEX_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_MORPHOLOGYEX_H

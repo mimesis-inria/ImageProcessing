@@ -22,7 +22,12 @@
 
 #include "FrameExporter.h"
 
-sofaor::processor::FrameExporter::FrameExporter()
+namespace sofacv
+{
+namespace common
+{
+
+FrameExporter::FrameExporter()
     : d_fileName(initData(&d_fileName, "fileName", "output image file name")),
       d_img(initData(&d_img, "img", "image to export")),
       d_nSteps(initData(&d_nSteps, (unsigned)0, "nSteps",
@@ -42,14 +47,14 @@ sofaor::processor::FrameExporter::FrameExporter()
   d_exportType.endEdit();
 }
 
-void sofaor::processor::FrameExporter::init()
+void FrameExporter::init()
 {
   m_stepCounter = 0;
   addInput(&d_img);
   update();
 }
 
-void sofaor::processor::FrameExporter::Update()
+void FrameExporter::Update()
 {
   ++m_stepCounter;
 
@@ -90,7 +95,7 @@ void sofaor::processor::FrameExporter::Update()
   }
 }
 
-void sofaor::processor::FrameExporter::cleanup()
+void FrameExporter::cleanup()
 {
   std::cout << "cleanup called on exporter" << std::endl;
   if (d_exportType.getValue().getSelectedId() == 1)  // END
@@ -113,3 +118,6 @@ void sofaor::processor::FrameExporter::cleanup()
     cv::imwrite(d_fileName.getValue(), img, qualityType);
   }
 }
+
+} // namespace common
+} // namespace sofacv

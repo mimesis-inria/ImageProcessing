@@ -20,9 +20,10 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_TEMPLATEMATCHER_H
-#define SOFA_OR_PROCESSOR_TEMPLATEMATCHER_H
+#ifndef SOFACV_IMGPROC_TEMPLATEMATCHER_H
+#define SOFACV_IMGPROC_TEMPLATEMATCHER_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
 #include <sofa/helper/OptionsGroup.h>
@@ -30,35 +31,25 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class TemplateMatcher : public ImageFilter
+class SOFA_IMAGEPROCESSING_API TemplateMatcher : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(TemplateMatcher, ImageFilter);
+  SOFA_CLASS(TemplateMatcher, common::ImageFilter);
 
-  sofa::Data<common::cvMat> d_template;
+  sofa::Data<cvMat> d_template;
   sofa::Data<sofa::helper::OptionsGroup> d_method;
 
   TemplateMatcher();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(TemplateMatcher)
-
-int TemplateMatcherClass = sofa::core::RegisterObject(
-                               "the 6 Template matching algorithms from "
-                               "OpenCV's cv::matchTemplate() method")
-                               .add<TemplateMatcher>();
-
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_TEMPLATEMATCHER_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_TEMPLATEMATCHER_H

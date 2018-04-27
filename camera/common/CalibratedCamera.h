@@ -20,13 +20,14 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CALIBRATEDCAMERA_H
-#define SOFA_OR_PROCESSOR_CALIBRATEDCAMERA_H
+#ifndef SOFACV_CAM_CALIBRATEDCAMERA_H
+#define SOFACV_CAM_CALIBRATEDCAMERA_H
 
-#include "ProcessOR/initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
 #include "CameraSettings.h"
+
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/core/objectmodel/KeyreleasedEvent.h>
 #include <sofa/core/visual/DrawToolGL.h>
@@ -39,9 +40,7 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -51,7 +50,7 @@ namespace cam
  * This component gets / sets OpenGL parameters from / to a linked
  * CameraSettings component, and modifies the OpenGL view in SOFA
  */
-class CalibratedCamera : public common::ImplicitDataEngine,
+class SOFA_IMAGEPROCESSING_API CalibratedCamera : public ImplicitDataEngine,
                          public sofa::core::visual::VisualManager
 {
   typedef sofa::core::objectmodel::SingleLink<
@@ -62,12 +61,12 @@ class CalibratedCamera : public common::ImplicitDataEngine,
   typedef typename sofa::defaulttype::Vector3 Vector3;
 
  public:
-  SOFA_CLASS2(CalibratedCamera, common::ImplicitDataEngine,
+  SOFA_CLASS2(CalibratedCamera, ImplicitDataEngine,
               sofa::core::visual::VisualManager);
 
   CalibratedCamera();
 
-  ~CalibratedCamera() {}
+  virtual ~CalibratedCamera() override {}
   void init() override;
   void reinit() override {}
   void Update() override;
@@ -92,13 +91,12 @@ class CalibratedCamera : public common::ImplicitDataEngine,
       d_freeProj;  ///< set / unset CameraSettings intrinsic params in OpenGL
   sofa::Data<bool> d_drawGizmo;  ///< draws / hides the camera gizmo
   sofa::Data<bool> d_captureFrame;  ///< captures camera's viewport as cvMat
-  sofa::Data<common::cvMat> d_img;  ///< captured camera frame
+  sofa::Data<cvMat> d_img;  ///< captured camera frame
 
  private:
   bool m_storeMatrices;
 };
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CALIBRATEDCAMERA_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_CALIBRATEDCAMERA_H

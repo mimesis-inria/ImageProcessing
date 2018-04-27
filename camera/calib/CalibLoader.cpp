@@ -34,9 +34,7 @@
 
 #include <opencv2/core/persistence.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -162,7 +160,7 @@ void CalibLoader::setCurrentCalib(const std::string& calibName)
 
 void CalibLoader::load(const std::string& filename)
 {
-  cv::FileStorage* fs = NULL;
+  cv::FileStorage* fs;
   try
   {
     fs = new cv::FileStorage(filename, cv::FileStorage::READ);
@@ -219,23 +217,23 @@ void CalibLoader::load(const std::string& filename)
 
   CalibData c;
 
-  common::matrix::cvMat2sofaVector(imsize1, c.imSize1);
-  common::matrix::cvMat2sofaMat(K1, c.K1);
-  common::matrix::cvMat2sofaMat(R1, c.R1);
-  common::matrix::cvMat2sofaVector(T1, c.T1);
-  common::matrix::cvMat2sofaVector(delta1, c.delta1);
+  matrix::cvMat2sofaVector(imsize1, c.imSize1);
+  matrix::cvMat2sofaMat(K1, c.K1);
+  matrix::cvMat2sofaMat(R1, c.R1);
+  matrix::cvMat2sofaVector(T1, c.T1);
+  matrix::cvMat2sofaVector(delta1, c.delta1);
   c.error1 = error1;
 
-  common::matrix::cvMat2sofaVector(imsize2, c.imSize2);
-  common::matrix::cvMat2sofaMat(K2, c.K2);
-  common::matrix::cvMat2sofaMat(R2, c.R2);
-  common::matrix::cvMat2sofaVector(T2, c.T2);
-  common::matrix::cvMat2sofaVector(delta2, c.delta2);
+  matrix::cvMat2sofaVector(imsize2, c.imSize2);
+  matrix::cvMat2sofaMat(K2, c.K2);
+  matrix::cvMat2sofaMat(R2, c.R2);
+  matrix::cvMat2sofaVector(T2, c.T2);
+  matrix::cvMat2sofaVector(delta2, c.delta2);
   c.error2 = error2;
-  common::matrix::cvMat2sofaMat(Rs, c.Rs);
-  common::matrix::cvMat2sofaVector(Ts, c.Ts);
-  common::matrix::cvMat2sofaMat(F, c.F);
-  common::matrix::cvMat2sofaMat(E, c.E);
+  matrix::cvMat2sofaMat(Rs, c.Rs);
+  matrix::cvMat2sofaVector(Ts, c.Ts);
+  matrix::cvMat2sofaMat(F, c.F);
+  matrix::cvMat2sofaMat(E, c.E);
   c.totalError = totalError;
 
   m_calibs[calibName] = c;
@@ -398,5 +396,4 @@ CalibLoader::CalibData::CalibData(
 
 }  // namespace calib
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

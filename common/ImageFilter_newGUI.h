@@ -1,16 +1,17 @@
-#ifndef SOFA_OR_PROCESSOR_IMAGEFILTER_NEWGUI_H
-#define SOFA_OR_PROCESSOR_IMAGEFILTER_NEWGUI_H
+#ifndef SOFACV_COMMON_IMAGEFILTER_NEWGUI_H
+#define SOFACV_COMMON_IMAGEFILTER_NEWGUI_H
 
-#include <SofaORCommon/ImplicitDataEngine.h>
-#include <SofaORCommon/cvMat.h>
+#include "ImageProcessingPlugin.h"
+
+#include <SofaCV/SofaCV.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 #include <opencv2/highgui.hpp>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
 /**
  *  \brief provides a Debug UI mechanism for image filters
@@ -45,10 +46,10 @@ namespace processor
  * }
  *
  */
-class ImageFilter : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API ImageFilter : public ImplicitDataEngine
 {
  public:
-  SOFA_CLASS(ImageFilter, common::ImplicitDataEngine);
+  SOFA_CLASS(ImageFilter, ImplicitDataEngine);
 
   /**
    * @brief ImageFilter
@@ -60,7 +61,7 @@ class ImageFilter : public common::ImplicitDataEngine
    * processing)
    */
   ImageFilter();
-  virtual ~ImageFilter();
+  virtual ~ImageFilter() override;
 
   void init() override;
   virtual void Update() override;
@@ -78,8 +79,8 @@ class ImageFilter : public common::ImplicitDataEngine
   virtual void applyFilter(const cv::Mat& /*in*/, cv::Mat& /*out*/,
                            bool /*debug*/ = false) = 0;
 
-  sofa::Data<common::cvMat> d_img;      ///< [INPUT] image to process
-  sofa::Data<common::cvMat> d_img_out;  ///< [OUTPUT] processed image
+  sofa::Data<cvMat> d_img;      ///< [INPUT] image to process
+  sofa::Data<cvMat> d_img_out;  ///< [OUTPUT] processed image
   sofa::Data<bool> d_isActive;  ///< Whether the filter is performed or not
   sofa::Data<bool> d_outputImage;
 
@@ -251,6 +252,6 @@ class ImageFilter : public common::ImplicitDataEngine
   void reinitDebugWindow();
 };
 
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_IMAGEFILTER_NEWGUI_H
+}  // namespace common
+}  // namespace sofacv
+#endif  // SOFACV_COMMON_IMAGEFILTER_NEWGUI_H

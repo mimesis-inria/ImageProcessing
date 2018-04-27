@@ -26,22 +26,18 @@
 #include "Matchers.h"
 #include "common/ImageFilter.h"
 
-#include <SofaORCommon/cvDMatch.h>
-#include <SofaORCommon/cvKeypoint.h>
-#include <SofaORCommon/cvMat.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/SVector.h>
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
-class DescriptorMatcher : public ImageFilter
+class SOFA_IMAGEPROCESSING_API DescriptorMatcher : public common::ImageFilter
 {
   enum MatcherType
   {
@@ -59,36 +55,36 @@ class DescriptorMatcher : public ImageFilter
   };
 
  public:
-  SOFA_CLASS(DescriptorMatcher, ImageFilter);
+  SOFA_CLASS(DescriptorMatcher, common::ImageFilter);
 
   DescriptorMatcher();
-  virtual ~DescriptorMatcher();
+  virtual ~DescriptorMatcher() override;
 
   virtual void init() override;
   virtual void Update() override;
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug) override;
 
   sofa::Data<sofa::helper::OptionsGroup> d_matcherType;
   sofa::Data<sofa::helper::OptionsGroup> d_matchingAlgo;
   sofa::Data<int> d_k;
   sofa::Data<float> d_maxDistance;
-  sofa::Data<common::cvMat> d_mask;
+  sofa::Data<cvMat> d_mask;
 
-  sofa::Data<common::cvMat> d_queryDescriptors;
-  sofa::Data<common::cvMat> d_trainDescriptors;
+  sofa::Data<cvMat> d_queryDescriptors;
+  sofa::Data<cvMat> d_trainDescriptors;
 
-  sofa::Data<common::cvMat> d_in2;
-  sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_kptsL;
-  sofa::Data<sofa::helper::vector<common::cvKeypoint> > d_kptsR;
+  sofa::Data<cvMat> d_in2;
+  sofa::Data<sofa::helper::vector<cvKeypoint> > d_kptsL;
+  sofa::Data<sofa::helper::vector<cvKeypoint> > d_kptsR;
 
-  sofa::Data<sofa::helper::SVector<sofa::helper::SVector<common::cvDMatch> > >
+  sofa::Data<sofa::helper::SVector<sofa::helper::SVector<cvDMatch> > >
       d_matches;
 
-  void match(const common::cvMat& queryDescriptors,
+  void match(const cvMat& queryDescriptors,
              std::vector<cv::DMatch>& matches);
-  void knnMatch(const common::cvMat& queryDescriptors,
+  void knnMatch(const cvMat& queryDescriptors,
                 std::vector<std::vector<cv::DMatch> >& matches, int k);
-  void radiusMatch(const common::cvMat& queryDescriptors,
+  void radiusMatch(const cvMat& queryDescriptors,
                    std::vector<std::vector<cv::DMatch> >& matches,
                    float maxDistance);
 
@@ -101,6 +97,5 @@ class DescriptorMatcher : public ImageFilter
 };
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_DESCRIPTORMATCHER_H
+}  // namespace sofacv
+#endif  // SOFACV_FEATURES_DESCRIPTORMATCHER_H

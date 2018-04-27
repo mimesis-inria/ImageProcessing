@@ -21,13 +21,11 @@
 ******************************************************************************/
 
 #include "FeatureColorExtractor.h"
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/core/ObjectFactory.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
@@ -55,12 +53,12 @@ void FeatureColorExtractor::init()
 
 	addOutput(&d_colors);
 
-  ImageFilter::init();
+  common::ImageFilter::init();
 }
 
 void FeatureColorExtractor::Update()
 {
-  ImageFilter::Update();
+  common::ImageFilter::Update();
 
 	sofa::helper::vector<Vec3b>& colors = *(d_colors.beginWriteOnly());
 	colors.clear();
@@ -73,7 +71,7 @@ void FeatureColorExtractor::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
 	out.zeros(in.rows, in.cols, in.type());
 	m_colors.clear();
-	const sofa::helper::vector<common::cvKeypoint>& kpts = d_keypoints.getValue();
+    const sofa::helper::vector<cvKeypoint>& kpts = d_keypoints.getValue();
 	for (auto kp : kpts)
 	{
 		cv::Vec3b c = d_img.getValue().at<cv::Vec3b>(kp.pt.y, kp.pt.x);
@@ -83,5 +81,4 @@ void FeatureColorExtractor::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 }
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

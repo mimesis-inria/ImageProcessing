@@ -22,14 +22,18 @@
 
 #include "ImageRectifier.h"
 
-sofaor::processor::cam::ImageRectifier::ImageRectifier()
+namespace sofacv
+{
+namespace cam
+{
+ImageRectifier::ImageRectifier()
     : l_cam(initLink("cam",
                      "link to CameraSettings component containing and "
                      "maintaining the camera's parameters"))
 {
 }
 
-void sofaor::processor::cam::ImageRectifier::init()
+void ImageRectifier::init()
 {
   if (!l_cam.get())
     msg_error(getName() + "::init()") << "Error: No camera link set. "
@@ -38,11 +42,12 @@ void sofaor::processor::cam::ImageRectifier::init()
   ImageFilter::init();
 }
 
-void sofaor::processor::cam::ImageRectifier::applyFilter(const cv::Mat &in,
-                                                         cv::Mat &out, bool)
+void ImageRectifier::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty() || l_cam->getDistortionCoefficients().empty()) return;
   cv::Mat_<double> cam;
-  common::matrix::sofaMat2cvMat(l_cam->getIntrinsicCameraMatrix(), cam);
+  matrix::sofaMat2cvMat(l_cam->getIntrinsicCameraMatrix(), cam);
   cv::undistort(in, out, cam, l_cam->getDistortionCoefficients());
 }
+}  // namespace cam
+}  // namespace sofacv

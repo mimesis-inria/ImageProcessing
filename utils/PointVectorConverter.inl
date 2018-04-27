@@ -1,11 +1,8 @@
 #include "PointVectorConverter.h"
 
-#include <SofaORCommon/cvKeypoint.h>
-//#include <SofaORCommon/CameraUtils.h>
+#include <SofaCV/SofaCV.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace utils
 {
@@ -18,15 +15,15 @@ std::string PointVectorConverter<SrcType, DstType>::templateName(
 }
 
 template <>
-void PointVectorConverter<sofa::defaulttype::Vec2i, common::cvKeypoint>::Update()
+void PointVectorConverter<sofa::defaulttype::Vec2i, cvKeypoint>::Update()
 {
-	sofa::helper::vector<common::cvKeypoint>& dst = *(d_dst.beginWriteOnly());
+    sofa::helper::vector<cvKeypoint>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
 	const sofa::helper::vector<sofa::defaulttype::Vec2i>& src = d_src.getValue();
 
 	//	if (l_functor.)
 	for (auto pt : src)
-		dst.push_back(common::cvKeypoint(cv::Point2f(pt.x(), pt.y()), 0));
+        dst.push_back(cvKeypoint(cv::Point2f(pt.x(), pt.y()), 0));
 }
 
 template <>
@@ -42,31 +39,31 @@ void PointVectorConverter<sofa::defaulttype::Vec2i, sofa::defaulttype::Vec2d>::U
 }
 
 template <>
-void PointVectorConverter<common::cvKeypoint, sofa::defaulttype::Vec2i>::Update()
+void PointVectorConverter<cvKeypoint, sofa::defaulttype::Vec2i>::Update()
 {
 	sofa::helper::vector<sofa::defaulttype::Vec2i>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
-	const sofa::helper::vector<common::cvKeypoint>& src = d_src.getValue();
+    const sofa::helper::vector<cvKeypoint>& src = d_src.getValue();
 	for (auto kp : src) dst.push_back(sofa::defaulttype::Vec2i(kp.pt.x, kp.pt.y));
 }
 
 template <>
-void PointVectorConverter<sofa::defaulttype::Vec2d, common::cvKeypoint>::Update()
+void PointVectorConverter<sofa::defaulttype::Vec2d, cvKeypoint>::Update()
 {
-	sofa::helper::vector<common::cvKeypoint>& dst = *(d_dst.beginWriteOnly());
+    sofa::helper::vector<cvKeypoint>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
 	const sofa::helper::vector<sofa::defaulttype::Vec2d>& src = d_src.getValue();
 	for (auto pt : src)
-		dst.push_back(common::cvKeypoint(cv::Point2f(pt.x(), pt.y()), 0));
+        dst.push_back(cvKeypoint(cv::Point2f(float(pt.x()), float(pt.y())), 0));
 }
 
 template <>
-void PointVectorConverter<common::cvKeypoint, sofa::defaulttype::Vec2d>::Update()
+void PointVectorConverter<cvKeypoint, sofa::defaulttype::Vec2d>::Update()
 {
 	sofa::helper::vector<sofa::defaulttype::Vec2d>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
-	const sofa::helper::vector<common::cvKeypoint>& src = d_src.getValue();
-	for (auto kp : src) dst.push_back(sofa::defaulttype::Vec2d(kp.pt.x, kp.pt.y));
+    const sofa::helper::vector<cvKeypoint>& src = d_src.getValue();
+    for (auto kp : src) dst.push_back(sofa::defaulttype::Vec2d(double(kp.pt.x), double(kp.pt.y)));
 }
 
 template <>
@@ -97,5 +94,4 @@ void PointVectorConverter<sofa::defaulttype::Vec2i, sofa::defaulttype::Vec3d>::U
 }
 
 }  // namespace utils
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

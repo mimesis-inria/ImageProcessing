@@ -5,9 +5,9 @@
 
 #include <QtGui/QOpenGLFramebufferObject>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace gui
 {
 FilterRenderer::FilterRenderer(const ImageFilterDisplay *imageFilterDisplay)
     : m_imageFilterDisplay(imageFilterDisplay)
@@ -72,5 +72,5 @@ void ImageFilterDisplay::setImageFilterModel(ImageFilterModel *imageFilterModel)
   m_imageFilterModel = imageFilterModel;
 }
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace gui
+}  // namespace sofacv

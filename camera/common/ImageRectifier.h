@@ -20,18 +20,16 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
-#define SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
+#ifndef SOFACV_CAM_IMAGERECTIFIER_H
+#define SOFACV_CAM_IMAGERECTIFIER_H
 
 #include "CameraSettings.h"
-#include "ProcessOR/common/ImageFilter.h"
-#include "SofaORCommon/cvMatUtils.h"
+#include "common/ImageFilter.h"
+#include "SofaCV/SofaCV.h"
 
 #include <opencv2/imgproc.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -40,7 +38,7 @@ namespace cam
  *
  * Rectifies a given image frame using the linked CameraSettings parameters
  */
-class ImageRectifier : public ImageFilter
+class SOFA_IMAGEPROCESSING_API ImageRectifier : public common::ImageFilter
 {
   typedef sofa::core::objectmodel::SingleLink<
       ImageRectifier, CameraSettings,
@@ -48,7 +46,7 @@ class ImageRectifier : public ImageFilter
       CamSettings;
 
  public:
-  SOFA_CLASS(ImageRectifier, ImageFilter);
+  SOFA_CLASS(ImageRectifier, common::ImageFilter);
 
   ImageRectifier();
 
@@ -64,6 +62,5 @@ int ImageRectifierClass =
     sofa::core::RegisterObject("Image undistortion").add<ImageRectifier>();
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_IMAGERECTIFIER_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_IMAGERECTIFIER_H

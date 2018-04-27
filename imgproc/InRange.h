@@ -20,40 +20,34 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_INRANGE_H
-#define SOFA_OR_PROCESSOR_INRANGE_H
+#ifndef SOFACV_IMGPROC_INRANGE_H
+#define SOFACV_IMGPROC_INRANGE_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class InRange : public ImageFilter
+class SOFA_IMAGEPROCESSING_API InRange : public common::ImageFilter
 {
   typedef typename sofa::defaulttype::Vec3i Vec3i;
 
  public:
-  SOFA_CLASS(InRange, ImageFilter);
+  SOFA_CLASS(InRange, common::ImageFilter);
 
   sofa::Data<Vec3i> d_minRange;
   sofa::Data<Vec3i> d_maxRange;
 
   InRange();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(InRange)
-
-int InRangeClass =
-    sofa::core::RegisterObject("OpenCV's InRange function").add<InRange>();
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_INRANGE_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_INRANGE_H

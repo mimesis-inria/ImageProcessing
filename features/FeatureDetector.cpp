@@ -21,14 +21,13 @@
 ******************************************************************************/
 
 #include "FeatureDetector.h"
-#include <SofaORCommon/cvMatUtils.h>
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/helper/AdvancedTimer.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
-namespace sofaor
-{
-namespace processor
+
+namespace sofacv
 {
 namespace features
 {
@@ -43,7 +42,7 @@ FeatureDetector::FeatureDetector()
     : ImageFilter(),
       d_detectMode(initData(&d_detectMode, "detectorMode",
                             "if true, does not compute the descriptors")),
-      d_mask(initData(&d_mask, common::cvMat(), "mask",
+      d_mask(initData(&d_mask, cvMat(), "mask",
                       "Mask specifying where to look for keypoints "
                       "(optional). It must be a 8-bit integer matrix with "
                       "non-zero values in the region of interest.")),
@@ -124,9 +123,9 @@ void FeatureDetector::Update()
   {
     case DETECT_ONLY:
     {
-      sofa::helper::vector<common::cvKeypoint>* vec = d_keypoints.beginEdit();
+      sofa::helper::vector<cvKeypoint>* vec = d_keypoints.beginEdit();
       vec->clear();
-      for (cv::KeyPoint& kp : _v) vec->push_back(common::cvKeypoint(kp));
+      for (cv::KeyPoint& kp : _v) vec->push_back(cvKeypoint(kp));
       d_keypoints.endEdit();
       break;
     }
@@ -137,10 +136,10 @@ void FeatureDetector::Update()
     }
     case DETECT_AND_COMPUTE:
     {
-      sofa::helper::vector<common::cvKeypoint>* vec =
+      sofa::helper::vector<cvKeypoint>* vec =
           d_keypoints.beginWriteOnly();
       vec->clear();
-      for (cv::KeyPoint& kp : _v) vec->push_back(common::cvKeypoint(kp));
+      for (cv::KeyPoint& kp : _v) vec->push_back(cvKeypoint(kp));
       d_keypoints.endEdit();
       d_descriptors.setValue(_d);
       break;
@@ -270,5 +269,4 @@ void FeatureDetector::detectTypeChanged()
 }
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

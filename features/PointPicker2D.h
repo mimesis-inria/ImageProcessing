@@ -20,8 +20,8 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_POINTPICKER2D_H
-#define SOFA_OR_PROCESSOR_POINTPICKER2D_H
+#ifndef SOFACV_FEATURES_POINTPICKER2D_H
+#define SOFACV_FEATURES_POINTPICKER2D_H
 
 #include "common/ImageFilter.h"
 
@@ -29,13 +29,11 @@
 
 #include <sofa/helper/SVector.h>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
-class PointPicker2D : public ImageFilter
+class PointPicker2D : public common::ImageFilter
 {
   typedef sofa::core::objectmodel::SingleLink<
       PointPicker2D, cam::StereoSettings,
@@ -43,7 +41,7 @@ class PointPicker2D : public ImageFilter
       Settings;
 
  public:
-  SOFA_CLASS(PointPicker2D, ImageFilter);
+  SOFA_CLASS(PointPicker2D, common::ImageFilter);
 
   // INPUTS
   Settings l_cam;
@@ -55,11 +53,11 @@ class PointPicker2D : public ImageFilter
 
   PointPicker2D();
 
-  void init();
+  void init() override;
 
   virtual void Update() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 
   void computeEpipolarLines();
 
@@ -88,6 +86,5 @@ int PointPicker2DClass =
         .add<PointPicker2D>();
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_POINTPICKER2D_H
+}  // namespace sofacv
+#endif  // SOFACV_FEATURES_POINTPICKER2D_H

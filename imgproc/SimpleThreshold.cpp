@@ -23,7 +23,12 @@
 #include "SimpleThreshold.h"
 #include <opencv2/imgproc.hpp>
 
-sofaor::processor::imgproc::SimpleThreshold::SimpleThreshold()
+namespace sofacv
+{
+namespace imgproc
+{
+
+SimpleThreshold::SimpleThreshold()
     : d_threshold(initData(&d_threshold, .5, "threshold", "threshold value")),
       d_max(initData(&d_max, 1.0, "max",
                      "maximum value to use with the THRESH_BINARY and "
@@ -38,7 +43,7 @@ sofaor::processor::imgproc::SimpleThreshold::SimpleThreshold()
   d_type.endEdit();
 }
 
-void sofaor::processor::imgproc::SimpleThreshold::init()
+void SimpleThreshold::init()
 {
   registerData(&d_threshold, 0.0, 1.0, .0001);
   registerData(&d_max, 0.0, 1.0, .0001);
@@ -46,7 +51,7 @@ void sofaor::processor::imgproc::SimpleThreshold::init()
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::SimpleThreshold::applyFilter(const cv::Mat& in,
+void SimpleThreshold::applyFilter(const cv::Mat& in,
                                                               cv::Mat& out,
                                                               bool)
 {
@@ -80,3 +85,16 @@ void sofaor::processor::imgproc::SimpleThreshold::applyFilter(const cv::Mat& in,
     return;
   }
 }
+
+SOFA_DECL_CLASS(SimpleThreshold)
+
+int SimpleThresholdClass =
+    sofa::core::RegisterObject(
+        "OpenCV's implementation of a simple image thresholding filter")
+        .add<SimpleThreshold>();
+
+
+}  // namespace imgproc
+}  // namespace sofacv
+
+

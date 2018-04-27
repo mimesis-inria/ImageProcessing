@@ -20,19 +20,17 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_PROJECTPOINTS_H
-#define SOFA_OR_PROCESSOR_PROJECTPOINTS_H
+#ifndef SOFACV_CAM_PROJECTPOINTS_H
+#define SOFACV_CAM_PROJECTPOINTS_H
 
-#include "ProcessOR/initPlugin.h"
+#include "ImageProcessingPlugin.h"
 
-#include <SofaORCommon/ImplicitDataEngine.h>
+#include <SofaCV/SofaCV.h>
 #include "CameraSettings.h"
 
 #include <opencv2/opencv.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace cam
 {
@@ -42,7 +40,7 @@ namespace cam
  * Projects a 2D point cloud in 3D or vice-versa using a linked CameraSettings
  * component
  */
-class ProjectPoints : public common::ImplicitDataEngine
+class SOFA_IMAGEPROCESSING_API ProjectPoints : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
       ProjectPoints, CameraSettings,
@@ -53,12 +51,12 @@ class ProjectPoints : public common::ImplicitDataEngine
   typedef typename sofa::defaulttype::Vector2 Vector2;
 
  public:
-  SOFA_CLASS(ProjectPoints, common::ImplicitDataEngine);
+  SOFA_CLASS(ProjectPoints, ImplicitDataEngine);
 
   ProjectPoints();
 
   ~ProjectPoints() {}
-  void init();
+  void init() override;
 
   virtual void Update() override;
 
@@ -73,6 +71,5 @@ class ProjectPoints : public common::ImplicitDataEngine
 };
 
 }  // namespace cam
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_PROJECTPOINTS_H
+}  // namespace sofacv
+#endif  // SOFACV_CAM_PROJECTPOINTS_H

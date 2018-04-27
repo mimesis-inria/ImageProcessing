@@ -22,9 +22,7 @@
 
 #include "ConvertTo.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
@@ -105,5 +103,4 @@ std::string ConvertTo<T>::templateName(
 
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

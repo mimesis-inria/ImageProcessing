@@ -20,16 +20,15 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CONVERTTO_H
-#define SOFA_OR_PROCESSOR_CONVERTTO_H
+#ifndef SOFACV_IMGPROC_CONVERTTO_H
+#define SOFACV_IMGPROC_CONVERTTO_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
 #define SHOWVAL(v) #v
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
@@ -42,21 +41,21 @@ namespace imgproc
  * 0 < val < 1 to 0 < val < 256 for instance.
  */
 template <class T>
-class ConvertTo : public ImageFilter
+class SOFA_IMAGEPROCESSING_API ConvertTo : public common::ImageFilter
 {
   T internal_type;
 
  public:
-  SOFA_CLASS(ConvertTo, ImageFilter);
+  SOFA_CLASS(ConvertTo, common::ImageFilter);
 
   sofa::Data<double> d_alpha;
   sofa::Data<double> d_beta;
 
   ConvertTo();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 
   int getCVType(T type);
 
@@ -67,6 +66,5 @@ class ConvertTo : public ImageFilter
 };
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CONVERTTO_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_CONVERTTO_H

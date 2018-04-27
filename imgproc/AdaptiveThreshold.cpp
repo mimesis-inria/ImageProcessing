@@ -23,7 +23,12 @@
 #include "AdaptiveThreshold.h"
 #include <opencv2/imgproc.hpp>
 
-sofaor::processor::imgproc::AdaptiveThreshold::AdaptiveThreshold()
+namespace sofacv
+{
+namespace imgproc
+{
+
+AdaptiveThreshold::AdaptiveThreshold()
     : d_max(initData(&d_max, 1.0, "maxValue",
                      "non-zero value assigned to the pixels for which the "
                      "condition is satisfied")),
@@ -51,7 +56,7 @@ sofaor::processor::imgproc::AdaptiveThreshold::AdaptiveThreshold()
   d_thresholdType.endEdit();
 }
 
-void sofaor::processor::imgproc::AdaptiveThreshold::init()
+void AdaptiveThreshold::init()
 {
   registerData(&d_adaptiveMethod);
   registerData(&d_thresholdType);
@@ -61,7 +66,7 @@ void sofaor::processor::imgproc::AdaptiveThreshold::init()
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::AdaptiveThreshold::applyFilter(
+void AdaptiveThreshold::applyFilter(
     const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
@@ -96,3 +101,14 @@ void sofaor::processor::imgproc::AdaptiveThreshold::applyFilter(
     return;
   }
 }
+
+SOFA_DECL_CLASS(AdaptiveThreshold)
+
+int AdaptiveThresholdClass =
+    sofa::core::RegisterObject(
+        "OpenCV's implementation of an adaptive image thresholding filter")
+        .add<AdaptiveThreshold>();
+
+}  // namespace imgproc
+}  // namespace sofacv
+

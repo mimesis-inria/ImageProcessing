@@ -23,7 +23,12 @@
 #include "CvtColor.h"
 #include <opencv2/imgproc.hpp>
 
-sofaor::processor::imgproc::CvtColor::CvtColor()
+namespace sofacv
+{
+namespace imgproc
+{
+
+CvtColor::CvtColor()
     : d_code(initData(&d_code, 6, "code",
                       "color space conversion code default is BGR2GRAY")),
       d_dstCn(initData(&d_dstCn, 0, "dstCn",
@@ -33,9 +38,9 @@ sofaor::processor::imgproc::CvtColor::CvtColor()
 {
 }
 
-void sofaor::processor::imgproc::CvtColor::init() { ImageFilter::init(); }
+void CvtColor::init() { ImageFilter::init(); }
 
-void sofaor::processor::imgproc::CvtColor::applyFilter(const cv::Mat &in,
+void CvtColor::applyFilter(const cv::Mat &in,
                                                        cv::Mat &out, bool)
 {
   if (in.empty()) return;
@@ -50,3 +55,14 @@ void sofaor::processor::imgproc::CvtColor::applyFilter(const cv::Mat &in,
     out = in;
   }
 }
+
+SOFA_DECL_CLASS(CvtColor)
+
+int CvtColorClass = sofa::core::RegisterObject(
+                        "Converts an image from one color space to another.")
+                        .add<CvtColor>();
+
+}  // namespace imgproc
+}  // namespace sofacv
+
+

@@ -20,14 +20,13 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CVTCOLOR_H
-#define SOFA_OR_PROCESSOR_CVTCOLOR_H
+#ifndef SOFACV_IMGPROC_CVTCOLOR_H
+#define SOFACV_IMGPROC_CVTCOLOR_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
@@ -37,28 +36,22 @@ namespace imgproc
  * Please refer to OpenCV's ColorConversionCodes enumeration in imgproc.hpp for
  * color codes
  */
-class CvtColor : public ImageFilter
+class SOFA_IMAGEPROCESSING_API CvtColor : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(CvtColor, ImageFilter);
+  SOFA_CLASS(CvtColor, common::ImageFilter);
 
   sofa::Data<int> d_code;
   sofa::Data<int> d_dstCn;
 
   CvtColor();
 
-  void init();
+  void init() override;
 
-  void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
+  void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
 
-SOFA_DECL_CLASS(CvtColor)
-
-int CvtColorClass = sofa::core::RegisterObject(
-                        "Converts an image from one color space to another.")
-                        .add<CvtColor>();
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CVTCOLOR_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_CVTCOLOR_H

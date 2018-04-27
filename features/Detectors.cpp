@@ -24,30 +24,28 @@
 
 #include <opencv2/xfeatures2d.hpp>
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace features
 {
 BaseDetector::~BaseDetector() {}
-void BaseDetector::detect(const common::cvMat &img, const common::cvMat &mask,
+void BaseDetector::detect(const cvMat &img, const cvMat &mask,
                           std::vector<cv::KeyPoint> &keypoints)
 {
   m_detector->detect(img, keypoints, mask);
 }
 
-void BaseDetector::compute(const common::cvMat &img,
+void BaseDetector::compute(const cvMat &img,
                            std::vector<cv::KeyPoint> &keypoints,
-                           common::cvMat &descriptors)
+                           cvMat &descriptors)
 {
   m_detector->compute(img, keypoints, descriptors);
 }
 
-void BaseDetector::detectAndCompute(const common::cvMat &img,
-                                    const common::cvMat &mask,
+void BaseDetector::detectAndCompute(const cvMat &img,
+                                    const cvMat &mask,
                                     std::vector<cv::KeyPoint> &keypoints,
-                                    common::cvMat &descriptors)
+                                    cvMat &descriptors)
 {
   m_detector->detectAndCompute(img, mask, keypoints, descriptors);
 }
@@ -116,7 +114,7 @@ void SimpleBlobDetector::init()
 {
 }
 
-void SimpleBlobDetector::registerData(ImageFilter *parent)
+void SimpleBlobDetector::registerData(common::ImageFilter *parent)
 {
   parent->registerData(&minThreshold, 0, 255, 1);
   parent->registerData(&maxThreshold, 0, 255, 1);
@@ -130,8 +128,8 @@ void SimpleBlobDetector::registerData(ImageFilter *parent)
   parent->registerData(&minInertiaRatio, 0.0, 1.0, 0.01);
 }
 
-void SimpleBlobDetector::detect(const common::cvMat &img,
-                                const common::cvMat &mask,
+void SimpleBlobDetector::detect(const cvMat &img,
+                                const cvMat &mask,
                                 std::vector<cv::KeyPoint> &keypoints)
 {
   // Setup SimpleBlobDetector parameters.
@@ -178,17 +176,17 @@ void SimpleBlobDetector::detect(const common::cvMat &img,
 #endif
 }
 
-void SimpleBlobDetector::compute(const common::cvMat &,
-                                 std::vector<cv::KeyPoint> &, common::cvMat &)
+void SimpleBlobDetector::compute(const cvMat &,
+                                 std::vector<cv::KeyPoint> &, cvMat &)
 {
   msg_error("SimpleBlobDetector::compute()")
       << "SimpleBlob is detectOnly. descriptors won't be computed.";
 }
 
-void SimpleBlobDetector::detectAndCompute(const common::cvMat &img,
-                                          const common::cvMat &mask,
+void SimpleBlobDetector::detectAndCompute(const cvMat &img,
+                                          const cvMat &mask,
                                           std::vector<cv::KeyPoint> &kpts,
-                                          common::cvMat &)
+                                          cvMat &)
 {
   msg_warning("SimpleBlobDetector::detectAndCompute()")
       << "SimpleBlob is detectOnly. descriptors won't be computed.";
@@ -207,7 +205,7 @@ ShiTomasiDetector::ShiTomasiDetector(sofa::core::DataEngine *c)
 
 void ShiTomasiDetector::init() {}
 
-void ShiTomasiDetector::registerData(ImageFilter *parent)
+void ShiTomasiDetector::registerData(common::ImageFilter *parent)
 {
   parent->registerData(&maxCorners, 0, 255, 1);
   parent->registerData(&qualityLevel, 0.0, 1.0, 0.01);
@@ -215,23 +213,23 @@ void ShiTomasiDetector::registerData(ImageFilter *parent)
   parent->registerData(&blockSize, 0, 20, 1);
 }
 
-void ShiTomasiDetector::detect(const common::cvMat &, const common::cvMat &,
+void ShiTomasiDetector::detect(const cvMat &, const cvMat &,
                                std::vector<cv::KeyPoint> &)
 {
   msg_error("ShiTomasiDetector::detect()") << "Not Implemented Yet";
 }
 
-void ShiTomasiDetector::compute(const common::cvMat &,
-                                std::vector<cv::KeyPoint> &, common::cvMat &)
+void ShiTomasiDetector::compute(const cvMat &,
+                                std::vector<cv::KeyPoint> &, cvMat &)
 {
   msg_error("FASTDetector::compute()")
       << "FAST is detectOnly. descriptors won't be computed.";
 }
 
-void ShiTomasiDetector::detectAndCompute(const common::cvMat &img,
-                                         const common::cvMat &mask,
+void ShiTomasiDetector::detectAndCompute(const cvMat &img,
+                                         const cvMat &mask,
                                          std::vector<cv::KeyPoint> &kpts,
-                                         common::cvMat &)
+                                         cvMat &)
 {
   msg_warning("FASTDetector::detectAndCompute()")
       << "FAST is detectOnly. descriptors won't be computed.";
@@ -281,24 +279,24 @@ FASTDetector::FASTDetector(sofa::core::DataEngine *c)
 
 void FASTDetector::init() {}
 
-void FASTDetector::registerData(ImageFilter *parent)
+void FASTDetector::registerData(common::ImageFilter *parent)
 {
   parent->registerData(&threshold, 0, 255, 1);
   parent->registerData(&nonmaxsuppression);
   parent->registerData(&type);
 }
 
-void FASTDetector::compute(const common::cvMat &, std::vector<cv::KeyPoint> &,
-                           common::cvMat &)
+void FASTDetector::compute(const cvMat &, std::vector<cv::KeyPoint> &,
+                           cvMat &)
 {
   msg_error("FASTDetector::compute()")
       << "FAST is detectOnly. descriptors won't be computed.";
 }
 
-void FASTDetector::detectAndCompute(const common::cvMat &img,
-                                    const common::cvMat &mask,
+void FASTDetector::detectAndCompute(const cvMat &img,
+                                    const cvMat &mask,
                                     std::vector<cv::KeyPoint> &kpts,
-                                    common::cvMat &)
+                                    cvMat &)
 {
   msg_warning("FASTDetector::detectAndCompute()")
       << "FAST is detectOnly. descriptors won't be computed.";
@@ -360,7 +358,7 @@ void MSERDetector::enable(bool show)
   {
     m_detector = cv::MSER::create(
         delta.getValue(), minArea.getValue(), maxArea.getValue(),
-        maxVariation.getValue(), minDiversity.getValue(),
+        double(maxVariation.getValue()), double(minDiversity.getValue()),
         maxEvolution.getValue(), areaThreshold.getValue(), minMargin.getValue(),
         edgeBlurSize.getValue());
     m_obj->addInput(&delta);
@@ -398,7 +396,7 @@ void MSERDetector::enable(bool show)
 
 void MSERDetector::init() {}
 
-void MSERDetector::registerData(ImageFilter *parent)
+void MSERDetector::registerData(common::ImageFilter *parent)
 {
   parent->registerData(&delta, 0, 10, 1);
   parent->registerData(&minArea, 0, 255, 1);
@@ -412,17 +410,17 @@ void MSERDetector::registerData(ImageFilter *parent)
   parent->registerData(&edgeBlurSize, 0, 10, 1);
 }
 
-void MSERDetector::compute(const common::cvMat &, std::vector<cv::KeyPoint> &,
-                           common::cvMat &)
+void MSERDetector::compute(const cvMat &, std::vector<cv::KeyPoint> &,
+                           cvMat &)
 {
   msg_error("MSERDetector::detectAndCompute()")
       << "MSER is detectOnly. descriptors won't be computed.";
 }
 
-void MSERDetector::detectAndCompute(const common::cvMat &img,
-                                    const common::cvMat &mask,
+void MSERDetector::detectAndCompute(const cvMat &img,
+                                    const cvMat &mask,
                                     std::vector<cv::KeyPoint> &kpts,
-                                    common::cvMat &)
+                                    cvMat &)
 {
   msg_warning("MSERDetector::detectAndCompute()")
       << "MSER is detectOnly. descriptors won't be computed.";
@@ -463,7 +461,7 @@ ORBDetector::ORBDetector(sofa::core::DataEngine *c)
 
 void ORBDetector::init() {}
 
-void ORBDetector::registerData(ImageFilter *)
+void ORBDetector::registerData(common::ImageFilter *)
 {
   // TODO: find optimal range of values
 }
@@ -523,7 +521,7 @@ BRISKDetector::BRISKDetector(sofa::core::DataEngine *c)
 }
 void BRISKDetector::init() {}
 
-void BRISKDetector::registerData(ImageFilter *)
+void BRISKDetector::registerData(common::ImageFilter *)
 {
   // TODO: find optimal range of values
 }
@@ -576,7 +574,7 @@ KAZEDetector::KAZEDetector(sofa::core::DataEngine *c)
 
 void KAZEDetector::init() {}
 
-void KAZEDetector::registerData(ImageFilter *)
+void KAZEDetector::registerData(common::ImageFilter *)
 {
   // TODO: find optimal range of values
 }
@@ -651,7 +649,7 @@ AKAZEDetector::AKAZEDetector(sofa::core::DataEngine *c)
 
 void AKAZEDetector::init() {}
 
-void AKAZEDetector::registerData(ImageFilter *)
+void AKAZEDetector::registerData(common::ImageFilter *)
 {
   // TODO: find optimal range of values
 }
@@ -691,7 +689,7 @@ void AKAZEDetector::enable(bool show)
   diffusivity.setDisplayed(show);
 }
 
-#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+#ifdef SOFACV_OPENCV_CONTRIB_ENABLED
 
 BRIEFDetector::BRIEFDetector(sofa::core::DataEngine *c)
     : BaseDetector(c),
@@ -707,22 +705,22 @@ BRIEFDetector::BRIEFDetector(sofa::core::DataEngine *c)
 
 void BRIEFDetector::init() {}
 
-void BRIEFDetector::registerData(ImageFilter *)
+void BRIEFDetector::registerData(common::ImageFilter *)
 {
   // TODO: find optimal range of values
 }
 
-void BRIEFDetector::detect(const common::cvMat &, const common::cvMat &,
+void BRIEFDetector::detect(const cvMat &, const cvMat &,
                            std::vector<cv::KeyPoint> &)
 {
   msg_error("BRIEFDetector::detect()")
       << "BRIEF is computeOnly. keypoints must be provided.";
 }
 
-void BRIEFDetector::detectAndCompute(const common::cvMat &,
-                                     const common::cvMat &,
+void BRIEFDetector::detectAndCompute(const cvMat &,
+                                     const cvMat &,
                                      std::vector<cv::KeyPoint> &,
-                                     common::cvMat &)
+                                     cvMat &)
 {
   msg_error("BRIEFDetector::detectAndCompute()")
       << "BRIEF is computeOnly. Please provide keypoints and set "
@@ -778,7 +776,7 @@ SIFTDetector::SIFTDetector(sofa::core::DataEngine *c)
 
 void SIFTDetector::init() {}
 
-void SIFTDetector::registerData(ImageFilter *)
+void SIFTDetector::registerData(common::ImageFilter *)
 {
   // TODO: find optimal range of values
 }
@@ -852,7 +850,7 @@ SURFDetector::SURFDetector(sofa::core::DataEngine *c)
 
 void SURFDetector::init() {}
 
-void SURFDetector::registerData(ImageFilter *)
+void SURFDetector::registerData(common::ImageFilter *)
 {
   // TODO: find optimal range of values
 }
@@ -906,7 +904,7 @@ DAISYDetector::DAISYDetector(sofa::core::DataEngine *c)
           "for L2 norm equal to 1.0 but no individual one is bigger than "
           "0.154 "
           "as in SIFT")),
-      H(c->initData(&H, common::cvMat(), "DAISYH",
+      H(c->initData(&H, cvMat(), "DAISYH",
                     "optional 3x3 homography matrix used to warp the grid of "
                     "daisy but sampling keypoints remains unwarped on image")),
       interpolation(c->initData(&interpolation, true, "DAISYInterpolation",
@@ -925,22 +923,22 @@ DAISYDetector::DAISYDetector(sofa::core::DataEngine *c)
 
 void DAISYDetector::init() {}
 
-void DAISYDetector::registerData(ImageFilter *)
+void DAISYDetector::registerData(common::ImageFilter *)
 {
   // TODO: find optimal range of values
 }
 
-void DAISYDetector::detect(const common::cvMat &, const common::cvMat &,
+void DAISYDetector::detect(const cvMat &, const cvMat &,
                            std::vector<cv::KeyPoint> &)
 {
   msg_error("DAISYDetector::detect()")
       << "DAISY is computeOnly. keypoints must be provided.";
 }
 
-void DAISYDetector::detectAndCompute(const common::cvMat &,
-                                     const common::cvMat &,
+void DAISYDetector::detectAndCompute(const cvMat &,
+                                     const cvMat &,
                                      std::vector<cv::KeyPoint> &,
-                                     common::cvMat &)
+                                     cvMat &)
 {
   msg_error("DAISYDetector::detectAndCompute()")
       << "DAISY is computeOnly. Please provide keypoints and set "
@@ -985,8 +983,7 @@ void DAISYDetector::enable(bool show)
   use_orientation.setDisplayed(show);
 }
 
-#endif  // SOFAOR_OPENCV_CONTRIB_ENABLED
+#endif  // SOFACV_OPENCV_CONTRIB_ENABLED
 
 }  // namespace features
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace sofacv

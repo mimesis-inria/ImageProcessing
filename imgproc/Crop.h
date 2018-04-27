@@ -20,21 +20,20 @@
  * Contact information: contact-mimesis@inria.fr                               *
  ******************************************************************************/
 
-#ifndef SOFA_OR_PROCESSOR_CROP_H
-#define SOFA_OR_PROCESSOR_CROP_H
+#ifndef SOFACV_IMGPROC_CROP_H
+#define SOFACV_IMGPROC_CROP_H
 
+#include "ImageProcessingPlugin.h"
 #include "common/ImageFilter.h"
 
-namespace sofaor
-{
-namespace processor
+namespace sofacv
 {
 namespace imgproc
 {
-class Crop : public ImageFilter
+class SOFA_IMAGEPROCESSING_API Crop : public common::ImageFilter
 {
  public:
-  SOFA_CLASS(Crop, ImageFilter);
+  SOFA_CLASS(Crop, common::ImageFilter);
 
   sofa::Data<sofa::defaulttype::Vec4i> d_roi;
 
@@ -45,12 +44,7 @@ class Crop : public ImageFilter
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
 };
 
-SOFA_DECL_CLASS(Crop)
-
-int CropClass =
-    sofa::core::RegisterObject("OpenCV's Crop function").add<Crop>();
 
 }  // namespace imgproc
-}  // namespace processor
-}  // namespace sofaor
-#endif  // SOFA_OR_PROCESSOR_CROP_H
+}  // namespace sofacv
+#endif  // SOFACV_IMGPROC_CROP_H

@@ -23,7 +23,13 @@
 #include "SobelFilter.h"
 #include <opencv2/imgproc.hpp>
 
-sofaor::processor::imgproc::SobelFilter::SobelFilter()
+namespace sofacv
+{
+namespace imgproc
+{
+
+
+SobelFilter::SobelFilter()
     : d_ddepth(initData(&d_ddepth, -1, "ddepth",
                         "Output image depth. Same as source by default (-1). "
                         "possible values: 1, 2, 4, 8 bytes")),
@@ -54,7 +60,7 @@ sofaor::processor::imgproc::SobelFilter::SobelFilter()
   d_bordertype.endEdit();
 }
 
-void sofaor::processor::imgproc::SobelFilter::init()
+void SobelFilter::init()
 {
   registerData(&d_xorder, 0, 7, 1);
   registerData(&d_yorder, 0, 7, 1);
@@ -65,7 +71,7 @@ void sofaor::processor::imgproc::SobelFilter::init()
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::SobelFilter::applyFilter(const cv::Mat& in,
+void SobelFilter::applyFilter(const cv::Mat& in,
                                                           cv::Mat& out, bool)
 {
   if (in.empty()) return;
@@ -105,3 +111,13 @@ void sofaor::processor::imgproc::SobelFilter::applyFilter(const cv::Mat& in,
     return;
   }
 }
+
+SOFA_DECL_CLASS(SobelFilter)
+
+int SobelFilterClass =
+    sofa::core::RegisterObject("OpenCV's implementation of the Sobel operator")
+        .add<SobelFilter>();
+
+}  // namespace imgproc
+}  // namespace sofacv
+

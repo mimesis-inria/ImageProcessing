@@ -30,9 +30,9 @@
 #include <sofa/helper/system/gl.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
 SOFA_DECL_CLASS(FrameViewer)
 
@@ -260,5 +260,5 @@ void FrameViewer::computeBBox(const sofa::core::ExecParams *params, bool)
       params, sofa::defaulttype::TBoundingBox<double>(minBBox, maxBBox));
 }
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace common
+}  // namespace sofacv

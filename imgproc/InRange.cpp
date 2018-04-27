@@ -22,7 +22,13 @@
 
 #include "InRange.h"
 
-sofaor::processor::imgproc::InRange::InRange()
+namespace sofacv
+{
+namespace imgproc
+{
+
+
+InRange::InRange()
     : d_minRange(initData(&d_minRange, Vec3i(0, 0, 0), "minRange",
                           "minimum color value")),
       d_maxRange(initData(&d_maxRange, Vec3i(255, 255, 255), "maxRange",
@@ -30,14 +36,14 @@ sofaor::processor::imgproc::InRange::InRange()
 {
 }
 
-void sofaor::processor::imgproc::InRange::init()
+void InRange::init()
 {
   registerData(&d_minRange, 0, 255, 1);
   registerData(&d_maxRange, 0, 255, 1);
   ImageFilter::init();
 }
 
-void sofaor::processor::imgproc::InRange::applyFilter(const cv::Mat &in,
+void InRange::applyFilter(const cv::Mat &in,
                                                       cv::Mat &out, bool)
 {
   if (in.empty())
@@ -55,3 +61,12 @@ void sofaor::processor::imgproc::InRange::applyFilter(const cv::Mat &in,
   in.copyTo(out);
   cv::inRange(in, min, max, out);
 }
+
+SOFA_DECL_CLASS(InRange)
+
+int InRangeClass =
+    sofa::core::RegisterObject("OpenCV's InRange function").add<InRange>();
+
+}  // namespace imgproc
+}  // namespace sofacv
+
