@@ -215,7 +215,7 @@ struct AKAZEDetector : BaseDetector
   sofa::Data<sofa::helper::OptionsGroup> diffusivity;
 };
 
-#ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
+#ifdef SOFACV_OPENCV_CONTRIB_ENABLED
 
 struct BRIEFDetector : BaseDetector
 {
@@ -283,7 +283,7 @@ struct DAISYDetector : BaseDetector
   sofa::Data<bool> use_orientation;
 };
 
-#endif  // SOFAOR_OPENCV_CONTRIB_ENABLED
+#endif  // SOFACV_OPENCV_CONTRIB_ENABLED
 
 }  // namespace features
 }  // namespace sofacv
