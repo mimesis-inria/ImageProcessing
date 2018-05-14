@@ -1,0 +1,10 @@
+<Node name="root" dt="0.05" gravity="0.0 -10 0">
+  <RequiredPlugin pluginName="SofaCV"/>
+  <RequiredPlugin pluginName="DataAcquisition"/>
+  <RequiredPlugin pluginName="ImageProcessing"/>
+
+  <VideoGrabber videoFile="TEST_FAIL" />
+  <VideoGrabber videoFile="Lenna_100px.png" />
+  <CannyFilter name="canny" img="@[-1].img_out" />
+  <FrameViewer name="viewer" img="@[-1].img_out" corners="-1 1 0  1 1 0  1 -1 0  -1 -1 0" mode="ORTHO" />
+</Node>

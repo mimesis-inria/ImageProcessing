@@ -1,0 +1,53 @@
+<Node name="root" dt="0.05" gravity="0.0 -10 0">
+  <RequiredPlugin pluginName="SofaCV"/>
+  <RequiredPlugin pluginName="DataAcquisition"/>
+  <RequiredPlugin pluginName="ImageProcessing"/>
+
+  <ViewerSetting resolution="1280 720" />
+  <InteractiveCamera name="ic" zNear="0.0001" zFar="5000"/>
+
+  <CameraSettings name="cam" imageSize="1280 720" f="1"/>
+  <CalibratedCamera name="cc" cam="@cam" drawGizmo="true" freeProj="true" freeCam="true" />
+  <CalibLoader name="loader" calibName="calibExporterTest" calibDir="calib" cam="@/cam" />
+
+  <Node name="Origin" >
+    <MeshObjLoader name="lc" scale="0.01" translation="0 0 0" filename="mesh/sphere.obj" />
+    <OglModel src="@lc" color="1 1 1" />
+
+    <MeshObjLoader name="lx" scale="0.01" translation="0.05 0 0" filename="mesh/sphere.obj" />
+    <OglModel src="@lx" color="1 0 0" />
+
+    <MeshObjLoader name="ly" scale="0.01" translation="0 0.05 0" filename="mesh/sphere.obj" />
+    <OglModel src="@ly" color="0 1 0" />
+    
+    <MeshObjLoader name="lz" scale="0.01" translation="0 0 0.05" filename="mesh/sphere.obj" />
+    <OglModel src="@lz" color="0 0 1" />
+  </Node>
+
+  <Node name="Camera">
+    <MeshObjLoader name="Oc" scale="0.01" translation="0.22360679507255554199  0.44721359014511108398  0." filename="mesh/sphere.obj" />
+    <OglModel src="@Oc" color="1 1 1" />
+    
+    <MeshObjLoader name="Xc" scale="0.01" translation="0.26832816004753112793  0.42485290765762329102  0." filename="mesh/sphere.obj" />
+    <OglModel src="@Xc" color="1 0 0" />
+    
+    <MeshObjLoader name="Yc" scale="0.01" translation="0.22360679507255554199  0.44721359014511108398 -0.05" filename="mesh/sphere.obj" />
+    <OglModel src="@Yc" color="0 1 0" />
+
+    <MeshObjLoader name="Zc" scale="0.01" translation="0.24596747756004333496  0.49193495512008666992  0." filename="mesh/sphere.obj" />
+    <OglModel src="@Zc" color="0 0 1" />
+  </Node>
+
+  <Node name="ImagePlane">
+    <MeshObjLoader name="A" scale="0.02" translation="0.22360679507255554199  1.56524756550788879395  0.28125" filename="mesh/sphere.obj" />
+    <OglModel src="@A" color="1 1 1" />
+    
+    <MeshObjLoader name="B" scale="0.02" translation="1.11803397536277770996  1.11803397536277770996  0.28125" filename="mesh/sphere.obj" />
+    <OglModel src="@B" color="1 1 1" />
+
+    <MeshObjLoader name="C" scale="0.02" translation="0.22360679507255554199  1.56524756550788879395 -0.28125" filename="mesh/sphere.obj" />
+    <OglModel src="@C" color="1 1 1" />
+    <MeshObjLoader name="D" scale="0.02" translation="1.11803397536277770996  1.11803397536277770996 -0.28125" filename="mesh/sphere.obj" />    
+    <OglModel src="@D" color="1 1 1" />
+  </Node>
+</Node>
