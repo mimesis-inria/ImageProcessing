@@ -88,6 +88,7 @@ void PCViewer::computeBBox(const sofa::core::ExecParams* params, bool)
 
 void PCViewer::draw(const sofa::core::visual::VisualParams*)
 {
+  update();
   glPointSize(d_size.getValue());
   glDisable(GL_LIGHTING);
   glBegin(GL_POINTS);

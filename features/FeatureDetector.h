@@ -48,18 +48,18 @@ class SOFA_IMAGEPROCESSING_API FeatureDetector : public common::ImageFilter
 
   enum DetectorType
   {
-    FAST = 0,
-    MSER = 1,
-    ORB = 2,
-    BRISK = 3,
-    KAZE = 4,
-    AKAZE = 5,
-    BLOB = 7,
+    FAST,
+    MSER,
+    ORB,
+    BRISK,
+    KAZE,
+    AKAZE,
+    BLOB,
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
-    BRIEF = 6,
-    SIFT = 8,
-    SURF = 9,
-    DAISY = 10,
+    BRIEF,
+    SIFT,
+    SURF,
+    DAISY,
 #endif // SOFAOR_OPENCV_CONTRIB_ENABLED
     DetectorType_COUNT
   };

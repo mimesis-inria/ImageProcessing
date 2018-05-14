@@ -72,6 +72,7 @@ SOFA_IMAGEPROCESSING_API const char* getModuleComponentList();
 
 void initExternalModule()
 {
+    std::cout << SOFACV_RESOURCES_PATH << std::endl;
   static bool first = true;
   if (first)
   {
