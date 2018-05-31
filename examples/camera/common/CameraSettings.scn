@@ -9,6 +9,12 @@
   <CameraSettings name="cam" imageSize="1280 720" f="1" K="[1280 0 640 0 1280 360 0 0 1]" R="[0.89443 -0.44721 0 0 0 -1 0.44721 0.89443 0]" t="0.22360679507255554199  0.44721359014511108398 -0"/>
   <CalibratedCamera name="cc" cam="@cam" drawGizmo="true" freeProj="true" freeCam="true" />
 
+  <CameraSettings name="cam2" imageSize="1280 720" f="1" glProjection="@cam.glProjection" glModelview="@cam.glModelview"/>
+  <CalibratedCamera name="cc2" cam="@cam2" drawGizmo="true" freeProj="true" freeCam="true" />
+
+  <!-- <CameraSettings name="cam3" imageSize="1280 720" f="0.95" K="[1280 0 640 0 1280 360 0 0 1]" R="[0.89443 -0.44721 0 0 0 -1 0.44721 0.89443 0]" t="0.22360679507255554199  0.44721359014511108398 -0"/> -->
+  <!-- <CalibratedCamera name="cc3" cam="@cam2" drawGizmo="false" freeProj="false" freeCam="true" /> -->
+  
   <Node name="Origin" >
     <MeshObjLoader name="lc" scale="0.01" translation="0 0 0" filename="mesh/sphere.obj" />
     <OglModel src="@lc" color="1 1 1" />
@@ -23,19 +29,19 @@
     <OglModel src="@lz" color="0 0 1" />
   </Node>
 
-  <Node name="Camera">
-    <MeshObjLoader name="Oc" scale="0.01" translation="0.22360679507255554199  0.44721359014511108398  0." filename="mesh/sphere.obj" />
-    <OglModel src="@Oc" color="1 1 1" />
+  <!-- <Node name="Camera"> -->
+  <!--   <MeshObjLoader name="Oc" scale="0.01" translation="0.22360679507255554199  0.44721359014511108398  0." filename="mesh/sphere.obj" /> -->
+  <!--   <!-\- <OglModel src="@Oc" color="1 1 1" /> -\-> -->
     
-    <MeshObjLoader name="Xc" scale="0.01" translation="0.26832816004753112793  0.42485290765762329102  0." filename="mesh/sphere.obj" />
-    <OglModel src="@Xc" color="1 0 0" />
+  <!--   <MeshObjLoader name="Xc" scale="0.01" translation="0.26832816004753112793  0.42485290765762329102  0." filename="mesh/sphere.obj" /> -->
+  <!--   <OglModel src="@Xc" color="1 0 0" /> -->
     
-    <MeshObjLoader name="Yc" scale="0.01" translation="0.22360679507255554199  0.44721359014511108398 -0.05" filename="mesh/sphere.obj" />
-    <OglModel src="@Yc" color="0 1 0" />
+  <!--   <MeshObjLoader name="Yc" scale="0.01" translation="0.22360679507255554199  0.44721359014511108398 -0.05" filename="mesh/sphere.obj" /> -->
+  <!--   <OglModel src="@Yc" color="0 1 0" /> -->
 
-    <MeshObjLoader name="Zc" scale="0.01" translation="0.24596747756004333496  0.49193495512008666992  0." filename="mesh/sphere.obj" />
-    <OglModel src="@Zc" color="0 0 1" />
-  </Node>
+  <!--   <MeshObjLoader name="Zc" scale="0.01" translation="0.24596747756004333496  0.49193495512008666992  0." filename="mesh/sphere.obj" /> -->
+  <!--   <OglModel src="@Zc" color="0 0 1" /> -->
+  <!-- </Node> -->
 
   <Node name="ImagePlane">
     <MeshObjLoader name="A" scale="0.02" translation="0.22360679507255554199  1.56524756550788879395  0.28125" filename="mesh/sphere.obj" />
@@ -57,9 +63,9 @@
 
   <VideoGrabber name="grabber" videoFile="cross.png" />  
   <FrameViewer img="@grabber.img_out" corners="0.22360679507255554199  1.56524756550788879395  0.28125
-					       1.11803397536277770996  1.11803397536277770996  0.28125
-					       1.11803397536277770996  1.11803397536277770996 -0.28125
-					       0.22360679507255554199  1.56524756550788879395 -0.28125"/>
+  					       1.11803397536277770996  1.11803397536277770996  0.28125
+  					       1.11803397536277770996  1.11803397536277770996 -0.28125
+  					       0.22360679507255554199  1.56524756550788879395 -0.28125"/>
   <ProjectPoints name="to2D" cam="@/cam" to3D="false" points3D="0.55901698768138885498  0.83852548152208328247 0.0703125"/>
   <ProjectPoints name="to3D" cam="@/cam" to3D="true" points2D="@to2D.points2D" />
 

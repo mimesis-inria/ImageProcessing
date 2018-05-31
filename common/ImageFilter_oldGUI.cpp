@@ -31,15 +31,15 @@
 
 #include <opencv2/highgui.hpp>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
 unsigned ImageFilter::m_window_uid = 0;
 
 ImageFilter::ImageFilter()
     : d_img(initData(
-          &d_img, common::cvMat(), "img",
+          &d_img, cvMat(), "img",
           "Input image, that will undergo changes through the filter.", false)),
       d_img_out(initData(&d_img_out, "img_out",
                          "Output image, holding the filter's result", false)),
@@ -245,5 +245,5 @@ void ImageFilter::registerData(sofa::Data<sofa::defaulttype::Vec4d>* data,
   m_params.push_back(new VecSliderManager<4, double>(data, min, max, step));
 }
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace common
+}  // namespace sofacv

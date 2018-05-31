@@ -30,6 +30,8 @@
 
 namespace sofacv
 {
+namespace common
+{
 struct DSM
 {
   virtual ~DSM() {}
@@ -92,5 +94,6 @@ struct VecSliderManager : DSM
   U m_min, m_max, m_step;
 };
 
+}  // namespace common
 }  // namespace sofacv
 #endif  // SOFACV_COMMON_DATASLIDERMGR_H

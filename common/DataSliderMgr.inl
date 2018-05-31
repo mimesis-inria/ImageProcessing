@@ -1,5 +1,5 @@
-#ifndef SOFA_OR_PROCESSOR_ScalarSliderManager_INL
-#define SOFA_OR_PROCESSOR_ScalarSliderManager_INL
+#ifndef SOFACV_COMMON_DATASLIDERMANAGER_INL
+#define SOFACV_COMMON_DATASLIDERMANAGER_INL
 
 #include "DataSliderMgr.h"
 #include "ImageFilter_oldGUI.h"
@@ -7,9 +7,9 @@
 #include <sofa/helper/OptionsGroup.h>
 #include <opencv2/highgui.hpp>
 
-namespace sofaor
+namespace sofacv
 {
-namespace processor
+namespace common
 {
 // CONSTRUCTORS
 
@@ -215,7 +215,7 @@ void ScalarSliderManager<T>::callback(int val, void* mgr)
 	if (m->getTrackbarRangedValue() != val)
 	{
 		m->m_data->setValue(T(val) * m->m_step + m->m_min);
-		dynamic_cast<ImageFilter*>(m->m_data->getOwner())->refreshDebugWindow();
+        dynamic_cast<ImageFilter*>(m->m_data->getOwner())->refreshDebugWindow();
 	}
 }
 
@@ -305,7 +305,7 @@ void VecSliderManager<N, U>::callback_w(int val, void* mgr)
 	}
 }
 
-}  // namespace processor
-}  // namespace sofaor
+}  // namespace common
+}  // namespace sofacv
 
-#endif  // SOFA_OR_PROCESSOR_ScalarSliderManager_INL
+#endif  // SOFACV_COMMON_DATASLIDERMANAGER_INL

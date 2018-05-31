@@ -23,6 +23,8 @@
 #ifndef SOFACV_IMAGEPROCESSING_COMMON_IMAGEFILTER_OLDGUI_H
 #define SOFACV_IMAGEPROCESSING_COMMON_IMAGEFILTER_OLDGUI_H
 
+#include "ImageProcessingPlugin.h"
+
 #include <SofaCV/SofaCV.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/helper/OptionsGroup.h>

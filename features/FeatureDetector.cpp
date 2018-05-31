@@ -68,10 +68,10 @@ FeatureDetector::FeatureDetector()
 
   t = d_detectorType.beginEdit();
   t->setNames(DetectorType_COUNT, "FAST", "MSER", "ORB", "BRISK", "KAZE",
-              "AKAZE", "BRIEF", "BLOB"
+              "AKAZE", "BLOB"
 #ifdef SOFAOR_OPENCV_CONTRIB_ENABLED
               ,
-              "SIFT", "SURF", "DAISY"
+              "BRIEF", "SIFT", "SURF", "DAISY"
 #endif  // SOFAOR_OPENCV_CONTRIB_ENABLED
               );
   t->setSelectedItem("FAST");
@@ -136,8 +136,7 @@ void FeatureDetector::Update()
     }
     case DETECT_AND_COMPUTE:
     {
-      sofa::helper::vector<cvKeypoint>* vec =
-          d_keypoints.beginWriteOnly();
+      sofa::helper::vector<cvKeypoint>* vec = d_keypoints.beginWriteOnly();
       vec->clear();
       for (cv::KeyPoint& kp : _v) vec->push_back(cvKeypoint(kp));
       d_keypoints.endEdit();

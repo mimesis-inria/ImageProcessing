@@ -67,95 +67,183 @@ void OpticalFlow::init()
 void OpticalFlow::applyFilter(const cv::Mat& in,
                                                            cv::Mat& out, bool)
 {
-  cv::Mat gray;
-  if (in.empty()) return;
+//  cv::Mat gray;
+//  if (in.empty()) return;
 
-  if (!d_startTracking.getValue() || m_pts_in.empty())
-  {
-    // Keep things well initialized:
-    if (!m_prev.empty())  // m_prev should stay empty
-      m_prev.zeros(m_prev.rows, m_prev.cols, m_prev.type());
+//  if (!d_startTracking.getValue() || m_pts_in.empty())
+//  {
+//    // Keep things well initialized:
+//    if (!m_prev.empty())  // m_prev should stay empty
+//      m_prev.zeros(m_prev.rows, m_prev.cols, m_prev.type());
 
-    // set prev_points to the current input
-    if (d_points_in.getValue().empty()) return;
-    m_pts_in.reserve(d_points_in.getValue().size());
-    m_pts_in.clear();
-    for (const sofa::defaulttype::Vec2d& pt : d_points_in.getValue())
-      m_pts_in.push_back(cv::Point2f(pt.x(), pt.y()));
+//    // set prev_points to the current input
+//    if (d_points_in.getValue().empty()) return;
+//    m_pts_in.reserve(d_points_in.getValue().size());
+//    m_pts_in.clear();
+//    for (const sofa::defaulttype::Vec2d& pt : d_points_in.getValue())
+//      m_pts_in.push_back(cv::Point2f(pt.x(), pt.y()));
+
+//    // copy in in out
+//    in.copyTo(out);
+//    d_points_out.setValue(d_points_in.getValue());
+//    return;
+//  }
+
+//  // IF THE TRACKER HAS BEEN STARTED:
+//  if (in.type() != CV_8UC1)
+//    cv::cvtColor(in, gray, CV_BGRA2GRAY);
+//  else
+//    gray = in;
+
+//  // If it's the first step of the optical flow:
+//  if (m_prev.empty())
+//  {
+//    // we then want to initialize some of the prev values:
+//    m_prev = gray.clone();
+//    return;
+//  }
+//  m_pts_out = m_pts_in;
+
+//  if (m_pts_in.empty() || m_prev.empty() || gray.empty())
+//  {
+//    msg_error(getName() + "::applyFilter()")
+//        << "something is wrong: please check your input frames and / "
+//           "or input points";
+//    return;
+//  }
+//  std::vector<uchar> status = d_status_out.getValue();
+//  std::vector<float> error = d_error_out.getValue();
+
+//  cv::TermCriteria tc = cv::TermCriteria(
+//      d_criteria_type.getValue(), d_maxCount.getValue(), d_epsilon.getValue());
+//  cv::Size winSize(d_winSize.getValue().x(), d_winSize.getValue().y());
+
+//  cv::calcOpticalFlowPyrLK(m_prev, gray, m_pts_in, m_pts_out, status, error,
+//                           winSize, d_maxLevel.getValue(), tc,
+//                           d_flags.getValue(), d_minEigThresh.getValue());
+
+//  sofa::helper::vector<sofa::defaulttype::Vec2d>* points_out =
+//      d_points_out.beginEdit();
+//  sofa::helper::vector<sofa::defaulttype::Vec2d>* points_in =
+//      d_points_in.beginEdit();
+//  points_out->clear();
+//  points_in->clear();
+//  for (size_t i = 0; i < m_pts_out.size(); ++i)
+//  {
+//    cv::Point2f ptPrev, ptNext;
+//    ptPrev = m_pts_in[i];
+//    ptNext = m_pts_out[i];
+//    points_out->push_back(sofa::defaulttype::Vec2d(double(ptNext.x), double(ptNext.y)));
+//    points_in->push_back(sofa::defaulttype::Vec2d(double(ptPrev.x), double(ptPrev.y)));
+//  }
+//  d_status_out.setValue(status);
+//  d_error_out.setValue(error);
+
+//  m_pts_in = m_pts_out;
+//  d_points_out.endEdit();
+//  d_points_in.endEdit();
+//  m_prev = gray.clone();
+
+//  // copy in in out
+//  in.copyTo(out);
+//  if (d_outputImage.getValue())
+//  {
+//    for (size_t i = 0; i < m_pts_out.size(); ++i)
+//    {
+//      if (!status[i])
+//        cv::circle(out, m_pts_out[i], 3, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+//      else
+//        cv::circle(out, m_pts_out[i], 3, cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
+//    }
+//  }
+    cv::Mat gray;
+    if (in.empty()) return;
+
+    if (!d_startTracking.getValue() || m_pts_in.empty())
+    {
+      // Keep things well initialized:
+      if (!m_prev.empty())  // m_prev should stay empty
+        m_prev.zeros(m_prev.rows, m_prev.cols, m_prev.type());
+
+      // set prev_points to the current input
+      if (d_points_in.getValue().empty()) return;
+      m_pts_in.reserve(d_points_in.getValue().size());
+      m_pts_in.clear();
+      for (const sofa::defaulttype::Vec2d& pt : d_points_in.getValue())
+        m_pts_in.push_back(cv::Point2f(pt.x(), pt.y()));
+
+      // copy in in out
+      in.copyTo(out);
+      d_points_out.setValue(d_points_in.getValue());
+      return;
+    }
+
+    // IF THE TRACKER HAS BEEN STARTED:
+    if (in.type() != CV_8UC1)
+      cv::cvtColor(in, gray, CV_BGRA2GRAY);
+    else
+      gray = in;
+
+    // If it's the first step of the optical flow:
+    if (m_prev.empty())
+    {
+      // we then want to initialize some of the prev values:
+      m_prev = gray.clone();
+      return;
+    }
+    m_pts_out = m_pts_in;
+
+    if (m_pts_in.empty() || m_prev.empty() || gray.empty())
+    {
+      msg_error(getName() + "::applyFilter()")
+          << "something is wrong: please check your input frames and / "
+             "or input points";
+      return;
+    }
+    std::vector<uchar> status = d_status_out.getValue();
+    std::vector<float> error = d_error_out.getValue();
+
+    cv::TermCriteria tc = cv::TermCriteria(
+        d_criteria_type.getValue(), d_maxCount.getValue(), d_epsilon.getValue());
+    cv::Size winSize(d_winSize.getValue().x(), d_winSize.getValue().y());
+
+    cv::calcOpticalFlowPyrLK(m_prev, gray, m_pts_in, m_pts_out, status, error,
+                             winSize, d_maxLevel.getValue(), tc,
+                             d_flags.getValue(), d_minEigThresh.getValue());
+
+    sofa::helper::vector<sofa::defaulttype::Vec2d> points_out =
+        d_points_out.getValue();
+    sofa::helper::vector<sofa::defaulttype::Vec2d> points_in =
+        d_points_in.getValue();
+    points_out.clear();
+    points_in.clear();
+    for (size_t i = 0; i < m_pts_out.size(); ++i)
+    {
+      cv::Point2f ptPrev, ptNext;
+      ptPrev = m_pts_in[i];
+      ptNext = m_pts_out[i];
+      points_out.push_back(sofa::defaulttype::Vec2d(ptNext.x, ptNext.y));
+      points_in.push_back(sofa::defaulttype::Vec2d(ptPrev.x, ptPrev.y));
+    }
+    d_status_out.setValue(status);
+    d_error_out.setValue(error);
+
+    m_pts_in = m_pts_out;
+    d_points_out.setValue(points_out);
+    m_prev = gray.clone();
 
     // copy in in out
     in.copyTo(out);
-    d_points_out.setValue(d_points_in.getValue());
-    return;
-  }
-
-  // IF THE TRACKER HAS BEEN STARTED:
-  if (in.type() != CV_8UC1)
-    cv::cvtColor(in, gray, CV_BGRA2GRAY);
-  else
-    gray = in;
-
-  // If it's the first step of the optical flow:
-  if (m_prev.empty())
-  {
-    // we then want to initialize some of the prev values:
-    m_prev = gray.clone();
-    return;
-  }
-  m_pts_out = m_pts_in;
-
-  if (m_pts_in.empty() || m_prev.empty() || gray.empty())
-  {
-    msg_error(getName() + "::applyFilter()")
-        << "something is wrong: please check your input frames and / "
-           "or input points";
-    return;
-  }
-  std::vector<uchar> status = d_status_out.getValue();
-  std::vector<float> error = d_error_out.getValue();
-
-  cv::TermCriteria tc = cv::TermCriteria(
-      d_criteria_type.getValue(), d_maxCount.getValue(), d_epsilon.getValue());
-  cv::Size winSize(d_winSize.getValue().x(), d_winSize.getValue().y());
-
-  cv::calcOpticalFlowPyrLK(m_prev, gray, m_pts_in, m_pts_out, status, error,
-                           winSize, d_maxLevel.getValue(), tc,
-                           d_flags.getValue(), d_minEigThresh.getValue());
-
-  sofa::helper::vector<sofa::defaulttype::Vec2d>* points_out =
-      d_points_out.beginEdit();
-  sofa::helper::vector<sofa::defaulttype::Vec2d>* points_in =
-      d_points_in.beginEdit();
-  points_out->clear();
-  points_in->clear();
-  for (size_t i = 0; i < m_pts_out.size(); ++i)
-  {
-    cv::Point2f ptPrev, ptNext;
-    ptPrev = m_pts_in[i];
-    ptNext = m_pts_out[i];
-    points_out->push_back(sofa::defaulttype::Vec2d(double(ptNext.x), double(ptNext.y)));
-    points_in->push_back(sofa::defaulttype::Vec2d(double(ptPrev.x), double(ptPrev.y)));
-  }
-  d_status_out.setValue(status);
-  d_error_out.setValue(error);
-
-  m_pts_in = m_pts_out;
-  d_points_out.endEdit();
-  d_points_in.endEdit();
-  m_prev = gray.clone();
-
-  // copy in in out
-  in.copyTo(out);
-  if (d_outputImage.getValue())
-  {
-    for (size_t i = 0; i < m_pts_out.size(); ++i)
+    if (d_outputImage.getValue())
     {
-      if (!status[i])
-        cv::circle(out, m_pts_out[i], 3, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
-      else
-        cv::circle(out, m_pts_out[i], 3, cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
+      for (size_t i = 0; i < m_pts_out.size(); ++i)
+      {
+        if (!status[i])
+          cv::circle(out, m_pts_out[i], 3, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+        else
+          cv::circle(out, m_pts_out[i], 3, cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
+      }
     }
-  }
 }
 
 } // namespace features
