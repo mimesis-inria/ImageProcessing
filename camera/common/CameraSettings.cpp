@@ -415,8 +415,8 @@ void CameraSettings::decomposeGL()
 
   double fx = 0.5 * w * glP[0][0];
   double fy = 0.5 * h * (1.0 + glP[1][1]);
-  double cx = 0.5 * w * (1.0 - glP[0][3]);
-  double cy = 0.5 * h * (1.0 + glP[1][3]);
+  double cx = 0.5 * w * (1.0 - glP[0][2]);
+  double cy = 0.5 * h * (1.0 + glP[1][2]);
 
   Matrix3 translate2D(Vector3(1, 0, cx), Vector3(0, 1, cy), Vector3(0, 0, 1));
   Matrix3 scale2D(Vector3(fx, 0, 0), Vector3(0, fy, 0), Vector3(0, 0, 1));
@@ -426,14 +426,15 @@ void CameraSettings::decomposeGL()
 
   Matrix3 R;
   for (unsigned j = 0; j < 3; j++)
-    for (unsigned i = 0; i < 3; i++) R[j][i] = glM[j][i];
+    for (unsigned i = 0; i < 3; i++) R[j][i] = glM[i][j];
 
   Quat camera_ori;
-  camera_ori.fromMatrix(R);
+  camera_ori.fromMatrix(R.transposed());
   Vector3 camera_pos(glM[0][3], glM[1][3], glM[2][3]);
+  camera_pos = -R * camera_pos;
 
   camera_ori = Quat(Vector3(1.0, 0.0, 0.0), M_PI) * camera_ori;
-  camera_pos = -R * camera_pos;
+  camera_ori.toMatrix(R);
 
   d_orientation.setValue(camera_ori);
   d_R.setValue(R);
@@ -458,14 +459,14 @@ void CameraSettings::composeGL()
 
   glP[0][0] = 2.0 * S[0][0] / w;
   glP[0][1] = 0.0;
-  glP[0][2] = 0.0;
-  glP[0][3] = 1.0 - 2.0 * T[0][2] / w;
+  glP[0][2] = 1.0 - 2.0 * T[0][2] / w;
+  glP[0][3] = 0.0;
 
   //	glP[1][0] = -2.0 * s / w;
   glP[1][0] = 0.0;
   glP[1][1] = 2.0 * S[1][1] / h;
-  glP[1][2] = 0.0;
-  glP[1][3] = -1.0 + 2.0 * T[1][2] / h;
+  glP[1][2] = -1.0 + 2.0 * T[1][2] / h;
+  glP[1][3] = 0.0;
 
   glP[2][0] = 0.0;
   glP[2][1] = 0.0;
@@ -736,8 +737,8 @@ void CameraSettings::buildFromOpenGLContext()
   }
   if (hasGLContext)
   {
-    d_glProjection.setValue(p);
-    d_glModelview.setValue(m);
+    d_glProjection.setValue(p.transposed());
+    d_glModelview.setValue(m.transposed());
   }
   else
   {
