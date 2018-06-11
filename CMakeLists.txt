@@ -29,10 +29,7 @@ endif ()
 set(HEADER_FILES
   ImageProcessingPlugin.h
 
-  common/FrameViewer.h
-  common/PCViewer.h
   common/ImageFilter.h
-  common/FrameExporter.h
 
   camera/common/CameraSettings.h
   camera/common/StereoSettings.h
@@ -93,10 +90,6 @@ set(HEADER_FILES
 
 set(SOURCE_FILES
   ImageProcessingPlugin.cpp
-
-  common/FrameViewer.cpp
-  common/PCViewer.cpp
-  common/FrameExporter.cpp
 
   camera/common/CameraSettings.cpp
   camera/common/StereoSettings.cpp
