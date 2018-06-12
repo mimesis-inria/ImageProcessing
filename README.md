@@ -27,6 +27,9 @@ The ImageProcessing plugin doesn't have the ambition to provide cutting-edge com
 
 ### Contribution guidelines ###
 
+* __Contributing to this plugin:__
+    ImageProcessing has 2 main branches, __master__ and __develop__. both branches are protected, and you need to create pull (merge) requests to contribute to the codebase. merge requests are made against develop, except for __FAST-MERGE__ labelled PRs that are merged against both master and develop. merged PRs in develop are merged back into master once they've proven themselves stable enough
+
 * __Coding styles:__
     SofaCV is developped using a (slightly) modified Google / gnu codestyle. To contribute, please try to respect this indentation. More information on the coding style can be found in the SofaCV's README.md file.
 
