@@ -392,7 +392,7 @@ void CameraSettings::decomposeGL()
   double h = d_imageSize.getValue().y();
 
   double fx = 0.5 * w * glP[0][0];
-  double fy = 0.5 * h * (1.0 + glP[1][1]);
+  double fy = 0.5 * h * glP[1][1];
   double cx = 0.5 * w * (1.0 - glP[0][2]);
   double cy = 0.5 * h * (1.0 + glP[1][2]);
 
