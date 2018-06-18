@@ -28,7 +28,7 @@ class FingerPuppetController(Sofa.PythonScriptController):
         self.vision.createObject('Resize', name="resized", img="@flipped.img_out", size="640 360")
         self.copyto = self.vision.createObject('CopyTo', name="masked", img="@resized.img_out", mask="@mask.img_out", useMask="true")
         
-        self.detector = self.vision.createObject('FeatureDetector', name="detector", img="@masked.img_out", detectorMode="DETECT_ONLY", mask="@mask.img_out", detectorType="BLOB", BLOBminThreshold="0", BLOBmaxThreshold="150", BLOBfilterByArea="true", BLOBminArea="50", BLOBfilterByConvexity="false", BLOBfilterByInertia="false", BLOBfilterByCircularity="true", BLOBminCircularity="0.5")
+        self.detector = self.vision.createObject('FeatureDetector', name="detector", img="@masked.img_out", detectorMode="DETECT_ONLY", mask="@mask.img_out", detectorType="BLOB", BLOBthresholdStep="1", BLOBminThreshold="0", BLOBmaxThreshold="50", BLOBfilterByArea="true", BLOBminArea="60", BLOBfilterByConvexity="false", BLOBfilterByInertia="false", BLOBfilterByCircularity="true", BLOBminCircularity="0.5")
 
         self.vision.createObject('PointVectorConverter', name="converter", template="cvKeypoint,Vec2d", points="@detector.keypoints_out")
         
@@ -43,6 +43,7 @@ class FingerPuppetController(Sofa.PythonScriptController):
 
         ## display the camera stream
         self.vision.createObject('FrameViewer', img="@addImage.img_out", corners="@/cam.3DCorners")
+        # self.vision.createObject('FrameViewer', img="@pouet.img_out", corners="@/cam.3DCorners")
 
         ## display projected points:
         self.vision.createObject('PCViewer', name="3DPoints", size="10", points="@ProjectPoints.points3D")
@@ -71,8 +72,8 @@ class FingerPuppetController(Sofa.PythonScriptController):
         self.puppet.createObject('MeshObjLoader', name="loader", filename="data/FingerPuppet.obj", scale="0.1", translation=translation, rotation=rotation)
         self.puppet.createObject('SparseGrid', name="grid", vertices="@loader.position", input_triangles="@loader.triangles", n="10 10 7")
         self.puppet.createObject('MechanicalObject', name="gridDOFs")
-        self.puppet.createObject('UniformMass', totalMass="10")
-        self.puppet.createObject('HexahedronFEMForceField', name="FF", youngModulus="500", poissonRatio="0.4")
+        self.puppet.createObject('UniformMass', totalMass="100")
+        self.puppet.createObject('HexahedronFEMForceField', name="FF", youngModulus="5000", poissonRatio="0.4")
 
         self.visu = self.puppet.createChild('Visual')
         self.visu.createObject('OglModel', name="VisualModel", fileMesh="data/FingerPuppet.obj", scale="0.1", translation=translation, rotation=rotation)

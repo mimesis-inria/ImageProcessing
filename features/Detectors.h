@@ -58,8 +58,12 @@ struct SimpleBlobDetector : BaseDetector
                                 std::vector<cv::KeyPoint>& kpts,
                                 cvMat&);
 
+  sofa::Data<int> thresholdStep;
   sofa::Data<int> minThreshold;
   sofa::Data<int> maxThreshold;
+  sofa::Data<int> minDistBetweenBlobs;
+  sofa::Data<bool> filterByColor;
+  sofa::Data<int> blobColor;
   sofa::Data<bool> filterByArea;
   sofa::Data<int> minArea;
   sofa::Data<bool> filterByCircularity;
