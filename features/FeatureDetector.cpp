@@ -90,6 +90,7 @@ void FeatureDetector::reinit()
   if (m_dataTracker.isDirty(d_detectMode)) detectModeChanged();
   if (m_dataTracker.isDirty(d_detectorType)) detectTypeChanged();
 
+  ImageFilter::reinit();
   update();
 }
 

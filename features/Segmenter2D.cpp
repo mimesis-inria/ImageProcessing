@@ -135,8 +135,8 @@ void Segmenter2D::capture(int event, int x, int y, int flags)
       cv::Point2i pos(x, y);
       if (flags & cv::EVENT_FLAG_CTRLKEY)
       {
-        for (int _x = 0; _x < 6; ++_x)
-          for (int _y = 0; _y < 6; ++_y)
+        for (int _x = 0; _x < 16; ++_x)
+          for (int _y = 0; _y < 16; ++_y)
           {
             pos = cv::Point2i(x - 2 + _x, y - 2 + _y);
             m_poly.remove(pos);
@@ -150,8 +150,8 @@ void Segmenter2D::capture(int event, int x, int y, int flags)
       cv::Point2i pos(x, y);
       if (flags & cv::EVENT_FLAG_CTRLKEY)
       {
-        for (int _x = 0; _x < 6; ++_x)
-          for (int _y = 0; _y < 6; ++_y)
+        for (int _x = 0; _x < 16; ++_x)
+          for (int _y = 0; _y < 16; ++_y)
           {
             pos = cv::Point2i(x - 2 + _x, y - 2 + _y);
             m_poly.remove(pos);
