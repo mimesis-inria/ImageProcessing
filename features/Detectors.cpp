@@ -30,8 +30,12 @@ void BaseDetector::detectAndCompute(const cvMat &img,
 
 SimpleBlobDetector::SimpleBlobDetector(sofa::core::DataEngine *c)
     : BaseDetector(c),
+      thresholdStep(c->initData(&thresholdStep, 10, "BLOBthresholdStep", "")),
       minThreshold(c->initData(&minThreshold, 10, "BLOBminThreshold", "")),
       maxThreshold(c->initData(&maxThreshold, 200, "BLOBmaxThreshold", "")),
+      minDistBetweenBlobs(c->initData(&minDistBetweenBlobs, 5, "BLOBminDistBetweenBlobs", "")),
+      filterByColor(c->initData(&filterByColor, true, "BLOBfilterByColor", "")),
+      blobColor(c->initData(&blobColor, 0, "BLOBblobColor", "")),
       filterByArea(c->initData(&filterByArea, true, "BLOBfilterByArea", "")),
       minArea(c->initData(&minArea, 1500, "BLOBminArea", "")),
       filterByCircularity(c->initData(&filterByCircularity, true,
@@ -52,8 +56,12 @@ void SimpleBlobDetector::enable(bool show)
 {
   if (show)
   {
+    m_obj->addInput(&thresholdStep);
     m_obj->addInput(&minThreshold);
     m_obj->addInput(&maxThreshold);
+    m_obj->addInput(&minDistBetweenBlobs);
+    m_obj->addInput(&filterByColor);
+    m_obj->addInput(&blobColor);
     m_obj->addInput(&filterByArea);
     m_obj->addInput(&minArea);
     m_obj->addInput(&filterByCircularity);
@@ -65,8 +73,12 @@ void SimpleBlobDetector::enable(bool show)
   }
   else
   {
+    m_obj->delInput(&thresholdStep);
     m_obj->delInput(&minThreshold);
     m_obj->delInput(&maxThreshold);
+    m_obj->delInput(&minDistBetweenBlobs);
+    m_obj->delInput(&filterByColor);
+    m_obj->delInput(&blobColor);
     m_obj->delInput(&filterByArea);
     m_obj->delInput(&minArea);
     m_obj->delInput(&filterByCircularity);
@@ -95,7 +107,12 @@ void SimpleBlobDetector::init()
 void SimpleBlobDetector::registerData(common::ImageFilter *parent)
 {
   parent->registerData(&minThreshold, 0, 255, 1);
+  parent->registerData(&thresholdStep, 0, 255, 1);
+  parent->registerData(&minThreshold, 0, 255, 1);
   parent->registerData(&maxThreshold, 0, 255, 1);
+  parent->registerData(&minDistBetweenBlobs, 0, 255, 1);
+  parent->registerData(&filterByColor);
+  parent->registerData(&blobColor, 0, 255, 1);
   parent->registerData(&filterByArea);
   parent->registerData(&minArea, 0, 3000, 2);
   parent->registerData(&filterByCircularity);
@@ -114,8 +131,16 @@ void SimpleBlobDetector::detect(const cvMat &img,
   cv::SimpleBlobDetector::Params params;
 
   // Change thresholds
+  params.thresholdStep = thresholdStep.getValue();
   params.minThreshold = minThreshold.getValue();
   params.maxThreshold = maxThreshold.getValue();
+
+  // Merging
+  params.minDistBetweenBlobs = minDistBetweenBlobs.getValue();
+
+  // Filter by Color.
+  params.filterByColor = filterByColor.getValue();
+  params.blobColor = blobColor.getValue();
 
   // Filter by Area.
   params.filterByArea = filterByArea.getValue();

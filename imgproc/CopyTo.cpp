@@ -29,6 +29,7 @@ void CopyTo::applyFilter(const cv::Mat &in,
 
 void CopyTo::init()
 {
+  addInput(&d_useMask);
   registerData(&d_useMask);
   ImageFilter::init();
 }
