@@ -6,13 +6,13 @@ find_package(OpenSSL REQUIRED)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
 set(HEADER_FILES
-  regression/Regression_test.h
+ regression/Regression_test.h
 )
 
 set(SOURCE_FILES
-  camera/common/CameraSettings_test.cpp
-  common/DataSliderMgr_test.cpp
-  regression/Regression_test.cpp
+ camera/common/CameraSettings_test.cpp
+ common/DataSliderMgr_test.cpp
+ regression/Regression_test.cpp
 )
 
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
