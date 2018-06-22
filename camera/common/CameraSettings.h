@@ -1,7 +1,7 @@
 #ifndef SOFACV_CAM_CAMERASETTINGS_H
 #define SOFACV_CAM_CAMERASETTINGS_H
 
-#include "ImageProcessingPlugin.h"
+#include <ImageProcessing/ImageProcessingPlugin.h>
 
 #include <SofaCV/SofaCV.h>
 
