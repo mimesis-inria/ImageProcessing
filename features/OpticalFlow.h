@@ -27,6 +27,7 @@ class SOFA_IMAGEPROCESSING_API OpticalFlow : public common::ImageFilter
   sofa::Data<sofa::helper::vector<uchar> > d_status_out;
   sofa::Data<sofa::helper::vector<float> > d_error_out;
   sofa::Data<bool> d_startTracking;
+  sofa::Data<sofacv::cvMat> d_img2;
 
   std::vector<cv::Point2f> m_pts_in;
   std::vector<cv::Point2f> m_pts_out;
