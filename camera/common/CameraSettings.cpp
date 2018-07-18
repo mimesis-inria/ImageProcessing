@@ -692,6 +692,16 @@ void CameraSettings::buildFromKRT()
   decomposeCV();
   composeM();
   composeGL();
+  sofa::defaulttype::Matrix3 rot;
+  sofa::defaulttype::Quat q = getOrientation();
+  q.toMatrix(rot);
+
+  Vector3 camPos = getPosition();
+  Vector3 camera_Y = rot.line(1).normalized();
+  Vector3 camera_Z = rot.line(2).normalized();
+  d_upVector.setValue(camera_Y);
+  d_fwdVector.setValue(camera_Z);
+  d_lookAt.setValue(camPos - (camera_Z * d_f.getValue()));
 }
 
 void CameraSettings::buildFromOpenGL()
@@ -780,6 +790,13 @@ void CameraSettings::init()
   trackData(&d_translate2D);
 
   addOutput(&d_3DCorners);
+
+  if (!d_upVector.isSet())
+    addOutput(&d_upVector);
+  if (!d_fwdVector.isSet())
+    addOutput(&d_fwdVector);
+  if (!d_lookAt.isSet())
+    addOutput(&d_lookAt);
 
   if (!d_imageSize.isSet()) d_imageSize.setValue(Vec2i(1280, 720));
 
