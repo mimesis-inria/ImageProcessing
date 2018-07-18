@@ -14,9 +14,9 @@ SOFA_DECL_CLASS(LOSConstraintManager)
 int LOSConstraintManagerClass =
     sofa::core::RegisterObject("Lines of sight Constraint Manager")
         .add<LOSConstraintManager<sofa::defaulttype::Vec3dTypes> >(true)
-    #ifdef SOFA_FLOAT
+#ifdef SOFA_FLOAT
         .add<LOSConstraintManager<sofa::defaulttype::Vec3fTypes> >()
-    #endif // SOFA_FLOAT
+#endif  // SOFA_FLOAT
     ;
 
 template <class DataTypes>
@@ -28,22 +28,26 @@ LOSConstraintManager<DataTypes>::LOSConstraintManager()
       l_masterPoints(initLink(
           "masterMO",
           "MechanicalObject containing the position of the lines of sight")),
-      l_mapping(initLink("slaveBM", "BarycentricMapping used to map the slave MO")),
+      l_mapping(
+          initLink("slaveBM", "BarycentricMapping used to map the slave MO")),
       d_indices(initData(
           &d_indices, "indices",
-          "indices of the master points sorted by their matching slave"))
+          "indices of the master points sorted by their matching slave")),
+      d_rebuildConstraints(initData(
+          &d_rebuildConstraints, false, "rebuild",
+          "if true, constraints a deleted and recreated at each timestep"))
 {
 }
 
-template <class DataTypes>
-void LOSConstraintManager<DataTypes>::handleEvent(
-    sofa::core::objectmodel::Event *e)
-{
-  if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
-  {
-    update();
-  }
-}
+//template <class DataTypes>
+//void LOSConstraintManager<DataTypes>::handleEvent(
+//    sofa::core::objectmodel::Event *e)
+//{
+//  if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
+//  {
+//    update();
+//  }
+//}
 
 }  // namespace control
 }  // namespace cam
