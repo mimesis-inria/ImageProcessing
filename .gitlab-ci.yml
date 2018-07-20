@@ -1,0 +1,65 @@
+        
+  before_script:
+    - git clone git@gitlab.inria.fr:mimesis/ci-scripts.git
+    - . ci-scripts/sofa.sh
+    
+  stages:
+    - setup_env
+    - build_deps
+    - build_sofa
+    - test
+
+  setup_env:
+    stage: setup_env
+    script:
+      - echo $CI_JOB_STAGE
+      - BeforeStage
+      - echo " INSTALLING SYSTEM PACKAGES"
+      - AddPackage qt5-default qttools5-dev libqt5opengl5-dev
+      - AddPackage qt57quickcontrols qt57quickcontrols2 qtquick1-5-dev qtquick1-5-dev-tools qtquick1-qml-plugins
+      - AddPackage ffmpeg libavcodec-dev libavdevice-dev
+      - AddPackage libpng-dev zlib1g-dev libglew-dev freeglut3-dev libtiff5-dev
+      - AddPackage libboost-program-options-dev
+      - AfterStage
+    artifacts:
+      name: $CI_JOB_STAGE
+      untracked: true
+      
+  build_deps:
+    stage: build_deps
+    script:
+      - BeforeStage setup_env
+      - echo " INSTALLING THIRD PARTY SOFTWARES"
+      - AddGitSoftware opencv https://github.com/opencv/opencv.git "-DWITH_FFMPEG=ON -DWITH_TBB=ON -DWITH_V4L=ON -DWITH_QT=ON -DWITH_JPEG=ON -DWITH_TIFF=ON -DWITH_CUDA=OFF -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF" 3.2.0
+      - AfterStage
+    artifacts:
+      name: $CI_JOB_STAGE
+      untracked: true
+      
+  build_sofa:
+    stage: build_sofa
+    script:
+      - BeforeStage build_deps
+      - echo " INSTALLING CONFIGURING PLUGIN DEPENDENCIES "
+      - AddPlugin sofaqtquick "-DAPPLICATION_QTQUICKSOFA=ON -DAPPLICATION_RUNSOFA2=ON -DPLUGIN_SOFAQTQUICKGUI=ON" git@github.com:sofa-framework/SofaQtQuick.git
+      - AddPlugin SofaCV "" git@gitlab.inria.fr:mimesis/ComputerVision/SofaCV.git
+
+      - AddProjectPlugin ImageProcessing
+      - AddSofaOption OpenCV_DIR "$opencv_INSTALL_DIR/share/OpenCV"
+
+      - echo " BUILDING SOFA "
+      - BuildSofa mimesis
+#      - BuildSofa v17.12
+#      - BuildSofa master
+      - AfterStage
+    artifacts:
+      name: $CI_JOB_STAGE
+      untracked: true
+
+  test:
+    stage: test
+    script:
+      - BeforeStage build_sofa
+      - echo " RUNNING TESTS "
+      - RunTests ImageProcessing_test
+      - AfterStage
