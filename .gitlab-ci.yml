@@ -49,8 +49,6 @@
 
       - echo " BUILDING SOFA "
       - BuildSofa mimesis
-#      - BuildSofa v17.12
-#      - BuildSofa master
       - AfterStage
     artifacts:
       name: $CI_JOB_STAGE
