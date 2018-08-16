@@ -97,18 +97,23 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
     Quat q2 = Quat::fromEuler(0, -sphCoord.y() + M_PI, 0);
     Quat q3 = Quat::fromEuler(0, 0, -sphCoord.z());
     Quat q4 = Quat(Vector3(0.0, 0.0, 1.0), -M_PI / 2);
-    Quat q5 = Quat(Vector3(1.0, 0.0, 0.0), -M_PI / 2);
+    Quat q5 = Quat(Vector3(0.0, 1.0, 0.0), M_PI / 2);
+    Quat q6 = Quat(Vector3(1.0, 0.0, 0.0), -M_PI / 2);
+    Quat q7 = Quat(Vector3(0.0, 0.0, 1.0), -M_PI / 2);
 
-    Matrix3 R1, R2, R3, R4, R5;
+
+    Matrix3 R1, R2, R3, R4, R5, R6, R7;
     q1.toMatrix(R1);
     q2.toMatrix(R2);
     q3.toMatrix(R3);
     q4.toMatrix(R4);
     q5.toMatrix(R5);
+    q6.toMatrix(R6);
+    q7.toMatrix(R7);
 
-    p = Vector3(p.x(), -p.z(), p.y());
+    p = Vector3(-p.z(), -p.x(), p.y());
     p += d_center.getValue();
-    Matrix3 R = R4 * R2 * R3 * R5;
+    Matrix3 R = R7*R4 * R2 * R3 * R5 * R6;
 
     l_cam->setPosition(p, false);
     l_cam->setRotationMatrix(R, false);
