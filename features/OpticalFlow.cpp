@@ -27,6 +27,8 @@ OpticalFlow::OpticalFlow()
                                "set to true to stop reading from input "
                                "vector 'points' and start performing the "
                                "optical flow")),
+      d_error_out(initData(&d_error_out, "error_out",
+                            "tracking error")),
       d_img2(initData(&d_img2, "img2",
                       "second image to use for the optical flow (do not use if "
                       "you want to detect flow between 2 simulation steps)"))
@@ -43,6 +45,7 @@ void OpticalFlow::init()
     addInput(&d_points_in);
     addInput(&d_img2);
     addOutput(&d_points_out);
+    addOutput(&d_error_out);
     ImageFilter::init();
 }
 
@@ -161,7 +164,7 @@ void OpticalFlow::applyFilter(const cv::Mat& in,
         cv::Mat zero = cv::Mat::zeros(visu.rows, visu.cols, visu.type());
         for (int i = 0 ; i < visu.cols ; ++i)
             for (int j = 0 ; j < visu.rows ; ++j)
-                if (visu.at<uchar>(i,j) >= 128)
+                if (visu.at<uchar>(i,j) > 128)
                     visu.at<uchar>(i,j) = 0;
                 else
                     visu.at<uchar>(i,j) *= 5;
