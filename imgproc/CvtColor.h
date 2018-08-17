@@ -2,7 +2,7 @@
 #define SOFACV_IMGPROC_CVTCOLOR_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 namespace sofacv
 {
@@ -14,10 +14,10 @@ namespace imgproc
  * Please refer to OpenCV's ColorConversionCodes enumeration in imgproc.hpp for
  * color codes
  */
-class SOFA_IMAGEPROCESSING_API CvtColor : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API CvtColor : public ImageFilter
 {
  public:
-  SOFA_CLASS(CvtColor, common::ImageFilter);
+  SOFA_CLASS(CvtColor, ImageFilter);
 
   sofa::Data<int> d_code;
   sofa::Data<int> d_dstCn;

@@ -1,7 +1,7 @@
 #ifndef SOFACV_FEATURES_POINTPICKER2D_H
 #define SOFACV_FEATURES_POINTPICKER2D_H
 
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 #include "camera/common/StereoSettings.h"
 
@@ -11,7 +11,7 @@ namespace sofacv
 {
 namespace features
 {
-class PointPicker2D : public common::ImageFilter
+class PointPicker2D : public ImageFilter
 {
   typedef sofa::core::objectmodel::SingleLink<
       PointPicker2D, cam::StereoSettings,
@@ -19,7 +19,7 @@ class PointPicker2D : public common::ImageFilter
       Settings;
 
  public:
-  SOFA_CLASS(PointPicker2D, common::ImageFilter);
+  SOFA_CLASS(PointPicker2D, ImageFilter);
 
   // INPUTS
   Settings l_cam;

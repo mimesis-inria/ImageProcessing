@@ -2,7 +2,7 @@
 #define SOFA_OR_PROCESSOR_DETECTORS_H
 
 #include <SofaCV/SofaCV.h>
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/vector.h>
@@ -26,7 +26,7 @@ struct BaseDetector
 
     virtual void init() = 0;
 
-    virtual void registerData(common::ImageFilter* parent) = 0;
+    virtual void registerData(ImageFilter* parent) = 0;
 
     virtual void detect(const cvMat&, const cvMat&,
                         std::vector<cv::KeyPoint>&);
@@ -46,7 +46,7 @@ struct SimpleBlobDetector : BaseDetector
     void enable(bool);
     void init();
 
-    virtual void registerData(common::ImageFilter* parent);
+    virtual void registerData(ImageFilter* parent);
 
     virtual void detect(const cvMat& img, const cvMat& mask,
                         std::vector<cv::KeyPoint>& keypoints);
@@ -79,7 +79,7 @@ struct ShiTomasiDetector : BaseDetector
     ShiTomasiDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter* parent);
+    virtual void registerData(ImageFilter* parent);
 
     virtual void detect(const cvMat&, const cvMat&,
                         std::vector<cv::KeyPoint>&);
@@ -102,7 +102,7 @@ struct FASTDetector : BaseDetector
     FASTDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter* parent);
+    virtual void registerData(ImageFilter* parent);
     virtual void compute(const cvMat&, std::vector<cv::KeyPoint>&,
                          cvMat&);
     virtual void detectAndCompute(const cvMat& img,
@@ -119,7 +119,7 @@ struct MSERDetector : BaseDetector
     MSERDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter* parent);
+    virtual void registerData(ImageFilter* parent);
 
     virtual void compute(const cvMat&, std::vector<cv::KeyPoint>&,
                          cvMat&);
@@ -144,7 +144,7 @@ struct ORBDetector : BaseDetector
     void enable(bool);
     void init();
 
-    virtual void registerData(common::ImageFilter*);
+    virtual void registerData(ImageFilter*);
 
     sofa::Data<int> nFeatures;
     sofa::Data<float> scaleFactor;
@@ -161,7 +161,7 @@ struct BRISKDetector : BaseDetector
     BRISKDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter*);
+    virtual void registerData(ImageFilter*);
 
     sofa::Data<int> threshold;
     sofa::Data<int> octaves;
@@ -172,7 +172,7 @@ struct KAZEDetector : BaseDetector
     KAZEDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter*);
+    virtual void registerData(ImageFilter*);
 
     sofa::Data<bool> extended;
     sofa::Data<bool> upright;
@@ -186,7 +186,7 @@ struct AKAZEDetector : BaseDetector
     AKAZEDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter*);
+    virtual void registerData(ImageFilter*);
 
     sofa::Data<sofa::helper::OptionsGroup> descriptorType;
     sofa::Data<int> descriptorSize;
@@ -204,7 +204,7 @@ struct BRIEFDetector : BaseDetector
     BRIEFDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter*);
+    virtual void registerData(ImageFilter*);
 
     void detect(const cvMat&, const cvMat&,
                 std::vector<cv::KeyPoint>&);
@@ -220,7 +220,7 @@ struct SIFTDetector : BaseDetector
     SIFTDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter*);
+    virtual void registerData(ImageFilter*);
 
     sofa::Data<int> nFeatures;
     sofa::Data<int> nOctaveLayers;
@@ -234,7 +234,7 @@ struct SURFDetector : BaseDetector
     SURFDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter*);
+    virtual void registerData(ImageFilter*);
 
     sofa::Data<double> threshold;
     sofa::Data<int> nOctaves;
@@ -248,7 +248,7 @@ struct DAISYDetector : BaseDetector
     DAISYDetector(sofa::core::DataEngine* c);
     void enable(bool);
     void init();
-    virtual void registerData(common::ImageFilter*);
+    virtual void registerData(ImageFilter*);
 
     void detect(const cvMat&, const cvMat&,
                 std::vector<cv::KeyPoint>&);

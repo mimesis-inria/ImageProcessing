@@ -23,7 +23,7 @@
 #ifndef SOFA_OR_PROCESSOR_FEATURECOLOREXTRACTOR_H
 #define SOFA_OR_PROCESSOR_FEATURECOLOREXTRACTOR_H
 
-#include "common/ImageFilter.h"
+#include "ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/SVector.h>
@@ -34,12 +34,12 @@ namespace sofacv
 {
 namespace features
 {
-class SOFA_IMAGEPROCESSING_API FeatureColorExtractor: public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API FeatureColorExtractor: public ImageFilter
 {
         typedef sofa::defaulttype::Vec<3, uint8_t> Vec3b;
 
  public:
-    SOFA_CLASS(FeatureColorExtractor, common::ImageFilter);
+    SOFA_CLASS(FeatureColorExtractor, ImageFilter);
 
  public:
 	FeatureColorExtractor();

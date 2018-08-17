@@ -1,9 +1,8 @@
 #ifndef SOFACV_FEATURES_FEATUREDETECTOR_H
 #define SOFACV_FEATURES_FEATUREDETECTOR_H
 
+#include "ImageProcessingPlugin.h"
 #include "Detectors.h"
-#include "common/ImageFilter.h"
-
 #include <SofaCV/SofaCV.h>
 
 #include <sofa/core/DataTracker.h>
@@ -15,7 +14,7 @@ namespace sofacv
 {
 namespace features
 {
-class SOFA_IMAGEPROCESSING_API FeatureDetector : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API FeatureDetector : public ImageFilter
 {
     enum DetectorMode
     {
@@ -43,7 +42,7 @@ class SOFA_IMAGEPROCESSING_API FeatureDetector : public common::ImageFilter
     };
 
 public:
-    SOFA_CLASS(FeatureDetector, common::ImageFilter);
+    SOFA_CLASS(FeatureDetector, ImageFilter);
 
 public:
     FeatureDetector();

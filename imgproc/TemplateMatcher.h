@@ -2,7 +2,7 @@
 #define SOFACV_IMGPROC_TEMPLATEMATCHER_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/OptionsGroup.h>
 
@@ -13,10 +13,10 @@ namespace sofacv
 {
 namespace imgproc
 {
-class SOFA_IMAGEPROCESSING_API TemplateMatcher : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API TemplateMatcher : public ImageFilter
 {
  public:
-  SOFA_CLASS(TemplateMatcher, common::ImageFilter);
+  SOFA_CLASS(TemplateMatcher, ImageFilter);
 
   sofa::Data<cvMat> d_template;
   sofa::Data<sofa::helper::OptionsGroup> d_method;

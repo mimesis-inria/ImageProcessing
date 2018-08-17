@@ -7,7 +7,6 @@ set(${PROJECT_NAME}_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_M
 
 find_package(SofaFramework REQUIRED)
 find_package(SofaGui REQUIRED)
-find_package(SofaQtQuickGUI QUIET)
 
 find_package(OpenCV 3.0 REQUIRED)
 find_package(SofaCV REQUIRED)
@@ -28,8 +27,6 @@ endif ()
 
 set(HEADER_FILES
   ImageProcessingPlugin.h
-
-  common/ImageFilter.h
 
   camera/common/CameraSettings.h
   camera/common/StereoSettings.h
@@ -144,89 +141,10 @@ set(SOURCE_FILES
   utils/OrthoProj.cpp
   )
 
-set(${PROJECT_NAME}_LIBRARIES SofaCore SofaSimulationCommon ${OpenCV_LIBRARIES} SofaCV)
 set(${PROJECT_NAME}_SOURCES ${SOURCE_FILES} ${HEADER_FILES})
+set(${PROJECT_NAME}_LIBRARIES SofaCore SofaSimulationCommon ${OpenCV_LIBRARIES} SofaCV)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-set (SOFACV_NEW_GUI_ENABLED ON CACHE BOOL "Enables ImageFilter Widgets for runSofa2")
-
-if((SofaQtQuickGUI_FOUND) AND (SOFACV_NEW_GUI_ENABLED))
-  find_package(Qt5QuickControls2 REQUIRED)
-  find_package(Qt5Quick REQUIRED)
-  find_package(Qt5Qml REQUIRED)
-  find_package(GLEW REQUIRED)
-
-  add_definitions("-DSOFACV_NEW_GUI_ENABLED")
-  add_definitions("-DSOFA_BUILD_${PROJECT_NAME}_PLUGIN")
-  add_definitions("-DHAS_GLEW")
-
-  list(APPEND SOURCE_FILES
-    gui/ImageFilterDisplay.cpp
-    gui/ImageFilterModel.cpp
-    common/ImageFilter_newGUI.cpp
-    )
-
-  list(APPEND HEADER_FILES
-    gui/ImageFilterDisplay.h
-    gui/ImageFilterModel.h
-    common/ImageFilter_newGUI.h
-    )
-
-  set(MOC_HEADER_FILES
-    gui/ImageFilterDisplay.h
-    gui/ImageFilterModel.h
-    )
-
-  set(QML_FILES
-    gui/qml/SofaWidgets/ImageFilterWidget.qml
-    )
-
-  set(QRC_FILES
-    gui/qml/ImageProcessing_qml.qrc
-    )
-
-  list (APPEND ${PROJECT_NAME}_LIBRARIES
-    SofaQtQuickGUI
-    ${GLEW_LIBRARIES}
-    )
-
-  # do not use "set(CMAKE_AUTOMOC ON)" since all the mocced files
-  # will be compiled by a single compilation unit leading to a
-  # "out of heap space" issue on MSVC
-  qt5_wrap_cpp(MOC_FILES ${MOC_HEADER_FILES})
-  qt5_add_resources(RESOURCE_FILES ${QRC_FILES})
-
-  set(${PROJECT_NAME}_SOURCES
-    ${SOURCE_FILES}
-    ${HEADER_FILES}
-    ${MOC_FILES}
-    ${RESOURCE_FILES}
-    ${QML_FILES}
-    ${QRC_FILES}
-    )
-
-  # to fix a bug when one is compiling a debug version of the code
-  if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DQT_NO_DEBUG)
-  endif(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-  add_definitions(-DQT_PLUGIN)
-else ()
-  list(APPEND HEADER_FILES
-    common/DataSliderMgr.h
-    common/DataSliderMgr.inl
-    common/ImageFilter_oldGUI.h
-    )
-
-  list(APPEND SOURCE_FILES
-    common/ImageFilter_oldGUI.cpp
-    )
-  set(${PROJECT_NAME}_SOURCES
-    ${SOURCE_FILES}
-    ${HEADER_FILES}
-    )
-endif()
-
 
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
 

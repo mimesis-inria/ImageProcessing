@@ -31,12 +31,12 @@ void FeatureColorExtractor::init()
 
     addOutput(&d_colors);
 
-    common::ImageFilter::init();
+    ImageFilter::init();
 }
 
 void FeatureColorExtractor::Update()
 {
-    common::ImageFilter::Update();
+    ImageFilter::Update();
 
     sofa::helper::vector<Vec3b>& colors = *(d_colors.beginWriteOnly());
     colors.clear();

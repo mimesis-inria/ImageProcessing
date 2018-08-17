@@ -3,8 +3,6 @@
 
 #include "Detectors.h"
 #include "camera/common/StereoSettings.h"
-#include "common/ImageFilter.h"
-
 #include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/OptionsGroup.h>
@@ -16,7 +14,7 @@ namespace sofacv
 {
 namespace features
 {
-class SOFA_IMAGEPROCESSING_API MatchingConstraints : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API MatchingConstraints : public ImageFilter
 {
   typedef sofa::core::objectmodel::SingleLink<
       MatchingConstraints, cam::StereoSettings,

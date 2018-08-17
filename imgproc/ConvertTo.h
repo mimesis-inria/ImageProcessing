@@ -2,7 +2,7 @@
 #define SOFACV_IMGPROC_CONVERTTO_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 #define SHOWVAL(v) #v
 
@@ -19,12 +19,12 @@ namespace imgproc
  * 0 < val < 1 to 0 < val < 256 for instance.
  */
 template <class T>
-class SOFA_IMAGEPROCESSING_API ConvertTo : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API ConvertTo : public ImageFilter
 {
   T internal_type;
 
  public:
-  SOFA_CLASS(ConvertTo, common::ImageFilter);
+  SOFA_CLASS(ConvertTo, ImageFilter);
 
   sofa::Data<double> d_alpha;
   sofa::Data<double> d_beta;

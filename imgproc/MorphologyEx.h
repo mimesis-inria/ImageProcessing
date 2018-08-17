@@ -2,16 +2,16 @@
 #define SOFACV_IMGPROC_MORPHOLOGYEX_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 namespace sofacv
 {
 namespace imgproc
 {
-class SOFA_IMAGEPROCESSING_API MorphologyEx : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API MorphologyEx : public ImageFilter
 {
  public:
-  SOFA_CLASS(MorphologyEx, common::ImageFilter);
+  SOFA_CLASS(MorphologyEx, ImageFilter);
 
   sofa::Data<int> d_ksize;
   sofa::Data<sofa::helper::OptionsGroup> d_operator;

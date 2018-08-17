@@ -2,16 +2,16 @@
 #define SOFACV_IMGPROC_RESIZE_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 namespace sofacv
 {
 namespace imgproc
 {
-class SOFA_IMAGEPROCESSING_API Resize : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API Resize : public ImageFilter
 {
  public:
-  SOFA_CLASS(Resize, common::ImageFilter);
+  SOFA_CLASS(Resize, ImageFilter);
 
   sofa::Data<sofa::defaulttype::Vec2i> d_size;
   sofa::Data<double> d_fx;

@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-      <file>SofaWidgets/ImageFilterWidget.qml</file>
-    </qresource>
-</RCC>

@@ -1,7 +1,8 @@
 #ifndef SOFACV_FEATURES_OPTICALFLOW_H
 #define SOFACV_FEATURES_OPTICALFLOW_H
 
-#include "common/ImageFilter.h"
+#include "ImageProcessingPlugin.h"
+#include <SofaCV/SofaCV.h>
 
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/helper/vector.h>
@@ -10,10 +11,10 @@ namespace sofacv
 {
 namespace features
 {
-class SOFA_IMAGEPROCESSING_API OpticalFlow : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API OpticalFlow : public ImageFilter
 {
  public:
-  SOFA_CLASS(OpticalFlow, common::ImageFilter);
+  SOFA_CLASS(OpticalFlow, ImageFilter);
 
   sofa::Data<sofa::defaulttype::Vec2i> d_winSize;
   sofa::Data<int> d_maxLevel;
@@ -25,8 +26,8 @@ class SOFA_IMAGEPROCESSING_API OpticalFlow : public common::ImageFilter
   sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2d> > d_points_in;
   sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2d> > d_points_out;
   sofa::Data<sofa::helper::vector<uchar> > d_status_out;
-  sofa::Data<sofa::helper::vector<float> > d_error_out;
   sofa::Data<bool> d_startTracking;
+  sofa::Data<sofa::helper::vector<float> > d_error_out;
   sofa::Data<sofacv::cvMat> d_img2;
 
   std::vector<cv::Point2f> m_pts_in;

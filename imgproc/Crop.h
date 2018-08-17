@@ -2,16 +2,16 @@
 #define SOFACV_IMGPROC_CROP_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 namespace sofacv
 {
 namespace imgproc
 {
-class SOFA_IMAGEPROCESSING_API Crop : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API Crop : public ImageFilter
 {
  public:
-  SOFA_CLASS(Crop, common::ImageFilter);
+  SOFA_CLASS(Crop, ImageFilter);
 
   sofa::Data<sofa::defaulttype::Vec4i> d_roi;
 

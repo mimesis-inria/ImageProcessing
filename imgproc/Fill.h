@@ -2,16 +2,16 @@
 #define SOFACV_IMGPROC_FILL_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 namespace sofacv
 {
 namespace imgproc
 {
-class SOFA_IMAGEPROCESSING_API Fill : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API Fill : public ImageFilter
 {
  public:
-  SOFA_CLASS(Fill, common::ImageFilter);
+  SOFA_CLASS(Fill, ImageFilter);
 
   sofa::Data<sofa::defaulttype::Vec4d> d_color;
 
