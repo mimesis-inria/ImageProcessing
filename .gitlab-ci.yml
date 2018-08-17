@@ -46,6 +46,7 @@
 
       - AddProjectPlugin ImageProcessing
       - AddSofaOption OpenCV_DIR "$opencv_INSTALL_DIR/share/OpenCV"
+      - AddSofaOption SOFACV_NEW_GUI_ENABLED OFF
 
       - echo " BUILDING SOFA "
       - BuildSofa mimesis
