@@ -2,8 +2,7 @@
 #define SOFACV_CAM_IMAGERECTIFIER_H
 
 #include "CameraSettings.h"
-#include "common/ImageFilter.h"
-#include "SofaCV/SofaCV.h"
+#include <SofaCV/SofaCV.h>
 
 #include <opencv2/imgproc.hpp>
 
@@ -16,7 +15,7 @@ namespace cam
  *
  * Rectifies a given image frame using the linked CameraSettings parameters
  */
-class SOFA_IMAGEPROCESSING_API ImageRectifier : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API ImageRectifier : public ImageFilter
 {
   typedef sofa::core::objectmodel::SingleLink<
       ImageRectifier, CameraSettings,
@@ -24,7 +23,7 @@ class SOFA_IMAGEPROCESSING_API ImageRectifier : public common::ImageFilter
       CamSettings;
 
  public:
-  SOFA_CLASS(ImageRectifier, common::ImageFilter);
+  SOFA_CLASS(ImageRectifier, ImageFilter);
 
   ImageRectifier();
 

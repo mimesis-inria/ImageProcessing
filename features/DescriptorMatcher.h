@@ -1,8 +1,8 @@
 #ifndef SOFA_OR_PROCESSOR_DESCRIPTORMATCHER_H
 #define SOFA_OR_PROCESSOR_DESCRIPTORMATCHER_H
 
+#include "ImageProcessingPlugin.h"
 #include "Matchers.h"
-#include "common/ImageFilter.h"
 
 #include <SofaCV/SofaCV.h>
 
@@ -15,7 +15,7 @@ namespace sofacv
 {
 namespace features
 {
-class SOFA_IMAGEPROCESSING_API DescriptorMatcher : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API DescriptorMatcher : public ImageFilter
 {
   enum MatcherType
   {
@@ -33,7 +33,7 @@ class SOFA_IMAGEPROCESSING_API DescriptorMatcher : public common::ImageFilter
   };
 
  public:
-  SOFA_CLASS(DescriptorMatcher, common::ImageFilter);
+  SOFA_CLASS(DescriptorMatcher, ImageFilter);
 
   DescriptorMatcher();
   virtual ~DescriptorMatcher() override;

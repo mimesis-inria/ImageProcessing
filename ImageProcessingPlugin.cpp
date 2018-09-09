@@ -1,19 +1,6 @@
 #include "ImageProcessingPlugin.h"
 #include <sofa/helper/system/config.h>
 
-#ifdef QT_PLUGIN
-#include <gui/ImageFilterDisplay.h>
-#include <gui/ImageFilterModel.h>
-#include <QApplication>
-#include <QDebug>
-#include <QQuickPaintedItem>
-
-const int versionMajor = 1;
-const int versionMinor = 0;
-
-static void initResources() { Q_INIT_RESOURCE(ImageProcessing_qml); }
-#endif  // QT_PLUGIN
-
 namespace sofacv
 {
 /**
@@ -54,17 +41,6 @@ void initExternalModule()
   if (first)
   {
     first = false;
-#ifdef QT_PLUGIN
-    initResources();
-
-    qmlRegisterType<sofacv::gui::ImageFilterDisplay>(
-        "ImageFilterDisplay", versionMajor, versionMinor, "ImageFilterDisplay");
-    qmlRegisterType<sofacv::gui::ImageFilterModel>(
-        "ImageFilterModel", versionMajor, versionMinor, "ImageFilterModel");
-    qmlRegisterType<sofacv::gui::ImageFilterModelList>(
-        "ImageFilterModelList", versionMajor, versionMinor,
-        "ImageFilterModelList");
-#endif  // QT_PLUGIN
   }
 }
 

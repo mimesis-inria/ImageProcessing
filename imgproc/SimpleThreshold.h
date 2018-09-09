@@ -2,16 +2,16 @@
 #define SOFACV_IMGPROC_SIMPLETHRESHOLD_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 namespace sofacv
 {
 namespace imgproc
 {
-class SOFA_IMAGEPROCESSING_API SimpleThreshold : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API SimpleThreshold : public ImageFilter
 {
  public:
-  SOFA_CLASS(SimpleThreshold, common::ImageFilter);
+  SOFA_CLASS(SimpleThreshold, ImageFilter);
 
   sofa::Data<double> d_threshold;
   sofa::Data<double> d_max;

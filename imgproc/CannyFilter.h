@@ -2,16 +2,16 @@
 #define SOFACV_IMGPROC_CANNYFILTER_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 namespace sofacv
 {
 namespace imgproc
 {
-class SOFA_IMAGEPROCESSING_API CannyFilter : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API CannyFilter : public ImageFilter
 {
  public:
-  SOFA_CLASS(CannyFilter, common::ImageFilter);
+  SOFA_CLASS(CannyFilter, ImageFilter);
 
   sofa::Data<double> d_minThreshold;
   sofa::Data<double> d_maxThreshold;

@@ -37,14 +37,14 @@ void Segmenter2D::init()
   addInput(&d_points);
   addInput(&d_regionPoly);
   addOutput(&d_regionPoints);
-  common::ImageFilter::activateMouseCallback();
+  ImageFilter::activateMouseCallback();
   setMouseState(&Segmenter2D::freeMove);
-  common::ImageFilter::init();
+  ImageFilter::init();
 }
 
 void Segmenter2D::Update()
 {
-  common::ImageFilter::Update();
+  ImageFilter::Update();
 
   if (d_regionPoly.getValue().size() <= 2)
   {
@@ -123,7 +123,7 @@ void Segmenter2D::freeMove(int event, int /*x*/, int /*y*/, int /*flags*/)
     d_regionLabel.beginWriteOnly()->clear();
     d_regionPoly.endEdit();
     d_regionLabel.endEdit();
-    common::ImageFilter::update();
+    ImageFilter::update();
   }
 }
 void Segmenter2D::capture(int event, int x, int y, int flags)
@@ -195,7 +195,7 @@ void Segmenter2D::stopping(int event, int /*x*/, int /*y*/, int /*flags*/)
       d_regionPoly.endEdit();
       m_poly.clear();
       setMouseState(&Segmenter2D::freeMove);
-      common::ImageFilter::update();
+      ImageFilter::update();
     }
     break;
     default:

@@ -105,7 +105,7 @@ void SimpleBlobDetector::init()
 {
 }
 
-void SimpleBlobDetector::registerData(common::ImageFilter *parent)
+void SimpleBlobDetector::registerData(ImageFilter *parent)
 {
     parent->registerData(&minThreshold, 0, 255, 1);
     parent->registerData(&thresholdStep, 0, 255, 1);
@@ -209,7 +209,7 @@ ShiTomasiDetector::ShiTomasiDetector(sofa::core::DataEngine *c)
 
 void ShiTomasiDetector::init() {}
 
-void ShiTomasiDetector::registerData(common::ImageFilter *parent)
+void ShiTomasiDetector::registerData(ImageFilter *parent)
 {
     parent->registerData(&maxCorners, 0, 255, 1);
     parent->registerData(&qualityLevel, 0.0, 1.0, 0.01);
@@ -283,7 +283,7 @@ FASTDetector::FASTDetector(sofa::core::DataEngine *c)
 
 void FASTDetector::init() {}
 
-void FASTDetector::registerData(common::ImageFilter *parent)
+void FASTDetector::registerData(ImageFilter *parent)
 {
     parent->registerData(&threshold, 0, 255, 1);
     parent->registerData(&nonmaxsuppression);
@@ -403,7 +403,7 @@ void MSERDetector::enable(bool show)
 
 void MSERDetector::init() {}
 
-void MSERDetector::registerData(common::ImageFilter *parent)
+void MSERDetector::registerData(ImageFilter *parent)
 {
     parent->registerData(&delta, 0, 10, 1);
     parent->registerData(&minArea, 0, 255, 1);
@@ -468,7 +468,7 @@ ORBDetector::ORBDetector(sofa::core::DataEngine *c)
 
 void ORBDetector::init() {}
 
-void ORBDetector::registerData(common::ImageFilter *)
+void ORBDetector::registerData(ImageFilter *)
 {
     // TODO: find optimal range of values
 }
@@ -529,7 +529,7 @@ BRISKDetector::BRISKDetector(sofa::core::DataEngine *c)
 }
 void BRISKDetector::init() {}
 
-void BRISKDetector::registerData(common::ImageFilter *)
+void BRISKDetector::registerData(ImageFilter *)
 {
     // TODO: find optimal range of values
 }
@@ -582,7 +582,7 @@ KAZEDetector::KAZEDetector(sofa::core::DataEngine *c)
 
 void KAZEDetector::init() {}
 
-void KAZEDetector::registerData(common::ImageFilter *)
+void KAZEDetector::registerData(ImageFilter *)
 {
     // TODO: find optimal range of values
 }
@@ -658,7 +658,7 @@ AKAZEDetector::AKAZEDetector(sofa::core::DataEngine *c)
 
 void AKAZEDetector::init() {}
 
-void AKAZEDetector::registerData(common::ImageFilter *)
+void AKAZEDetector::registerData(ImageFilter *)
 {
     // TODO: find optimal range of values
 }
@@ -715,7 +715,7 @@ BRIEFDetector::BRIEFDetector(sofa::core::DataEngine *c)
 
 void BRIEFDetector::init() {}
 
-void BRIEFDetector::registerData(common::ImageFilter *)
+void BRIEFDetector::registerData(ImageFilter *)
 {
     // TODO: find optimal range of values
 }
@@ -788,7 +788,7 @@ SIFTDetector::SIFTDetector(sofa::core::DataEngine *c)
 
 void SIFTDetector::init() {}
 
-void SIFTDetector::registerData(common::ImageFilter *)
+void SIFTDetector::registerData(ImageFilter *)
 {
     // TODO: find optimal range of values
 }
@@ -859,7 +859,7 @@ SURFDetector::SURFDetector(sofa::core::DataEngine *c)
 
 void SURFDetector::init() {}
 
-void SURFDetector::registerData(common::ImageFilter *)
+void SURFDetector::registerData(ImageFilter *)
 {
     // TODO: find optimal range of values
 }
@@ -931,7 +931,7 @@ DAISYDetector::DAISYDetector(sofa::core::DataEngine *c)
 
 void DAISYDetector::init() {}
 
-void DAISYDetector::registerData(common::ImageFilter *)
+void DAISYDetector::registerData(ImageFilter *)
 {
     // TODO: find optimal range of values
 }

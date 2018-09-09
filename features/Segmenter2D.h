@@ -1,17 +1,18 @@
 #ifndef SOFACV_FEATURES_SEGMENTER2D_H
 #define SOFACV_FEATURES_SEGMENTER2D_H
 
-#include "common/ImageFilter.h"
+#include "ImageProcessingPlugin.h"
+#include <SofaCV/SofaCV.h>
 #include <sofa/helper/SVector.h>
 
 namespace sofacv
 {
 namespace features
 {
-class SOFA_IMAGEPROCESSING_API Segmenter2D : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API Segmenter2D : public ImageFilter
 {
  public:
-  SOFA_CLASS(Segmenter2D, common::ImageFilter);
+  SOFA_CLASS(Segmenter2D, ImageFilter);
 
   sofa::Data<std::string> d_regionLabel;
 

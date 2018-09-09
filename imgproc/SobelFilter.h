@@ -2,16 +2,16 @@
 #define SOFACV_IMGPROC_SOBELFILTER_H
 
 #include "ImageProcessingPlugin.h"
-#include "common/ImageFilter.h"
+#include <SofaCV/SofaCV.h>
 
 namespace sofacv
 {
 namespace imgproc
 {
-class SOFA_IMAGEPROCESSING_API SobelFilter : public common::ImageFilter
+class SOFA_IMAGEPROCESSING_API SobelFilter : public ImageFilter
 {
  public:
-  SOFA_CLASS(SobelFilter, common::ImageFilter);
+  SOFA_CLASS(SobelFilter, ImageFilter);
 
   sofa::Data<int> d_ddepth;
   sofa::Data<int> d_xorder;
