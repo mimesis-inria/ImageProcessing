@@ -511,6 +511,69 @@ void CameraSettings::composeM()
   Mat3x4d M = K * Rt;
 
   d_M.setValue(M);
+
+  std::string path = "poses.txt";
+  std::string opath = "%03d_test.png";
+  file.open(path.c_str(), std::ios_base::app );
+     double dvalue0,dvalue1,dvalue2,dvalue3,dvalue4,dvalue5,dvalue6,dvalue7,dvalue8,dvalue9,dvalue10,dvalue11;    //for (int k = 0; k < pcd.size(); k++)
+     //if ((index0-1)%3==0)
+     {
+         char buf4[FILENAME_MAX];
+         sprintf(buf4, opath.c_str(),(index0));
+         std::string filename4(buf4);
+         dvalue0 = t[0]/100.0;
+         dvalue1 = t[1]/100.0;
+         dvalue2 = t[2]/100.0;
+         dvalue3 = (this->getOrientation())[0];
+         dvalue4 = (this->getOrientation())[1];
+         dvalue5 = (this->getOrientation())[2];
+         dvalue6 = (this->getOrientation())[3];
+         /*dvalue3 = R[0][0];
+         dvalue4 = R[0][1];
+         dvalue5 = R[0][2];
+         dvalue6 = R[1][0];
+         dvalue7 = R[1][1];
+         dvalue8 = R[1][2];
+         dvalue9 = R[2][0];
+         dvalue10 = R[2][1];
+         dvalue11 = R[2][2]; */
+
+         file << filename4;
+         file << " ";
+         file << dvalue0;
+         file << " ";
+         file << dvalue1;
+         file << " ";
+         file << dvalue2;
+         file << " ";
+         file << dvalue3;
+         file << " ";
+         file << dvalue4;
+         file << " ";
+         file << dvalue5;
+         file << " ";
+         file << dvalue6;
+         /*file << " ";
+         file << dvalue7;
+         file << " ";
+         file << dvalue8;
+         file << " ";
+         file << dvalue9;
+         file << " ";
+         file << dvalue10;
+         file << " ";
+         file << dvalue11;*/
+         file << " ";
+         file << "\n";
+     }
+     std::cout << " index " << index0 << std::endl;
+     std::cout << " camera " << getIntrinsicCameraMatrix() << std::endl;
+     std::cout << " Rt " << Rt << std::endl;
+     std::cout << " R " << getRotationMatrix() << std::endl;
+     std::cout << " t " << getPosition() << std::endl;
+     std::cout << " image size " << d_imageSize.getValue().x() << " " << d_imageSize.getValue().y() << std::endl;
+     index0++;
+     file.close();
 }
 
 void CameraSettings::recalculate3DCorners()

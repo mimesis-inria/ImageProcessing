@@ -227,6 +227,10 @@ class SOFA_IMAGEPROCESSING_API CameraSettings : public ImplicitDataEngine
   /// source, opposite to the standard pinhole camera model
   sofa::Data<bool> d_isXRay;  ///< Whether or not this camera is an XRay
                               /// source-detector model (in which case,
+
+  int index0;
+  std::ofstream file;
+
  private:
   /// Decomposes the global projection matrix
   void decomposeM();
