@@ -7,7 +7,11 @@
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/vector.h>
 
+#ifdef SOFACV_OPENCV_CONTRIB_ENABLED
 #include <opencv2/xfeatures2d.hpp>
+#else
+#include <opencv2/features2d.hpp>
+#endif
 
 namespace sofacv
 {
