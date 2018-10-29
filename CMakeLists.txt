@@ -47,6 +47,8 @@ set(HEADER_FILES
   camera/control/LinesOfSightConstraintManager.h
   camera/control/LinesOfSightConstraintManager.inl
   camera/control/CameraController.h
+  camera/control/Icosphere.h
+  camera/control/TranslationScaleGrid.h
 
   imgproc/CannyFilter.h
   imgproc/SobelFilter.h
@@ -106,6 +108,8 @@ set(SOURCE_FILES
   camera/control/TrajectoryAround.cpp
   camera/control/LinesOfSightConstraintManager.cpp
   camera/control/CameraController.cpp
+  camera/control/Icosphere.cpp
+  camera/control/TranslationScaleGrid.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
