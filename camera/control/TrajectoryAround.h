@@ -63,6 +63,7 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
 
   void rotate(double rho, double theta, double phi, bool init = false)
   {
+
     Vector3 p = Vector3(0, 0, d_rhoInit.getValue());
     Vector3 sphCoord;
 

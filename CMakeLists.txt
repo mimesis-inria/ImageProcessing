@@ -19,11 +19,12 @@ link_directories(${OpenCV_LIBRARY_DIRS})
 
 add_definitions("-std=c++11")
 
-set (SOFACV_ENABLE_OPENCV_CONTRIB OFF CACHE BOOL "Enables OpenCV's non-free features hosted in opencv_contrib")
-
-if (SOFACV_ENABLE_OPENCV_CONTRIB)
-  add_definitions("-DSOFACV_OPENCV_CONTRIB_ENABLED")
-endif ()
+include(CheckIncludeFileCXX)
+check_include_file_cxx(opencv2/xfeatures2d.hpp HAVE_OPENCV_CONTRIB)
+if(HAVE_OPENCV_CONTRIB)
+  message("found opencv contrib")
+    add_definitions(-DSOFACV_OPENCV_CONTRIB_ENABLED)
+endif(HAVE_OPENCV_CONTRIB)
 
 set(HEADER_FILES
   ImageProcessingPlugin.h
@@ -47,6 +48,7 @@ set(HEADER_FILES
   camera/control/LinesOfSightConstraintManager.h
   camera/control/LinesOfSightConstraintManager.inl
   camera/control/CameraController.h
+  camera/control/Icosphere.h
 
   imgproc/CannyFilter.h
   imgproc/SobelFilter.h
@@ -106,6 +108,7 @@ set(SOURCE_FILES
   camera/control/TrajectoryAround.cpp
   camera/control/LinesOfSightConstraintManager.cpp
   camera/control/CameraController.cpp
+  camera/control/Icosphere.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
