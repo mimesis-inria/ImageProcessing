@@ -1,7 +1,5 @@
 #include "Detectors.h"
 
-#include <opencv2/xfeatures2d.hpp>
-
 namespace sofacv
 {
 namespace features

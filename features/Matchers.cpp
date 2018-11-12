@@ -1,7 +1,5 @@
 #include "Matchers.h"
 
-#include <opencv2/features2d.hpp>
-
 namespace sofacv
 {
 namespace features

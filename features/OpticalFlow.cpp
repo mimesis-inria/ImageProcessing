@@ -1,6 +1,5 @@
 #include "OpticalFlow.h"
 #include <opencv2/imgproc.hpp>
-#include <opencv2/tracking.hpp>
 #include <opencv2/video.hpp>
 
 namespace sofacv

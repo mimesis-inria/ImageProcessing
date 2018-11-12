@@ -1,5 +1,5 @@
-#ifndef SOFA_OR_PROCESSOR_DETECTORS_H
-#define SOFA_OR_PROCESSOR_DETECTORS_H
+#ifndef SOFA_CV_PROCESSOR_DETECTORS_H
+#define SOFA_CV_PROCESSOR_DETECTORS_H
 
 #include <SofaCV/SofaCV.h>
 #include <SofaCV/SofaCV.h>
@@ -7,7 +7,11 @@
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/vector.h>
 
+#ifdef SOFACV_OPENCV_CONTRIB_ENABLED
 #include <opencv2/xfeatures2d.hpp>
+#else
+#include <opencv2/features2d.hpp>
+#endif  // SOFACV_OPENCV_CONTRIB_ENABLED
 
 namespace sofacv
 {
