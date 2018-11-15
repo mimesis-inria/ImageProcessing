@@ -36,7 +36,7 @@ class SOFA_IMAGEPROCESSING_API ProjectPoints : public ImplicitDataEngine
   ~ProjectPoints() {}
   void init() override;
 
-  virtual void Update() override;
+  virtual void doUpdate() override;
 
   CamSettings l_cam;           ///< Linked CameraSettings
   sofa::Data<bool> d_2Dto3D;   ///< projection direction (2Dto3D or 3Dto2D)

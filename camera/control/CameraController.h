@@ -76,20 +76,20 @@ class SOFA_IMAGEPROCESSING_API CameraController : public ImplicitDataEngine
     update();
   }
 
-  void Update()
+  void doUpdate()
   {
-    if (m_dataTracker.isDirty(d_R00)) RotationMatrixDataChanged();
-    if (m_dataTracker.isDirty(d_R01)) RotationMatrixDataChanged();
-    if (m_dataTracker.isDirty(d_R02)) RotationMatrixDataChanged();
-    if (m_dataTracker.isDirty(d_R10)) RotationMatrixDataChanged();
-    if (m_dataTracker.isDirty(d_R11)) RotationMatrixDataChanged();
-    if (m_dataTracker.isDirty(d_R12)) RotationMatrixDataChanged();
-    if (m_dataTracker.isDirty(d_R20)) RotationMatrixDataChanged();
-    if (m_dataTracker.isDirty(d_R21)) RotationMatrixDataChanged();
-    if (m_dataTracker.isDirty(d_R22)) RotationMatrixDataChanged();
-    if (m_dataTracker.isDirty(d_tx)) TranslationVectorDataChanged();
-    if (m_dataTracker.isDirty(d_ty)) TranslationVectorDataChanged();
-    if (m_dataTracker.isDirty(d_tz)) TranslationVectorDataChanged();
+    if (m_dataTracker.hasChanged(d_R00)) RotationMatrixDataChanged();
+    if (m_dataTracker.hasChanged(d_R01)) RotationMatrixDataChanged();
+    if (m_dataTracker.hasChanged(d_R02)) RotationMatrixDataChanged();
+    if (m_dataTracker.hasChanged(d_R10)) RotationMatrixDataChanged();
+    if (m_dataTracker.hasChanged(d_R11)) RotationMatrixDataChanged();
+    if (m_dataTracker.hasChanged(d_R12)) RotationMatrixDataChanged();
+    if (m_dataTracker.hasChanged(d_R20)) RotationMatrixDataChanged();
+    if (m_dataTracker.hasChanged(d_R21)) RotationMatrixDataChanged();
+    if (m_dataTracker.hasChanged(d_R22)) RotationMatrixDataChanged();
+    if (m_dataTracker.hasChanged(d_tx)) TranslationVectorDataChanged();
+    if (m_dataTracker.hasChanged(d_ty)) TranslationVectorDataChanged();
+    if (m_dataTracker.hasChanged(d_tz)) TranslationVectorDataChanged();
 
     Matrix3 R;
     R[0][0] = d_R00.getValue();

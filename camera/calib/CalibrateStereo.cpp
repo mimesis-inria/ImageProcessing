@@ -147,7 +147,7 @@ void CalibrateStereo::init()
   update();
 }
 
-void CalibrateStereo::Update()
+void CalibrateStereo::doUpdate()
 {
   if (d_imagePoints1.isSet() && d_imagePoints2.isSet() &&
       d_objectPoints.isSet())

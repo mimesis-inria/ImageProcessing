@@ -62,7 +62,7 @@ class SOFA_IMAGEPROCESSING_API LOSConstraintManager : public ImplicitDataEngine
 
   virtual void init() override;
 
-  virtual void Update() override;
+  virtual void doUpdate() override;
 
   void createConstraints();
 

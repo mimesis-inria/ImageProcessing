@@ -29,7 +29,7 @@ class SOFA_IMAGEPROCESSING_API MatchingConstraints : public ImageFilter
   virtual ~MatchingConstraints() override;
 
   void init() override;
-  virtual void Update() override;
+  virtual void doUpdate() override;
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 
   // INPUTS

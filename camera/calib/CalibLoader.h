@@ -82,7 +82,7 @@ class SOFA_IMAGEPROCESSING_API CalibLoader : public ImplicitDataEngine
 
   void parse(sofa::core::objectmodel::BaseObjectDescription *arg) override;
   virtual void init() override;
-  virtual void Update() override;
+  virtual void doUpdate() override;
 
   StereoCam l_sCam;
   CamSettings l_cam1;

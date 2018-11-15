@@ -15,7 +15,7 @@ std::string PointVectorConverter<SrcType, DstType>::templateName(
 }
 
 template <>
-void PointVectorConverter<sofa::defaulttype::Vec2i, cvKeypoint>::Update()
+void PointVectorConverter<sofa::defaulttype::Vec2i, cvKeypoint>::doUpdate()
 {
     sofa::helper::vector<cvKeypoint>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
@@ -27,7 +27,7 @@ void PointVectorConverter<sofa::defaulttype::Vec2i, cvKeypoint>::Update()
 }
 
 template <>
-void PointVectorConverter<sofa::defaulttype::Vec2i, sofa::defaulttype::Vec2d>::Update()
+void PointVectorConverter<sofa::defaulttype::Vec2i, sofa::defaulttype::Vec2d>::doUpdate()
 {
 	sofa::helper::vector<sofa::defaulttype::Vec2d>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
@@ -39,7 +39,7 @@ void PointVectorConverter<sofa::defaulttype::Vec2i, sofa::defaulttype::Vec2d>::U
 }
 
 template <>
-void PointVectorConverter<cvKeypoint, sofa::defaulttype::Vec2i>::Update()
+void PointVectorConverter<cvKeypoint, sofa::defaulttype::Vec2i>::doUpdate()
 {
 	sofa::helper::vector<sofa::defaulttype::Vec2i>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
@@ -48,7 +48,7 @@ void PointVectorConverter<cvKeypoint, sofa::defaulttype::Vec2i>::Update()
 }
 
 template <>
-void PointVectorConverter<sofa::defaulttype::Vec2d, cvKeypoint>::Update()
+void PointVectorConverter<sofa::defaulttype::Vec2d, cvKeypoint>::doUpdate()
 {
     sofa::helper::vector<cvKeypoint>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
@@ -58,7 +58,7 @@ void PointVectorConverter<sofa::defaulttype::Vec2d, cvKeypoint>::Update()
 }
 
 template <>
-void PointVectorConverter<cvKeypoint, sofa::defaulttype::Vec2d>::Update()
+void PointVectorConverter<cvKeypoint, sofa::defaulttype::Vec2d>::doUpdate()
 {
 	sofa::helper::vector<sofa::defaulttype::Vec2d>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
@@ -67,7 +67,7 @@ void PointVectorConverter<cvKeypoint, sofa::defaulttype::Vec2d>::Update()
 }
 
 template <>
-void PointVectorConverter<sofa::defaulttype::Vec2d, sofa::defaulttype::Vec3d>::Update()
+void PointVectorConverter<sofa::defaulttype::Vec2d, sofa::defaulttype::Vec3d>::doUpdate()
 {
 	sofa::helper::vector<sofa::defaulttype::Vec3d>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();
@@ -80,7 +80,7 @@ void PointVectorConverter<sofa::defaulttype::Vec2d, sofa::defaulttype::Vec3d>::U
 			dst.push_back(l_cam->get3DFrom2DPosition(pt.x(), pt.y(), d_depth.getValue()));
 }
 template <>
-void PointVectorConverter<sofa::defaulttype::Vec2i, sofa::defaulttype::Vec3d>::Update()
+void PointVectorConverter<sofa::defaulttype::Vec2i, sofa::defaulttype::Vec3d>::doUpdate()
 {
 	sofa::helper::vector<sofa::defaulttype::Vec3d>& dst = *(d_dst.beginWriteOnly());
 	dst.clear();

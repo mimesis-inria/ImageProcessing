@@ -47,7 +47,7 @@ class SOFA_IMAGEPROCESSING_API CalibratedCamera : public ImplicitDataEngine,
   virtual ~CalibratedCamera() override {}
   void init() override;
   void reinit() override {}
-  void Update() override;
+  void doUpdate() override;
 
   /// sets the correct GL params for drawing and displays the camera gizmo if
   /// drawGizmo=true

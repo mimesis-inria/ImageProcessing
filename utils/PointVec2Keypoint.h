@@ -22,7 +22,7 @@ class SOFA_IMAGEPROCESSING_API PointVec2Keypoint : public ImplicitDataEngine
 
   virtual ~PointVec2Keypoint() override {}
   void init() override;
-  void Update() override;
+  void doUpdate() override;
 
   // INPUTS
 	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_src;

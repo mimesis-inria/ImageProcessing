@@ -39,7 +39,7 @@ class SOFA_IMAGEPROCESSING_API ConvertTo : public ImageFilter
 
   virtual std::string getTemplateName() const { return templateName(this); }
   static std::string templateName(
-          const ConvertTo<T>* = NULL);
+          const ConvertTo<T>* = nullptr);
 
 };
 

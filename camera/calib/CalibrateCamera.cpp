@@ -146,7 +146,7 @@ void CalibrateCamera::init()
   update();
 }
 
-void CalibrateCamera::Update()
+void CalibrateCamera::doUpdate()
 {
   calibrate();
 

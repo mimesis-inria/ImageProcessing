@@ -92,7 +92,7 @@ class SOFA_IMAGEPROCESSING_API CameraSettings : public ImplicitDataEngine
   void buildFromOpenGLContext();
 
   void init() override;
-  void Update() override;
+  void doUpdate() override;
   void reinit() override;
 
   /// returns the 2D pixel position of a given 3D point

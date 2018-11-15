@@ -287,7 +287,7 @@ class DataRegression_test : public testing::Test
 
     bool initializing = false;
 
-    sofa::simulation::Visitor* visitor = NULL;
+    sofa::simulation::Visitor* visitor = nullptr;
 
     // if a ref file already exists
     if (helper::system::FileSystem::exists(reference) &&

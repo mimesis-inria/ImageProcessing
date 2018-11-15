@@ -51,7 +51,7 @@ class SOFA_IMAGEPROCESSING_API OrthoProj : public ImplicitDataEngine
   // Finds the normal of the plane to which at least d1 and 1 point of d2 belong
   // to
   void lines2PlaneNormal(const Vec3d& d1, const Vec3d& d2, Vec3d& n);
-  void Update() override;
+  void doUpdate() override;
 
   // INPUTS
   CamSettings l_cam;

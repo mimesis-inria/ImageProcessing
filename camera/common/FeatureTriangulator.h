@@ -36,7 +36,7 @@ class SOFA_IMAGEPROCESSING_API FeatureTriangulator : public ImplicitDataEngine
   virtual ~FeatureTriangulator();
 
   void init();
-  virtual void Update() override;
+  virtual void doUpdate() override;
 
 	// INPUTS
 	StereoCamSettings l_cam;  ///< StereoSettings component holding the two camera

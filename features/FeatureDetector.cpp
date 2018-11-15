@@ -87,17 +87,17 @@ void FeatureDetector::init()
 
 void FeatureDetector::reinit()
 {
-    if (m_dataTracker.isDirty(d_detectMode)) detectModeChanged();
-    if (m_dataTracker.isDirty(d_detectorType)) detectTypeChanged();
+    if (m_dataTracker.hasChanged(d_detectMode)) detectModeChanged();
+    if (m_dataTracker.hasChanged(d_detectorType)) detectTypeChanged();
 
     ImageFilter::reinit();
     update();
 }
 
-void FeatureDetector::Update()
+void FeatureDetector::doUpdate()
 {
     sofa::helper::AdvancedTimer::stepBegin("FeatureDetection");
-    ImageFilter::Update();
+    ImageFilter::doUpdate();
     switch (d_detectMode.getValue().getSelectedId())
     {
     case DETECT_ONLY:
