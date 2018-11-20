@@ -512,8 +512,11 @@ void CameraSettings::composeM()
 
   d_M.setValue(M);
 
-  std::string path = "poses.txt";
-  std::string opath = "%03d_test.png";
+  Quat camera_ori;
+  camera_ori.fromMatrix(R.transposed());
+
+  std::string path = "poses3.txt";
+  std::string opath = "%06d_test.png";
   file.open(path.c_str(), std::ios_base::app );
      double dvalue0,dvalue1,dvalue2,dvalue3,dvalue4,dvalue5,dvalue6,dvalue7,dvalue8,dvalue9,dvalue10,dvalue11;    //for (int k = 0; k < pcd.size(); k++)
      //if ((index0-1)%3==0)
@@ -524,10 +527,10 @@ void CameraSettings::composeM()
          dvalue0 = t[0]/100.0;
          dvalue1 = t[1]/100.0;
          dvalue2 = t[2]/100.0;
-         dvalue3 = (this->getOrientation())[0];
-         dvalue4 = (this->getOrientation())[1];
-         dvalue5 = (this->getOrientation())[2];
-         dvalue6 = (this->getOrientation())[3];
+         dvalue3 = camera_ori[3];
+         dvalue4 = camera_ori[0];
+         dvalue5 = camera_ori[1];
+         dvalue6 = camera_ori[2];
          /*dvalue3 = R[0][0];
          dvalue4 = R[0][1];
          dvalue5 = R[0][2];

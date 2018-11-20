@@ -67,6 +67,7 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
     Vector3 p = Vector3(0, 0, d_rhoInit.getValue());
     Vector3 sphCoord;
 
+
     // convert to spherical coordinates and add rho, theta & phi
     // rho
     sphCoord.x() =
@@ -89,10 +90,16 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
       m_theta += theta;
       m_phi += phi;
     }
+
+    std::cout << " rho " << rho << " theta " << theta << " phi " << phi << std::endl;
+
     // convert back to cartesian coordinates
     p.x() = sphCoord.x() * std::sin(sphCoord.y()) * std::cos(sphCoord.z());
     p.y() = sphCoord.x() * std::sin(sphCoord.y()) * std::sin(sphCoord.z());
     p.z() = sphCoord.x() * std::cos(sphCoord.y());
+
+    std::cout << " sph1 " << sphCoord.y() << " sph2 " << sphCoord.z() << std::endl;
+
 
     Quat q1 = Quat(Vector3(1.0, 0.0, 0.0), M_PI);
     Quat q2 = Quat::fromEuler(0, -sphCoord.y() + M_PI, 0);
@@ -101,7 +108,6 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
     Quat q5 = Quat(Vector3(0.0, 1.0, 0.0), M_PI / 2);
     Quat q6 = Quat(Vector3(1.0, 0.0, 0.0), -M_PI / 2);
     Quat q7 = Quat(Vector3(0.0, 0.0, 1.0), -M_PI / 2);
-
 
     Matrix3 R1, R2, R3, R4, R5, R6, R7;
     q1.toMatrix(R1);

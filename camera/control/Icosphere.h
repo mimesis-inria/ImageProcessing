@@ -153,7 +153,7 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
     double rangey = 150;
     double rangez = 150;*/
 
-    //Patient 1
+    //Patient 2
 
     int nx = 2;
     int ny = 2;
