@@ -20,7 +20,7 @@ namespace sofacv
 {
 namespace processor
 {
-class RenderCommunication : public common::ImplicitDataEngine
+class RenderCommunication : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
       RenderCommunication, cam::CameraSettings,
@@ -31,7 +31,7 @@ class RenderCommunication : public common::ImplicitDataEngine
   typedef typename sofa::defaulttype::Quat Quat;
 
  public:
-  SOFA_CLASS(RenderCommunication, common::ImplicitDataEngine);
+  SOFA_CLASS(RenderCommunication, ImplicitDataEngine);
 
   RenderCommunication()
   {
@@ -64,21 +64,25 @@ class RenderCommunication : public common::ImplicitDataEngine
     GLfloat depthsN[hght * wdth ];
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT,viewport);
-    //glEnable(GL_DEPTH_TEST);
 
     cv::Mat temp = cv::Mat::zeros(hght, wdth, CV_8UC1);
     cv::Mat tempI;
 
-    glReadPixels(viewport[0], viewport[1], viewport[2],viewport[3], GL_LUMINANCE, GL_UNSIGNED_BYTE,temp.data);
+    std::cout << " ok render " << viewport[0] << " " << viewport[1] << " " << viewport[2] << " " << viewport[3] << std::endl;
+
+    glReadPixels(327, 22, 764,800, GL_LUMINANCE, GL_UNSIGNED_BYTE,temp.data);
+
+//getchar();
 
     // Process buffer so it matches correct format and orientation
     //cv::cvtColor(temp, tempI, CV_BGR2RGB);
-    tempI = temp;
+    tempI = temp.clone();
     cv::flip(tempI, temp, 0);
+
+    cv::imwrite("savedWindow.png", tempI);
 
     temp = (temp.reshape(0,1)); // to make it continuous
     // Write to file
-    //cv::imwrite("savedWindow.png", temp);
 
     int  imgSize = temp.total()*temp.elemSize();
 
@@ -92,7 +96,7 @@ class RenderCommunication : public common::ImplicitDataEngine
      bool status = m_socket->send(message);
   }
 
-  virtual void handleEvent(sofa::core::objectmodel::Event* e)
+  virtual void handleEvent(sofa::core::objectmodel::Event* e) override
   {
     if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
     {

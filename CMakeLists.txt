@@ -10,6 +10,21 @@ find_package(SofaGui REQUIRED)
 
 find_package(OpenCV 3.0 REQUIRED)
 find_package(SofaCV REQUIRED)
+find_package(Boost COMPONENTS system filesystem serialization REQUIRED)
+
+## Use PkgConfig to find location of zmq headers / libs if installed from package manager
+find_package(PkgConfig)
+pkg_check_modules(PC_ZeroMQ QUIET zmq)
+## use the hint from above to find where 'zmq.hpp' is located
+find_path(ZeroMQ_INCLUDE_DIR
+  NAMES zmq.hpp
+  PATHS ${ZMQ_INCLUDE_DIRS}
+  )
+## use the hint from about to find the location of libzmq
+find_library(ZeroMQ_LIBRARY
+  NAMES zmq
+  PATHS ${ZMQ_LIBRARY_DIRS}
+  )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
@@ -49,6 +64,7 @@ set(HEADER_FILES
   camera/control/CameraController.h
   camera/control/Icosphere.h
   camera/control/TranslationScaleGrid.h
+  camera/control/RenderCommunication.h
 
   imgproc/CannyFilter.h
   imgproc/SobelFilter.h
@@ -110,6 +126,7 @@ set(SOURCE_FILES
   camera/control/CameraController.cpp
   camera/control/Icosphere.cpp
   camera/control/TranslationScaleGrid.cpp
+  camera/control/RenderCommunication.cpp
 
   imgproc/CannyFilter.cpp
   imgproc/SobelFilter.cpp
@@ -146,13 +163,13 @@ set(SOURCE_FILES
   )
 
 set(${PROJECT_NAME}_SOURCES ${SOURCE_FILES} ${HEADER_FILES})
-set(${PROJECT_NAME}_LIBRARIES SofaCore SofaSimulationCommon ${OpenCV_LIBRARIES} SofaCV)
+set(${PROJECT_NAME}_LIBRARIES SofaCore SofaSimulationCommon ${OpenCV_LIBRARIES} SofaCV -lzmq ${Boost_LIBRARIES} )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
 
-target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
 
 target_compile_options(${PROJECT_NAME} PUBLIC -D${PROJECT_NAME}_VERSION=\"${${PROJECT_NAME}_VERSION}\")
 target_compile_options(${PROJECT_NAME} PUBLIC -D${PROJECT_NAME}_REGRESSION_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/examples/\")
