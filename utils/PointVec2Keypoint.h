@@ -25,11 +25,10 @@ class SOFA_IMAGEPROCESSING_API PointVec2Keypoint : public ImplicitDataEngine
   void Update() override;
 
   // INPUTS
-	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_src;
+  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_src;
   // OUTPUTS
-    sofa::Data<sofa::helper::vector<cvKeypoint> > d_dst;
+  sofa::Data<sofa::helper::vector<cvKeypoint> > d_dst;
 };
-
 
 }  // namespace utils
 }  // namespace sofacv

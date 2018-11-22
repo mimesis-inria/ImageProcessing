@@ -1,8 +1,8 @@
 #ifndef SOFACV_CAM_IMAGERECTIFIER_H
 #define SOFACV_CAM_IMAGERECTIFIER_H
 
-#include "CameraSettings.h"
 #include <SofaCV/SofaCV.h>
+#include "CameraSettings.h"
 
 #include <opencv2/imgproc.hpp>
 

@@ -1,9 +1,9 @@
 #ifndef SOFACV_FEATURES_MATCHINGCONSTRAINTS_H
 #define SOFACV_FEATURES_MATCHINGCONSTRAINTS_H
 
+#include <SofaCV/SofaCV.h>
 #include "Detectors.h"
 #include "camera/common/StereoSettings.h"
-#include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/SVector.h>

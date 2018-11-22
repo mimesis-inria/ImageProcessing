@@ -80,7 +80,7 @@ class SOFA_IMAGEPROCESSING_API CalibLoader : public ImplicitDataEngine
   CalibLoader();
   virtual ~CalibLoader() override;
 
-  void parse(sofa::core::objectmodel::BaseObjectDescription *arg) override;
+  void parse(sofa::core::objectmodel::BaseObjectDescription* arg) override;
   virtual void init() override;
   virtual void Update() override;
 
@@ -124,7 +124,8 @@ class SOFA_IMAGEPROCESSING_API CalibLoader : public ImplicitDataEngine
   void setCurrentCalib(CalibData& d);
   void setCurrentCalib(const std::string& calibName);
   std::string getPathToCalibs(const std::string& path);
-  void getAllCalibFiles(const std::string& path, std::vector<std::string>& calibFiles);
+  void getAllCalibFiles(const std::string& path,
+                        std::vector<std::string>& calibFiles);
   void setOptionsGroupToFolder(std::string calibFolder, std::string calibname);
 };
 

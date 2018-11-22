@@ -16,32 +16,31 @@ template <class T>
 class SOFA_IMAGEPROCESSING_API Vector2SSVector : public ImplicitDataEngine
 {
  public:
-    SOFA_CLASS(SOFA_TEMPLATE(Vector2SSVector, T), ImplicitDataEngine);
+  SOFA_CLASS(SOFA_TEMPLATE(Vector2SSVector, T), ImplicitDataEngine);
 
-	Vector2SSVector()
-			: d_src(initData(&d_src, "srcType", "input vector to convert")),
-				d_dst(initData(&d_dst, "dstType", "converted output vector"))
-	{
-	}
+  Vector2SSVector()
+      : d_src(initData(&d_src, "srcType", "input vector to convert")),
+        d_dst(initData(&d_dst, "dstType", "converted output vector"))
+  {
+  }
 
-    ~Vector2SSVector() override {}
-    void init() override
-	{
-		addInput(&d_src);
-		addOutput(&d_dst);
-		update();
-	}
+  ~Vector2SSVector() override {}
+  void init() override
+  {
+    addInput(&d_src);
+    addOutput(&d_dst);
+    update();
+  }
 
   virtual void Update() override;
 
-	virtual std::string getTemplateName() const { return templateName(this); }
-	static std::string templateName(
-			const Vector2SSVector<T>* = NULL);
+  virtual std::string getTemplateName() const { return templateName(this); }
+  static std::string templateName(const Vector2SSVector<T>* = NULL);
 
-	// INPUTS
-	sofa::Data<sofa::helper::vector<T> > d_src;
-	// OUTPUTS
-	sofa::Data<sofa::helper::SVector<sofa::helper::SVector<T> > > d_dst;
+  // INPUTS
+  sofa::Data<sofa::helper::vector<T> > d_src;
+  // OUTPUTS
+  sofa::Data<sofa::helper::SVector<sofa::helper::SVector<T> > > d_dst;
 };
 
 }  // namespace utils

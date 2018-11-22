@@ -4,8 +4,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
-
 CopyTo::CopyTo()
     : d_mask(initData(&d_mask, "mask", "mask")),
       d_useMask(initData(&d_useMask, true, "useMask",
@@ -13,8 +11,7 @@ CopyTo::CopyTo()
 {
 }
 
-void CopyTo::applyFilter(const cv::Mat &in,
-                                                     cv::Mat &out, bool)
+void CopyTo::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty())
   {
@@ -23,8 +20,7 @@ void CopyTo::applyFilter(const cv::Mat &in,
     return;
   }
 
-  in.copyTo(out,
-            (d_useMask.getValue()) ? (d_mask.getValue()) : (cvMat()));
+  in.copyTo(out, (d_useMask.getValue()) ? (d_mask.getValue()) : (cvMat()));
 }
 
 void CopyTo::init()
@@ -39,8 +35,5 @@ SOFA_DECL_CLASS(CopyTo)
 int CopyToClass =
     sofa::core::RegisterObject("OpenCV's CopyTo function").add<CopyTo>();
 
-
-
 }  // namespace imgproc
 }  // namespace sofacv
-

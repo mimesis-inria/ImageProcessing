@@ -1,8 +1,8 @@
 #ifndef SOFACV_IMGPROC_ADDWEIGHTED_H
 #define SOFACV_IMGPROC_ADDWEIGHTED_H
 
-#include "ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
+#include "ImageProcessingPlugin.h"
 
 namespace sofacv
 {

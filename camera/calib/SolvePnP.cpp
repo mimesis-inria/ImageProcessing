@@ -89,8 +89,7 @@ void SolvePnP::Update()
       matrix::sofaMat2cvMat(d_K.getValue(), camMatrix);
     else if (l_cam->getIntrinsicCameraMatrix() ==
              sofa::defaulttype::Matrix3::Identity())
-      matrix::sofaMat2cvMat(l_cam->getIntrinsicCameraMatrix(),
-                                    camMatrix);
+      matrix::sofaMat2cvMat(l_cam->getIntrinsicCameraMatrix(), camMatrix);
     else
     {
       int max_d;

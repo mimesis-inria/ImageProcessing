@@ -5,7 +5,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
 MorphologyEx::MorphologyEx()
     : d_ksize(initData(&d_ksize, 7, "ksize", "kernel size (3 5 7 ...)")),
       d_operator(initData(&d_operator, "operator",
@@ -34,8 +33,7 @@ void MorphologyEx::init()
   ImageFilter::init();
 }
 
-void MorphologyEx::applyFilter(const cv::Mat& in,
-                                                           cv::Mat& out, bool)
+void MorphologyEx::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
 
@@ -64,4 +62,3 @@ int MorphologyExClass =
 
 }  // namespace imgproc
 }  // namespace sofacv
-

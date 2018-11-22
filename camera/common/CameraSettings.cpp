@@ -302,10 +302,7 @@ void CameraSettings::RotationMatrixChanged()
   setRotationMatrix(d_R.getValue());
 }
 
-void CameraSettings::TranslationVectorChanged()
-{
-  setPosition(d_t.getValue());
-}
+void CameraSettings::TranslationVectorChanged() { setPosition(d_t.getValue()); }
 
 void CameraSettings::DistortionCoefficientsChanged()
 {
@@ -337,10 +334,7 @@ void CameraSettings::GLViewportChanged()
   setGLViewport(d_glViewport.getValue());
 }
 
-void CameraSettings::GLZClipChanged()
-{
-  setGLZClip(d_zClip.getValue());
-}
+void CameraSettings::GLZClipChanged() { setGLZClip(d_zClip.getValue()); }
 
 void CameraSettings::OrientationChanged()
 {
@@ -514,66 +508,49 @@ void CameraSettings::composeM()
 
   std::string path = "poses.txt";
   std::string opath = "%03d_test.png";
-  file.open(path.c_str(), std::ios_base::app );
-     double dvalue0,dvalue1,dvalue2,dvalue3,dvalue4,dvalue5,dvalue6,dvalue7,dvalue8,dvalue9,dvalue10,dvalue11;    //for (int k = 0; k < pcd.size(); k++)
-     //if ((index0-1)%3==0)
-     {
-         char buf4[FILENAME_MAX];
-         sprintf(buf4, opath.c_str(),(index0));
-         std::string filename4(buf4);
-         dvalue0 = t[0]/100.0;
-         dvalue1 = t[1]/100.0;
-         dvalue2 = t[2]/100.0;
-         dvalue3 = (this->getOrientation())[0];
-         dvalue4 = (this->getOrientation())[1];
-         dvalue5 = (this->getOrientation())[2];
-         dvalue6 = (this->getOrientation())[3];
-         /*dvalue3 = R[0][0];
-         dvalue4 = R[0][1];
-         dvalue5 = R[0][2];
-         dvalue6 = R[1][0];
-         dvalue7 = R[1][1];
-         dvalue8 = R[1][2];
-         dvalue9 = R[2][0];
-         dvalue10 = R[2][1];
-         dvalue11 = R[2][2]; */
+  file.open(path.c_str(), std::ios_base::app);
+  double dvalue0, dvalue1, dvalue2, dvalue3, dvalue4, dvalue5, dvalue6;
+  // for (int k = 0; k < pcd.size(); k++)
+  // if ((index0-1)%3==0)
+  {
+    char buf4[FILENAME_MAX];
+    sprintf(buf4, opath.c_str(), (index0));
+    std::string filename4(buf4);
+    dvalue0 = t[0] / 100.0;
+    dvalue1 = t[1] / 100.0;
+    dvalue2 = t[2] / 100.0;
+    dvalue3 = (this->getOrientation())[0];
+    dvalue4 = (this->getOrientation())[1];
+    dvalue5 = (this->getOrientation())[2];
+    dvalue6 = (this->getOrientation())[3];
 
-         file << filename4;
-         file << " ";
-         file << dvalue0;
-         file << " ";
-         file << dvalue1;
-         file << " ";
-         file << dvalue2;
-         file << " ";
-         file << dvalue3;
-         file << " ";
-         file << dvalue4;
-         file << " ";
-         file << dvalue5;
-         file << " ";
-         file << dvalue6;
-         /*file << " ";
-         file << dvalue7;
-         file << " ";
-         file << dvalue8;
-         file << " ";
-         file << dvalue9;
-         file << " ";
-         file << dvalue10;
-         file << " ";
-         file << dvalue11;*/
-         file << " ";
-         file << "\n";
-     }
-     std::cout << " index " << index0 << std::endl;
-     std::cout << " camera " << getIntrinsicCameraMatrix() << std::endl;
-     std::cout << " Rt " << Rt << std::endl;
-     std::cout << " R " << getRotationMatrix() << std::endl;
-     std::cout << " t " << getPosition() << std::endl;
-     std::cout << " image size " << d_imageSize.getValue().x() << " " << d_imageSize.getValue().y() << std::endl;
-     index0++;
-     file.close();
+    file << filename4;
+    file << " ";
+    file << dvalue0;
+    file << " ";
+    file << dvalue1;
+    file << " ";
+    file << dvalue2;
+    file << " ";
+    file << dvalue3;
+    file << " ";
+    file << dvalue4;
+    file << " ";
+    file << dvalue5;
+    file << " ";
+    file << dvalue6;
+    file << " ";
+    file << "\n";
+  }
+  std::cout << " index " << index0 << std::endl;
+  std::cout << " camera " << getIntrinsicCameraMatrix() << std::endl;
+  std::cout << " Rt " << Rt << std::endl;
+  std::cout << " R " << getRotationMatrix() << std::endl;
+  std::cout << " t " << getPosition() << std::endl;
+  std::cout << " image size " << d_imageSize.getValue().x() << " "
+            << d_imageSize.getValue().y() << std::endl;
+  index0++;
+  file.close();
 }
 
 void CameraSettings::recalculate3DCorners()
@@ -781,7 +758,7 @@ void CameraSettings::buildFromOpenGLContext()
   glGetDoublev(GL_MODELVIEW_MATRIX, m.ptr());
 
   bool hasGLContext = false;
-  for (int i = 0 ; i < 16 ; ++i)
+  for (int i = 0; i < 16; ++i)
   {
     if (std::fabs(p.ptr()[0]) > std::numeric_limits<double>::epsilon())
       hasGLContext = true;
@@ -801,39 +778,23 @@ void CameraSettings::buildFromOpenGLContext()
 
 void CameraSettings::reinit()
 {
-  if (m_dataTracker.isDirty(d_M))
-      ProjectionMatrixChanged();
-  if (m_dataTracker.isDirty(d_K))
-      IntrinsicCameraMatrixChanged();
-  if (m_dataTracker.isDirty(d_distCoefs))
-      DistortionCoefficientsChanged();
-  if (m_dataTracker.isDirty(d_R))
-      RotationMatrixChanged();
-  if (m_dataTracker.isDirty(d_t))
-      TranslationVectorChanged();
-  if (m_dataTracker.isDirty(d_imageSize))
-      ImageSizeChanged();
-  if (m_dataTracker.isDirty(d_glProjection))
-      GLProjectionChanged();
-  if (m_dataTracker.isDirty(d_glModelview))
-      GLModelviewChanged();
-  if (m_dataTracker.isDirty(d_glViewport))
-      GLViewportChanged();
-  if (m_dataTracker.isDirty(d_zClip))
-      GLZClipChanged();
-  if (m_dataTracker.isDirty(d_orientation))
-      OrientationChanged();
-  if (m_dataTracker.isDirty(d_scale2D))
-      Scale2DChanged();
-  if (m_dataTracker.isDirty(d_translate2D))
-      Translation2DChanged();
-  if (m_dataTracker.isDirty(d_f))
-      FocalDistanceChanged();
+  if (m_dataTracker.isDirty(d_M)) ProjectionMatrixChanged();
+  if (m_dataTracker.isDirty(d_K)) IntrinsicCameraMatrixChanged();
+  if (m_dataTracker.isDirty(d_distCoefs)) DistortionCoefficientsChanged();
+  if (m_dataTracker.isDirty(d_R)) RotationMatrixChanged();
+  if (m_dataTracker.isDirty(d_t)) TranslationVectorChanged();
+  if (m_dataTracker.isDirty(d_imageSize)) ImageSizeChanged();
+  if (m_dataTracker.isDirty(d_glProjection)) GLProjectionChanged();
+  if (m_dataTracker.isDirty(d_glModelview)) GLModelviewChanged();
+  if (m_dataTracker.isDirty(d_glViewport)) GLViewportChanged();
+  if (m_dataTracker.isDirty(d_zClip)) GLZClipChanged();
+  if (m_dataTracker.isDirty(d_orientation)) OrientationChanged();
+  if (m_dataTracker.isDirty(d_scale2D)) Scale2DChanged();
+  if (m_dataTracker.isDirty(d_translate2D)) Translation2DChanged();
+  if (m_dataTracker.isDirty(d_f)) FocalDistanceChanged();
 }
 
-void CameraSettings::Update()
-{
-}
+void CameraSettings::Update() {}
 
 void CameraSettings::init()
 {
@@ -854,12 +815,9 @@ void CameraSettings::init()
 
   addOutput(&d_3DCorners);
 
-  if (!d_upVector.isSet())
-    addOutput(&d_upVector);
-  if (!d_fwdVector.isSet())
-    addOutput(&d_fwdVector);
-  if (!d_lookAt.isSet())
-    addOutput(&d_lookAt);
+  if (!d_upVector.isSet()) addOutput(&d_upVector);
+  if (!d_fwdVector.isSet()) addOutput(&d_fwdVector);
+  if (!d_lookAt.isSet()) addOutput(&d_lookAt);
 
   if (!d_imageSize.isSet()) d_imageSize.setValue(Vec2i(1280, 720));
 

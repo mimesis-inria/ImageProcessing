@@ -26,13 +26,14 @@ namespace imgproc
 // Here are just several convenient functions to help user to know what contains
 // the plugin
 
-extern "C" {
-SOFA_IMAGEPROCESSING_API void initExternalModule();
-SOFA_IMAGEPROCESSING_API const char* getModuleName();
-SOFA_IMAGEPROCESSING_API const char* getModuleVersion();
-SOFA_IMAGEPROCESSING_API const char* getModuleLicense();
-SOFA_IMAGEPROCESSING_API const char* getModuleDescription();
-SOFA_IMAGEPROCESSING_API const char* getModuleComponentList();
+extern "C"
+{
+  SOFA_IMAGEPROCESSING_API void initExternalModule();
+  SOFA_IMAGEPROCESSING_API const char* getModuleName();
+  SOFA_IMAGEPROCESSING_API const char* getModuleVersion();
+  SOFA_IMAGEPROCESSING_API const char* getModuleLicense();
+  SOFA_IMAGEPROCESSING_API const char* getModuleDescription();
+  SOFA_IMAGEPROCESSING_API const char* getModuleComponentList();
 }
 
 void initExternalModule()

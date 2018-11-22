@@ -69,15 +69,13 @@ void CalibrateStereo::calibrate()
   cv::Mat F;
 
   cv::Mat_<double> cam1, cam2;
-  matrix::sofaMat2cvMat(l_cam->getCamera1().getIntrinsicCameraMatrix(),
-                                cam1);
-  matrix::sofaMat2cvMat(l_cam->getCamera2().getIntrinsicCameraMatrix(),
-                                cam2);
+  matrix::sofaMat2cvMat(l_cam->getCamera1().getIntrinsicCameraMatrix(), cam1);
+  matrix::sofaMat2cvMat(l_cam->getCamera2().getIntrinsicCameraMatrix(), cam2);
 
-  matrix::sofaVector2cvMat(
-      l_cam->getCamera1().getDistortionCoefficients(), distCoeffs1);
-  matrix::sofaVector2cvMat(
-      l_cam->getCamera2().getDistortionCoefficients(), distCoeffs2);
+  matrix::sofaVector2cvMat(l_cam->getCamera1().getDistortionCoefficients(),
+                           distCoeffs1);
+  matrix::sofaVector2cvMat(l_cam->getCamera2().getDistortionCoefficients(),
+                           distCoeffs2);
 
   std::cout << "reprojectionError: "
             << cv::stereoCalibrate(

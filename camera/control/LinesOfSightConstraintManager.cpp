@@ -39,8 +39,8 @@ LOSConstraintManager<DataTypes>::LOSConstraintManager()
 {
 }
 
-//template <class DataTypes>
-//void LOSConstraintManager<DataTypes>::handleEvent(
+// template <class DataTypes>
+// void LOSConstraintManager<DataTypes>::handleEvent(
 //    sofa::core::objectmodel::Event *e)
 //{
 //  if (sofa::simulation::AnimateBeginEvent::checkEventType(e))

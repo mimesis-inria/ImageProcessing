@@ -58,8 +58,7 @@ class SOFA_IMAGEPROCESSING_API DescriptorMatcher : public ImageFilter
   sofa::Data<sofa::helper::SVector<sofa::helper::SVector<cvDMatch> > >
       d_matches;
 
-  void match(const cvMat& queryDescriptors,
-             std::vector<cv::DMatch>& matches);
+  void match(const cvMat& queryDescriptors, std::vector<cv::DMatch>& matches);
   void knnMatch(const cvMat& queryDescriptors,
                 std::vector<std::vector<cv::DMatch> >& matches, int k);
   void radiusMatch(const cvMat& queryDescriptors,

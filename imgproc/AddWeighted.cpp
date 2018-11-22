@@ -4,8 +4,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
-
 AddWeighted::AddWeighted()
     : d_img2(initData(&d_img2, "img2", "Image to add to img"))
 {
@@ -13,8 +11,7 @@ AddWeighted::AddWeighted()
 
 void AddWeighted::init() { ImageFilter::init(); }
 
-void AddWeighted::applyFilter(const cv::Mat &in,
-                                                          cv::Mat &out, bool)
+void AddWeighted::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty() || d_img2.getValue().empty())
   {
@@ -32,7 +29,5 @@ int AddWeightedClass =
     sofa::core::RegisterObject("OpenCV's AddWeighted function")
         .add<AddWeighted>();
 
-
 }  // namespace imgproc
 }  // namespace sofacv
-

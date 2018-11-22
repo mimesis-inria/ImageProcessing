@@ -1,8 +1,8 @@
 #ifndef SOFACV_IMGPROC_CROP_H
 #define SOFACV_IMGPROC_CROP_H
 
-#include "ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
+#include "ImageProcessingPlugin.h"
 
 namespace sofacv
 {
@@ -21,7 +21,6 @@ class SOFA_IMAGEPROCESSING_API Crop : public ImageFilter
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool);
 };
-
 
 }  // namespace imgproc
 }  // namespace sofacv

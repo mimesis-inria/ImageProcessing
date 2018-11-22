@@ -1,12 +1,11 @@
 #include "Resize.h"
-#include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 
 namespace sofacv
 {
 namespace imgproc
 {
-
 Resize::Resize()
     : d_size(initData(&d_size, "size", "pixel resolution of the output image")),
       d_fx(initData(&d_fx, 0.0, "fx", "scale factor on the X axis")),
@@ -25,8 +24,7 @@ void Resize::init()
   ImageFilter::init();
 }
 
-void Resize::applyFilter(const cv::Mat &in,
-                                                     cv::Mat &out, bool)
+void Resize::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty())
   {
@@ -50,6 +48,5 @@ SOFA_DECL_CLASS(Resize)
 int ResizeClass =
     sofa::core::RegisterObject("OpenCV's Resize function").add<Resize>();
 
-
-} // namespace imgproc
-} // namespace sofacv
+}  // namespace imgproc
+}  // namespace sofacv

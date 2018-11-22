@@ -1,8 +1,8 @@
 #ifndef SOFACV_FEATURES_OPTICALFLOW_H
 #define SOFACV_FEATURES_OPTICALFLOW_H
 
-#include "ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
+#include "ImageProcessingPlugin.h"
 
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/helper/vector.h>

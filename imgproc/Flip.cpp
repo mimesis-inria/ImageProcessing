@@ -4,8 +4,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
-
 Flip::Flip()
     : d_flipCode(initData(&d_flipCode, 1, "flipCode",
                           "0 for X axis flip, 1 for Y, and -1 for both"))
@@ -19,8 +17,7 @@ void Flip::init()
   ImageFilter::init();
 }
 
-void Flip::applyFilter(const cv::Mat &in,
-                                                   cv::Mat &out, bool)
+void Flip::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty())
   {
@@ -39,4 +36,3 @@ int FlipClass =
 
 }  // namespace imgproc
 }  // namespace sofacv
-

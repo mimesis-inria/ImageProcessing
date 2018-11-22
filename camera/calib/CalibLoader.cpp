@@ -100,7 +100,8 @@ void CalibLoader::setCurrentCalib(CalibData& d)
   d_F.setValue(d.E);
   d_totalError.setValue(d.totalError);
 
-  msg_info(getName()) << "loading camera data from " << d_calibNames.getValue().getSelectedItem();
+  msg_info(getName()) << "loading camera data from "
+                      << d_calibNames.getValue().getSelectedItem();
   if (m_isStereo)
   {
     l_sCam->setFundamentalMatrix(d.F);
@@ -225,8 +226,8 @@ void CalibLoader::getAllCalibFiles(const std::string& calibFolder,
                                    std::vector<std::string>& calibFiles)
 {
   // Retrieve all calib files (files ending in ".yml" in calibFolder)
-  sofa::helper::system::FileSystem::listDirectory(calibFolder,
-                                                  calibFiles, "yml");
+  sofa::helper::system::FileSystem::listDirectory(calibFolder, calibFiles,
+                                                  "yml");
 }
 
 void CalibLoader::parse(sofa::core::objectmodel::BaseObjectDescription* arg)
@@ -332,10 +333,8 @@ void CalibLoader::calibFolderChanged()
 
 void CalibLoader::Update()
 {
-  if (m_dataTracker.isDirty(d_calibNames))
-    calibChanged();
-  if (m_dataTracker.isDirty(d_calibFolder))
-    calibFolderChanged();
+  if (m_dataTracker.isDirty(d_calibNames)) calibChanged();
+  if (m_dataTracker.isDirty(d_calibFolder)) calibFolderChanged();
 }
 
 CalibLoader::CalibData::CalibData(
