@@ -1,8 +1,8 @@
 #ifndef SOFACV_IMGPROC_MINMAXLOC_H
 #define SOFACV_IMGPROC_MINMAXLOC_H
 
-#include "ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
+#include "ImageProcessingPlugin.h"
 
 namespace sofacv
 {
@@ -10,7 +10,6 @@ namespace imgproc
 {
 class SOFA_IMAGEPROCESSING_API MinMaxLoc : public ImageFilter
 {
-
  public:
   SOFA_CLASS(MinMaxLoc, ImageFilter);
 

@@ -28,8 +28,9 @@ namespace cam
  * This component gets / sets OpenGL parameters from / to a linked
  * CameraSettings component, and modifies the OpenGL view in SOFA
  */
-class SOFA_IMAGEPROCESSING_API CalibratedCamera : public ImplicitDataEngine,
-                         public sofa::core::visual::VisualManager
+class SOFA_IMAGEPROCESSING_API CalibratedCamera
+    : public ImplicitDataEngine,
+      public sofa::core::visual::VisualManager
 {
   typedef sofa::core::objectmodel::SingleLink<
       CalibratedCamera, CameraSettings,
@@ -67,9 +68,9 @@ class SOFA_IMAGEPROCESSING_API CalibratedCamera : public ImplicitDataEngine,
   sofa::Data<bool> d_freeCam;  ///< locks / unlocks the modelview in OpenGL
   sofa::Data<bool>
       d_freeProj;  ///< set / unset CameraSettings intrinsic params in OpenGL
-  sofa::Data<bool> d_drawGizmo;  ///< draws / hides the camera gizmo
+  sofa::Data<bool> d_drawGizmo;     ///< draws / hides the camera gizmo
   sofa::Data<bool> d_captureFrame;  ///< captures camera's viewport as cvMat
-  sofa::Data<cvMat> d_img;  ///< captured camera frame
+  sofa::Data<cvMat> d_img;          ///< captured camera frame
 
  private:
   bool m_storeMatrices;

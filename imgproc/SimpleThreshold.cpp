@@ -5,7 +5,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
 SimpleThreshold::SimpleThreshold()
     : d_threshold(initData(&d_threshold, .5, "threshold", "threshold value")),
       d_max(initData(&d_max, 1.0, "max",
@@ -29,9 +28,7 @@ void SimpleThreshold::init()
   ImageFilter::init();
 }
 
-void SimpleThreshold::applyFilter(const cv::Mat& in,
-                                                              cv::Mat& out,
-                                                              bool)
+void SimpleThreshold::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
 
@@ -71,8 +68,5 @@ int SimpleThresholdClass =
         "OpenCV's implementation of a simple image thresholding filter")
         .add<SimpleThreshold>();
 
-
 }  // namespace imgproc
 }  // namespace sofacv
-
-

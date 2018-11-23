@@ -132,11 +132,11 @@ class SOFA_IMAGEPROCESSING_API CameraController : public ImplicitDataEngine
   double m_rho;
 
   sofa::Data<double> d_tx;  ///< Position along x in world coordinates of the
-                            ///camera's optical center
+                            /// camera's optical center
   sofa::Data<double> d_ty;  ///< Position along y in world coordinates of the
-                            ///camera's optical center
+                            /// camera's optical center
   sofa::Data<double> d_tz;  ///< Position along z in world coordinates of the
-                            ///camera's optical center
+                            /// camera's optical center
 
   sofa::Data<double> d_R00;  ///< 3x3 rotation matrix 00
   sofa::Data<double> d_R01;  ///< 3x3 rotation matrix 01

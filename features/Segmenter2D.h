@@ -1,9 +1,9 @@
 #ifndef SOFACV_FEATURES_SEGMENTER2D_H
 #define SOFACV_FEATURES_SEGMENTER2D_H
 
-#include "ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
 #include <sofa/helper/SVector.h>
+#include "ImageProcessingPlugin.h"
 
 namespace sofacv
 {

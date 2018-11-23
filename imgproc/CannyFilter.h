@@ -1,8 +1,8 @@
 #ifndef SOFACV_IMGPROC_CANNYFILTER_H
 #define SOFACV_IMGPROC_CANNYFILTER_H
 
-#include "ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
+#include "ImageProcessingPlugin.h"
 
 namespace sofacv
 {
@@ -24,7 +24,6 @@ class SOFA_IMAGEPROCESSING_API CannyFilter : public ImageFilter
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
-
 
 }  // namespace imgproc
 }  // namespace sofacv

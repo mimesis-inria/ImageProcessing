@@ -1,8 +1,8 @@
 #ifndef SOFACV_IMGPROC_TEMPLATEMATCHER_H
 #define SOFACV_IMGPROC_TEMPLATEMATCHER_H
 
-#include "ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
+#include "ImageProcessingPlugin.h"
 
 #include <sofa/helper/OptionsGroup.h>
 

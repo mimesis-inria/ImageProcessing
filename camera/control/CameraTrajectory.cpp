@@ -6,7 +6,6 @@ namespace cam
 {
 namespace control
 {
-
 CameraTrajectory::CameraTrajectory()
     : l_cam(initLink("cam", "camera to control")),
       d_center(
@@ -81,8 +80,7 @@ void CameraTrajectory::Update()
   d_angle.setValue(d_angle.getValue() + 1);
 }
 
-void CameraTrajectory::handleEvent(
-    sofa::core::objectmodel::Event* e)
+void CameraTrajectory::handleEvent(sofa::core::objectmodel::Event* e)
 {
   if (sofa::simulation::AnimateBeginEvent::checkEventType(e))
   {
@@ -90,6 +88,6 @@ void CameraTrajectory::handleEvent(
   }
 }
 
-} // namespace control
-} // namespace cam
-} // namespace sofacv
+}  // namespace control
+}  // namespace cam
+}  // namespace sofacv

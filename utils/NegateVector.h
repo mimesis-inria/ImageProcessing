@@ -17,11 +17,13 @@ class SOFA_IMAGEPROCESSING_API NegateVector : public ImplicitDataEngine
 
   NegateVector()
       : d_src(initData(&d_src, "input_position", "input vector to negate")),
-//        d_srcRot(
-//            initData(&d_srcRot, "input_rotation", "input rotation to negate")),
-        d_dst(initData(&d_dst, "output_position", "negated output vector"))/*,*/
-//        d_dstRot(
-//            initData(&d_dstRot, "output_rotation", "negated output vector"))
+        //        d_srcRot(
+        //            initData(&d_srcRot, "input_rotation", "input rotation to
+        //            negate")),
+        d_dst(
+            initData(&d_dst, "output_position", "negated output vector")) /*,*/
+  //        d_dstRot(
+  //            initData(&d_dstRot, "output_rotation", "negated output vector"))
   {
   }
 
@@ -33,7 +35,7 @@ class SOFA_IMAGEPROCESSING_API NegateVector : public ImplicitDataEngine
   sofa::Data<sofa::defaulttype::Matrix3> d_srcRot;
   // OUTPUTS
   sofa::Data<sofa::defaulttype::Vector3> d_dst;
-//  sofa::Data<sofa::defaulttype::Matrix3> d_dstRot;
+  //  sofa::Data<sofa::defaulttype::Matrix3> d_dstRot;
 };
 
 }  // namespace utils

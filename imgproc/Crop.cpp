@@ -4,14 +4,9 @@ namespace sofacv
 {
 namespace imgproc
 {
+Crop::Crop() : d_roi(initData(&d_roi, "ROI", "x, y, w, h values of the ROI")) {}
 
-Crop::Crop()
-    : d_roi(initData(&d_roi, "ROI", "x, y, w, h values of the ROI"))
-{
-}
-
-void Crop::applyFilter(const cv::Mat &in,
-                                                   cv::Mat &out, bool)
+void Crop::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty())
   {
@@ -42,4 +37,3 @@ int CropClass =
 
 }  // namespace imgproc
 }  // namespace sofacv
-

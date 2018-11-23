@@ -5,8 +5,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
-
 CannyFilter::CannyFilter()
     : d_minThreshold(initData(&d_minThreshold, 0.0, "min",
                               "first threshold for the hysteresis procedure.")),
@@ -33,8 +31,7 @@ void CannyFilter::init()
   ImageFilter::init();
 }
 
-void CannyFilter::applyFilter(const cv::Mat &in,
-                                                          cv::Mat &out, bool)
+void CannyFilter::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty()) return;
   int apertureSize = d_apertureSize.getValue();
@@ -76,5 +73,3 @@ int CannyFilterClass =
 
 }  // namespace imgproc
 }  // namespace sofacv
-
-

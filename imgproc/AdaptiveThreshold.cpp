@@ -5,7 +5,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
 AdaptiveThreshold::AdaptiveThreshold()
     : d_max(initData(&d_max, 1.0, "maxValue",
                      "non-zero value assigned to the pixels for which the "
@@ -44,8 +43,7 @@ void AdaptiveThreshold::init()
   ImageFilter::init();
 }
 
-void AdaptiveThreshold::applyFilter(
-    const cv::Mat& in, cv::Mat& out, bool)
+void AdaptiveThreshold::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
 
@@ -89,4 +87,3 @@ int AdaptiveThresholdClass =
 
 }  // namespace imgproc
 }  // namespace sofacv
-

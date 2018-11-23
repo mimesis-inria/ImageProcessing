@@ -57,10 +57,10 @@ void FeatureTriangulator::Update()
   //	common::matrix::sofaVector2cvMat(l_cam->getTranslationVector(), T);
   matrix::sofaMat2cvMat(l_cam->getCamera1().getProjectionMatrix(), cmL);
   matrix::sofaMat2cvMat(l_cam->getCamera2().getProjectionMatrix(), cmR);
-  matrix::sofaVector2cvMat(
-      l_cam->getCamera1().getDistortionCoefficients(), dvL);
-  matrix::sofaVector2cvMat(
-      l_cam->getCamera2().getDistortionCoefficients(), dvR);
+  matrix::sofaVector2cvMat(l_cam->getCamera1().getDistortionCoefficients(),
+                           dvL);
+  matrix::sofaVector2cvMat(l_cam->getCamera2().getDistortionCoefficients(),
+                           dvR);
 
   PL = cmL;
   PR = cmR;

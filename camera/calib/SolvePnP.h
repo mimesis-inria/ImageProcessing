@@ -28,35 +28,36 @@ namespace calib
  */
 class SOFA_IMAGEPROCESSING_API SolvePnP : public ImplicitDataEngine
 {
-	typedef sofa::core::objectmodel::SingleLink<
-			SolvePnP, CameraSettings,
-			sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
-			CamSettings;
+  typedef sofa::core::objectmodel::SingleLink<
+      SolvePnP, CameraSettings,
+      sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
+      CamSettings;
 
  public:
-    SOFA_CLASS(SolvePnP, ImplicitDataEngine);
+  SOFA_CLASS(SolvePnP, ImplicitDataEngine);
 
-    SolvePnP();
+  SolvePnP();
 
-    virtual ~SolvePnP() override {}
-    void init() override;
+  virtual ~SolvePnP() override {}
+  void init() override;
 
   virtual void Update() override;
 
-	CamSettings l_cam;  ///< Camera settings to update
+  CamSettings l_cam;  ///< Camera settings to update
 
-	// INPUTS
-	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector2> >
-			d_imagePoints;  ///< [INPUT] 2D points in the image
-	sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> >
-			d_objectPoints;  ///< [INPUT] 3D points on the object
+  // INPUTS
+  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector2> >
+      d_imagePoints;  ///< [INPUT] 2D points in the image
+  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> >
+      d_objectPoints;  ///< [INPUT] 3D points on the object
 
-	// OPTIONAL INPUT
-	sofa::Data<sofa::defaulttype::Vec2i> d_imgSize;  ///< [INPUT] image size to estimate K
-	sofa::Data<sofa::defaulttype::Matrix3> d_K;      ///< [INPUT] Intrinsic Guess
-	sofa::Data<sofa::helper::vector<double> >
-			d_distCoefs;             ///< [INPUT] Distortion coefficients guess
-	sofa::Data<int> d_pnpFlags;  ///< OpenCV's PNP flags
+  // OPTIONAL INPUT
+  sofa::Data<sofa::defaulttype::Vec2i>
+      d_imgSize;  ///< [INPUT] image size to estimate K
+  sofa::Data<sofa::defaulttype::Matrix3> d_K;  ///< [INPUT] Intrinsic Guess
+  sofa::Data<sofa::helper::vector<double> >
+      d_distCoefs;             ///< [INPUT] Distortion coefficients guess
+  sofa::Data<int> d_pnpFlags;  ///< OpenCV's PNP flags
 };
 
 }  // namespace calib

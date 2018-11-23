@@ -194,8 +194,7 @@ void MatchingConstraints::Update()
     for (auto match : matchVector) mvec.push_back(match);
     matches.push_back(mvec);
   }
-  const sofa::helper::vector<cvKeypoint>& PointsR =
-      d_keypointsR_in.getValue();
+  const sofa::helper::vector<cvKeypoint>& PointsR = d_keypointsR_in.getValue();
 
   /// Fill matchVector with all the necessary info:
   m_matchVector.clear();
@@ -298,11 +297,10 @@ bool MatchingConstraints::MinimalDistanceFilter(MatchVector& ms,
 
 void MatchingConstraints::PushInlier(
     const cvMat& descL, unsigned i,
-    const sofa::helper::vector<cvKeypoint>& PointsL,
-    const cvMat& descR, MatchVector& ms,
-    const sofa::helper::vector<cvKeypoint>& PointsR)
+    const sofa::helper::vector<cvKeypoint>& PointsL, const cvMat& descR,
+    MatchVector& ms, const sofa::helper::vector<cvKeypoint>& PointsR)
 {
-  ulong inliersIdx = i - m_outliers_out.size();
+  unsigned long inliersIdx = i - m_outliers_out.size();
   m_matches.push_back(
       cvDMatch(int(ms.idxL), int(ms.matches[0].idxR), ms.matches[0].distance));
   m_kpL.push_back(PointsL[ms.idxL]);
@@ -328,11 +326,11 @@ void MatchingConstraints::ClearOutputVectors()
   m_kpR.reserve(d_keypointsL_in.getValue().size());
   m_outliers_out.reserve(d_keypointsL_in.getValue().size());
   m_descL = cvMat(int(d_keypointsL_in.getValue().size()),
-                          d_descriptorsL_in.getValue().cols,
-                          d_descriptorsL_in.getValue().type());
+                  d_descriptorsL_in.getValue().cols,
+                  d_descriptorsL_in.getValue().type());
   m_descR = cvMat(int(d_keypointsL_in.getValue().size()),
-                          d_descriptorsL_in.getValue().cols,
-                          d_descriptorsL_in.getValue().type());
+                  d_descriptorsL_in.getValue().cols,
+                  d_descriptorsL_in.getValue().type());
 }
 
 void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
@@ -366,10 +364,8 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     }
   }
 
-  const sofa::helper::vector<cvKeypoint>& PointsL =
-      d_keypointsL_in.getValue();
-  const sofa::helper::vector<cvKeypoint>& PointsR =
-      d_keypointsR_in.getValue();
+  const sofa::helper::vector<cvKeypoint>& PointsL = d_keypointsL_in.getValue();
+  const sofa::helper::vector<cvKeypoint>& PointsR = d_keypointsR_in.getValue();
 
   const cvMat& descL = d_descriptorsL_in.getValue();
   const cvMat& descR = d_descriptorsR_in.getValue();

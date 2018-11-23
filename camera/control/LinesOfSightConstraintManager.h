@@ -21,25 +21,24 @@ namespace control
 template <class DataTypes>
 class SOFA_IMAGEPROCESSING_API LOSConstraintManager : public ImplicitDataEngine
 {
-    typedef typename sofa::component::constraintset::SlidingConstraint<
-        DataTypes>::SPtr SlidingConstraint;
-    typedef typename sofa::defaulttype::Vec2i Vec2i;
-    typedef typename DataTypes::VecCoord VecCoord;
-    typedef sofa::core::objectmodel::SingleLink<
-        LOSConstraintManager, cam::CameraSettings,
-        sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
-        CamSettings;
-    typedef sofa::core::objectmodel::SingleLink<
-        LOSConstraintManager,
-        sofa::component::container::MechanicalObject<DataTypes>,
-        sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
-        MechanicalObject;
+  typedef typename sofa::component::constraintset::SlidingConstraint<
+      DataTypes>::SPtr SlidingConstraint;
+  typedef typename sofa::defaulttype::Vec2i Vec2i;
+  typedef typename DataTypes::VecCoord VecCoord;
+  typedef sofa::core::objectmodel::SingleLink<
+      LOSConstraintManager, cam::CameraSettings,
+      sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
+      CamSettings;
+  typedef sofa::core::objectmodel::SingleLink<
+      LOSConstraintManager,
+      sofa::component::container::MechanicalObject<DataTypes>,
+      sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
+      MechanicalObject;
 
-      typedef sofa::core::objectmodel::SingleLink<
-          LOSConstraintManager,
-          sofa::core::objectmodel::BaseObject,
-          sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
-          BarycentricMapping;
+  typedef sofa::core::objectmodel::SingleLink<
+      LOSConstraintManager, sofa::core::objectmodel::BaseObject,
+      sofa::BaseLink::FLAG_STOREPATH | sofa::BaseLink::FLAG_STRONGLINK>
+      BarycentricMapping;
 
  public:
   SOFA_CLASS(SOFA_TEMPLATE(LOSConstraintManager, DataTypes),
@@ -71,6 +70,6 @@ class SOFA_IMAGEPROCESSING_API LOSConstraintManager : public ImplicitDataEngine
 
 }  // namespace control
 }  // namespace cam
-}  // namespace sofaor
+}  // namespace sofacv
 
 #endif  // SOFACV_CAM_CONTROL_LINESOFSIGHTCONSTRAINT_H

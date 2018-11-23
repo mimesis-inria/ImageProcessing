@@ -12,8 +12,8 @@ namespace sofacv
 {
 namespace utils
 {
-using sofa::helper::vector;
 using sofa::defaulttype::Vec3d;
+using sofa::helper::vector;
 
 class SOFA_IMAGEPROCESSING_API OrthoProj : public ImplicitDataEngine
 {

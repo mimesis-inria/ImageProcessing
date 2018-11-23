@@ -5,7 +5,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
 CvtColor::CvtColor()
     : d_code(initData(&d_code, 6, "code",
                       "color space conversion code default is BGR2GRAY")),
@@ -18,8 +17,7 @@ CvtColor::CvtColor()
 
 void CvtColor::init() { ImageFilter::init(); }
 
-void CvtColor::applyFilter(const cv::Mat &in,
-                                                       cv::Mat &out, bool)
+void CvtColor::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty()) return;
   try
@@ -42,5 +40,3 @@ int CvtColorClass = sofa::core::RegisterObject(
 
 }  // namespace imgproc
 }  // namespace sofacv
-
-

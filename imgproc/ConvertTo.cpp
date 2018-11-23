@@ -10,7 +10,8 @@ SOFA_DECL_CLASS(ConvertTo)
 
 int ConvertToClass = sofa::core::RegisterObject(
                          "Converts OpenCV Matrices pixel depth, and optionally "
-                         "scales / crop the histogram using alpha & beta. Number of channels stay the same")
+                         "scales / crop the histogram using alpha & beta. "
+                         "Number of channels stay the same")
                          .add<ConvertTo<char> >()
                          .add<ConvertTo<unsigned char> >()
                          .add<ConvertTo<short> >()
@@ -18,7 +19,6 @@ int ConvertToClass = sofa::core::RegisterObject(
                          .add<ConvertTo<int> >()
                          .add<ConvertTo<float> >()
                          .add<ConvertTo<double> >();
-
 
 }  // namespace imgproc
 }  // namespace sofacv

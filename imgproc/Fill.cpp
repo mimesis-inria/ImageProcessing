@@ -4,7 +4,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
 Fill::Fill()
     : d_color(initData(&d_color, sofa::defaulttype::Vec4d(1.0, 1.0, 1.0, 1.0),
                        "scalar", "pixel color value."))
@@ -17,8 +16,7 @@ void Fill::init()
   ImageFilter::init();
 }
 
-void Fill::applyFilter(const cv::Mat &in,
-                                                   cv::Mat &out, bool)
+void Fill::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty()) return;
 
@@ -51,4 +49,3 @@ int FillClass =
 
 }  // namespace imgproc
 }  // namespace sofacv
-

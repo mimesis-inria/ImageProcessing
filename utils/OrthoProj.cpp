@@ -4,7 +4,6 @@ namespace sofacv
 {
 namespace utils
 {
-
 void OrthoProj::init()
 {
   if (!l_cam.get())
@@ -20,8 +19,9 @@ void OrthoProj::init()
 
 // Project the line defined by the point p1 and the direction vector d1
 // On the plane defined by the point p2 and the normal n2
-void OrthoProj::linePlaneIntersection(const Vec3d& p1, const Vec3d& d1, const Vec3d& p2,
-                           const Vec3d& n2, Vec3d& P)
+void OrthoProj::linePlaneIntersection(const Vec3d& p1, const Vec3d& d1,
+                                      const Vec3d& p2, const Vec3d& n2,
+                                      Vec3d& P)
 {
   double lambda =
       sofa::defaulttype::dot(p2 - p1, n2) / sofa::defaulttype::dot(d1, n2);
@@ -158,8 +158,6 @@ void OrthoProj::Update()
     d_P.setValue(P);
   }
 }
-
-
 
 SOFA_DECL_CLASS(OrthoProj)
 

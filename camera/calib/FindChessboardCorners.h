@@ -17,7 +17,7 @@ class SOFA_IMAGEPROCESSING_API FindPatternCorners : public ImageFilter
  public:
   SOFA_CLASS(FindPatternCorners, ImageFilter);
 
-  sofa::Data < sofa::helper::vector<sofa::defaulttype::Vec2i> > d_imagePoints;
+  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_imagePoints;
   sofa::Data<sofa::helper::OptionsGroup> d_patternType;
   sofa::Data<sofa::defaulttype::Vec2i> d_patternSize;
   sofa::Data<int> d_detectRate;

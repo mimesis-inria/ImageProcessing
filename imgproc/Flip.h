@@ -1,14 +1,13 @@
 #ifndef SOFACV_IMGPROC_FLIP_H
 #define SOFACV_IMGPROC_FLIP_H
 
-#include "ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
+#include "ImageProcessingPlugin.h"
 
 namespace sofacv
 {
 namespace imgproc
 {
-
 class SOFA_IMAGEPROCESSING_API Flip : public ImageFilter
 {
  public:
@@ -22,7 +21,6 @@ class SOFA_IMAGEPROCESSING_API Flip : public ImageFilter
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 };
-
 
 }  // namespace imgproc
 }  // namespace sofacv

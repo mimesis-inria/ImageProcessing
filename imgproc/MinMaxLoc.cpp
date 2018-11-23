@@ -4,7 +4,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
 MinMaxLoc::MinMaxLoc()
     : d_min(initData(&d_min, "min", "min score", true, true)),
       d_max(initData(&d_max, "max", "max score", true, true)),
@@ -18,8 +17,7 @@ MinMaxLoc::MinMaxLoc()
 
 void MinMaxLoc::init() { ImageFilter::init(); }
 
-void MinMaxLoc::applyFilter(const cv::Mat &in,
-                                                        cv::Mat &, bool)
+void MinMaxLoc::applyFilter(const cv::Mat &in, cv::Mat &, bool)
 {
   if (in.empty()) return;
 

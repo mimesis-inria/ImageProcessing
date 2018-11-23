@@ -5,8 +5,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
-
 SobelFilter::SobelFilter()
     : d_ddepth(initData(&d_ddepth, -1, "ddepth",
                         "Output image depth. Same as source by default (-1). "
@@ -49,8 +47,7 @@ void SobelFilter::init()
   ImageFilter::init();
 }
 
-void SobelFilter::applyFilter(const cv::Mat& in,
-                                                          cv::Mat& out, bool)
+void SobelFilter::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
   int ksize = d_ksize.getValue();
@@ -98,4 +95,3 @@ int SobelFilterClass =
 
 }  // namespace imgproc
 }  // namespace sofacv
-

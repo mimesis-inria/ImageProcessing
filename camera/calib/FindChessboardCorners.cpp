@@ -6,7 +6,6 @@ namespace cam
 {
 namespace calib
 {
-
 FindPatternCorners::FindPatternCorners()
     : d_imagePoints(initData(&d_imagePoints, "imagePoints",
                              "output vector of image points")),
@@ -35,8 +34,7 @@ FindPatternCorners::FindPatternCorners()
   d_patternType.endEdit();
 }
 
-void FindPatternCorners::applyFilter(
-    const cv::Mat& in, cv::Mat& out, bool)
+void FindPatternCorners::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   bool found = false;
   std::vector<cv::Point2f> corners;
@@ -60,17 +58,16 @@ void FindPatternCorners::applyFilter(
       out, cv::Size(d_patternSize.getValue().x(), d_patternSize.getValue().y()),
       corners, found);
 
-  sofa::helper::vector<sofa::defaulttype::Vec2i>& pts = *d_imagePoints.beginEdit();
+  sofa::helper::vector<sofa::defaulttype::Vec2i>& pts =
+      *d_imagePoints.beginEdit();
   pts.clear();
-  for (auto pt : corners) pts.push_back(sofa::defaulttype::Vec2i(int(pt.x), int(pt.y)));
+  for (auto pt : corners)
+    pts.push_back(sofa::defaulttype::Vec2i(int(pt.x), int(pt.y)));
   d_imagePoints.endEdit();
 }
 
-void FindPatternCorners::init()
-{
-  ImageFilter::init();
-}
+void FindPatternCorners::init() { ImageFilter::init(); }
 
-} // namespace calib
-} // namespace cam
-} // namespace sofacv
+}  // namespace calib
+}  // namespace cam
+}  // namespace sofacv

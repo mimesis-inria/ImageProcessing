@@ -13,7 +13,6 @@ namespace cam
 {
 namespace control
 {
-
 class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
 {
   typedef sofa::core::objectmodel::SingleLink<
@@ -45,7 +44,7 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
   {
   }
 
-  virtual ~TrajectoryAround() override{}
+  virtual ~TrajectoryAround() override {}
   void init() override
   {
     addInput(&d_center);
@@ -63,7 +62,6 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
 
   void rotate(double rho, double theta, double phi, bool init = false)
   {
-
     Vector3 p = Vector3(0, 0, d_rhoInit.getValue());
     Vector3 sphCoord;
 
@@ -102,7 +100,6 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
     Quat q6 = Quat(Vector3(1.0, 0.0, 0.0), -M_PI / 2);
     Quat q7 = Quat(Vector3(0.0, 0.0, 1.0), -M_PI / 2);
 
-
     Matrix3 R1, R2, R3, R4, R5, R6, R7;
     q1.toMatrix(R1);
     q2.toMatrix(R2);
@@ -114,7 +111,7 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
 
     p = Vector3(-p.z(), -p.x(), p.y());
     p += d_center.getValue();
-    Matrix3 R = R7*R4 * R2 * R3 * R5 * R6;
+    Matrix3 R = R7 * R4 * R2 * R3 * R5 * R6;
 
     l_cam->setPosition(p, false);
     l_cam->setRotationMatrix(R, false);
@@ -123,14 +120,10 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
 
   void Update() override
   {
-    if (m_dataTracker.isDirty(d_center))
-      centerChanged();
-    if (m_dataTracker.isDirty(d_theta))
-      thetaChanged();
-    if (m_dataTracker.isDirty(d_phi))
-      phiChanged();
-    if (m_dataTracker.isDirty(d_rho))
-      rhoChanged();
+    if (m_dataTracker.isDirty(d_center)) centerChanged();
+    if (m_dataTracker.isDirty(d_theta)) thetaChanged();
+    if (m_dataTracker.isDirty(d_phi)) phiChanged();
+    if (m_dataTracker.isDirty(d_rho)) rhoChanged();
     rotate(d_rho.getValue(), d_theta.getValue(), d_phi.getValue());
   }
 
@@ -172,18 +165,9 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
     //      m_rho = d_rho.getValue();
   }
 
-  void thetaInitChanged()
-  {
-    rotate(0, 0, 0, true);
-  }
-  void phiInitChanged()
-  {
-    rotate(0, 0, 0, true);
-  }
-  void rhoInitChanged()
-  {
-    rotate(0, 0, 0, true);
-  }
+  void thetaInitChanged() { rotate(0, 0, 0, true); }
+  void phiInitChanged() { rotate(0, 0, 0, true); }
+  void rhoInitChanged() { rotate(0, 0, 0, true); }
 };
 
 SOFA_DECL_CLASS(TrajectoryAround)

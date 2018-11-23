@@ -15,16 +15,16 @@ namespace control
 template <class DataTypes>
 void LOSConstraintManager<DataTypes>::init()
 {
-    addInput(&d_indices);
-    if (!l_slavePoints.get())
-      msg_error(getName() + "::init()") << "No MState provided for slave points!";
-    if (!l_masterPoints.get())
-      msg_error(getName() + "::init()")
-          << "No MState provided for master points!";
-    m_components = sofa::helper::vector<SlidingConstraint>(
-        d_indices.getValue().size() + 1, nullptr);
-    setDirtyValue();
-    update();
+  addInput(&d_indices);
+  if (!l_slavePoints.get())
+    msg_error(getName() + "::init()") << "No MState provided for slave points!";
+  if (!l_masterPoints.get())
+    msg_error(getName() + "::init()")
+        << "No MState provided for master points!";
+  m_components = sofa::helper::vector<SlidingConstraint>(
+      d_indices.getValue().size() + 1, nullptr);
+  setDirtyValue();
+  update();
 }
 
 template <class DataTypes>
@@ -63,10 +63,9 @@ void LOSConstraintManager<DataTypes>::createConstraints()
            std::to_string(d_indices.getValue()[i]))
               .c_str(),
           "SlidingConstraint");
-      desc.setAttribute("name",
-                        (std::string("SlidingConstraint_") +
-                         std::to_string(d_indices.getValue()[i]))
-                            .c_str());
+      desc.setAttribute("name", (std::string("SlidingConstraint_") +
+                                 std::to_string(d_indices.getValue()[i]))
+                                    .c_str());
       desc.setAttribute("object1", l_slavePoints.getPath().c_str());
       desc.setAttribute("object2", l_masterPoints.getPath().c_str());
       desc.setAttribute("sliding_point",
@@ -76,9 +75,10 @@ void LOSConstraintManager<DataTypes>::createConstraints()
                         std::to_string(l_masterPoints->x.getValue().size() - 1)
                             .c_str());  // cam position index in masterPoints
 
-//      std::cout << "LOSConstraint: "
-//                << l_slavePoints->x.getValue()[d_indices.getValue()[i]] << "\t"
-//                << l_masterPoints->x.getValue()[i] << std::endl;
+      //      std::cout << "LOSConstraint: "
+      //                << l_slavePoints->x.getValue()[d_indices.getValue()[i]]
+      //                << "\t"
+      //                << l_masterPoints->x.getValue()[i] << std::endl;
       m_components[i] = sofa::core::objectmodel::New<
           sofa::component::constraintset::SlidingConstraint<DataTypes> >();
       this->getContext()->addObject(m_components[i]);
@@ -87,7 +87,7 @@ void LOSConstraintManager<DataTypes>::createConstraints()
       m_components[i]->reinit();
       m_components[i]->bwdInit();
     }
-//    std::cout << std::endl;
+    //    std::cout << std::endl;
   }
   else
   {
@@ -128,12 +128,12 @@ void LOSConstraintManager<DataTypes>::createConstraints()
 template <class DataTypes>
 void LOSConstraintManager<DataTypes>::Update()
 {
-    if (d_rebuildConstraints.getValue() /* || firstPass*/)
-    {
-      l_slavePoints->reinit();
-      l_masterPoints->reinit();
-      createConstraints();
-    }
+  if (d_rebuildConstraints.getValue() /* || firstPass*/)
+  {
+    l_slavePoints->reinit();
+    l_masterPoints->reinit();
+    createConstraints();
+  }
 }
 
 template <class DataTypes>

@@ -4,8 +4,6 @@ namespace sofacv
 {
 namespace imgproc
 {
-
-
 InRange::InRange()
     : d_minRange(initData(&d_minRange, Vec3i(0, 0, 0), "minRange",
                           "minimum color value")),
@@ -21,8 +19,7 @@ void InRange::init()
   ImageFilter::init();
 }
 
-void InRange::applyFilter(const cv::Mat &in,
-                                                      cv::Mat &out, bool)
+void InRange::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {
   if (in.empty())
   {
@@ -47,4 +44,3 @@ int InRangeClass =
 
 }  // namespace imgproc
 }  // namespace sofacv
-

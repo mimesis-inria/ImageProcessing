@@ -16,12 +16,11 @@ namespace cam
 {
 namespace control
 {
-
 typedef struct fpoint_tag
 {
-   float x;
-   float y;
-   float z;
+  float x;
+  float y;
+  float z;
 } fpoint;
 
 struct Triangle
@@ -29,34 +28,28 @@ struct Triangle
   int vertex[3];
 };
 
-using TriangleList=std::vector<Triangle>;
-using VertexList=std::vector<sofa::defaulttype::Vector3>;
+using TriangleList = std::vector<Triangle>;
+using VertexList = std::vector<sofa::defaulttype::Vector3>;
 
 namespace icosahedron
 {
-const float X=0.525731112119133606;
-const float Z=0.850650808352039932;
-const float N=0.f;
+const float X = 0.525731112119133606;
+const float Z = 0.850650808352039932;
+const float N = 0.f;
 
-static const VertexList vertices=
-{
-  {-X,N,Z}, {X,N,Z}, {-X,N,-Z}, {X,N,-Z},
-  {N,Z,X}, {N,Z,-X}, {N,-Z,X}, {N,-Z,-X},
-  {Z,X,N}, {-Z,X, N}, {Z,-X,N}, {-Z,-X, N}
-};
+static const VertexList vertices = {
+    {-X, N, Z}, {X, N, Z},   {-X, N, -Z}, {X, N, -Z}, {N, Z, X},  {N, Z, -X},
+    {N, -Z, X}, {N, -Z, -X}, {Z, X, N},   {-Z, X, N}, {Z, -X, N}, {-Z, -X, N}};
 
-static const TriangleList triangles=
-{
-  {0,4,1},{0,9,4},{9,5,4},{4,5,8},{4,8,1},
-  {8,10,1},{8,3,10},{5,3,8},{5,2,3},{2,7,3},
-  {7,10,3},{7,6,10},{7,11,6},{11,0,6},{0,1,6},
-  {6,1,10},{9,0,11},{9,11,2},{9,2,5},{7,2,11}
-};
-}
+static const TriangleList triangles = {
+    {0, 4, 1},  {0, 9, 4},  {9, 5, 4},  {4, 5, 8},  {4, 8, 1},
+    {8, 10, 1}, {8, 3, 10}, {5, 3, 8},  {5, 2, 3},  {2, 7, 3},
+    {7, 10, 3}, {7, 6, 10}, {7, 11, 6}, {11, 0, 6}, {0, 1, 6},
+    {6, 1, 10}, {9, 0, 11}, {9, 11, 2}, {9, 2, 5},  {7, 2, 11}};
+}  // namespace icosahedron
 
-using Lookup=std::map<std::pair<int, int>, int>;
-using IndexedMesh=std::pair<VertexList, TriangleList>;
-
+using Lookup = std::map<std::pair<int, int>, int>;
+using IndexedMesh = std::pair<VertexList, TriangleList>;
 
 class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
 {
@@ -68,16 +61,16 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
   typedef typename sofa::defaulttype::Vector3 Vector3;
   typedef typename sofa::defaulttype::Quat Quat;
 
-    IndexedMesh indexedmesh, indexedmeshclasses;
+  IndexedMesh indexedmesh, indexedmeshclasses;
 
-    std::vector<int> classes;
+  std::vector<int> classes;
 
-    std::vector<Vector3> centers;
+  std::vector<Vector3> centers;
 
-    int index;
-    std::ofstream file;
+  int index;
+  std::ofstream file;
 
-    int centerit;
+  int centerit;
 
  public:
   SOFA_CLASS(Icosphere, ImplicitDataEngine);
@@ -100,7 +93,7 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
   {
   }
 
-  virtual ~Icosphere() override{}
+  virtual ~Icosphere() override {}
   void init() override
   {
     addInput(&d_center);
@@ -122,29 +115,27 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
     indexedmesh = make_icosphere(nsubdivisions);
     indexedmeshclasses = make_icosphere(nsubdivisionsclasses);
 
-    TriangleList triangles =  indexedmesh.second;
-    VertexList vertices =  indexedmesh.first;
+    TriangleList triangles = indexedmesh.second;
+    VertexList vertices = indexedmesh.first;
 
     VertexList verticesSemi;
 
-    for (int k = 0; k <vertices.size(); k++)
+    for (int k = 0; k < vertices.size(); k++)
     {
-        if (vertices[k][0] < 0.01)
-            verticesSemi.push_back(vertices[k]);
+      if (vertices[k][0] < 0.01) verticesSemi.push_back(vertices[k]);
     }
 
     vertices = verticesSemi;
     indexedmesh.first = vertices;
 
-    TriangleList trianglesclasses =  indexedmeshclasses.second;
-    VertexList verticesclasses =  indexedmeshclasses.first;
+    TriangleList trianglesclasses = indexedmeshclasses.second;
+    VertexList verticesclasses = indexedmeshclasses.first;
 
     centers.resize(0);
 
     centerit = 0;
 
-
-    //Pig1
+    // Pig1
     /*
     int nx = 3;
     int ny = 2;
@@ -153,7 +144,7 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
     double rangey = 150;
     double rangez = 150;*/
 
-    //Patient 1
+    // Patient 1
 
     int nx = 2;
     int ny = 2;
@@ -163,7 +154,7 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
     double rangey = 120;
     double rangez = 80;
 
-    //Patient1
+    // Patient1
 
     /*double rangex = 120;
         double rangey = 120;
@@ -177,40 +168,41 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
         double rangez = 0;*/
 
     for (int kx = 0; kx < nx; kx++)
-        for (int ky = 0; ky < ny; ky++)
-            for (int kz = 0; kz < nz; kz++)
-            {
-                Vector3 cent;
-                cent[0] = /*-0.5*rangex +*/ (double)kx*rangex/(nx-1);
-                cent[1] =  -0.5*rangey + (double)ky*rangey/(ny-1);
-                cent[2] =  -0.5*rangez + (double)kz*rangez/(nz-1);
-                cent += d_center.getValue();
-                centers.push_back(cent);
-            }
+      for (int ky = 0; ky < ny; ky++)
+        for (int kz = 0; kz < nz; kz++)
+        {
+          Vector3 cent;
+          cent[0] = /*-0.5*rangex +*/ (double)kx * rangex / (nx - 1);
+          cent[1] = -0.5 * rangey + (double)ky * rangey / (ny - 1);
+          cent[2] = -0.5 * rangez + (double)kz * rangez / (nz - 1);
+          cent += d_center.getValue();
+          centers.push_back(cent);
+        }
 
     d_center.setValue(centers[0]);
 
-    std::cout << " center0 " << d_center.getValue() << " inddex " << index << std::endl;
+    std::cout << " center0 " << d_center.getValue() << " inddex " << index
+              << std::endl;
 
-    classes.resize(vertices.size()*centers.size());
+    classes.resize(vertices.size() * centers.size());
 
     rotate(0, 0, 0, true);
 
     std::string path = "classes.txt";
     std::string opath = "images/%06d_test.png";
-    file.open(path.c_str(), std::ios_base::app );
+    file.open(path.c_str(), std::ios_base::app);
 
     int im = 1;
 
-    for (int kc = 0; kc < centers.size() ; kc++)
+    for (int kc = 0; kc < centers.size(); kc++)
     {
-    for (int k = 0; k <vertices.size(); k++)
-    {
+      for (int k = 0; k < vertices.size(); k++)
+      {
         char buf4[FILENAME_MAX];
-        sprintf(buf4, opath.c_str(),im);
+        sprintf(buf4, opath.c_str(), im);
         std::string filename4(buf4);
 
-        fpoint linep,vect;
+        fpoint linep, vect;
         fpoint* pt_int;
         linep.x = vertices[k][0];
         linep.y = vertices[k][1];
@@ -224,62 +216,62 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
 
         bool okintersect = false;
 
-        std::cout << " vertices " << vertices[k] << " " << vertices.size() << "  " << trianglesclasses.size() <<  " vertices  " << verticesclasses.size() << std::endl;
+        std::cout << " vertices " << vertices[k] << " " << vertices.size()
+                  << "  " << trianglesclasses.size() << " vertices  "
+                  << verticesclasses.size() << std::endl;
         for (int l = 0; l < trianglesclasses.size(); l++)
         {
-            fpoint p1, p2, p3;
+          fpoint p1, p2, p3;
 
-            p1.x = verticesclasses[trianglesclasses[l].vertex[0]][0];
-            p1.y = verticesclasses[trianglesclasses[l].vertex[0]][1];
-            p1.z = verticesclasses[trianglesclasses[l].vertex[0]][2];
+          p1.x = verticesclasses[trianglesclasses[l].vertex[0]][0];
+          p1.y = verticesclasses[trianglesclasses[l].vertex[0]][1];
+          p1.z = verticesclasses[trianglesclasses[l].vertex[0]][2];
 
-            p2.x = verticesclasses[trianglesclasses[l].vertex[1]][0];
-            p2.y = verticesclasses[trianglesclasses[l].vertex[1]][1];
-            p2.z = verticesclasses[trianglesclasses[l].vertex[1]][2];
+          p2.x = verticesclasses[trianglesclasses[l].vertex[1]][0];
+          p2.y = verticesclasses[trianglesclasses[l].vertex[1]][1];
+          p2.z = verticesclasses[trianglesclasses[l].vertex[1]][2];
 
-            p3.x = verticesclasses[trianglesclasses[l].vertex[2]][0];
-            p3.y = verticesclasses[trianglesclasses[l].vertex[2]][1];
-            p3.z = verticesclasses[trianglesclasses[l].vertex[2]][2];
+          p3.x = verticesclasses[trianglesclasses[l].vertex[2]][0];
+          p3.y = verticesclasses[trianglesclasses[l].vertex[2]][1];
+          p3.z = verticesclasses[trianglesclasses[l].vertex[2]][2];
 
-            pt_int = new fpoint;
+          pt_int = new fpoint;
 
-            intersect = check_intersect_tri(p1, p2, p3, linep, vect, pt_int);
+          intersect = check_intersect_tri(p1, p2, p3, linep, vect, pt_int);
 
-            if (intersect == 1)
-            {
-                classes[k]=l + trianglesclasses.size()*kc;
-                okintersect = true;
-            }
+          if (intersect == 1)
+          {
+            classes[k] = l + trianglesclasses.size() * kc;
+            okintersect = true;
+          }
         }
 
-        if (okintersect==true)
+        if (okintersect == true)
         {
-        file << filename4;
-        file << " ";
-        file << classes[k];
-        file << "\n";
+          file << filename4;
+          file << " ";
+          file << classes[k];
+          file << "\n";
         }
         im++;
-    }
+      }
     }
 
-       file.close();
-
+    file.close();
   }
 
-  int vertex_for_edge(Lookup& lookup,
-    VertexList& vertices, int first, int second)
+  int vertex_for_edge(Lookup& lookup, VertexList& vertices, int first,
+                      int second)
   {
     Lookup::key_type key(first, second);
-    if (key.first>key.second)
-      std::swap(key.first, key.second);
+    if (key.first > key.second) std::swap(key.first, key.second);
 
-    auto inserted=lookup.insert({key, vertices.size()});
+    auto inserted = lookup.insert({key, vertices.size()});
     if (inserted.second)
     {
-      auto& edge0=vertices[first];
-      auto& edge1=vertices[second];
-      auto point=(edge0+edge1);
+      auto& edge0 = vertices[first];
+      auto& edge1 = vertices[second];
+      auto point = (edge0 + edge1);
       point.normalize();
       vertices.push_back(point);
     }
@@ -287,19 +279,18 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
     return inserted.first->second;
   }
 
-  TriangleList subdivide(VertexList& vertices,
-    TriangleList triangles)
+  TriangleList subdivide(VertexList& vertices, TriangleList triangles)
   {
     Lookup lookup;
     TriangleList result;
 
-    for (auto&& each:triangles)
+    for (auto&& each : triangles)
     {
       std::array<int, 3> mid;
-      for (int edge=0; edge<3; ++edge)
+      for (int edge = 0; edge < 3; ++edge)
       {
-        mid[edge]=vertex_for_edge(lookup, vertices,
-          each.vertex[edge], each.vertex[(edge+1)%3]);
+        mid[edge] = vertex_for_edge(lookup, vertices, each.vertex[edge],
+                                    each.vertex[(edge + 1) % 3]);
       }
 
       result.push_back({each.vertex[0], mid[0], mid[2]});
@@ -313,102 +304,121 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
 
   IndexedMesh make_icosphere(int subdivisions)
   {
-    VertexList vertices=icosahedron::vertices;
-    TriangleList triangles=icosahedron::triangles;
+    VertexList vertices = icosahedron::vertices;
+    TriangleList triangles = icosahedron::triangles;
 
-    for (int i=0; i<subdivisions; ++i)
+    for (int i = 0; i < subdivisions; ++i)
     {
-      triangles=subdivide(vertices, triangles);
+      triangles = subdivide(vertices, triangles);
     }
 
-    return{vertices, triangles};
+    return {vertices, triangles};
   }
 
   int check_same_clock_dir(fpoint pt1, fpoint pt2, fpoint pt3, fpoint norm)
   {
-     float testi, testj, testk;
-     float dotprod;
-     // normal of trinagle
-     testi = (((pt2.y - pt1.y)*(pt3.z - pt1.z)) - ((pt3.y - pt1.y)*(pt2.z - pt1.z)));
-     testj = (((pt2.z - pt1.z)*(pt3.x - pt1.x)) - ((pt3.z - pt1.z)*(pt2.x - pt1.x)));
-     testk = (((pt2.x - pt1.x)*(pt3.y - pt1.y)) - ((pt3.x - pt1.x)*(pt2.y - pt1.y)));
+    float testi, testj, testk;
+    float dotprod;
+    // normal of trinagle
+    testi = (((pt2.y - pt1.y) * (pt3.z - pt1.z)) -
+             ((pt3.y - pt1.y) * (pt2.z - pt1.z)));
+    testj = (((pt2.z - pt1.z) * (pt3.x - pt1.x)) -
+             ((pt3.z - pt1.z) * (pt2.x - pt1.x)));
+    testk = (((pt2.x - pt1.x) * (pt3.y - pt1.y)) -
+             ((pt3.x - pt1.x) * (pt2.y - pt1.y)));
 
-     // Dot product with triangle normal
-     dotprod = testi*norm.x + testj*norm.y + testk*norm.z;
+    // Dot product with triangle normal
+    dotprod = testi * norm.x + testj * norm.y + testk * norm.z;
 
-     //answer
-     if(dotprod < 0){ return DIFF_CLOCKNESS;}
-     else {return SAME_CLOCKNESS;}
+    // answer
+    if (dotprod < 0)
+    {
+      return DIFF_CLOCKNESS;
+    }
+    else
+    {
+      return SAME_CLOCKNESS;
+    }
   }
 
-  int check_intersect_tri(fpoint pt1, fpoint pt2, fpoint pt3, fpoint linept, fpoint vect,
-                          fpoint* pt_int)
+  int check_intersect_tri(fpoint pt1, fpoint pt2, fpoint pt3, fpoint linept,
+                          fpoint vect, fpoint* pt_int)
   {
-     float V1x, V1y, V1z;
-     float V2x, V2y, V2z;
-     fpoint norm;
-     float dotprod;
-     float t;
+    float V1x, V1y, V1z;
+    float V2x, V2y, V2z;
+    fpoint norm;
+    float dotprod;
+    float t;
 
-     // vector form triangle pt1 to pt2
-     V1x = pt2.x - pt1.x;
-     V1y = pt2.y - pt1.y;
-     V1z = pt2.z - pt1.z;
+    // vector form triangle pt1 to pt2
+    V1x = pt2.x - pt1.x;
+    V1y = pt2.y - pt1.y;
+    V1z = pt2.z - pt1.z;
 
-     // vector form triangle pt2 to pt3
-     V2x = pt3.x - pt2.x;
-     V2y = pt3.y - pt2.y;
-     V2z = pt3.z - pt2.z;
+    // vector form triangle pt2 to pt3
+    V2x = pt3.x - pt2.x;
+    V2y = pt3.y - pt2.y;
+    V2z = pt3.z - pt2.z;
 
-     // vector normal of triangle
-     norm.x = V1y*V2z-V1z*V2y;
-     norm.y = V1z*V2x-V1x*V2z;
-     norm.z = V1x*V2y-V1y*V2x;
+    // vector normal of triangle
+    norm.x = V1y * V2z - V1z * V2y;
+    norm.y = V1z * V2x - V1x * V2z;
+    norm.z = V1x * V2y - V1y * V2x;
 
-     // dot product of normal and line's vector if zero line is parallel to triangle
-     dotprod = norm.x*vect.x + norm.y*vect.y + norm.z*vect.z;
+    // dot product of normal and line's vector if zero line is parallel to
+    // triangle
+    dotprod = norm.x * vect.x + norm.y * vect.y + norm.z * vect.z;
 
-     //if(dotprod < 0)
-     {
-        //Find point of intersect to triangle plane.
-        //find t to intersect point
-        t = -(norm.x*(linept.x-pt1.x)+norm.y*(linept.y-pt1.y)+norm.z*(linept.z-pt1.z))/(norm.x*vect.x+norm.y*vect.y+norm.z*vect.z);
+    // if(dotprod < 0)
+    {
+      // Find point of intersect to triangle plane.
+      // find t to intersect point
+      t = -(norm.x * (linept.x - pt1.x) + norm.y * (linept.y - pt1.y) +
+            norm.z * (linept.z - pt1.z)) /
+          (norm.x * vect.x + norm.y * vect.y + norm.z * vect.z);
 
-        // if ds is neg line started past triangle so can't hit triangle.
-        if(t < -0.001 || t >1) {return 0;}
+      // if ds is neg line started past triangle so can't hit triangle.
+      if (t < -0.001 || t > 1)
+      {
+        return 0;
+      }
 
-        pt_int->x = linept.x + vect.x*t;
-        pt_int->y = linept.y + vect.y*t;
-        pt_int->z = linept.z + vect.z*t;
+      pt_int->x = linept.x + vect.x * t;
+      pt_int->y = linept.y + vect.y * t;
+      pt_int->z = linept.z + vect.z * t;
 
-        //std::cout << " vectx " << vect.x*t << " vecty " << vect.y*t << " vectz " << vect.z*t << std::endl;
+      // std::cout << " vectx " << vect.x*t << " vecty " << vect.y*t << " vectz
+      // " << vect.z*t << std::endl;
 
-        if(check_same_clock_dir(pt1, pt2, *pt_int, norm) == SAME_CLOCKNESS)
+      if (check_same_clock_dir(pt1, pt2, *pt_int, norm) == SAME_CLOCKNESS)
+      {
+        if (check_same_clock_dir(pt2, pt3, *pt_int, norm) == SAME_CLOCKNESS)
         {
-           if(check_same_clock_dir(pt2, pt3, *pt_int, norm) == SAME_CLOCKNESS)
-           {
-              if(check_same_clock_dir(pt3, pt1, *pt_int, norm) == SAME_CLOCKNESS)
-              {
-                  std::cout << " t " << t << " norm " << norm.x*vect.x+norm.y*vect.y+norm.z*vect.z << " pt1 " << pt1.x << " " << pt1.y << " " << pt1.z << " pt2 " << " " << pt2.x << " " << pt2.y << " " << pt2.z << " pt3 " << pt3.x << " " << pt3.y << " " << pt3.z <<std::endl;
+          if (check_same_clock_dir(pt3, pt1, *pt_int, norm) == SAME_CLOCKNESS)
+          {
+            std::cout << " t " << t << " norm "
+                      << norm.x * vect.x + norm.y * vect.y + norm.z * vect.z
+                      << " pt1 " << pt1.x << " " << pt1.y << " " << pt1.z
+                      << " pt2 "
+                      << " " << pt2.x << " " << pt2.y << " " << pt2.z << " pt3 "
+                      << pt3.x << " " << pt3.y << " " << pt3.z << std::endl;
 
-                 // answer in pt_int is insde triangle
-                 return 1;
-              }
-           }
+            // answer in pt_int is insde triangle
+            return 1;
+          }
         }
-     }
-     return 0;
+      }
+    }
+    return 0;
   }
 
   void rotate(double rho, double theta, double phi, bool init = false)
   {
-
     Vector3 p = Vector3(0, 0, d_rhoInit.getValue());
     Vector3 sphCoord;
 
-    TriangleList triangles =  indexedmesh.second;
-    VertexList vertices =  indexedmesh.first;
-
+    TriangleList triangles = indexedmesh.second;
+    VertexList vertices = indexedmesh.first;
 
     /*for (int k = 0; k <vertices.size(); k++)
     {
@@ -442,18 +452,19 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
     p.y() = sphCoord.x() * std::sin(sphCoord.y()) * std::sin(sphCoord.z());
     p.z() = sphCoord.x() * std::cos(sphCoord.y());*/
 
-    p.x() = vertices[index][0]*d_rhoInit.getValue();
-    p.y() = vertices[index][1]*d_rhoInit.getValue();
-    p.z() = vertices[index][2]*d_rhoInit.getValue();
+    p.x() = vertices[index][0] * d_rhoInit.getValue();
+    p.y() = vertices[index][1] * d_rhoInit.getValue();
+    p.z() = vertices[index][2] * d_rhoInit.getValue();
 
     sphCoord.x() =
-    std::sqrt((p.x() * p.x()) + (p.y() * p.y()) + (p.z() * p.z()));
+        std::sqrt((p.x() * p.x()) + (p.y() * p.y()) + (p.z() * p.z()));
     // theta
     sphCoord.y() = /*d_thetaInit.getValue() +*/ std::acos(p.z() / sphCoord.x());
     // phi
     sphCoord.z() = /*d_phiInit.getValue() +*/ std::atan2(p.y(), p.x());
 
-    std::cout << "vertex " << p.x() << " " << p.y() << " " << p.z() <<std::endl;
+    std::cout << "vertex " << p.x() << " " << p.y() << " " << p.z()
+              << std::endl;
 
     index++;
 
@@ -464,7 +475,6 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
     Quat q5 = Quat(Vector3(0.0, 1.0, 0.0), M_PI / 2);
     Quat q6 = Quat(Vector3(1.0, 0.0, 0.0), -M_PI / 2);
     Quat q7 = Quat(Vector3(0.0, 0.0, 1.0), -M_PI / 2);
-
 
     Matrix3 R1, R2, R3, R4, R5, R6, R7;
     q1.toMatrix(R1);
@@ -480,12 +490,13 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
     std::cout << " p " << p << std::endl;
 
     if (index == vertices.size())
-        {
-        centerit++;
-        d_center.setValue(centers[centerit]);
-        index = 0;
-        }
-    std::cout << " center " << d_center.getValue() << " inddex " << index << std::endl;
+    {
+      centerit++;
+      d_center.setValue(centers[centerit]);
+      index = 0;
+    }
+    std::cout << " center " << d_center.getValue() << " inddex " << index
+              << std::endl;
 
     p += d_center.getValue();
 
@@ -500,14 +511,10 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
 
   void Update() override
   {
-    if (m_dataTracker.isDirty(d_center))
-      centerChanged();
-    if (m_dataTracker.isDirty(d_theta))
-      thetaChanged();
-    if (m_dataTracker.isDirty(d_phi))
-      phiChanged();
-    if (m_dataTracker.isDirty(d_rho))
-      rhoChanged();
+    if (m_dataTracker.isDirty(d_center)) centerChanged();
+    if (m_dataTracker.isDirty(d_theta)) thetaChanged();
+    if (m_dataTracker.isDirty(d_phi)) phiChanged();
+    if (m_dataTracker.isDirty(d_rho)) rhoChanged();
     rotate(d_rho.getValue(), d_theta.getValue(), d_phi.getValue());
   }
 
@@ -549,18 +556,9 @@ class SOFA_IMAGEPROCESSING_API Icosphere : public ImplicitDataEngine
     //      m_rho = d_rho.getValue();
   }
 
-  void thetaInitChanged()
-  {
-    rotate(0, 0, 0, true);
-  }
-  void phiInitChanged()
-  {
-    rotate(0, 0, 0, true);
-  }
-  void rhoInitChanged()
-  {
-    rotate(0, 0, 0, true);
-  }
+  void thetaInitChanged() { rotate(0, 0, 0, true); }
+  void phiInitChanged() { rotate(0, 0, 0, true); }
+  void rhoInitChanged() { rotate(0, 0, 0, true); }
 };
 
 SOFA_DECL_CLASS(Icosphere)
