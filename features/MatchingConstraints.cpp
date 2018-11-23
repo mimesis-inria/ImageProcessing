@@ -300,7 +300,7 @@ void MatchingConstraints::PushInlier(
     const sofa::helper::vector<cvKeypoint>& PointsL, const cvMat& descR,
     MatchVector& ms, const sofa::helper::vector<cvKeypoint>& PointsR)
 {
-  ulong inliersIdx = i - m_outliers_out.size();
+  unsigned long inliersIdx = i - m_outliers_out.size();
   m_matches.push_back(
       cvDMatch(int(ms.idxL), int(ms.matches[0].idxR), ms.matches[0].distance));
   m_kpL.push_back(PointsL[ms.idxL]);
