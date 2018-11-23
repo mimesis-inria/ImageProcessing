@@ -39,7 +39,7 @@ class SOFA_IMAGEPROCESSING_API StereoSettings : public ImplicitDataEngine
 
   ~StereoSettings() {}
   void init() override;
-  virtual void Update() override {}
+  virtual void doUpdate() override {}
   /// returns the 3D position of a pair of 2D matches 'X, Y'
   Vector3 triangulate(const Vector2& x1, const Vector2& x2);
   /// returns the 3D position of a pair of 2D matches 'X, Y'

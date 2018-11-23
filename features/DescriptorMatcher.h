@@ -39,7 +39,7 @@ class SOFA_IMAGEPROCESSING_API DescriptorMatcher : public ImageFilter
   virtual ~DescriptorMatcher() override;
 
   virtual void init() override;
-  virtual void Update() override;
+  virtual void doUpdate() override;
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug) override;
 
   sofa::Data<sofa::helper::OptionsGroup> d_matcherType;

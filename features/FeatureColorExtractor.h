@@ -46,7 +46,7 @@ class SOFA_IMAGEPROCESSING_API FeatureColorExtractor: public ImageFilter
     virtual ~FeatureColorExtractor() override;
 
     void init() override;
-    void Update() override;
+    void doUpdate() override;
     virtual void applyFilter(const cv::Mat& in, cv::Mat& out, bool debug = false) override;
 
 	// INPUTS

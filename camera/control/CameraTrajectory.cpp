@@ -28,11 +28,11 @@ void CameraTrajectory::init()
     msg_error(getName() + "::init()") << "Error: No camera link set. ";
 }
 
-void CameraTrajectory::Update()
+void CameraTrajectory::doUpdate()
 {
-  if (m_dataTracker.isDirty(d_center)) centerChanged();
-  if (m_dataTracker.isDirty(d_angle)) angleChanged();
-  if (m_dataTracker.isDirty(d_plane)) planeChanged();
+  if (m_dataTracker.hasChanged(d_center)) centerChanged();
+  if (m_dataTracker.hasChanged(d_angle)) angleChanged();
+  if (m_dataTracker.hasChanged(d_plane)) planeChanged();
 
   Vector3 p = l_cam->getPosition();
   Vector3 c = d_center.getValue();

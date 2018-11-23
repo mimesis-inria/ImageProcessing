@@ -33,7 +33,7 @@ class SOFA_IMAGEPROCESSING_API CalibrateStereo : public ImplicitDataEngine
   ~CalibrateStereo() {}
   void init() override;
 
-  virtual void Update() override;
+  virtual void doUpdate() override;
   void calibrate();
 
   Settings l_cam;

@@ -51,7 +51,7 @@ void FeatureTriangulator::init()
   update();
 }
 
-void FeatureTriangulator::Update()
+void FeatureTriangulator::doUpdate()
 {
   //	common::matrix::sofaMat2cvMat(l_cam->getRotationMatrix(), R);
   //	common::matrix::sofaVector2cvMat(l_cam->getTranslationVector(), T);

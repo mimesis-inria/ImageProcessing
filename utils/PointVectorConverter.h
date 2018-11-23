@@ -50,11 +50,11 @@ class SOFA_IMAGEPROCESSING_API PointVectorConverter : public ImplicitDataEngine
     update();
   }
 
-  virtual void Update() override;
+  virtual void doUpdate() override;
 
   virtual std::string getTemplateName() const { return templateName(this); }
   static std::string templateName(
-      const PointVectorConverter<SrcType, DstType>* = NULL);
+      const PointVectorConverter<SrcType, DstType>* = nullptr);
 
   CamSettings l_cam;
 

@@ -778,40 +778,40 @@ void CameraSettings::buildFromOpenGLContext()
 
 void CameraSettings::reinit()
 {
-  if (m_dataTracker.isDirty(d_M)) ProjectionMatrixChanged();
-  if (m_dataTracker.isDirty(d_K)) IntrinsicCameraMatrixChanged();
-  if (m_dataTracker.isDirty(d_distCoefs)) DistortionCoefficientsChanged();
-  if (m_dataTracker.isDirty(d_R)) RotationMatrixChanged();
-  if (m_dataTracker.isDirty(d_t)) TranslationVectorChanged();
-  if (m_dataTracker.isDirty(d_imageSize)) ImageSizeChanged();
-  if (m_dataTracker.isDirty(d_glProjection)) GLProjectionChanged();
-  if (m_dataTracker.isDirty(d_glModelview)) GLModelviewChanged();
-  if (m_dataTracker.isDirty(d_glViewport)) GLViewportChanged();
-  if (m_dataTracker.isDirty(d_zClip)) GLZClipChanged();
-  if (m_dataTracker.isDirty(d_orientation)) OrientationChanged();
-  if (m_dataTracker.isDirty(d_scale2D)) Scale2DChanged();
-  if (m_dataTracker.isDirty(d_translate2D)) Translation2DChanged();
-  if (m_dataTracker.isDirty(d_f)) FocalDistanceChanged();
+  if (m_dataTracker.hasChanged(d_M)) ProjectionMatrixChanged();
+  if (m_dataTracker.hasChanged(d_K)) IntrinsicCameraMatrixChanged();
+  if (m_dataTracker.hasChanged(d_distCoefs)) DistortionCoefficientsChanged();
+  if (m_dataTracker.hasChanged(d_R)) RotationMatrixChanged();
+  if (m_dataTracker.hasChanged(d_t)) TranslationVectorChanged();
+  if (m_dataTracker.hasChanged(d_imageSize)) ImageSizeChanged();
+  if (m_dataTracker.hasChanged(d_glProjection)) GLProjectionChanged();
+  if (m_dataTracker.hasChanged(d_glModelview)) GLModelviewChanged();
+  if (m_dataTracker.hasChanged(d_glViewport)) GLViewportChanged();
+  if (m_dataTracker.hasChanged(d_zClip)) GLZClipChanged();
+  if (m_dataTracker.hasChanged(d_orientation)) OrientationChanged();
+  if (m_dataTracker.hasChanged(d_scale2D)) Scale2DChanged();
+  if (m_dataTracker.hasChanged(d_translate2D)) Translation2DChanged();
+  if (m_dataTracker.hasChanged(d_f)) FocalDistanceChanged();
 }
 
-void CameraSettings::Update() {}
+void CameraSettings::doUpdate() {}
 
 void CameraSettings::init()
 {
-  trackData(&d_M);
-  trackData(&d_K);
-  trackData(&d_distCoefs);
-  trackData(&d_R);
-  trackData(&d_t);
-  trackData(&d_imageSize);
-  trackData(&d_glProjection);
-  trackData(&d_glModelview);
-  trackData(&d_glViewport);
-  trackData(&d_zClip);
-  trackData(&d_orientation);
-  trackData(&d_scale2D);
-  trackData(&d_f);
-  trackData(&d_translate2D);
+  m_dataTracker.trackData(d_M);
+  m_dataTracker.trackData(d_K);
+  m_dataTracker.trackData(d_distCoefs);
+  m_dataTracker.trackData(d_R);
+  m_dataTracker.trackData(d_t);
+  m_dataTracker.trackData(d_imageSize);
+  m_dataTracker.trackData(d_glProjection);
+  m_dataTracker.trackData(d_glModelview);
+  m_dataTracker.trackData(d_glViewport);
+  m_dataTracker.trackData(d_zClip);
+  m_dataTracker.trackData(d_orientation);
+  m_dataTracker.trackData(d_scale2D);
+  m_dataTracker.trackData(d_f);
+  m_dataTracker.trackData(d_translate2D);
 
   addOutput(&d_3DCorners);
 

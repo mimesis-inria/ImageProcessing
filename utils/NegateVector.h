@@ -29,7 +29,7 @@ class SOFA_IMAGEPROCESSING_API NegateVector : public ImplicitDataEngine
 
   virtual ~NegateVector() override {}
   void init() override;
-  void Update() override;
+  void doUpdate() override;
   // INPUTS
   sofa::Data<sofa::defaulttype::Vector3> d_src;
   sofa::Data<sofa::defaulttype::Matrix3> d_srcRot;

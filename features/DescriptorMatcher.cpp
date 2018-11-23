@@ -69,7 +69,7 @@ void DescriptorMatcher::init()
             << std::endl;
 
   matcherTypeChanged();
-  trackData(&d_matcherType);
+  m_dataTracker.trackData(d_matcherType);
 
   addInput(&d_queryDescriptors);
   addInput(&d_trainDescriptors);
@@ -84,15 +84,15 @@ void DescriptorMatcher::init()
   ImageFilter::init();
 }
 
-void DescriptorMatcher::Update()
+void DescriptorMatcher::doUpdate()
 {
-  if (m_dataTracker.isDirty(d_matcherType)) matcherTypeChanged();
+  if (m_dataTracker.hasChanged(d_matcherType)) matcherTypeChanged();
 
   msg_warning_when(!d_queryDescriptors.getValue().rows ||
                        !d_trainDescriptors.getValue().rows,
                    "DescriptorMatcher::update()")
       << "Error: Empty descriptor matrix!";
-  ImageFilter::update();
+  ImageFilter::doUpdate();
 
   sofa::helper::SVector<sofa::helper::SVector<cvDMatch> >* vec =
       d_matches.beginWriteOnly();

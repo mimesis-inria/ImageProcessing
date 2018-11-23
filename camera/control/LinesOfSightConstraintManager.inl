@@ -126,7 +126,7 @@ void LOSConstraintManager<DataTypes>::createConstraints()
 }
 
 template <class DataTypes>
-void LOSConstraintManager<DataTypes>::Update()
+void LOSConstraintManager<DataTypes>::doUpdate()
 {
   if (d_rebuildConstraints.getValue() /* || firstPass*/)
   {

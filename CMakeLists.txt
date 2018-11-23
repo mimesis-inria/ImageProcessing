@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(ImageProcessing)
 
+#cmake_policy(SET CMP0053 OLD)
+#cmake_policy(SET CMP0054 OLD)
+#cmake_policy(SET CMP0017 NEW)
+
 set(${PROJECT_NAME}_MAJOR_VERSION 2)
 set(${PROJECT_NAME}_MINOR_VERSION 0)
 set(${PROJECT_NAME}_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION})

@@ -244,8 +244,8 @@ void CalibLoader::parse(sofa::core::objectmodel::BaseObjectDescription* arg)
 
 void CalibLoader::init()
 {
-  trackData(&d_calibNames);
-  trackData(&d_calibFolder);
+  m_dataTracker.trackData(d_calibNames);
+  m_dataTracker.trackData(d_calibFolder);
 
   addOutput(&d_delta1);
   addOutput(&d_delta2);
@@ -331,10 +331,10 @@ void CalibLoader::calibFolderChanged()
   setOptionsGroupToFolder(calibFolder, calibname);
 }
 
-void CalibLoader::Update()
+void CalibLoader::doUpdate()
 {
-  if (m_dataTracker.isDirty(d_calibNames)) calibChanged();
-  if (m_dataTracker.isDirty(d_calibFolder)) calibFolderChanged();
+  if (m_dataTracker.hasChanged(d_calibNames)) calibChanged();
+  if (m_dataTracker.hasChanged(d_calibFolder)) calibFolderChanged();
 }
 
 CalibLoader::CalibData::CalibData(

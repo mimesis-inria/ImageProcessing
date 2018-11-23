@@ -72,7 +72,7 @@ void CalibExporter::init()
   update();
 }
 
-void CalibExporter::Update()
+void CalibExporter::doUpdate()
 {
   ++m_stepCounter;
   switch (d_exportType.getValue().getSelectedId())

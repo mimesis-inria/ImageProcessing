@@ -40,7 +40,7 @@ class SOFA_IMAGEPROCESSING_API CalibExporter : public ImplicitDataEngine
   virtual ~CalibExporter();
 
   virtual void init() override;
-  virtual void Update() override;
+  virtual void doUpdate() override;
   virtual void cleanup() override;
 
   StereoCam l_sCam;

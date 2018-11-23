@@ -11,7 +11,7 @@ void NegateVector::init()
   addOutput(&d_dst);
 }
 
-void NegateVector::Update()
+void NegateVector::doUpdate()
 {
   d_dst.setValue(-d_src.getValue());
   //    sofa::defaulttype::Matrix3 rev;

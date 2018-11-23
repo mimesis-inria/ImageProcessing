@@ -10,7 +10,7 @@ void PointVec2Keypoint::init()
   addOutput(&d_dst);
 }
 
-void PointVec2Keypoint::Update()
+void PointVec2Keypoint::doUpdate()
 {
   sofa::helper::vector<cvKeypoint>& dst = *(d_dst.beginWriteOnly());
   dst.clear();

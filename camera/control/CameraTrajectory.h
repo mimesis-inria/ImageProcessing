@@ -36,7 +36,7 @@ class SOFA_IMAGEPROCESSING_API CameraTrajectory : public ImplicitDataEngine
   virtual ~CameraTrajectory() override {}
   virtual void init() override;
 
-  virtual void Update() override;
+  virtual void doUpdate() override;
 
   virtual void handleEvent(sofa::core::objectmodel::Event* e) override;
 

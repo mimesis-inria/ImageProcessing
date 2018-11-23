@@ -33,7 +33,7 @@ class SOFA_IMAGEPROCESSING_API CalibrateCamera : public ImplicitDataEngine
   ~CalibrateCamera() {}
   void init() override;
 
-  virtual void Update() override;
+  virtual void doUpdate() override;
   void calibrate();
 
   CamSettings l_cam;

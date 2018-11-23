@@ -118,12 +118,12 @@ class SOFA_IMAGEPROCESSING_API TrajectoryAround : public ImplicitDataEngine
     l_cam->buildFromKRT();
   }
 
-  void Update() override
+  void doUpdate() override
   {
-    if (m_dataTracker.isDirty(d_center)) centerChanged();
-    if (m_dataTracker.isDirty(d_theta)) thetaChanged();
-    if (m_dataTracker.isDirty(d_phi)) phiChanged();
-    if (m_dataTracker.isDirty(d_rho)) rhoChanged();
+    if (m_dataTracker.hasChanged(d_center)) centerChanged();
+    if (m_dataTracker.hasChanged(d_theta)) thetaChanged();
+    if (m_dataTracker.hasChanged(d_phi)) phiChanged();
+    if (m_dataTracker.hasChanged(d_rho)) rhoChanged();
     rotate(d_rho.getValue(), d_theta.getValue(), d_phi.getValue());
   }
 

@@ -32,10 +32,10 @@ class SOFA_IMAGEPROCESSING_API Vector2SSVector : public ImplicitDataEngine
     update();
   }
 
-  virtual void Update() override;
+  virtual void doUpdate() override;
 
   virtual std::string getTemplateName() const { return templateName(this); }
-  static std::string templateName(const Vector2SSVector<T>* = NULL);
+  static std::string templateName(const Vector2SSVector<T>* = nullptr);
 
   // INPUTS
   sofa::Data<sofa::helper::vector<T> > d_src;

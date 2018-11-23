@@ -27,7 +27,7 @@ class SOFA_IMAGEPROCESSING_API Segmenter2D : public ImageFilter
 
   virtual void init() override;
 
-  virtual void Update() override;
+  virtual void doUpdate() override;
 
   void applyFilter(const cv::Mat& in, cv::Mat& out, bool) override;
 

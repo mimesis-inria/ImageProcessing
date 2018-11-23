@@ -61,9 +61,9 @@ void PointPicker2D::init()
   ImageFilter::init();
 }
 
-void PointPicker2D::Update()
+void PointPicker2D::doUpdate()
 {
-  ImageFilter::Update();
+  ImageFilter::doUpdate();
   sofa::helper::vector<sofa::defaulttype::Vec2i>* points =
       d_points.beginWriteOnly();
   points->clear();
@@ -88,7 +88,7 @@ void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   else
     in.copyTo(out);
 
-  if (m_picker != NULL)
+  if (m_picker != nullptr)
   {
     cv::Scalar color(0, 255, 0, 255);
     for (auto line : m_picker->epilines)

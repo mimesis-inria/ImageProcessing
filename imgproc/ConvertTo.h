@@ -38,7 +38,7 @@ class SOFA_IMAGEPROCESSING_API ConvertTo : public ImageFilter
   int getCVType(T type);
 
   virtual std::string getTemplateName() const { return templateName(this); }
-  static std::string templateName(const ConvertTo<T>* = NULL);
+  static std::string templateName(const ConvertTo<T>* = nullptr);
 };
 
 }  // namespace imgproc

@@ -35,7 +35,7 @@ void OrthoProj::lines2PlaneNormal(const Vec3d& d1, const Vec3d& d2, Vec3d& n)
   n = d1.cross(d1.cross(d2));
 }
 
-void OrthoProj::Update()
+void OrthoProj::doUpdate()
 {
   Vec3d C = l_cam->getPosition();
   const vector<Vec3d>& S = d_S.getValue();
