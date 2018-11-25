@@ -33,7 +33,13 @@ class RenderCommunication : public ImplicitDataEngine
  public:
   SOFA_CLASS(RenderCommunication, ImplicitDataEngine);
 
-  RenderCommunication()
+  RenderCommunication():
+      viewportwidth(
+          initData(&viewportwidth, "viewportwidth", "width of the viewport")),
+      viewportheight(initData(&viewportheight, "viewportheight", "height of the viewport")),
+      viewportx(initData(&viewportx, "viewportx", "x position of the viewport")),
+      viewporty(initData(&viewporty, "viewporty", "y position of the viewport")),
+      port(initData(&port, "port", "ip port"))
   {
   }
 
@@ -41,7 +47,8 @@ class RenderCommunication : public ImplicitDataEngine
   virtual void init() override
   {
     m_socket =new zmq::socket_t(m_context, ZMQ_PUB);
-    m_socket->bind("tcp://127.0.0.1:6667");
+    std::string sipp= "tcp://127.0.0.1:" + std::to_string(port.getValue());
+    m_socket->bind(sipp);
 
     update();
   }
@@ -57,29 +64,28 @@ class RenderCommunication : public ImplicitDataEngine
 
   virtual void Update() override
   {
-    int wdth = 764;
-    int hght = 800;
+    int wdth = viewportwidth.getValue();
+    int hght = viewportheight.getValue();
+    int x = viewportx.getValue();
+    int y = viewporty.getValue();
 
     GLfloat depths[hght * wdth ];
     GLfloat depthsN[hght * wdth ];
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT,viewport);
+    glEnable(GL_BLEND);
+    //glEnable(GL_DEPTH_TEST);
 
     cv::Mat temp = cv::Mat::zeros(hght, wdth, CV_8UC1);
     cv::Mat tempI;
 
-    std::cout << " ok render " << viewport[0] << " " << viewport[1] << " " << viewport[2] << " " << viewport[3] << std::endl;
+    glReadPixels(x, y, wdth, hght, GL_LUMINANCE, GL_UNSIGNED_BYTE,temp.data);
 
-    glReadPixels(327, 22, 764,800, GL_LUMINANCE, GL_UNSIGNED_BYTE,temp.data);
-
-//getchar();
 
     // Process buffer so it matches correct format and orientation
     //cv::cvtColor(temp, tempI, CV_BGR2RGB);
     tempI = temp.clone();
     cv::flip(tempI, temp, 0);
-
-    cv::imwrite("savedWindow.png", tempI);
 
     temp = (temp.reshape(0,1)); // to make it continuous
     // Write to file
@@ -106,6 +112,11 @@ class RenderCommunication : public ImplicitDataEngine
 
   zmq::context_t     m_context{1};
   zmq::socket_t      *m_socket;
+  sofa::Data<int> viewportwidth;
+  sofa::Data<int> viewportheight;
+  sofa::Data<int> viewportx;
+  sofa::Data<int> viewporty;
+  sofa::Data<int> port;
 
 };
 
