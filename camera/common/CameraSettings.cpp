@@ -577,6 +577,47 @@ void CameraSettings::composeM()
      std::cout << " image size " << d_imageSize.getValue().x() << " " << d_imageSize.getValue().y() << std::endl;
      index0++;
      file.close();
+
+     std::string pathregistration = "pose_registration.txt";
+     fileregistration.open(pathregistration.c_str());
+
+     dvalue3 = R[0][0];
+     dvalue4 = R[0][1];
+     dvalue5 = R[0][2];
+     dvalue6 = R[1][0];
+     dvalue7 = R[1][1];
+     dvalue8 = R[1][2];
+     dvalue9 = R[2][0];
+     dvalue10 = R[2][1];
+     dvalue11 = R[2][2];
+
+     fileregistration << dvalue0;
+     fileregistration << " ";
+     fileregistration << dvalue1;
+     fileregistration << " ";
+     fileregistration << dvalue2;
+     fileregistration << " ";
+     fileregistration << "\n";
+     fileregistration << dvalue3;
+     fileregistration << " ";
+     fileregistration << dvalue4;
+     fileregistration << " ";
+     fileregistration << dvalue5;
+     fileregistration << " ";
+     fileregistration << dvalue6;
+     fileregistration << " ";
+     fileregistration << dvalue7;
+     fileregistration << " ";
+     fileregistration << dvalue8;
+     fileregistration << " ";
+     fileregistration << dvalue9;
+     fileregistration << " ";
+     fileregistration << dvalue10;
+     fileregistration << " ";
+     fileregistration << dvalue11;
+
+     fileregistration.close();
+
 }
 
 void CameraSettings::recalculate3DCorners()

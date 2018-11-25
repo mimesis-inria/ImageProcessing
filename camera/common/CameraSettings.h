@@ -229,7 +229,7 @@ class SOFA_IMAGEPROCESSING_API CameraSettings : public ImplicitDataEngine
                               /// source-detector model (in which case,
 
   int index0;
-  std::ofstream file;
+  std::ofstream file, fileregistration;
 
  private:
   /// Decomposes the global projection matrix
