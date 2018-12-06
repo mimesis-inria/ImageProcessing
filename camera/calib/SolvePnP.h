@@ -41,6 +41,8 @@ class SOFA_IMAGEPROCESSING_API SolvePnP : public ImplicitDataEngine
   virtual ~SolvePnP() override {}
   void init() override;
 
+  virtual void handleEvent(sofa::core::objectmodel::Event* e);
+
   virtual void doUpdate() override;
 
   CamSettings l_cam;  ///< Camera settings to update
