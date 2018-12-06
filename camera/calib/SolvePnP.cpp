@@ -87,7 +87,7 @@ void SolvePnP::doUpdate()
   {
     if (d_K.isSet())
       matrix::sofaMat2cvMat(d_K.getValue(), camMatrix);
-    else if (l_cam->getIntrinsicCameraMatrix() ==
+    else if (l_cam->getIntrinsicCameraMatrix() !=
              sofa::defaulttype::Matrix3::Identity())
       matrix::sofaMat2cvMat(l_cam->getIntrinsicCameraMatrix(), camMatrix);
     else
@@ -137,6 +137,7 @@ void SolvePnP::doUpdate()
   sofa::helper::vector<double> distCoefs;
   matrix::cvMat2sofaVector(dc, distCoefs);
 
+  msg_info() << "setting Rt in camera: " << P;
   if (l_cam->getImageSize() != imsize)
     l_cam->setImageSize(d_imgSize.getValue());
   l_cam->setProjectionMatrix(P);
