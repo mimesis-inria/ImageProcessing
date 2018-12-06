@@ -9,7 +9,9 @@ AddWeighted::AddWeighted()
 {
 }
 
-void AddWeighted::init() { ImageFilter::init(); }
+void AddWeighted::init() {
+    addInput(&d_img2);
+    ImageFilter::init(); }
 
 void AddWeighted::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 {

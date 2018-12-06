@@ -40,6 +40,11 @@ void AdaptiveThreshold::init()
   registerData(&d_max, 0.0, 1.0, .0001);
   registerData(&d_blockSize, 3, 11, 2);
   registerData(&d_C, -10.0, 10.0, 1.0);
+  addInput(&d_adaptiveMethod);
+  addInput(&d_thresholdType);
+  addInput(&d_max);
+  addInput(&d_blockSize);
+  addInput(&d_C);
   ImageFilter::init();
 }
 

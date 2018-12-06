@@ -20,6 +20,10 @@ Resize::Resize()
 
 void Resize::init()
 {
+  addInput(&d_size);
+  addInput(&d_fx);
+  addInput(&d_fy);
+  addInput(&d_interp);
   registerData(&d_interp);
   ImageFilter::init();
 }
