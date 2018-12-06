@@ -22,8 +22,7 @@ The ImageProcessing plugin doesn't have the ambition to provide cutting-edge com
 * in CMAKE's gui, search for the SOFA_EXTERNAL_DIRECTORIES, and set this variable to the path to the SofaCV repository
 * Configuration
     * If you are not interested in any of the features unlocked by the optional dependencies, all you have to do now is generating your CMake project, and compiling your code. example scenes can be found in SofaOR/examples
-    * If you are interested in using OpenCV's 3rd party features with SOFA, you might be interested in activating OpenCV's contrib wrapping through CMake:
-        * To enable opencv_contrib features: __SOFAOR_ENABLE_OPENCV_CONTRIB__. Don't forget to compile OpenCV with the contrib module
+    * If you are have opencv_contrib installed, you will get additional opencv features such as the SIFT detector etc. To enable opencv_contrib features, simply link to a build of opencv that has opencv_contrib module compiled.
 
 ### Contribution guidelines ###
 
