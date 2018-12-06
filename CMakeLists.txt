@@ -89,6 +89,7 @@ set(HEADER_FILES
   utils/Vector2SSVector.inl
   utils/NegateVector.h
   utils/OrthoProj.h
+  utils/AddCam.h
   )
 
 set(SOURCE_FILES
@@ -146,6 +147,7 @@ set(SOURCE_FILES
   utils/Vector2SSVector.cpp
   utils/NegateVector.cpp
   utils/OrthoProj.cpp
+  utils/AddCam.h
   )
 
 set(${PROJECT_NAME}_SOURCES ${SOURCE_FILES} ${HEADER_FILES})
