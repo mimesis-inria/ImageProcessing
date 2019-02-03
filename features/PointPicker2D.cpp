@@ -35,25 +35,32 @@ PointPicker2D::PointPicker2D()
       d_getEpilinesFrom(initData(
           &d_getEpilinesFrom, "getEpilinesFrom",
           "optional input component from which to look for epipolar lines")),
-      d_points(initData(&d_points, "points",
-                        "output vector of 2D points picked in the image", true,
-                        true))
+      d_points_in(initData(&d_points_in, "points",
+                        "[Optional] input vector of 2D points pre-picked in the image", true, false)),
+    d_points_out(initData(&d_points_out, "points_out",
+                      "output vector of 2D points picked in the image", true,
+                      true))
 {
-  addAlias(&d_points, "points_out");
 }
 
 void PointPicker2D::init()
 {
   addInput(&d_whichImage);
-  addOutput(&d_points);
+  addInput(&d_points_in);
+  addOutput(&d_points_out);
   ImageFilter::activateMouseCallback();
   setMouseState(&PointPicker2D::freeMove);
   m_picker =
       this->getContext()->get<PointPicker2D>(d_getEpilinesFrom.getValue());
-  if (!d_points.getValue().empty())
-    for (auto pt : d_points.getValue())
-      m_pointList.push_back(cv::Point2f(pt.x(), pt.y()));
-
+  if (d_points_in.isSet())
+  {
+    for (auto pt : d_points_in.getValue())
+    {
+        std::cout << "New Point: " << pt << std::endl;
+        m_pointList.push_back(cv::Point2f(pt.x(), pt.y()));
+    }
+    d_points_out.setValue(d_points_in.getValue());
+  }
   if (m_picker && !l_cam.get())
     msg_advice(getName() + "::init()")
         << "No Stereo camera settings link set. "
@@ -64,20 +71,30 @@ void PointPicker2D::init()
 void PointPicker2D::doUpdate()
 {
   ImageFilter::doUpdate();
+
+  if (m_dataTracker.hasChanged(d_points_in))
+  {
+      for (auto pt : d_points_in.getValue())
+      {
+          m_pointList.push_back(cv::Point2f(pt.x(), pt.y()));
+      }
+      d_points_out.setValue(d_points_in.getValue());
+      return;
+  }
   sofa::helper::vector<sofa::defaulttype::Vec2i>* points =
-      d_points.beginWriteOnly();
+      d_points_out.beginWriteOnly();
   points->clear();
   if (!m_pointList.empty())
   {
     std::cout << std::endl << std::endl;
-    for (const cv::Point2i& pt : m_pointList)
+    for (const cv::Point2f& pt : m_pointList)
     {
-      points->push_back(sofa::defaulttype::Vec2i(pt.x, pt.y));
+      points->push_back(sofa::defaulttype::Vec2i(int(pt.x), int(pt.y)));
       std::cout << pt.x << " " << pt.y << " ";
     }
     std::cout << std::endl << std::endl;
   }
-  d_points.endEdit();
+  d_points_out.endEdit();
 }
 
 void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
@@ -93,8 +110,8 @@ void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     cv::Scalar color(0, 255, 0, 255);
     for (auto line : m_picker->epilines)
     {
-      cv::line(out, cv::Point(0, -line[2] / line[1]),
-               cv::Point(out.cols, -(line[2] + line[0] * out.cols) / line[1]),
+      cv::line(out, cv::Point(0, int(-line[2]) / int(line[1])),
+               cv::Point(out.cols, int(-(line[2]) + int(line[0]) * out.cols) / int(line[1])),
                color);
     }
   }
@@ -112,7 +129,7 @@ void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
                 1.0, CV_RGB(0, 255, 0));
     return;
   }
-  for (const cv::Point2i& pt : m_pointList)
+  for (const cv::Point2f& pt : m_pointList)
     cv::circle(out, pt, 3, color, 1, cv::LINE_AA);
 }
 

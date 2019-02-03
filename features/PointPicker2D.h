@@ -25,8 +25,9 @@ class PointPicker2D : public ImageFilter
   Settings l_cam;
   sofa::Data<int> d_whichImage;
   sofa::Data<std::string> d_getEpilinesFrom;
+  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_points_in;
   // OUTPUTS
-  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_points;
+  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vec2i> > d_points_out;
   sofa::helper::vector<sofa::defaulttype::Vec3f> epilines;
 
   PointPicker2D();
