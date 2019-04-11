@@ -23,7 +23,7 @@
 #ifndef SOFA_OR_PROCESSOR_FEATURECOLOREXTRACTOR_H
 #define SOFA_OR_PROCESSOR_FEATURECOLOREXTRACTOR_H
 
-#include "ImageProcessingPlugin.h"
+#include "ImageProcessing/ImageProcessingPlugin.h"
 #include <SofaCV/SofaCV.h>
 
 #include <sofa/helper/SVector.h>
