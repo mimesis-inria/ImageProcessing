@@ -1,4 +1,4 @@
-#include "DataSliderMgr.h"
+#include <SofaCV/DataSliderMgr.h>
 #include <SofaTest/Sofa_test.h>
 #include <opencv2/opencv.hpp>
 

@@ -1,8 +1,8 @@
 #ifndef SOFACV_CAM_CONTROL_LINESOFSIGHTCONSTRAINT_H
 #define SOFACV_CAM_CONTROL_LINESOFSIGHTCONSTRAINT_H
 
-#include "ImageProcessingPlugin.h"
-#include "camera/common/CameraSettings.h"
+#include "ImageProcessing/ImageProcessingPlugin.h"
+#include "ImageProcessing/camera/common/CameraSettings.h"
 
 #include <SofaBaseMechanics/BarycentricMapping.h>
 #include <SofaBaseMechanics/MechanicalObject.h>

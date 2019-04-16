@@ -2,8 +2,14 @@ cmake_minimum_required(VERSION 3.1)
 
 project(ImageProcessing_test)
 
-find_package(OpenSSL REQUIRED)
-include_directories(${OPENSSL_INCLUDE_DIR})
+find_package(OpenSSL QUIET)
+
+set(LIBS SofaTest SofaGTestMain SofaCV ImageProcessing)
+
+if (OpenSSL_FOUND)
+    include_directories(${OPENSSL_INCLUDE_DIR})
+    list(APPEND LIBS ${OPENSSL_LIBRARIES})
+endif (OpenSSL_FOUND)
 
 set(HEADER_FILES
  regression/Regression_test.h
@@ -16,6 +22,6 @@ set(SOURCE_FILES
 )
 
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} SofaTest SofaGTestMain SofaCV ImageProcessing ${OPENSSL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${LIBS})
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})

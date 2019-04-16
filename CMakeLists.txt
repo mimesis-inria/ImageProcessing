@@ -10,13 +10,11 @@ set(${PROJECT_NAME}_MINOR_VERSION 0)
 set(${PROJECT_NAME}_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION})
 
 find_package(SofaFramework REQUIRED)
+find_package(SofaGeneral REQUIRED)
 find_package(SofaGui REQUIRED)
 
 find_package(OpenCV 3.0 REQUIRED)
 find_package(SofaCV REQUIRED)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 link_directories(${OpenCV_LIBRARY_DIRS})
@@ -30,146 +28,143 @@ if(HAVE_OPENCV_CONTRIB)
     add_definitions(-DSOFACV_OPENCV_CONTRIB_ENABLED)
 endif(HAVE_OPENCV_CONTRIB)
 
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/ImageProcessing/")
+
 set(HEADER_FILES
-  ImageProcessingPlugin.h
+  src/ImageProcessing/ImageProcessingPlugin.h
 
-  camera/common/CameraSettings.h
-  camera/common/StereoSettings.h
-  camera/common/CalibratedCamera.h
-  camera/common/ImageRectifier.h
-  camera/common/ProjectPoints.h
-  camera/common/FeatureTriangulator.h
+  src/ImageProcessing/camera/common/CameraSettings.h
+  src/ImageProcessing/camera/common/StereoSettings.h
+  src/ImageProcessing/camera/common/CalibratedCamera.h
+  src/ImageProcessing/camera/common/ImageRectifier.h
+  src/ImageProcessing/camera/common/ProjectPoints.h
+  src/ImageProcessing/camera/common/FeatureTriangulator.h
 
-  camera/calib/CalibrateCamera.h
-  camera/calib/SolvePnP.h
-  camera/calib/CalibrateStereo.h
-  camera/calib/CalibLoader.h
-  camera/calib/CalibExporter.h
-  camera/calib/FindChessboardCorners.h
+  src/ImageProcessing/camera/calib/CalibrateCamera.h
+  src/ImageProcessing/camera/calib/SolvePnP.h
+  src/ImageProcessing/camera/calib/CalibrateStereo.h
+  src/ImageProcessing/camera/calib/CalibLoader.h
+  src/ImageProcessing/camera/calib/CalibExporter.h
+  src/ImageProcessing/camera/calib/FindChessboardCorners.h
 
-  camera/control/CameraTrajectory.h
-  camera/control/TrajectoryAround.h
-  camera/control/LinesOfSightConstraintManager.h
-  camera/control/LinesOfSightConstraintManager.inl
-  camera/control/CameraController.h
-  camera/control/Icosphere.h
+  src/ImageProcessing/camera/control/CameraTrajectory.h
+  src/ImageProcessing/camera/control/TrajectoryAround.h
+  src/ImageProcessing/camera/control/LinesOfSightConstraintManager.h
+  src/ImageProcessing/camera/control/LinesOfSightConstraintManager.inl
+  src/ImageProcessing/camera/control/CameraController.h
+  src/ImageProcessing/camera/control/Icosphere.h
 
-  imgproc/CannyFilter.h
-  imgproc/SobelFilter.h
-  imgproc/AdaptiveThreshold.h
-  imgproc/SimpleThreshold.h
-  imgproc/MorphologyEx.h
-  imgproc/ConvertTo.h
-  imgproc/ConvertTo.inl
-  imgproc/CvtColor.h
-  imgproc/TemplateMatcher.h
-  imgproc/AddWeighted.h
-  imgproc/Flip.h
-  imgproc/InRange.h
-  imgproc/CopyTo.h
-  imgproc/Resize.h
-  imgproc/Crop.h
-  imgproc/Fill.h
-  imgproc/MinMaxLoc.h
+  src/ImageProcessing/imgproc/CannyFilter.h
+  src/ImageProcessing/imgproc/SobelFilter.h
+  src/ImageProcessing/imgproc/AdaptiveThreshold.h
+  src/ImageProcessing/imgproc/SimpleThreshold.h
+  src/ImageProcessing/imgproc/MorphologyEx.h
+  src/ImageProcessing/imgproc/ConvertTo.h
+  src/ImageProcessing/imgproc/ConvertTo.inl
+  src/ImageProcessing/imgproc/CvtColor.h
+  src/ImageProcessing/imgproc/TemplateMatcher.h
+  src/ImageProcessing/imgproc/AddWeighted.h
+  src/ImageProcessing/imgproc/Flip.h
+  src/ImageProcessing/imgproc/InRange.h
+  src/ImageProcessing/imgproc/CopyTo.h
+  src/ImageProcessing/imgproc/Resize.h
+  src/ImageProcessing/imgproc/Crop.h
+  src/ImageProcessing/imgproc/Fill.h
+  src/ImageProcessing/imgproc/MinMaxLoc.h
 
-  features/Detectors.h
-  features/Matchers.h
-  features/FeatureDetector.h
-  features/DescriptorMatcher.h
-  features/MatchingConstraints.h
-  features/PointPicker2D.h
-  features/Segmenter2D.h
-  features/OpticalFlow.h
-  features/FeatureColorExtractor.cpp
+  src/ImageProcessing/features/Detectors.h
+  src/ImageProcessing/features/Matchers.h
+  src/ImageProcessing/features/FeatureDetector.h
+  src/ImageProcessing/features/DescriptorMatcher.h
+  src/ImageProcessing/features/MatchingConstraints.h
+  src/ImageProcessing/features/PointPicker2D.h
+  src/ImageProcessing/features/Segmenter2D.h
+  src/ImageProcessing/features/OpticalFlow.h
+  src/ImageProcessing/features/FeatureColorExtractor.cpp
 
-  utils/PointVectorConverter.h
-  utils/PointVectorConverter.inl
-  utils/PointVec2Keypoint.h
-  utils/Vector2SSVector.h
-  utils/Vector2SSVector.inl
-  utils/NegateVector.h
-  utils/OrthoProj.h
-  utils/AddCam.h
+  src/ImageProcessing/utils/PointVectorConverter.h
+  src/ImageProcessing/utils/PointVectorConverter.inl
+  src/ImageProcessing/utils/PointVec2Keypoint.h
+  src/ImageProcessing/utils/Vector2SSVector.h
+  src/ImageProcessing/utils/Vector2SSVector.inl
+  src/ImageProcessing/utils/NegateVector.h
+  src/ImageProcessing/utils/OrthoProj.h
+  src/ImageProcessing/utils/AddCam.h
   )
 
 set(SOURCE_FILES
-  ImageProcessingPlugin.cpp
+  src/ImageProcessing/ImageProcessingPlugin.cpp
 
-  camera/common/CameraSettings.cpp
-  camera/common/StereoSettings.cpp
-  camera/common/CalibratedCamera.cpp
-  camera/common/ImageRectifier.cpp
-  camera/common/ProjectPoints.cpp
-  camera/common/FeatureTriangulator.cpp
+  src/ImageProcessing/camera/common/CameraSettings.cpp
+  src/ImageProcessing/camera/common/StereoSettings.cpp
+  src/ImageProcessing/camera/common/CalibratedCamera.cpp
+  src/ImageProcessing/camera/common/ImageRectifier.cpp
+  src/ImageProcessing/camera/common/ProjectPoints.cpp
+  src/ImageProcessing/camera/common/FeatureTriangulator.cpp
 
-  camera/calib/CalibrateCamera.cpp
-  camera/calib/SolvePnP.cpp
-  camera/calib/CalibrateStereo.cpp
-  camera/calib/CalibLoader.cpp
-  camera/calib/CalibExporter.cpp
-  camera/calib/FindChessboardCorners.cpp
+  src/ImageProcessing/camera/calib/CalibrateCamera.cpp
+  src/ImageProcessing/camera/calib/SolvePnP.cpp
+  src/ImageProcessing/camera/calib/CalibrateStereo.cpp
+  src/ImageProcessing/camera/calib/CalibLoader.cpp
+  src/ImageProcessing/camera/calib/CalibExporter.cpp
+  src/ImageProcessing/camera/calib/FindChessboardCorners.cpp
 
-  camera/control/CameraTrajectory.cpp
-  camera/control/TrajectoryAround.cpp
-  camera/control/LinesOfSightConstraintManager.cpp
-  camera/control/CameraController.cpp
-  camera/control/Icosphere.cpp
+  src/ImageProcessing/camera/control/CameraTrajectory.cpp
+  src/ImageProcessing/camera/control/TrajectoryAround.cpp
+  src/ImageProcessing/camera/control/LinesOfSightConstraintManager.cpp
+  src/ImageProcessing/camera/control/CameraController.cpp
+  src/ImageProcessing/camera/control/Icosphere.cpp
 
-  imgproc/CannyFilter.cpp
-  imgproc/SobelFilter.cpp
-  imgproc/AdaptiveThreshold.cpp
-  imgproc/SimpleThreshold.cpp
-  imgproc/MorphologyEx.cpp
-  imgproc/ConvertTo.cpp
-  imgproc/CvtColor.cpp
-  imgproc/TemplateMatcher.cpp
-  imgproc/AddWeighted.cpp
-  imgproc/Flip.cpp
-  imgproc/InRange.cpp
-  imgproc/CopyTo.cpp
-  imgproc/Resize.cpp
-  imgproc/Crop.cpp
-  imgproc/Fill.cpp
-  imgproc/MinMaxLoc.cpp
+  src/ImageProcessing/imgproc/CannyFilter.cpp
+  src/ImageProcessing/imgproc/SobelFilter.cpp
+  src/ImageProcessing/imgproc/AdaptiveThreshold.cpp
+  src/ImageProcessing/imgproc/SimpleThreshold.cpp
+  src/ImageProcessing/imgproc/MorphologyEx.cpp
+  src/ImageProcessing/imgproc/ConvertTo.cpp
+  src/ImageProcessing/imgproc/CvtColor.cpp
+  src/ImageProcessing/imgproc/TemplateMatcher.cpp
+  src/ImageProcessing/imgproc/AddWeighted.cpp
+  src/ImageProcessing/imgproc/Flip.cpp
+  src/ImageProcessing/imgproc/InRange.cpp
+  src/ImageProcessing/imgproc/CopyTo.cpp
+  src/ImageProcessing/imgproc/Resize.cpp
+  src/ImageProcessing/imgproc/Crop.cpp
+  src/ImageProcessing/imgproc/Fill.cpp
+  src/ImageProcessing/imgproc/MinMaxLoc.cpp
 
-  features/Detectors.cpp
-  features/Matchers.cpp
-  features/FeatureDetector.cpp
-  features/DescriptorMatcher.cpp
-  features/MatchingConstraints.cpp
-  features/PointPicker2D.cpp
-  features/Segmenter2D.cpp
-  features/OpticalFlow.cpp
-  features/FeatureColorExtractor.cpp
+  src/ImageProcessing/features/Detectors.cpp
+  src/ImageProcessing/features/Matchers.cpp
+  src/ImageProcessing/features/FeatureDetector.cpp
+  src/ImageProcessing/features/DescriptorMatcher.cpp
+  src/ImageProcessing/features/MatchingConstraints.cpp
+  src/ImageProcessing/features/PointPicker2D.cpp
+  src/ImageProcessing/features/Segmenter2D.cpp
+  src/ImageProcessing/features/OpticalFlow.cpp
+  src/ImageProcessing/features/FeatureColorExtractor.cpp
 
-  utils/PointVectorConverter.cpp
-  utils/PointVec2Keypoint.cpp
-  utils/Vector2SSVector.cpp
-  utils/NegateVector.cpp
-  utils/OrthoProj.cpp
-  utils/AddCam.h
+  src/ImageProcessing/utils/PointVectorConverter.cpp
+  src/ImageProcessing/utils/PointVec2Keypoint.cpp
+  src/ImageProcessing/utils/Vector2SSVector.cpp
+  src/ImageProcessing/utils/NegateVector.cpp
+  src/ImageProcessing/utils/OrthoProj.cpp
+  src/ImageProcessing/utils/AddCam.h
   )
 
-set(${PROJECT_NAME}_SOURCES ${SOURCE_FILES} ${HEADER_FILES})
-set(${PROJECT_NAME}_LIBRARIES SofaCore SofaSimulationCommon ${OpenCV_LIBRARIES} SofaCV)
+set(${PROJECT_NAME}_LIBRARIES SofaCore SofaSimulationCommon SofaConstraint ${OpenCV_LIBRARIES} SofaCV)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})
 
 target_link_libraries(${PROJECT_NAME} ${${PROJECT_NAME}_LIBRARIES})
 
 target_compile_options(${PROJECT_NAME} PUBLIC -D${PROJECT_NAME}_VERSION=\"${${PROJECT_NAME}_VERSION}\")
 target_compile_options(${PROJECT_NAME} PUBLIC -D${PROJECT_NAME}_REGRESSION_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/examples/\")
 
-target_include_directories(${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>")
-target_include_directories(${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>")
-target_include_directories(${PROJECT_NAME} PUBLIC "$<INSTALL_INTERFACE:include>")
-set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_d")
-set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${${PROJECT_NAME}_VERSION})
-set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADER_FILES}")
+target_include_directories(${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
+target_include_directories(${PROJECT_NAME} PUBLIC "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 
-sofa_create_package(${PROJECT_NAME} ${${PROJECT_NAME}_VERSION} ${PROJECT_NAME} ${PROJECT_NAME})
+sofa_generate_package(NAME ${PROJECT_NAME} VERSION ${${PROJECT_NAME}_VERSION} TARGETS ${PROJECT_NAME} INCLUDE_INSTALL_DIR ${PROJECT_NAME} INCLUDE_SOURCE_DIR "src/${PROJECT_NAME}")
 
 if(SOFA_BUILD_TESTS)
     find_package(SofaTest QUIET)
