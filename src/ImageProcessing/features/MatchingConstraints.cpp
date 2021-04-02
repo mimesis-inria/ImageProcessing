@@ -360,7 +360,7 @@ void MatchingConstraints::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     if (out.channels() == 1)
     {
       std::cout << "converting from grayscale to BGR" << std::endl;
-      cv::cvtColor(out, out, CV_GRAY2BGR);
+      cv::cvtColor(out, out, cv::COLOR_GRAY2BGR);
     }
   }
 

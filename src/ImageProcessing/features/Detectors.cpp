@@ -302,7 +302,7 @@ void FASTDetector::enable(bool show)
   {
     m_detector = cv::FastFeatureDetector::create(
         threshold.getValue(), nonmaxsuppression.getValue(),
-        int(type.getValue().getSelectedId()));
+        cv::FastFeatureDetector::DetectorType(type.getValue().getSelectedId()));
     m_obj->addInput(&threshold);
     m_obj->addInput(&nonmaxsuppression);
     m_obj->addInput(&type);
@@ -463,7 +463,7 @@ void ORBDetector::enable(bool show)
     m_detector = cv::ORB::create(
         nFeatures.getValue(), scaleFactor.getValue(), nLevels.getValue(),
         edgeThreshold.getValue(), firstLevel.getValue(), WTA_K.getValue(),
-        int(scoreType.getValue().getSelectedId()), patchSize.getValue(),
+        cv::ORB::ScoreType(scoreType.getValue().getSelectedId()), patchSize.getValue(),
         fastThreshold.getValue());
     m_obj->addInput(&nFeatures);
     m_obj->addInput(&scaleFactor);
@@ -575,7 +575,7 @@ void KAZEDetector::enable(bool show)
     m_detector = cv::KAZE::create(extended.getValue(), upright.getValue(),
                                   threshold.getValue(), octaves.getValue(),
                                   sublevels.getValue(),
-                                  int(diffusivity.getValue().getSelectedId()));
+                                  cv::KAZE::DiffusivityType(diffusivity.getValue().getSelectedId()));
     m_obj->addInput(&extended);
     m_obj->addInput(&upright);
     m_obj->addInput(&threshold);
@@ -648,10 +648,10 @@ void AKAZEDetector::enable(bool show)
   if (show)
   {
     m_detector = cv::AKAZE::create(
-        int(descriptorType.getValue().getSelectedId()),
+        cv::AKAZE::DescriptorType(descriptorType.getValue().getSelectedId()),
         descriptorSize.getValue(), descriptorChannels.getValue(),
         threshold.getValue(), octaves.getValue(), sublevels.getValue(),
-        int(diffusivity.getValue().getSelectedId()));
+        cv::KAZE::DiffusivityType(diffusivity.getValue().getSelectedId()));
     m_obj->addInput(&descriptorType);
     m_obj->addInput(&descriptorSize);
     m_obj->addInput(&descriptorChannels);

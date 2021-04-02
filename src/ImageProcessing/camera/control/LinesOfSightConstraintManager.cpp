@@ -1,7 +1,7 @@
 #include "LinesOfSightConstraintManager.inl"
 
 #include <sofa/core/ObjectFactory.h>
-#include <sofa/defaulttype/Vec3Types.h>
+#include <sofa/defaulttype/VecTypes.h>
 
 namespace sofacv
 {
@@ -13,10 +13,7 @@ SOFA_DECL_CLASS(LOSConstraintManager)
 
 int LOSConstraintManagerClass =
     sofa::core::RegisterObject("Lines of sight Constraint Manager")
-        .add<LOSConstraintManager<sofa::defaulttype::Vec3dTypes> >(true)
-#ifdef SOFA_FLOAT
-        .add<LOSConstraintManager<sofa::defaulttype::Vec3fTypes> >()
-#endif  // SOFA_FLOAT
+        .add<LOSConstraintManager<sofa::defaulttype::Vec3Types> >(true)
     ;
 
 template <class DataTypes>

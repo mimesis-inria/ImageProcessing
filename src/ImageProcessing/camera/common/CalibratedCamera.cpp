@@ -209,8 +209,7 @@ void CalibratedCamera::computeBBox(const sofa::core::ExecParams *params, bool)
       if (p[c] < minBBox[c]) minBBox[c] = p[c];
     }
   }
-  this->f_bbox.setValue(
-      params, sofa::defaulttype::TBoundingBox<double>(minBBox, maxBBox));
+  this->f_bbox.setValue(sofa::defaulttype::TBoundingBox<double>(minBBox, maxBBox));
 }
 
 }  // namespace cam

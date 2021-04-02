@@ -5,13 +5,13 @@
 
 #include <SofaCV/SofaCV.h>
 
-#include <sofa/core/visual/DrawToolGL.h>
+#include <sofa/gl/DrawToolGL.h>
 #include <sofa/core/visual/VisualManager.h>
 #include <sofa/core/visual/VisualParams.h>
+#include <sofa/helper/gl/Transformation.h>
 #include <sofa/defaulttype/RigidTypes.h>
 #include <sofa/helper/OptionsGroup.h>
-#include <sofa/helper/gl/Transformation.h>
-#include <sofa/helper/gl/template.h>
+#include <sofa/gl/template.h>
 #include <sofa/helper/system/gl.h>
 #include <sofa/helper/system/glu.h>
 
@@ -39,15 +39,15 @@ class SOFA_IMAGEPROCESSING_API CameraSettings : public ImplicitDataEngine
 {
  public:
   typedef sofa::defaulttype::RigidTypes::Coord Rigid;
-  typedef sofa::defaulttype::Vector2 Vector2;
-  typedef sofa::defaulttype::Vector3 Vector3;
-  typedef sofa::defaulttype::Vec<4, int> Vector4;
-  typedef sofa::defaulttype::Vec<2, int> Vec2i;
-  typedef sofa::defaulttype::Vec<5, double> Vector5;
-  typedef sofa::defaulttype::Mat3x4d Mat3x4d;
-  typedef sofa::defaulttype::Matrix4 Matrix4;
-  typedef sofa::defaulttype::Matrix3 Matrix3;
-  typedef sofa::defaulttype::Quat Quat;
+  typedef sofa::type::Vector2 Vector2;
+  typedef sofa::type::Vector3 Vector3;
+  typedef sofa::type::Vec<4, int> Vector4;
+  typedef sofa::type::Vec<2, int> Vec2i;
+  typedef sofa::type::Vec<5, double> Vector5;
+  typedef sofa::type::Mat3x4d Mat3x4d;
+  typedef sofa::type::Matrix4 Matrix4;
+  typedef sofa::type::Matrix3 Matrix3;
+  typedef sofa::type::Quaternion Quat;
 
  public:
   SOFA_CLASS(CameraSettings, ImplicitDataEngine);
@@ -118,9 +118,9 @@ class SOFA_IMAGEPROCESSING_API CameraSettings : public ImplicitDataEngine
   void setIntrinsicCameraMatrix(const Matrix3& K, bool update = true);
 
   /// returns the distortion coefficients
-  const sofa::helper::vector<double>& getDistortionCoefficients() const;
+  const sofa::type::vector<double>& getDistortionCoefficients() const;
   /// sets the distortion coefficients
-  void setDistortionCoefficients(const sofa::helper::vector<double>& distCoefs);
+  void setDistortionCoefficients(const sofa::type::vector<double>& distCoefs);
 
   /// returns the rotation matrix R expressed in the world frame
   const Matrix3& getRotationMatrix() const;
@@ -178,7 +178,7 @@ class SOFA_IMAGEPROCESSING_API CameraSettings : public ImplicitDataEngine
   void set2DTranslationMatrix(const Matrix3& translation2DMat);
 
   /// returns the corners of the image plane at the current focale distance
-  const sofa::helper::vector<sofa::defaulttype::Vector3>& getCorners() const;
+  const sofa::type::vector<sofa::type::Vector3>& getCorners() const;
 
   /// returns the axis skew parameter (Always 0 in this implementation)
   double getAxisSkew() const;
@@ -195,7 +195,7 @@ class SOFA_IMAGEPROCESSING_API CameraSettings : public ImplicitDataEngine
   sofa::Data<double> d_f;             ///< Focal distance
   sofa::Data<Matrix3> d_translate2D;  ///< 2D translation matrix (u0 v0)
   sofa::Data<Matrix3> d_scale2D;  ///< 2D scale matrix (focal opening, fx, fy)
-  sofa::Data<sofa::helper::vector<double> >
+  sofa::Data<sofa::type::vector<double> >
       d_distCoefs;          ///< camera's distortion coefficients if any
   sofa::Data<Mat3x4d> d_M;  ///< 3x4 global projection matrix
   sofa::Data<Matrix3> d_K;  ///< 3x3 Intrinsic Matrix
@@ -211,7 +211,7 @@ class SOFA_IMAGEPROCESSING_API CameraSettings : public ImplicitDataEngine
   sofa::Data<Vector4> d_glViewport;  ///< OpenGL's viewport
   sofa::Data<Vector2> d_zClip;       ///< zNear, zFar
 
-  sofa::Data<sofa::helper::vector<sofa::defaulttype::Vector3> >
+  sofa::Data<sofa::type::vector<sofa::type::Vector3> >
       d_3DCorners;  ///< [OUTPUT] 3D positions of the Image plane's corners
   sofa::Data<Vector3> d_upVector;  ///< camera's up vector
 
