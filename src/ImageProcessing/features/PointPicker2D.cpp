@@ -81,7 +81,7 @@ void PointPicker2D::doUpdate()
       d_points_out.setValue(d_points_in.getValue());
       return;
   }
-  sofa::helper::vector<sofa::defaulttype::Vec2i>* points =
+  sofa::helper::vector<sofa::type::Vec2i>* points =
       d_points_out.beginWriteOnly();
   points->clear();
   if (!m_pointList.empty())
@@ -89,7 +89,7 @@ void PointPicker2D::doUpdate()
     std::cout << std::endl << std::endl;
     for (const cv::Point2f& pt : m_pointList)
     {
-      points->push_back(sofa::defaulttype::Vec2i(int(pt.x), int(pt.y)));
+      points->push_back(sofa::type::Vec2i(int(pt.x), int(pt.y)));
       std::cout << pt.x << " " << pt.y << " ";
     }
     std::cout << std::endl << std::endl;
@@ -101,7 +101,7 @@ void PointPicker2D::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 {
   if (in.empty()) return;
   if (in.channels() == 1)
-    cv::cvtColor(in, out, CV_GRAY2BGR);
+    cv::cvtColor(in, out, cv::COLOR_GRAY2BGR);
   else
     in.copyTo(out);
 
@@ -146,7 +146,7 @@ void PointPicker2D::computeEpipolarLines()
     std::vector<cv::Point2f> points(m_pointList.begin(), m_pointList.end());
     cv::computeCorrespondEpilines(points, d_whichImage.getValue(), F, lines);
     for (const cv::Vec3f& pt : lines)
-      epilines.push_back(sofa::defaulttype::Vec3f(pt.val));
+      epilines.push_back(sofa::type::Vec3f(pt.val));
   }
 #ifndef SOFACV_NEW_GUI_ENABLED
   m_picker->refreshDebugWindow();

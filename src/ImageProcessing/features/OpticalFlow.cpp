@@ -1,13 +1,14 @@
 #include "OpticalFlow.h"
 #include <opencv2/imgproc.hpp>
 #include <opencv2/video.hpp>
+#include <opencv2/core/core_c.h>
 
 namespace sofacv
 {
 namespace features
 {
 OpticalFlow::OpticalFlow()
-    : d_winSize(initData(&d_winSize, sofa::defaulttype::Vec2i(21, 21),
+    : d_winSize(initData(&d_winSize, sofa::type::Vec2i(21, 21),
                          "win_size", "")),
       d_maxLevel(initData(&d_maxLevel, 3, "max_level", "")),
       d_criteria_type(initData(&d_criteria_type,
@@ -61,7 +62,7 @@ void OpticalFlow::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     if (d_points_in.getValue().empty()) return;
     m_pts_in.reserve(d_points_in.getValue().size());
     m_pts_in.clear();
-    for (const sofa::defaulttype::Vec2d& pt : d_points_in.getValue())
+    for (const sofa::type::Vec2d& pt : d_points_in.getValue())
       m_pts_in.push_back(cv::Point2f(pt.x(), pt.y()));
 
     // copy in in out
@@ -72,21 +73,21 @@ void OpticalFlow::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
 
   // IF THE TRACKER HAS BEEN STARTED:
   if (in.type() != CV_8UC1)
-    cv::cvtColor(in, gray, CV_BGRA2GRAY);
+    cv::cvtColor(in, gray, cv::COLOR_BGRA2GRAY);
   else
     gray = in;
 
   if (d_img2.isSet())
   {
     if (d_img2.getValue().type() != CV_8UC1)
-      cv::cvtColor(d_img2.getValue(), m_prev, CV_BGRA2GRAY);
+      cv::cvtColor(d_img2.getValue(), m_prev, cv::COLOR_BGRA2GRAY);
     else
       m_prev = d_img2.getValue();
     // set prev_points to the current input
     if (d_points_in.getValue().empty()) return;
     m_pts_in.reserve(d_points_in.getValue().size());
     m_pts_in.clear();
-    for (const sofa::defaulttype::Vec2d& pt : d_points_in.getValue())
+    for (const sofa::type::Vec2d& pt : d_points_in.getValue())
       m_pts_in.push_back(cv::Point2f(pt.x(), pt.y()));
   }
   // If it's the first step of the optical flow:
@@ -117,9 +118,9 @@ void OpticalFlow::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
                            winSize, d_maxLevel.getValue(), tc,
                            d_flags.getValue(), d_minEigThresh.getValue());
 
-  sofa::helper::vector<sofa::defaulttype::Vec2d> points_out =
+  sofa::helper::vector<sofa::type::Vec2d> points_out =
       d_points_out.getValue();
-  sofa::helper::vector<sofa::defaulttype::Vec2d> points_in =
+  sofa::helper::vector<sofa::type::Vec2d> points_in =
       d_points_in.getValue();
   points_out.clear();
   points_in.clear();
@@ -128,8 +129,8 @@ void OpticalFlow::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
     cv::Point2f ptPrev, ptNext;
     ptPrev = m_pts_in[i];
     ptNext = m_pts_out[i];
-    points_out.push_back(sofa::defaulttype::Vec2d(ptNext.x, ptNext.y));
-    points_in.push_back(sofa::defaulttype::Vec2d(ptPrev.x, ptPrev.y));
+    points_out.push_back(sofa::type::Vec2d(ptNext.x, ptNext.y));
+    points_in.push_back(sofa::type::Vec2d(ptPrev.x, ptPrev.y));
   }
   d_status_out.setValue(status);
   d_error_out.setValue(error);
@@ -154,7 +155,7 @@ void OpticalFlow::applyFilter(const cv::Mat& in, cv::Mat& out, bool)
   if (d_outputImage.getValue())
   {
     cv::Mat visu;
-    cv::cvtColor(gray, gray, CV_GRAY2BGR);
+    cv::cvtColor(gray, gray, cv::COLOR_GRAY2BGR);
     m_prev.copyTo(visu);
     cv::Mat zero = cv::Mat::zeros(visu.rows, visu.cols, visu.type());
     for (int i = 0; i < visu.cols; ++i)

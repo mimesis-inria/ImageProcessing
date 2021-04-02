@@ -194,9 +194,9 @@ void FeatureDetector::applyFilter(const cv::Mat& in, cv::Mat& out, bool debug)
     }
     if (_in.channels() == 1)
     {
-      cv::cvtColor(_in, _in, CV_GRAY2BGR);
+      cv::cvtColor(_in, _in, cv::COLOR_GRAY2BGR);
     }
-    cv::drawKeypoints(_in, _v, _in, cv::Scalar(0, 255, 0), 1);
+    cv::drawKeypoints(_in, _v, _in, cv::Scalar(0, 255, 0), cv::DrawMatchesFlags::DRAW_OVER_OUTIMG);
     out = _in.clone();
   }
   else

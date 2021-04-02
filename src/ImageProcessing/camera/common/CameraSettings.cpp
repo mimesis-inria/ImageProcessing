@@ -18,7 +18,7 @@ int CameraSettingsClass =
         "transformations")
         .add<CameraSettings>();
 
-sofa::defaulttype::Vector2 CameraSettings::get2DFrom3DPosition(
+sofa::type::Vector2 CameraSettings::get2DFrom3DPosition(
     const Vector3& pt)
 {
   const Mat3x4d& M = d_M.getValue();
@@ -29,7 +29,7 @@ sofa::defaulttype::Vector2 CameraSettings::get2DFrom3DPosition(
   return Vector2(rx, ry) * 1.0 / rz;
 }
 
-sofa::defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x,
+sofa::type::Vector3 CameraSettings::get3DFrom2DPosition(double x,
                                                                double y,
                                                                double f)
 {
@@ -46,7 +46,7 @@ sofa::defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(double x,
   return R.transposed() * (point3D - t);
 }
 
-sofa::defaulttype::Vector3 CameraSettings::get3DFrom2DPosition(const Vector2& p,
+sofa::type::Vector3 CameraSettings::get3DFrom2DPosition(const Vector2& p,
                                                                double f)
 {
   return get3DFrom2DPosition(p[0], p[1], f);
@@ -72,7 +72,7 @@ void CameraSettings::getCornersPosition(Vector3& p1, Vector3& p2, Vector3& p3,
   p4 = get3DFrom2DPosition(0, h, f);
 }
 
-const sofa::defaulttype::Mat3x4d& CameraSettings::getProjectionMatrix() const
+const sofa::type::Mat3x4d& CameraSettings::getProjectionMatrix() const
 {
   return d_M.getValue();
 }
@@ -86,7 +86,7 @@ void CameraSettings::setProjectionMatrix(const Mat3x4d& M)
   recalculate3DCorners();
 }
 
-const sofa::defaulttype::Matrix3& CameraSettings::getIntrinsicCameraMatrix()
+const sofa::type::Matrix3& CameraSettings::getIntrinsicCameraMatrix()
     const
 {
   return d_K.getValue();
@@ -104,13 +104,13 @@ void CameraSettings::setIntrinsicCameraMatrix(const Matrix3& K, bool update)
   recalculate3DCorners();
 }
 
-const sofa::helper::vector<double>& CameraSettings::getDistortionCoefficients()
+const sofa::type::vector<double>& CameraSettings::getDistortionCoefficients()
     const
 {
   return d_distCoefs.getValue();
 }
 void CameraSettings::setDistortionCoefficients(
-    const sofa::helper::vector<double>& distCoefs)
+    const sofa::type::vector<double>& distCoefs)
 {
   // Nothing to do, distortion coefficients are not (yet?) taken into account in
   // OpenGL
@@ -119,7 +119,7 @@ void CameraSettings::setDistortionCoefficients(
   recalculate3DCorners();
 }
 
-const sofa::defaulttype::Matrix3& CameraSettings::getRotationMatrix() const
+const sofa::type::Matrix3& CameraSettings::getRotationMatrix() const
 {
   return d_R.getValue();
 }
@@ -136,7 +136,7 @@ void CameraSettings::setRotationMatrix(const Matrix3& R, bool update)
   recalculate3DCorners();
 }
 
-const sofa::defaulttype::Vector3& CameraSettings::getPosition() const
+const sofa::type::Vector3& CameraSettings::getPosition() const
 {
   return d_t.getValue();
 }
@@ -153,7 +153,7 @@ void CameraSettings::setPosition(const Vector3& t, bool update)
   recalculate3DCorners();
 }
 
-const sofa::defaulttype::Vec2i& CameraSettings::getImageSize() const
+const sofa::type::Vec2i& CameraSettings::getImageSize() const
 {
   return d_imageSize.getValue();
 }
@@ -168,7 +168,7 @@ void CameraSettings::setImageSize(const Vec2i& imgSize, bool update)
 
   recalculate3DCorners();
 }
-const sofa::defaulttype::Matrix4& CameraSettings::getGLProjection() const
+const sofa::type::Matrix4& CameraSettings::getGLProjection() const
 {
   return d_glProjection.getValue();
 }
@@ -180,7 +180,7 @@ void CameraSettings::setGLProjection(const Matrix4& glProjection)
 
   recalculate3DCorners();
 }
-const sofa::defaulttype::Matrix4& CameraSettings::getGLModelview() const
+const sofa::type::Matrix4& CameraSettings::getGLModelview() const
 {
   return d_glModelview.getValue();
 }
@@ -193,7 +193,7 @@ void CameraSettings::setGLModelview(const Matrix4& glModelview)
   recalculate3DCorners();
 }
 
-const sofa::defaulttype::Vec<4, int>& CameraSettings::getGLViewport() const
+const sofa::type::Vec<4, int>& CameraSettings::getGLViewport() const
 {
   return d_glViewport.getValue();
 }
@@ -204,7 +204,7 @@ void CameraSettings::setGLViewport(const Vector4& glViewport)
   recalculate3DCorners();
 }
 
-const sofa::defaulttype::Vector2& CameraSettings::getGLZClip() const
+const sofa::type::Vector2& CameraSettings::getGLZClip() const
 {
   return d_zClip.getValue();
 }
@@ -215,7 +215,7 @@ void CameraSettings::setGLZClip(const Vector2& zClip)
 
   recalculate3DCorners();
 }
-const sofa::defaulttype::Quat& CameraSettings::getOrientation() const
+const sofa::type::Quaternion& CameraSettings::getOrientation() const
 {
   return d_orientation.getValue();
 }
@@ -231,7 +231,7 @@ void CameraSettings::setOrientation(const Quat& orientation)
   recalculate3DCorners();
 }
 
-const sofa::defaulttype::Matrix3& CameraSettings::get2DScaleMatrix() const
+const sofa::type::Matrix3& CameraSettings::get2DScaleMatrix() const
 {
   return d_scale2D.getValue();
 }
@@ -252,7 +252,7 @@ void CameraSettings::setFocalDistance(double f)
   recalculate3DCorners();
 }
 
-const sofa::defaulttype::Matrix3& CameraSettings::get2DTranslationMatrix() const
+const sofa::type::Matrix3& CameraSettings::get2DTranslationMatrix() const
 {
   return d_translate2D.getValue();
 }
@@ -265,7 +265,7 @@ void CameraSettings::set2DTranslationMatrix(const Matrix3& translation2D)
   recalculate3DCorners();
 }
 
-const sofa::helper::vector<sofa::defaulttype::Vector3>&
+const sofa::type::vector<sofa::type::Vector3>&
 CameraSettings::getCorners() const
 {
   return d_3DCorners.getValue();
@@ -559,7 +559,7 @@ void CameraSettings::recalculate3DCorners()
   Vector3 p1, p2, p3, p4;
   this->getCornersPosition(p1, p2, p3, p4,
                            (d_f.getValue() != -1) ? (d_f.getValue()) : (1.0f));
-  sofa::helper::vector<Vector3>& corners3D = *d_3DCorners.beginEdit();
+  sofa::type::vector<Vector3>& corners3D = *d_3DCorners.beginEdit();
   corners3D.clear();
   corners3D.push_back(p1);
   corners3D.push_back(p2);
@@ -569,16 +569,16 @@ void CameraSettings::recalculate3DCorners()
 }
 
 /// Projects a point p on a plane defined by a Point A and a normal n
-sofa::defaulttype::Vector3 orthoProj(const sofa::defaulttype::Vector3& p,
-                                     const sofa::defaulttype::Vector3& A,
-                                     const sofa::defaulttype::Vector3& n)
+sofa::type::Vector3 orthoProj(const sofa::type::Vector3& p,
+                                     const sofa::type::Vector3& A,
+                                     const sofa::type::Vector3& n)
 {
   double lambda = ((A * n) - (p * n)) / (n * n);
   return p + lambda * n;
 }
 
-double length(const sofa::defaulttype::Vector3& a,
-              const sofa::defaulttype::Vector3& b)
+double length(const sofa::type::Vector3& a,
+              const sofa::type::Vector3& b)
 {
   return sqrt((a.x() - b.x()) * (a.x() - b.x()) +
               (a.y() - b.y()) * (a.y() - b.y()) +
@@ -732,8 +732,8 @@ void CameraSettings::buildFromKRT()
   decomposeCV();
   composeM();
   composeGL();
-  sofa::defaulttype::Matrix3 rot;
-  sofa::defaulttype::Quat q = getOrientation();
+  sofa::type::Matrix3 rot;
+  sofa::type::Quat q = getOrientation();
   q.toMatrix(rot);
 
   Vector3 camPos = getPosition();

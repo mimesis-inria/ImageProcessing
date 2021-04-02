@@ -38,39 +38,39 @@ class SOFA_IMAGEPROCESSING_API CalibLoader : public ImplicitDataEngine
   struct CalibData
   {
     CalibData() {}
-    CalibData(const sofa::defaulttype::Matrix3& _K1,
-              const sofa::defaulttype::Matrix3& _R1,
-              const sofa::defaulttype::Vector3& _T1,
+    CalibData(const sofa::type::Matrix3& _K1,
+              const sofa::type::Matrix3& _R1,
+              const sofa::type::Vector3& _T1,
               const sofa::helper::vector<double>& _delta1,
-              const sofa::defaulttype::Vec2i _imSize1, double _error1,
-              const sofa::defaulttype::Matrix3& _K2,
-              const sofa::defaulttype::Matrix3& _R2,
-              const sofa::defaulttype::Vector3& _T2,
+              const sofa::type::Vec2i _imSize1, double _error1,
+              const sofa::type::Matrix3& _K2,
+              const sofa::type::Matrix3& _R2,
+              const sofa::type::Vector3& _T2,
               const sofa::helper::vector<double>& _delta2,
-              const sofa::defaulttype::Vec2i _imSize2, double _error2,
-              const sofa::defaulttype::Matrix3& _Rs,
-              const sofa::defaulttype::Vector3& _Ts,
-              const sofa::defaulttype::Matrix3& _F,
-              const sofa::defaulttype::Matrix3& _E, double _totalError);
+              const sofa::type::Vec2i _imSize2, double _error2,
+              const sofa::type::Matrix3& _Rs,
+              const sofa::type::Vector3& _Ts,
+              const sofa::type::Matrix3& _F,
+              const sofa::type::Matrix3& _E, double _totalError);
 
-    sofa::defaulttype::Vec2i imSize1;
-    sofa::defaulttype::Matrix3 K1;
-    sofa::defaulttype::Matrix3 R1;
-    sofa::defaulttype::Vector3 T1;
+    sofa::type::Vec2i imSize1;
+    sofa::type::Matrix3 K1;
+    sofa::type::Matrix3 R1;
+    sofa::type::Vector3 T1;
     sofa::helper::vector<double> delta1;
     double error1;
 
-    sofa::defaulttype::Vec2i imSize2;
-    sofa::defaulttype::Matrix3 K2;
-    sofa::defaulttype::Matrix3 R2;
-    sofa::defaulttype::Vector3 T2;
+    sofa::type::Vec2i imSize2;
+    sofa::type::Matrix3 K2;
+    sofa::type::Matrix3 R2;
+    sofa::type::Vector3 T2;
     sofa::helper::vector<double> delta2;
     double error2;
 
-    sofa::defaulttype::Matrix3 Rs;
-    sofa::defaulttype::Vector3 Ts;
-    sofa::defaulttype::Matrix3 F;
-    sofa::defaulttype::Matrix3 E;
+    sofa::type::Matrix3 Rs;
+    sofa::type::Vector3 Ts;
+    sofa::type::Matrix3 F;
+    sofa::type::Matrix3 E;
     double totalError;
   };
 
@@ -92,24 +92,24 @@ class SOFA_IMAGEPROCESSING_API CalibLoader : public ImplicitDataEngine
   bool m_isStereo;
   bool m_isInitialized;
 
-  sofa::Data<sofa::defaulttype::Vec2i> d_imSize1;
-  sofa::Data<sofa::defaulttype::Matrix3> d_K1;
-  sofa::Data<sofa::defaulttype::Matrix3> d_R1;
-  sofa::Data<sofa::defaulttype::Vector3> d_T1;
+  sofa::Data<sofa::type::Vec2i> d_imSize1;
+  sofa::Data<sofa::type::Matrix3> d_K1;
+  sofa::Data<sofa::type::Matrix3> d_R1;
+  sofa::Data<sofa::type::Vector3> d_T1;
   sofa::Data<sofa::helper::vector<double> > d_delta1;
   sofa::Data<double> d_error1;
 
-  sofa::Data<sofa::defaulttype::Vec2i> d_imSize2;
-  sofa::Data<sofa::defaulttype::Matrix3> d_K2;
-  sofa::Data<sofa::defaulttype::Matrix3> d_R2;
-  sofa::Data<sofa::defaulttype::Vector3> d_T2;
+  sofa::Data<sofa::type::Vec2i> d_imSize2;
+  sofa::Data<sofa::type::Matrix3> d_K2;
+  sofa::Data<sofa::type::Matrix3> d_R2;
+  sofa::Data<sofa::type::Vector3> d_T2;
   sofa::Data<sofa::helper::vector<double> > d_delta2;
   sofa::Data<double> d_error2;
 
-  sofa::Data<sofa::defaulttype::Matrix3> d_Rs;
-  sofa::Data<sofa::defaulttype::Vector3> d_Ts;
-  sofa::Data<sofa::defaulttype::Matrix3> d_F;
-  sofa::Data<sofa::defaulttype::Matrix3> d_E;
+  sofa::Data<sofa::type::Matrix3> d_Rs;
+  sofa::Data<sofa::type::Vector3> d_Ts;
+  sofa::Data<sofa::type::Matrix3> d_F;
+  sofa::Data<sofa::type::Matrix3> d_E;
   sofa::Data<double> d_totalError;
 
  protected:

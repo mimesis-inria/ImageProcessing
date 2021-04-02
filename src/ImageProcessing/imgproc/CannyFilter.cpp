@@ -52,9 +52,9 @@ void CannyFilter::applyFilter(const cv::Mat &in, cv::Mat &out, bool)
 
   cv::Mat img_gray;
   if (in.type() == CV_8UC4)
-    cv::cvtColor(in, img_gray, CV_BGRA2GRAY);
+    cv::cvtColor(in, img_gray, cv::COLOR_BGRA2GRAY);
   else if (in.type() == CV_8UC3)
-    cv::cvtColor(in, img_gray, CV_BGR2GRAY);
+    cv::cvtColor(in, img_gray, cv::COLOR_BGR2GRAY);
   else
     img_gray = in.clone();
 
